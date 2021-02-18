@@ -3,7 +3,7 @@ name: Infrastructure CD
 on:
   push:
     branches:
-      - main
+      - renetnielsen/fix-cosmo-variable
     paths:
       - build/infrastructure/**
       - build/modules/**
