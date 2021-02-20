@@ -16,7 +16,7 @@ name: Infrastructure CD
 on:
   push:
     branches:
-      - renetnielsen/added-license-to-tf-files
+      - main
     paths:
       - build/infrastructure/**
       - build/modules/**
