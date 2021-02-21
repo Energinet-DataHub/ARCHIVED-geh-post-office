@@ -91,7 +91,7 @@ POST https://{{YOUR_DOMAIN_URL}}/api/Dequeue
 
 | Name | Required |  Type | Description |
 | --- | --- | --- | --- |
-| `id` | True | string | The id of the bundle to dequeue |
+| `bundle` | True | string | The id of the bundle to dequeue |
 | `recipient` | True | string | The id of the recipient to dequeue documents on |
 
 #### Dequeue Responses
@@ -100,7 +100,7 @@ POST https://{{YOUR_DOMAIN_URL}}/api/Dequeue
 | --- | --- | --- |
 | 200 OK | [OkResult](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.okresult?view=aspnetcore-5.0) | OK |
 | 404 Not Found | [NotFoundResult](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.notfoundresult?view=aspnetcore-5.0) |
-| 400 Bad Request | [BadRequestErrorMessageResult](https://docs.microsoft.com/en-us/dotnet/api/system.web.http.badrequesterrormessageresult?view=aspnetcore-2.2) | If `id` is missing, the following error will be outputted: _Request body is missing 'id'_. |
+| 400 Bad Request | [BadRequestErrorMessageResult](https://docs.microsoft.com/en-us/dotnet/api/system.web.http.badrequesterrormessageresult?view=aspnetcore-2.2) | If `bundle` is missing, the following error will be outputted: _Request body is missing 'bundle'_. |
 | 400 Bad Request | [BadRequestErrorMessageResult](https://docs.microsoft.com/en-us/dotnet/api/system.web.http.badrequesterrormessageresult?view=aspnetcore-2.2) | If `recipient` is missing, the following error will be outputted: _Request body is missing 'recipient'_. |
 
 ## Types
