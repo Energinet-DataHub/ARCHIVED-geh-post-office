@@ -65,9 +65,9 @@ GET https://{{YOUR_DOMAIN_URL}}/api/Peek
 
 | Name | Required |  Type | Description |
 | --- | --- | --- | --- |
-| `Recipient` | True | string | The id of the recipient to peek documents on |
-| `Type` | True | string | The type of documents to peek |
-| `PageSize` | True | integer | The number of documents to peek |
+| `recipient` | True | string | The id of the recipient to peek documents on |
+| `type` | True | string | The type of documents to peek |
+| `pageSize` | True | integer | The number of documents to peek, defaults to 1. |
 
 #### Peek Responses
 
@@ -75,8 +75,8 @@ GET https://{{YOUR_DOMAIN_URL}}/api/Peek
 | --- | --- | --- |
 | 200 OK | [Peeked documents](#peeked-documents) | OK |
 | 204 No Content | [NoContentResult](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.nocontentresult?view=aspnetcore-5.0) | If no documents is available for peeking. |
-| 400 Bad Request | [BadRequestErrordocumentResult](https://docs.microsoft.com/en-us/dotnet/api/system.web.http.badrequesterrordocumentresult?view=aspnetcore-2.2) | If `Recipient` is missing, the following error will be outputted: _Specify recipient_. |
-| 400 Bad Request | [BadRequestErrordocumentResult](https://docs.microsoft.com/en-us/dotnet/api/system.web.http.badrequesterrordocumentresult?view=aspnetcore-2.2) | If `Type` is missing, the following error will be outputted: _Specify type of document_. |
+| 400 Bad Request | [BadRequestErrordocumentResult](https://docs.microsoft.com/en-us/dotnet/api/system.web.http.badrequesterrordocumentresult?view=aspnetcore-2.2) | If `recipient` is missing, the following error will be outputted: _'Query parameter is missing 'recipient'_. |
+| 400 Bad Request | [BadRequestErrordocumentResult](https://docs.microsoft.com/en-us/dotnet/api/system.web.http.badrequesterrordocumentresult?view=aspnetcore-2.2) | If `type` is missing, the following error will be outputted: _'Query parameter is missing 'type'_. |
 | 500 Server error | [ArgumentNullException](https://docs.microsoft.com/en-us/dotnet/api/system.argumentnullexception?view=net-5.0) ||
 
 ### POST:/Dequeue
@@ -91,12 +91,17 @@ POST https://{{YOUR_DOMAIN_URL}}/api/Dequeue
 
 | Name | Required |  Type | Description |
 | --- | --- | --- | --- |
-| `Id` | True | string | The id of the bundle to dequeue |
-| `Recipient` | True | string | The id of the recipient to dequeue documents on |
+| `id` | True | string | The id of the bundle to dequeue |
+| `recipient` | True | string | The id of the recipient to dequeue documents on |
 
 #### Dequeue Responses
 
-TODO
+| Name | Type | Description |
+| --- | --- | --- |
+| 200 OK | [OkResult](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.okresult?view=aspnetcore-5.0) | OK |
+| 404 Not Found | [NotFoundResult](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.notfoundresult?view=aspnetcore-5.0) |
+| 400 Bad Request | [BadRequestErrordocumentResult](https://docs.microsoft.com/en-us/dotnet/api/system.web.http.badrequesterrordocumentresult?view=aspnetcore-2.2) | If `id` is missing, the following error will be outputted: _Request body is missing 'id'_. |
+| 400 Bad Request | [BadRequestErrordocumentResult](https://docs.microsoft.com/en-us/dotnet/api/system.web.http.badrequesterrordocumentresult?view=aspnetcore-2.2) | If `recipient` is missing, the following error will be outputted: _Request body is missing 'recipient'_. |
 
 ## Types
 
