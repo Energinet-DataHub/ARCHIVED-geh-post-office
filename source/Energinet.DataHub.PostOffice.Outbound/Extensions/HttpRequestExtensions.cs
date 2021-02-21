@@ -14,10 +14,10 @@
 
 using System;
 using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Application;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 
 namespace Energinet.DataHub.PostOffice.Outbound.Extensions
 {
@@ -49,8 +49,7 @@ namespace Energinet.DataHub.PostOffice.Outbound.Extensions
             if (request == null) throw new ArgumentNullException(nameof(request));
             string requestBody = await new StreamReader(request.Body).ReadToEndAsync();
 
-            // use Json.NET to deserialize the posted JSON into a C# dynamic object
-            var parsedObject = JsonConvert.DeserializeObject<DocumentBody>(requestBody);
+            var parsedObject = JsonSerializer.Deserialize<DocumentBody>(requestBody);
 
             if (parsedObject == null)
             {
