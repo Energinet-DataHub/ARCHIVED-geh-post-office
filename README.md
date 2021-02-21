@@ -1,26 +1,29 @@
 # Post Office
 
 - [Intro](#intro)
-- [Usage](#usage)
-  - [Delivering messages to the post office](#a)
-  - [Read and dequeue messages from the post office](#a)
+- [Delivering documents to the post office](#delivering-documents-to-the-post-office)
+- [Peek and dequeue documents from the post office](#peek-and-dequeue-documents-from-the-post-office)
 - [Architecture](#architecture)
 
 ## Intro
 
-The Post Office is the central place for handling outbound messages from within the Green Energy Hub.
+The Post Office is the central place for handling outbound documents from within the Green Energy Hub.
 
-This means that any domain inside the Green Energy Hub that has a message that outside actors needs to be able to read, wukk have to deliver the message to the Post Office. Read [Delivering messages to the post office](#a).
+This means that any domain inside the Green Energy Hub that has a document which outside actors needs to be able to peek, will have to deliver the document to the Post Office using the appropriate type.
 
-Any message delivered to the Post Office will then be processed, saved in a storage and thus made available for outside market actors to read/dequeue.
+See [Delivering documents to the post office](#delivering-documents-to-the-post-office).
 
-The Market Actors will be able to read and dequeue messages that they are marked as recipients of. Read [Fetching messages from the post office](#a).
+Any document delivered to the Post Office will then be processed, saved in a storage and thus made available for outside market actors to peek and eventually dequeue.
 
-## Usage
+The Market Actors will only be able to peek and dequeue documents that they are marked as recipients of. See [Fetching documents from the post office](#peek-and-dequeue-documents-from-the-post-office).
 
-### Delivering messages to the post office
+### Architecture
 
-To deliver a message to the Post Office from a domain, the domain will have to insert a document into the corresponding topic of the `sbn-inbound-postoffice` service bus.
+![design](ARCHITECTURE.png)
+
+## Delivering documents to the post office
+
+To deliver a document to the Post Office from a domain, the domain will have to insert a document into the corresponding topic of the `sbn-inbound-postoffice` service bus.
 
 The service bus contains 3 Topics.
 
@@ -28,15 +31,87 @@ The service bus contains 3 Topics.
 - marketdata
 - timeseries
 
-All documents inserted into each of the topics will then be processed and placed in a collection of documents, corresponding to the topic.
-This means that when a domain place a document in the `timeseries` domain, this document will only be able to be peaked/dequeued using the `timeseries` type on the outbound end of the Post Office.
+All documents inserted into each of the topics will then be processed and placed in a collection of documents corresponding to the topic.
+This means that when a domain place a document in the `timeseries` topic, this document will only be peekable using the `timeseries` type on the outbound end of the Post Office.
 
-All documents inserted into the topics will have to comply with the protobuf contract exposed [here](source/Contracts/v1/Document.proto)
+### Format
 
-### Read and dequeue messages from the post office
+All documents inserted into the topics will have to comply with the protobuf contract exposed [here](source/Contracts/v1/Document.proto).
 
-TO BE DONE
+If a document is inserted into the queue that does not comply with this contract, **IT WILL NOT** be handled.
 
-## Architecture
+## Peek and dequeue documents from the post office
 
-![design](ARCHITECTURE.png)
+### Authenticating
+
+TODO: This will have to be updated once we know more about how authentication is done throughout the system.
+
+### GET:/Peek
+
+It is possible in the Post Office to a given number of documents.
+
+Once a peek has been made, the system will check if a bundle of documents already exists, if that is the case then those will be returned.
+
+If no bundle exists, the system will select the number of documents requested, generate a new bundle id and return the documents.
+
+This means if a repetetive number peek's is made, the same bundle of documents will always be returned.
+It is necessary to dequeue a bundle, before being able to get a new bundle of messages.
+
+````brainfuck
+GET https://{{YOUR_DOMAIN_URL}}/api/Peek
+````
+
+#### Peek URI Parameters
+
+| Name | Required |  Type | Description |
+| --- | --- | --- | --- |
+| `Recipient` | True | string | The id of the recipient to peek documents on |
+| `Type` | True | string | The type of documents to peek |
+| `PageSize` | True | integer | The number of documents to peek |
+
+#### Peek Responses
+
+| Name | Type | Description |
+| --- | --- | --- |
+| 200 OK | [Peeked documents](#peeked-documents) | OK |
+| 204 No Content | [NoContentResult](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.nocontentresult?view=aspnetcore-5.0) | If no documents is available for peeking. |
+| 400 Bad Request | [BadRequestErrordocumentResult](https://docs.microsoft.com/en-us/dotnet/api/system.web.http.badrequesterrordocumentresult?view=aspnetcore-2.2) | If `Recipient` is missing, the following error will be outputted: _Specify recipient_. |
+| 400 Bad Request | [BadRequestErrordocumentResult](https://docs.microsoft.com/en-us/dotnet/api/system.web.http.badrequesterrordocumentresult?view=aspnetcore-2.2) | If `Type` is missing, the following error will be outputted: _Specify type of document_. |
+| 500 Server error | [ArgumentNullException](https://docs.microsoft.com/en-us/dotnet/api/system.argumentnullexception?view=net-5.0) ||
+
+### POST:/Dequeue
+
+This method is used to dequeue a bundle of documents.
+
+````brainfuck
+POST https://{{YOUR_DOMAIN_URL}}/api/Dequeue
+````
+
+#### Dequeue Request body
+
+| Name | Required |  Type | Description |
+| --- | --- | --- | --- |
+| `Id` | True | string | The id of the bundle to dequeue |
+| `Recipient` | True | string | The id of the recipient to dequeue documents on |
+
+#### Dequeue Responses
+
+TODO
+
+## Types
+
+### Peeked documents
+
+An array of documents.
+
+```json
+[
+   {
+      "Recipient": string,
+      "Type": string,
+      "EffectuationDate": Date,
+      "Content": Dynamic,
+      "Bundle": string // The Id of the bundle
+   }
+]
+```
