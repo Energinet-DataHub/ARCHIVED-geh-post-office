@@ -13,8 +13,11 @@
 // limitations under the License.
 
 using System;
+using System.IO;
+using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Application;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace Energinet.DataHub.PostOffice.Outbound.Extensions
 {
@@ -39,6 +42,22 @@ namespace Energinet.DataHub.PostOffice.Outbound.Extensions
             }
 
             return documentQuery;
+        }
+
+        public static async Task<DocumentBody> GetDocumentBody(this HttpRequest request)
+        {
+            if (request == null) throw new ArgumentNullException(nameof(request));
+            string requestBody = await new StreamReader(request.Body).ReadToEndAsync();
+
+            // use Json.NET to deserialize the posted JSON into a C# dynamic object
+            var parsedObject = JsonConvert.DeserializeObject<DocumentBody>(requestBody);
+
+            if (parsedObject == null)
+            {
+                throw new InvalidOperationException("Object could not be parsed");
+            }
+
+            return parsedObject;
         }
     }
 }

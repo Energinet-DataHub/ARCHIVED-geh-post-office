@@ -14,7 +14,9 @@
 
 using System;
 using System.Threading.Tasks;
+using System.Web.Http;
 using Energinet.DataHub.PostOffice.Application;
+using Energinet.DataHub.PostOffice.Outbound.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -38,9 +40,9 @@ namespace Energinet.DataHub.PostOffice.Outbound.Functions
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest request,
             ILogger logger)
         {
-            if (request == null) throw new ArgumentNullException(nameof(request));
-            if (!request.Query.ContainsKey("id")) throw new InvalidOperationException("Request must include 'id'");
-            if (!request.Query.ContainsKey("recipient")) throw new InvalidOperationException("Request must include 'recipient'");
+            var documentBody = await request.GetDocumentBody();
+            if (string.IsNullOrEmpty(documentBody.Recipient)) return new BadRequestErrorMessageResult("Query parameter is missing 'recipient'");
+            if (string.IsNullOrEmpty(documentBody.Bundle)) return new BadRequestErrorMessageResult("Query parameter is missing 'type'");
 
             var bundle = request.Query["id"].ToString();
             var recipient = request.Query["recipient"].ToString();
@@ -48,7 +50,7 @@ namespace Energinet.DataHub.PostOffice.Outbound.Functions
             logger.LogInformation("processing document dequeue: {id}", bundle);
 
             var didDeleteDocuments = await _documentStore
-                .DeleteDocumentsAsync(bundle, recipient)
+                .DeleteDocumentsAsync(documentBody)
                 .ConfigureAwait(false);
 
             return didDeleteDocuments
