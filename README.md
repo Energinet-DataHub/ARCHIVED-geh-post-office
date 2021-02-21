@@ -107,11 +107,11 @@ An array of documents.
 ```json
 [
    {
-      "Recipient": string,
-      "Type": string,
-      "EffectuationDate": Date,
-      "Content": Dynamic,
-      "Bundle": string // The Id of the bundle
+      "Recipient": "string",
+      "Type": "string",
+      "EffectuationDate": "Date",
+      "Content": "Dynamic",
+      "Bundle": "string"
    }
 ]
 ```
