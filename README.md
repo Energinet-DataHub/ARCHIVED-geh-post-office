@@ -75,8 +75,8 @@ GET https://{{YOUR_DOMAIN_URL}}/api/Peek
 | --- | --- | --- |
 | 200 OK | [Peeked documents](#peeked-documents) | OK |
 | 204 No Content | [NoContentResult](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.nocontentresult?view=aspnetcore-5.0) | If no documents is available for peeking. |
-| 400 Bad Request | [BadRequestErrordocumentResult](https://docs.microsoft.com/en-us/dotnet/api/system.web.http.badrequesterrordocumentresult?view=aspnetcore-2.2) | If `recipient` is missing, the following error will be outputted: _'Query parameter is missing 'recipient'_. |
-| 400 Bad Request | [BadRequestErrordocumentResult](https://docs.microsoft.com/en-us/dotnet/api/system.web.http.badrequesterrordocumentresult?view=aspnetcore-2.2) | If `type` is missing, the following error will be outputted: _'Query parameter is missing 'type'_. |
+| 400 Bad Request | [BadRequestErrorMessageResult](https://docs.microsoft.com/en-us/dotnet/api/system.web.http.badrequesterrormessageresult?view=aspnetcore-2.2) | If `recipient` is missing, the following error will be outputted: _'Query parameter is missing 'recipient'_. |
+| 400 Bad Request | [BadRequestErrorMessageResult](https://docs.microsoft.com/en-us/dotnet/api/system.web.http.badrequesterrormessageresult?view=aspnetcore-2.2) | If `type` is missing, the following error will be outputted: _'Query parameter is missing 'type'_. |
 | 500 Server error | [ArgumentNullException](https://docs.microsoft.com/en-us/dotnet/api/system.argumentnullexception?view=net-5.0) ||
 
 ### POST:/Dequeue
@@ -100,8 +100,8 @@ POST https://{{YOUR_DOMAIN_URL}}/api/Dequeue
 | --- | --- | --- |
 | 200 OK | [OkResult](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.okresult?view=aspnetcore-5.0) | OK |
 | 404 Not Found | [NotFoundResult](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.notfoundresult?view=aspnetcore-5.0) |
-| 400 Bad Request | [BadRequestErrordocumentResult](https://docs.microsoft.com/en-us/dotnet/api/system.web.http.badrequesterrordocumentresult?view=aspnetcore-2.2) | If `id` is missing, the following error will be outputted: _Request body is missing 'id'_. |
-| 400 Bad Request | [BadRequestErrordocumentResult](https://docs.microsoft.com/en-us/dotnet/api/system.web.http.badrequesterrordocumentresult?view=aspnetcore-2.2) | If `recipient` is missing, the following error will be outputted: _Request body is missing 'recipient'_. |
+| 400 Bad Request | [BadRequestErrorMessageResult](https://docs.microsoft.com/en-us/dotnet/api/system.web.http.badrequesterrormessageresult?view=aspnetcore-2.2) | If `id` is missing, the following error will be outputted: _Request body is missing 'id'_. |
+| 400 Bad Request | [BadRequestErrorMessageResult](https://docs.microsoft.com/en-us/dotnet/api/system.web.http.badrequesterrormessageresult?view=aspnetcore-2.2) | If `recipient` is missing, the following error will be outputted: _Request body is missing 'recipient'_. |
 
 ## Types
 
