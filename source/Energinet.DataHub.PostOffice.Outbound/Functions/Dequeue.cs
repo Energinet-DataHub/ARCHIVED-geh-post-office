@@ -37,12 +37,12 @@ namespace Energinet.DataHub.PostOffice.Outbound.Functions
 
         [FunctionName("Dequeue")]
         public async Task<IActionResult> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest request,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = null)] HttpRequest request,
             ILogger logger)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
 
-            var dequeueCommand = await request.GetDequeueCommandAsync().ConfigureAwait(false);
+            var dequeueCommand = request.GetDequeueCommand();
             if (string.IsNullOrEmpty(dequeueCommand.Recipient)) return new BadRequestErrorMessageResult("Request body is missing 'recipient'");
             if (string.IsNullOrEmpty(dequeueCommand.Bundle)) return new BadRequestErrorMessageResult("Request body is missing 'type'");
 
