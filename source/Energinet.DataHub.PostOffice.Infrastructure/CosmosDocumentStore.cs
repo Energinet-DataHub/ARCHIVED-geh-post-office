@@ -56,7 +56,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure
         {
             if (dequeueCommand == null) throw new ArgumentNullException(nameof(dequeueCommand));
 
-            foreach (var containerTypeIdentifier in _cosmosConfig.TypeToContainerIdMap.Keys)
+            foreach (var containerTypeIdentifier in _cosmosConfig.Maps)
             {
                 var container = GetContainer(containerTypeIdentifier);
                 var bundle = await GetBundleAsync(container, dequeueCommand.Recipient).ConfigureAwait(false);
@@ -193,7 +193,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure
         {
             var container = _cosmosClient.GetContainer(
                 _cosmosConfig.DatabaseId,
-                _cosmosConfig.TypeToContainerIdMap[type]);
+                _cosmosConfig.GetMap(type));
             return container;
         }
     }
