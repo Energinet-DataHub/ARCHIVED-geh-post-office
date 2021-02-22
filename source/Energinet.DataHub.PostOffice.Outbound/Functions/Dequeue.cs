@@ -53,8 +53,8 @@ namespace Energinet.DataHub.PostOffice.Outbound.Functions
                 .ConfigureAwait(false);
 
             return didDeleteDocuments
-                ? new OkResult()
-                : new NotFoundResult();
+                ? (IActionResult)new OkResult()
+                : (IActionResult)new NotFoundResult();
         }
     }
 }
