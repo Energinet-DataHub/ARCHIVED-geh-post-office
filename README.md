@@ -57,9 +57,9 @@ If no bundle exists, the system will select the number of documents requested, g
 This means if a repetetive number peek's is made, the same bundle of documents will always be returned.
 It is necessary to dequeue a bundle, before being able to get a new bundle of messages.
 
-````brainfuck
+```brainfuck
 GET https://{{YOUR_DOMAIN_URL}}/api/Peek
-````
+```
 
 #### Peek URI Parameters
 
@@ -67,7 +67,7 @@ GET https://{{YOUR_DOMAIN_URL}}/api/Peek
 | --- | --- | --- | --- |
 | `recipient` | True | string | The id of the recipient to peek documents on |
 | `type` | True | string | The type of documents to peek |
-| `pageSize` | True | integer | The number of documents to peek, defaults to 1. |
+| `pageSize` | False | integer | The number of documents to peek, defaults to 1. |
 
 #### Peek Responses
 
@@ -83,9 +83,9 @@ GET https://{{YOUR_DOMAIN_URL}}/api/Peek
 
 This method is used to dequeue a bundle of documents.
 
-````brainfuck
+```brainfuck
 POST https://{{YOUR_DOMAIN_URL}}/api/Dequeue
-````
+```
 
 #### Dequeue Request body
 
