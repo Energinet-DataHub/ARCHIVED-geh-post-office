@@ -44,19 +44,18 @@ namespace Energinet.DataHub.PostOffice.Outbound.Extensions
             return documentQuery;
         }
 
-        public static async Task<DocumentBody> GetDocumentBody(this HttpRequest request)
+        public static async Task<DequeueCommand> GetDequeueCommandAsync(this HttpRequest request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
-            string requestBody = await new StreamReader(request.Body).ReadToEndAsync();
 
-            var parsedObject = JsonSerializer.Deserialize<DocumentBody>(requestBody);
+            var dequeueCommand = await JsonSerializer.DeserializeAsync<DequeueCommand>(request.Body).ConfigureAwait(false);
 
-            if (parsedObject == null)
+            if (dequeueCommand == null)
             {
                 throw new InvalidOperationException("Object could not be parsed");
             }
 
-            return parsedObject;
+            return dequeueCommand;
         }
     }
 }

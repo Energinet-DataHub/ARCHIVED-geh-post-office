@@ -37,25 +37,24 @@ namespace Energinet.DataHub.PostOffice.Outbound.Functions
 
         [FunctionName("Dequeue")]
         public async Task<IActionResult> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequest request,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = null)] HttpRequest request,
             ILogger logger)
         {
-            var documentBody = await request.GetDocumentBody();
-            if (string.IsNullOrEmpty(documentBody.Recipient)) return new BadRequestErrorMessageResult("Query parameter is missing 'recipient'");
-            if (string.IsNullOrEmpty(documentBody.Bundle)) return new BadRequestErrorMessageResult("Query parameter is missing 'type'");
+            if (request == null) throw new ArgumentNullException(nameof(request));
 
-            var bundle = request.Query["id"].ToString();
-            var recipient = request.Query["recipient"].ToString();
+            var dequeueCommand = await request.GetDequeueCommandAsync().ConfigureAwait(false);
+            if (string.IsNullOrEmpty(dequeueCommand.Recipient)) return new BadRequestErrorMessageResult("Request body is missing 'recipient'");
+            if (string.IsNullOrEmpty(dequeueCommand.Bundle)) return new BadRequestErrorMessageResult("Request body is missing 'type'");
 
-            logger.LogInformation("processing document dequeue: {id}", bundle);
+            logger.LogInformation($"processing dequeue command: {dequeueCommand}", dequeueCommand);
 
             var didDeleteDocuments = await _documentStore
-                .DeleteDocumentsAsync(documentBody)
+                .DeleteDocumentsAsync(dequeueCommand)
                 .ConfigureAwait(false);
 
             return didDeleteDocuments
-                ? (IActionResult)new OkResult()
-                : (IActionResult)new NotFoundResult();
+                ? new OkResult()
+                : new NotFoundResult();
         }
     }
 }

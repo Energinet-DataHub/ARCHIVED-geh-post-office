@@ -1,11 +1,11 @@
 ﻿namespace Energinet.DataHub.PostOffice.Application
 {
-    public class DocumentBody
+    public class DequeueCommand
     {
         /// <summary>
         /// Body for document store.
         /// </summary>
-        public DocumentBody(string recipient, string bundle)
+        public DequeueCommand(string recipient, string bundle)
         {
             Recipient = recipient;
             Bundle = bundle;

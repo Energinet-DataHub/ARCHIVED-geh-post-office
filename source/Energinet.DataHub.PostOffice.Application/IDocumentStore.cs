@@ -46,7 +46,7 @@ namespace Energinet.DataHub.PostOffice.Application
         /// <summary>
         /// Delete documents
         /// </summary>
-        /// <param name="documentBody">The documentBody to delete the documents by.</param>
-        Task<bool> DeleteDocumentsAsync(DocumentBody documentBody);
+        /// <param name="dequeueCommand">The documentBody to delete the documents by.</param>
+        Task<bool> DeleteDocumentsAsync(DequeueCommand dequeueCommand);
     }
 }

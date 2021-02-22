@@ -52,15 +52,15 @@ namespace Energinet.DataHub.PostOffice.Infrastructure
             }
         }
 
-        public async Task<bool> DeleteDocumentsAsync(DocumentBody documentBody)
+        public async Task<bool> DeleteDocumentsAsync(DequeueCommand dequeueCommand)
         {
-            if (documentBody == null) throw new ArgumentNullException(nameof(documentBody));
+            if (dequeueCommand == null) throw new ArgumentNullException(nameof(dequeueCommand));
 
             foreach (var containerTypeIdentifier in _cosmosConfig.TypeToContainerIdMap.Keys)
             {
                 var container = GetContainer(containerTypeIdentifier);
-                var bundle = await GetBundleAsync(container, documentBody.Recipient).ConfigureAwait(false);
-                if (bundle.FirstOrDefault()?.Bundle == documentBody.Bundle)
+                var bundle = await GetBundleAsync(container, dequeueCommand.Recipient).ConfigureAwait(false);
+                if (bundle.FirstOrDefault()?.Bundle == dequeueCommand.Bundle)
                 {
                     var itemRequestOptions = new ItemRequestOptions { EnableContentResponseOnWrite = false, };
 
