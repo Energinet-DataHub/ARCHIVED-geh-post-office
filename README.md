@@ -32,7 +32,7 @@ The service bus contains 3 Topics.
 - timeseries
 
 All documents inserted into each of the topics will then be processed and placed in a collection of documents corresponding to the topic.
-This means that when a domain place a document in the `timeseries` topic, this document will only be peekable using the `timeseries` type on the outbound end of the Post Office.
+This means that when a domain places a document in the `timeseries` topic, this document will only be peekable using the `timeseries` type on the outbound end of the Post Office.
 
 ### Format
 
@@ -48,13 +48,13 @@ TODO: This will have to be updated once we know more about how authentication is
 
 ### GET:/Peek
 
-It is possible in the Post Office to a given number of documents.
+It is possible in the Post Office to peek a given number of documents.
 
 Once a peek has been made, the system will check if a bundle of documents already exists, if that is the case then those will be returned.
 
 If no bundle exists, the system will select the number of documents requested, generate a new bundle id and return the documents.
 
-This means if a repetetive number peek's is made, the same bundle of documents will always be returned.
+This means if a repetetive number of peek's is made, the same bundle of documents will always be returned.
 It is necessary to dequeue a bundle, before being able to get a new bundle of messages.
 
 ```https
