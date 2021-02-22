@@ -57,7 +57,7 @@ If no bundle exists, the system will select the number of documents requested, g
 This means if a repetetive number peek's is made, the same bundle of documents will always be returned.
 It is necessary to dequeue a bundle, before being able to get a new bundle of messages.
 
-```brainfuck
+```https
 GET https://{{YOUR_DOMAIN_URL}}/api/Peek
 ```
 
@@ -83,7 +83,7 @@ GET https://{{YOUR_DOMAIN_URL}}/api/Peek
 
 This method is used to dequeue a bundle of documents.
 
-```brainfuck
+```https
 POST https://{{YOUR_DOMAIN_URL}}/api/Dequeue
 ```
 
