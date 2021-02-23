@@ -27,14 +27,14 @@ namespace Energinet.DataHub.PostOffice.Outbound.Extensions
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
 
-            var type = request.Query.ContainsKey("type") ? request.Query["type"].ToString() : null;
+            var group = request.Query.ContainsKey("group") ? request.Query["group"].ToString() : null;
             var recipient = request.Query.ContainsKey("recipient") ? request.Query["recipient"].ToString() : null;
-            if (type == null || recipient == null)
+            if (group == null || recipient == null)
             {
                 throw new InvalidOperationException("Request must include type and recipient.");
             }
 
-            var documentQuery = new DocumentQuery(recipient!, type!);
+            var documentQuery = new DocumentQuery(recipient!, group!);
 
             if (request.Query.ContainsKey("pageSize") && int.TryParse(request.Query["pageSize"], out var pageSize))
             {

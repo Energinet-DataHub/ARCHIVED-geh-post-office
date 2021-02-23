@@ -19,29 +19,14 @@ namespace Energinet.DataHub.PostOffice.Infrastructure
 {
     public class CosmosConfig
     {
-        private readonly Dictionary<string, string> _typeToContainerIdMap;
-
-        public CosmosConfig(string databaseId, IEnumerable<KeyValuePair<string, string>> maps)
+        public CosmosConfig(string databaseId, string[] containers)
         {
             DatabaseId = databaseId ?? throw new ArgumentNullException(nameof(databaseId));
-            _typeToContainerIdMap = new Dictionary<string, string>(maps);
+            Containers = containers ?? throw new ArgumentNullException(nameof(containers));
         }
 
         public string DatabaseId { get; }
 
-        public bool IsConfigured => !string.IsNullOrEmpty(DatabaseId)
-                                    && _typeToContainerIdMap.Count > 0;
-
-        public IEnumerable<string> Maps => _typeToContainerIdMap.Keys;
-
-        public bool ContainsMap(string map) => _typeToContainerIdMap.ContainsKey(map);
-
-        public string GetMap(string map)
-        {
-            if (map == null) throw new ArgumentNullException(nameof(map));
-            if (_typeToContainerIdMap.ContainsKey(map)) return _typeToContainerIdMap[map];
-
-            throw new MapNotFoundException(map);
-        }
+        public IReadOnlyList<string> Containers { get; }
     }
 }
