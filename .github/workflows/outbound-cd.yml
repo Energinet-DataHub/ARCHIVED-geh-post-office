@@ -16,7 +16,7 @@ name: Outbound CD
 on:
   push:
     branches:
-      - main
+      - renetnielsen/remove-container-app-configuration
     paths:
       - source/**
       - .github/workflows/outbound-cd.yml
