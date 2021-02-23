@@ -27,13 +27,16 @@ namespace Energinet.DataHub.PostOffice.Infrastructure
     {
         private readonly CosmosClient _cosmosClient;
         private readonly CosmosConfig _cosmosConfig;
+        private readonly CosmosContainerConfig _cosmosContainerConfig;
 
         public CosmosDocumentStore(
             CosmosClient cosmosClient,
-            CosmosConfig cosmosConfig)
+            CosmosConfig cosmosConfig,
+            CosmosContainerConfig cosmosContainerConfig)
         {
             _cosmosClient = cosmosClient;
             _cosmosConfig = cosmosConfig;
+            _cosmosContainerConfig = cosmosContainerConfig;
         }
 
         public async Task SaveDocumentAsync(Document document, string containerName)
@@ -56,7 +59,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure
         {
             if (dequeueCommand == null) throw new ArgumentNullException(nameof(dequeueCommand));
 
-            foreach (var containerTypeIdentifier in _cosmosConfig.Containers)
+            foreach (var containerTypeIdentifier in _cosmosContainerConfig.Containers)
             {
                 var container = GetContainer(containerTypeIdentifier);
                 var bundle = await GetBundleAsync(container, dequeueCommand.Recipient).ConfigureAwait(false);

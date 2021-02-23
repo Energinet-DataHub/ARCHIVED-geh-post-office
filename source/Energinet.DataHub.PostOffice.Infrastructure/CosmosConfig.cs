@@ -13,20 +13,16 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure
 {
     public class CosmosConfig
     {
-        public CosmosConfig(string databaseId, string[] containers)
+        public CosmosConfig(string databaseId)
         {
             DatabaseId = databaseId ?? throw new ArgumentNullException(nameof(databaseId));
-            Containers = containers ?? throw new ArgumentNullException(nameof(containers));
         }
 
         public string DatabaseId { get; }
-
-        public IReadOnlyList<string> Containers { get; }
     }
 }
