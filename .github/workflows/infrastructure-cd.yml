@@ -16,7 +16,7 @@ name: Infrastructure CD
 on:
   push:
     branches:
-      - renetnielsen/remove-container-app-configuration
+      - main
     paths:
       - build/infrastructure/**
       - build/modules/**

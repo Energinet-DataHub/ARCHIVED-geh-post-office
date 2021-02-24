@@ -16,7 +16,7 @@ name: Inbound CD
 on:
   push:
     branches:
-      - renetnielsen/remove-container-app-configuration
+      - main
     paths:
       - source/**
       - .github/workflows/inbound-cd.yml
