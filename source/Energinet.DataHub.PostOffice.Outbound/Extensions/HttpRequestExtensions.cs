@@ -31,7 +31,7 @@ namespace Energinet.DataHub.PostOffice.Outbound.Extensions
             var recipient = request.Query.ContainsKey("recipient") ? request.Query["recipient"].ToString() : null;
             if (group == null || recipient == null)
             {
-                throw new InvalidOperationException("Request must include type and recipient.");
+                throw new InvalidOperationException("Request must include group and recipient.");
             }
 
             var documentQuery = new DocumentQuery(recipient!, group!);
@@ -52,7 +52,7 @@ namespace Energinet.DataHub.PostOffice.Outbound.Extensions
             var recipient = request.Query.ContainsKey("recipient") ? request.Query["recipient"].ToString() : null;
             if (bundle == null || recipient == null)
             {
-                throw new InvalidOperationException("Request must include type and recipient.");
+                throw new InvalidOperationException("Request must include bundle and recipient.");
             }
 
             var dequeueCommand = new DequeueCommand(recipient!, bundle!);
