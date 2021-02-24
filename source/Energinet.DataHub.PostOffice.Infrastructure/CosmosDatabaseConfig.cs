@@ -16,9 +16,9 @@ using System;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure
 {
-    public class CosmosConfig
+    public class CosmosDatabaseConfig
     {
-        public CosmosConfig(string databaseId)
+        public CosmosDatabaseConfig(string databaseId)
         {
             DatabaseId = databaseId ?? throw new ArgumentNullException(nameof(databaseId));
         }

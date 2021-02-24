@@ -26,12 +26,12 @@ namespace Energinet.DataHub.PostOffice.Infrastructure
     public class CosmosDocumentStore : IDocumentStore
     {
         private readonly CosmosClient _cosmosClient;
-        private readonly CosmosConfig _cosmosConfig;
+        private readonly CosmosDatabaseConfig _cosmosConfig;
         private readonly CosmosContainerConfig _cosmosContainerConfig;
 
         public CosmosDocumentStore(
             CosmosClient cosmosClient,
-            CosmosConfig cosmosConfig,
+            CosmosDatabaseConfig cosmosConfig,
             CosmosContainerConfig cosmosContainerConfig)
         {
             _cosmosClient = cosmosClient;
