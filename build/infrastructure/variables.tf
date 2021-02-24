@@ -30,7 +30,12 @@ variable "organisation" {
   description   = "Organisation that is running the infrastructure code"
 }
 
-variable "current_spn_object_id" {
+variable "core_keyvault_name" {
   type          = string
-  description   = "Service Principal Object ID of the connection used to deploy the code"
+  description   = "Name of the Core keyvault, that contains shared secrets"
+}
+
+variable "core_resource_group_name" {
+  type          = string
+  description   = "Resource group name of the Core keyvaults location"
 }
