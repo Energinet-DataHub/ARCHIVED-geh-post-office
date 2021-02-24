@@ -30,7 +30,7 @@ module "azfun_outbound" {
     # Endregion
     MESSAGES_DB_CONNECTION_STRING       = local.message_db_connection_string
     MESSAGES_DB_NAME                    = azurerm_cosmosdb_sql_database.db.name
-    MESSAGE_DB_CONTAINERS               = "${azurerm_cosmosdb_sql_container.collection_marketdata.name},${azurerm_cosmosdb_sql_container.collection_timeseries.name}"
+    MESSAGE_DB_CONTAINERS               = "${azurerm_cosmosdb_sql_container.collection_marketdata.name},${azurerm_cosmosdb_sql_container.collection_timeseries.name},${azurerm_cosmosdb_sql_container.collection_aggregations.name}"
   }
   dependencies                              = [
     module.azfun_outbound_plan.dependent_on,
