@@ -16,7 +16,7 @@ name: Infrastructure CD
 on:
   push:
     branches:
-      - renetnielsen/add-values-to-core-kv
+      - main
     paths:
       - build/infrastructure/**
       - build/modules/**
