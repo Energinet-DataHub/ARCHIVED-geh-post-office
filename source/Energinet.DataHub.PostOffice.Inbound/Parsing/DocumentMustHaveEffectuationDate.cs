@@ -19,7 +19,7 @@ using GreenEnergyHub.Messaging.Validation;
 
 namespace Energinet.DataHub.PostOffice.Inbound.Parsing
 {
-    public class DocumentMustHaveEffectuationDate : PropertyRule<Timestamp>
+    public class DocumentMustHaveCreationDate : PropertyRule<Timestamp>
     {
         protected override string Code => "Json Serializable Content";
 

@@ -30,7 +30,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure
                 Content = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(obj.Content),
                 Type = obj.Type,
                 Recipient = obj.Recipient,
-                EffectuationDate = obj.EffectuationDate.ToInstant(),
+                CreationDate = obj.CreationDate.ToInstant(),
                 Version = obj.Version,
             };
 

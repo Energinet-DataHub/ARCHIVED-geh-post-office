@@ -33,13 +33,13 @@ namespace Energinet.DataHub.PostOffice.Tests
         [Fact]
         public void DocumentShouldBeMapped()
         {
-            var effectuationDate = _fixture.Create<Timestamp>();
+            var creationDate = _fixture.Create<Timestamp>();
             var type = _fixture.Create<string>();
             var recipient = _fixture.Create<string>();
             var content = "{\"document\": \"Important message.\"}";
             var document = new Document
             {
-                EffectuationDate = effectuationDate,
+                CreationDate = creationDate,
                 Type = type,
                 Recipient = recipient,
                 Content = content,
@@ -50,7 +50,7 @@ namespace Energinet.DataHub.PostOffice.Tests
             actual.Should().NotBeNull();
             actual.Type.Should().Be(type);
             actual.Recipient.Should().Be(recipient);
-            actual.EffectuationDate?.ToDateTimeOffset().Should().Be(effectuationDate.ToDateTimeOffset());
+            actual.CreationDate?.ToDateTimeOffset().Should().Be(creationDate.ToDateTimeOffset());
         }
     }
 }

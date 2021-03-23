@@ -21,7 +21,7 @@ option csharp_namespace = "Energinet.DataHub.PostOffice.Contracts";
 
 message Document {
   string type = 1;
-  google.protobuf.Timestamp effectuationDate = 2;
+  google.protobuf.Timestamp creationDate = 2;
   string recipient = 3;
   string content = 4;
   string version = 5;

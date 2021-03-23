@@ -90,7 +90,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure
                 SELECT TOP @pageSize *
                 FROM Documents d
                 WHERE d.recipient = @recipient
-                ORDER BY d.effectuationDate";
+                ORDER BY d.creationDate";
 
             var container = GetContainer(documentQuery.ContainerName);
 
@@ -148,7 +148,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure
 
         private static async Task<IList<CosmosDocument>> CreateBundleAsync(Container container, DocumentQuery documentQuery)
         {
-            var typeQueryDefinition = new QueryDefinition(@"SELECT top 1 * FROM Documents d WHERE d.recipient = @recipient ORDER BY d.effectuationDate")
+            var typeQueryDefinition = new QueryDefinition(@"SELECT top 1 * FROM Documents d WHERE d.recipient = @recipient ORDER BY d.creationDate")
                 .WithParameter("@recipient", documentQuery.Recipient);
             var typeQuery = container.GetItemQueryIterator<CosmosDocument>(typeQueryDefinition);
 
@@ -166,7 +166,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure
                 return new List<CosmosDocument>();
             }
 
-            var queryDefinition = new QueryDefinition(@"SELECT top @pageSize * FROM Documents d WHERE d.recipient = @recipient AND d.type = @type ORDER BY d.effectuationDate")
+            var queryDefinition = new QueryDefinition(@"SELECT top @pageSize * FROM Documents d WHERE d.recipient = @recipient AND d.type = @type ORDER BY d.creationDate")
                 .WithParameter("@recipient", documentQuery.Recipient)
                 .WithParameter("@pageSize", documentQuery.PageSize)
                 .WithParameter("@type", type);

@@ -136,7 +136,7 @@ namespace Energinet.DataHub.PostOffice.Tests
             {
                 documents.Add(new Document
                 {
-                    EffectuationDate = Timestamp.FromDateTimeOffset(DateTimeOffset.Now.AddMinutes(index)),
+                    CreationDate = Timestamp.FromDateTimeOffset(DateTimeOffset.Now.AddMinutes(index)),
                     Recipient = recipient,
                     Type = type,
                     Content = "{\"document\":\"" + index + "\"}",

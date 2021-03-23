@@ -31,7 +31,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure
                 Version = obj.Version,
 
                 // TODO: fix epoch nullable hack
-                EffectuationDate = obj.EffectuationDate?.ToDateTimeOffset() ?? DateTimeOffset.UnixEpoch,
+                CreationDate = obj.CreationDate?.ToDateTimeOffset() ?? DateTimeOffset.UnixEpoch,
             };
         }
 
@@ -42,7 +42,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure
             return new Domain.Document
             {
                 Content = obj.Content,
-                EffectuationDate = obj.EffectuationDate.ToInstant(),
+                CreationDate = obj.CreationDate.ToInstant(),
                 Recipient = obj.Recipient,
                 Type = obj.Type,
                 Bundle = obj.Bundle,

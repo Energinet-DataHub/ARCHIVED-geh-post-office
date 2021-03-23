@@ -22,7 +22,7 @@ namespace Energinet.DataHub.PostOffice.Domain
 
         public string? Type { get; set; }
 
-        public Instant? EffectuationDate { get; set; }
+        public Instant? CreationDate { get; set; }
 
         public object? Content { get; set; }
 

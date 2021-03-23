@@ -51,7 +51,7 @@ namespace Energinet.DataHub.PostOffice.Tests
         {
             var document = new Contracts.Document
             {
-                EffectuationDate = Timestamp.FromDateTimeOffset(_faker.Date.Soon()),
+                CreationDate = Timestamp.FromDateTimeOffset(_faker.Date.Soon()),
                 Recipient = _faker.PickRandom("greenenergy", "vELkommen"),
                 Type = _faker.PickRandom("changeofsupplier"), //, "movein", "moveout"),
                 Content = "{\"document\":\"" + _faker.Rant.Review() + "\"}",

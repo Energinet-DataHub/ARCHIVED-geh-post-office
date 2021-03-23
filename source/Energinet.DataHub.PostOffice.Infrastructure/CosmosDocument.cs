@@ -33,8 +33,8 @@ namespace Energinet.DataHub.PostOffice.Infrastructure
         [JsonProperty(PropertyName = "recipient")]
         public string Recipient { get; set; }
 
-        [JsonProperty(PropertyName = "effectuationDate")]
-        public System.DateTimeOffset EffectuationDate { get; set; }
+        [JsonProperty(PropertyName = "creationDate")]
+        public System.DateTimeOffset CreationDate { get; set; }
 
         [JsonProperty(PropertyName = "content")]
         public object Content { get; set; }

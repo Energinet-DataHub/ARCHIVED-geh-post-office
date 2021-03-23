@@ -46,14 +46,14 @@ namespace Energinet.DataHub.PostOffice.Tests
         [Fact]
         public async Task A_valid_document_should_validate()
         {
-            var effectuationDate = _fixture.Create<Timestamp>();
+            var creationDate = _fixture.Create<Timestamp>();
             var type = _fixture.Create<string>();
             var recipient = _fixture.Create<string>();
             var version = _fixture.Create<string>();
             var content = "{\"document\": \"Important message.\"}";
             var document = new Document
             {
-                EffectuationDate = effectuationDate,
+                CreationDate = creationDate,
                 Type = type,
                 Recipient = recipient,
                 Content = content,
