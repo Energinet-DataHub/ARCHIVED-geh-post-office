@@ -1,0 +1,26 @@
+flags:
+  unit:
+    paths:
+      - source/Energinet.DataHub.PostOffice.Application/
+      - source/Energinet.DataHub.PostOffice.Domain/
+  integration:
+    paths:
+      - source/Energinet.DataHub.PostOffice.Common/
+      - source/Energinet.DataHub.PostOffice.Inbound/
+      - source/Energinet.DataHub.PostOffice.Outbound/
+      - source/Energinet.DataHub.PostOffice.Infrastructure/
+
+coverage:
+  status:
+    project:
+      default:
+        flags:
+          - unit
+          - integration
+      unit:
+        flags:
+          - unit
+      integration:
+        flags:
+          - integration
+
