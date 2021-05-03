@@ -61,7 +61,7 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
           
       - name: Collect coverage
-        run: dotnet test ${{ matrix.project }} --filter "Category=Unit" --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+        run: dotnet test ${{ matrix.project }} --filter "Category=UnitTest" --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
         
       - name: upload coverage
         uses: codecov/codecov-action@v1
