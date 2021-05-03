@@ -28,6 +28,7 @@ The Green Energy Hub repository relies on open source libraries and tools. We re
 | `Terraform`                              | 1.2.1                                | <https://terraform.io>                                                       | Mozilla Public License 2.0                                                                    |
 | `xunit`                                  | 2.4.1                                | <https://www.nuget.org/packages/xunit/2.4.1>                                 | Apache-2.0                                                                                    |
 | `xunit.runner.visualstudio`              | 2.4.3                                | <https://www.nuget.org/packages/xunit.runner.visualstudio/2.4.3>             | MIT                                                                                           |
+|  xunit.categories                        | 2.0.4                                | <https://www.nuget.org/packages/xunit.categories/2.0.4>                      | Apache-2. |
 
 ### GitHub Actions
 

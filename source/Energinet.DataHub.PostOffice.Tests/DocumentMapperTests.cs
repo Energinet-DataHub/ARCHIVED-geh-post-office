@@ -18,9 +18,11 @@ using Energinet.DataHub.PostOffice.Infrastructure;
 using FluentAssertions;
 using Google.Protobuf.WellKnownTypes;
 using Xunit;
+using Xunit.Categories;
 
 namespace Energinet.DataHub.PostOffice.Tests
 {
+    [UnitTest]
     public class DocumentMapperTests
     {
         private readonly Fixture _fixture;
