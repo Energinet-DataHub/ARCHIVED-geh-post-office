@@ -3,8 +3,10 @@ flags:
     paths:
       - source/Energinet.DataHub.PostOffice.Application/
       - source/Energinet.DataHub.PostOffice.Domain/
+      - source/Energinet.DataHub.PostOffice.Tests/
   integration:
     paths:
+      - source/Energinet.DataHub.PostOffice.Tests/
       - source/Energinet.DataHub.PostOffice.Common/
       - source/Energinet.DataHub.PostOffice.Inbound/
       - source/Energinet.DataHub.PostOffice.Outbound/
