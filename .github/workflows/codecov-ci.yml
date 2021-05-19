@@ -14,6 +14,9 @@
 name: Code coverage
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
@@ -37,12 +40,13 @@ jobs:
             "codecov.yml",
             ".github/workflows/codecov-ci.yml",
             "source/**",
-            "Energinet.DataHub.PostOffice.sln"
+            "Energinet.DataHub.PostOffice.sln",
+            ".github/workflows/codecov-ci.yml"
           ]'
           
   collect_coverage_dotnet:
     needs: pre_job
-    if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
+    if: ${{ needs.pre_job.outputs.should_skip != 'true' || github.ref == 'refs/heads/main' }}
     name: Collect code coverage .NET
     runs-on: ubuntu-latest
     strategy:
