@@ -17,6 +17,7 @@ on:
   push:
     branches:
       - main
+      - renetnielsen/use-shared-actions
     paths:
       - build/infrastructure/**
       - .github/workflows/infrastructure-cd.yml
