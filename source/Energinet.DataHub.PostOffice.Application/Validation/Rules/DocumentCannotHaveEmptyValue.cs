@@ -12,32 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Text.Json;
 using FluentValidation.Validators;
 using GreenEnergyHub.Messaging.Validation;
 
-namespace Energinet.DataHub.PostOffice.Inbound.Parsing
+namespace Energinet.DataHub.PostOffice.Application.Validation.Rules
 {
-    public class DocumentMustHaveJsonSerializableContent : PropertyRule<string>
+    public class DocumentCannotHaveEmptyValue : PropertyRule<string>
     {
-        protected override string Code => "Json Serializable Content";
+        protected override string Code => "Empty value";
 
         protected override string GetDefaultMessageTemplate()
         {
-            return "'{PropertyName}' must be json serializable.";
+            return "'{PropertyName}' cannot be empty.";
         }
 
         protected override bool IsValid(string propertyValue, PropertyValidatorContext context)
         {
-            try
-            {
-                var serialized = JsonSerializer.Deserialize<dynamic>(propertyValue).ToString();
-                return !string.IsNullOrWhiteSpace(serialized);
-            }
-            catch (JsonException)
-            {
-                return false;
-            }
+            return !string.IsNullOrWhiteSpace(propertyValue);
         }
     }
 }
