@@ -12,8 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.PostOffice.Domain
+using System.Threading;
+using System.Threading.Tasks;
+using MediatR.Pipeline;
+
+namespace Energinet.DataHub.PostOffice.Common.MediatR
 {
-    public record DataAvailable(string? uuid, string? recipient, string? messageType, string? origin,
-        bool supportsBundling, int relativeWeight, decimal priority);
+    public class EmptyRequestPreProcessor<TRequest> : IRequestPreProcessor<TRequest>
+        where TRequest : notnull
+    {
+        public Task Process(TRequest request, CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
+    }
 }
