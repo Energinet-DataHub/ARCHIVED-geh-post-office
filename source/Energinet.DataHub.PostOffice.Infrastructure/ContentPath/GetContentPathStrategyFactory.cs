@@ -30,8 +30,8 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.ContentPath
         public IGetContentPathStrategy Create(string pathToExistingContent)
         {
             IGetContentPathStrategy strategy = string.IsNullOrWhiteSpace(pathToExistingContent)
-                ? _strategies.FirstOrDefault(contentPathStrategy => contentPathStrategy.StrategyName.Equals(nameof(ContentPathFromSubDomain))) !
-                : _strategies.FirstOrDefault(contentPathStrategy => contentPathStrategy.StrategyName.Equals(nameof(ContentPathFromSavedResponse))) !;
+                ? _strategies.FirstOrDefault(contentPathStrategy => contentPathStrategy.StrategyName.Equals(nameof(ContentPathFromSubDomain)))!
+                : _strategies.FirstOrDefault(contentPathStrategy => contentPathStrategy.StrategyName.Equals(nameof(ContentPathFromSavedResponse)))!;
 
             strategy.SavedContentPath = pathToExistingContent;
             return strategy;
