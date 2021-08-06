@@ -39,13 +39,17 @@ namespace Energinet.DataHub.PostOffice.Infrastructure
             _cosmosConfig = cosmosConfig;
         }
 
-        public async Task<IEnumerable<DataAvailable>> GetDocumentsAsync(string query, List<KeyValuePair<string, string>> parameters)
+        public async Task<IEnumerable<DataAvailable>> GetDocumentsAsync(string query, IDictionary<string, string> parameters)
         {
             if (query is null) throw new ArgumentNullException(nameof(query));
             if (parameters is null) throw new ArgumentNullException(nameof(parameters));
 
             var documentQuery = new QueryDefinition(query);
-            parameters.ForEach(item => documentQuery.WithParameter($"@{item.Key}", item.Value));
+
+            foreach (var (key, value) in parameters)
+            {
+                documentQuery.WithParameter($"@{key}", value);
+            }
 
             var container = GetContainer(ContainerName);
 

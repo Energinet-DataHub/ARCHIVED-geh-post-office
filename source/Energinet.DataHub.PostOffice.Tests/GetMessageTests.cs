@@ -31,10 +31,6 @@ namespace Energinet.DataHub.PostOffice.Tests
 {
     public class GetMessageTests
     {
-        public GetMessageTests()
-        {
-        }
-
         [Fact]
         public async Task GetMessageHandler_CallFromMarketOperator_ResultMustMatch_Failure()
         {
@@ -56,8 +52,8 @@ namespace Energinet.DataHub.PostOffice.Tests
             var storageServiceMock = new Mock<IStorageService>();
             GetMarketOperatorDataFromStorageService(storageServiceMock);
 
-            GetMessageQuery query = new GetMessageQuery(It.IsAny<string>());
-            GetMessageHandler handler = new GetMessageHandler(
+            var query = new GetMessageQuery(It.IsAny<string>());
+            var handler = new GetMessageHandler(
                 dataAvailableController,
                 storageServiceMock.Object);
 
@@ -89,8 +85,8 @@ namespace Energinet.DataHub.PostOffice.Tests
             var storageServiceMock = new Mock<IStorageService>();
             GetMarketOperatorDataFromStorageService(storageServiceMock);
 
-            GetMessageQuery query = new GetMessageQuery(It.IsAny<string>());
-            GetMessageHandler handler = new GetMessageHandler(
+            var query = new GetMessageQuery(It.IsAny<string>());
+            var handler = new GetMessageHandler(
                 dataAvailableController,
                 storageServiceMock.Object);
 
@@ -108,21 +104,21 @@ namespace Energinet.DataHub.PostOffice.Tests
                 .ReturnsAsync(messageReply);
             var sendMessageToServiceBus = new Mock<ISendMessageToServiceBus>();
 
-            return new List<IGetContentPathStrategy>() { new ContentPathFromSavedResponse(), new ContentPathFromSubDomain(sendMessageToServiceBus.Object, getPathToDataFromServiceBus.Object) };
+            return new List<IGetContentPathStrategy> { new ContentPathFromSavedResponse(), new ContentPathFromSubDomain(sendMessageToServiceBus.Object, getPathToDataFromServiceBus.Object) };
         }
 
         private static void GetMarketOperatorDataFromStorageService(Mock<IStorageService> storageService)
         {
-            var data = storageService.Setup(
+            storageService.Setup(
                 ss => ss.GetStorageContentAsync(
                     It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(GetStorageContentAsyncSimulatedData());
         }
 
         private static void GetDocumentsAsync(Mock<IDocumentStore<DataAvailable>> dataAvailableStore)
         {
-            var result = dataAvailableStore.Setup(
+            dataAvailableStore.Setup(
                 store => store.GetDocumentsAsync(
-                    It.IsAny<string>(), It.IsAny<List<KeyValuePair<string, string>>>())).ReturnsAsync(CreateListOfDataAvailableObjects());
+                    It.IsAny<string>(), It.IsAny<IDictionary<string, string>>())).ReturnsAsync(CreateListOfDataAvailableObjects());
         }
 
         private static string GetStorageContentAsyncSimulatedData()

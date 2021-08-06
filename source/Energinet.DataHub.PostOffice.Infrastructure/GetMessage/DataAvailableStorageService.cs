@@ -32,13 +32,13 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.GetMessage
             _cosmosDocumentStore = cosmosDocumentStore;
         }
 
-        public async Task<RequestData> GetDataAvailableUuidsAsync(GetMessageQuery getMessageQuery)
+        public async Task<RequestData> GetDataAvailableUuidsAsync(GetMessageQuery query)
         {
-            if (getMessageQuery is null) throw new ArgumentNullException(nameof(getMessageQuery));
+            if (query is null) throw new ArgumentNullException(nameof(query));
 
             const string queryString =
                 "SELECT * FROM c WHERE c.recipient = @recipient ORDER BY c._ts ASC OFFSET 0 LIMIT 1";
-            var parameters = new List<KeyValuePair<string, string>> { new("recipient", getMessageQuery.Recipient) };
+            var parameters = new Dictionary<string, string> { { "recipient", query.Recipient } };
 
             var documents = await _cosmosDocumentStore.GetDocumentsAsync(queryString, parameters).ConfigureAwait(false);
             var document = documents.FirstOrDefault();
