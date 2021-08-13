@@ -12,68 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Threading.Tasks;
-using Azure.Messaging.ServiceBus;
-using Energinet.DataHub.PostOffice.Application.GetMessage.Handlers;
-using Energinet.DataHub.PostOffice.Application.GetMessage.Interfaces;
-using Energinet.DataHub.PostOffice.Application.GetMessage.Queries;
-using Energinet.DataHub.PostOffice.Application.Validation;
-using Energinet.DataHub.PostOffice.Common;
-using Energinet.DataHub.PostOffice.Domain.Repositories;
-using Energinet.DataHub.PostOffice.Infrastructure.ContentPath;
-using Energinet.DataHub.PostOffice.Infrastructure.GetMessage;
-using Energinet.DataHub.PostOffice.Infrastructure.MessageReplyStorage;
-using Energinet.DataHub.PostOffice.Infrastructure.Pipeline;
-using FluentValidation;
-using MediatR;
+using Energinet.DataHub.PostOffice.Common.SimpleInjector;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SimpleInjector;
 
 namespace Energinet.DataHub.PostOffice.Outbound
 {
     public static class Program
     {
-        public static Task Main()
+        public static async Task Main()
         {
+            await using var startup = new Startup();
+
             var host = new HostBuilder()
-                .ConfigureAppConfiguration(configurationBuilder =>
-                {
-                    configurationBuilder.AddEnvironmentVariables();
-                })
-                .ConfigureFunctionsWorkerDefaults()
-                .ConfigureServices(services =>
-                {
-                    // Add Logging
-                    services.AddLogging();
+                .ConfigureAppConfiguration(configurationBuilder => configurationBuilder.AddEnvironmentVariables())
+                .ConfigureFunctionsWorkerDefaults(options => options.UseMiddleware<SimpleInjectorScopedRequest>())
+                .ConfigureServices(startup.ConfigureServices)
+                .Build()
+                .UseSimpleInjector(startup.Container, o => o.Container.Options.EnableAutoVerification = true);
 
-                    // Add MediatR
-                    services.AddMediatR(typeof(GetMessageHandler).Assembly);
-                    services.AddScoped(typeof(IRequest<string>), typeof(GetMessageHandler));
-                    services.AddScoped(typeof(IPipelineBehavior<,>), typeof(GetMessagePipelineValidationBehavior<,>));
-                    services.AddScoped(typeof(IValidator<GetMessageQuery>), typeof(GetMessageRuleSetValidator));
-
-                    // Add Custom Services
-                    services.AddScoped<IDataAvailableRepository, IDataAvailableRepository>();
-                    services.AddScoped<IDataAvailableController, DataAvailableController>();
-                    services.AddScoped<IMessageReplyStorage, MessageReplyTableStorage>();
-                    services.AddScoped<ISendMessageToServiceBus, SendMessageToServiceBus>();
-                    services.AddScoped<IGetPathToDataFromServiceBus, GetPathToDataFromServiceBus>();
-                    services.AddScoped<IStorageService, StorageService>();
-
-                    services.AddTransient<IGetContentPathStrategy, ContentPathFromSavedResponse>();
-                    services.AddTransient<IGetContentPathStrategy, ContentPathFromSubDomain>();
-                    services.AddScoped<IGetContentPathStrategyFactory, GetContentPathStrategyFactory>();
-
-                    services.AddSingleton<ServiceBusClient>(t => new ServiceBusClient(Environment.GetEnvironmentVariable("ServiceBusConnectionString")));
-                    services.AddDatabaseCosmosConfig();
-                    services.AddCosmosContainerConfig();
-                    services.AddCosmosClientBuilder(useBulkExecution: true);
-                })
-                .Build();
-
-            return host.RunAsync();
+            await host.RunAsync().ConfigureAwait(false);
         }
     }
 }
