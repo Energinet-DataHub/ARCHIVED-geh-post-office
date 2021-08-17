@@ -26,8 +26,8 @@ namespace Energinet.DataHub.PostOffice.Common
     {
         public static void AddApplicationServices(this Container container)
         {
-            container.Register<IGetContentPathStrategy, ContentPathFromSavedResponse>(Lifestyle.Transient);
-            container.Register<IGetContentPathStrategy, ContentPathFromSubDomain>(Lifestyle.Transient);
+            container.Collection.Append<IGetContentPathStrategy, ContentPathFromSavedResponse>(Lifestyle.Transient);
+            container.Collection.Append<IGetContentPathStrategy, ContentPathFromSubDomain>(Lifestyle.Transient);
             container.Register<IGetContentPathStrategyFactory, GetContentPathStrategyFactory>(Lifestyle.Scoped);
             container.Register<IGetPathToDataFromServiceBus, GetPathToDataFromServiceBus>(Lifestyle.Scoped);
             container.Register<ISendMessageToServiceBus, SendMessageToServiceBus>(Lifestyle.Scoped);
