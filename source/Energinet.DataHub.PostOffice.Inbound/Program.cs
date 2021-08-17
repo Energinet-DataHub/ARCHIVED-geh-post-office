@@ -27,7 +27,6 @@ namespace Energinet.DataHub.PostOffice.Inbound
             await using var startup = new Startup();
 
             var host = new HostBuilder()
-                .ConfigureAppConfiguration(configurationBuilder => configurationBuilder.AddEnvironmentVariables())
                 .ConfigureFunctionsWorkerDefaults(options => options.UseMiddleware<SimpleInjectorScopedRequest>())
                 .ConfigureServices(startup.ConfigureServices)
                 .Build()
