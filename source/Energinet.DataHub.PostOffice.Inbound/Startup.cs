@@ -13,11 +13,15 @@
 // limitations under the License.
 
 using System;
+using Energinet.DataHub.PostOffice.Application;
+using Energinet.DataHub.PostOffice.Application.DataAvailable;
 using Energinet.DataHub.PostOffice.Application.Validation;
 using Energinet.DataHub.PostOffice.Common;
+using Energinet.DataHub.PostOffice.Contracts;
 using Energinet.DataHub.PostOffice.Inbound.Functions;
 using Energinet.DataHub.PostOffice.Inbound.GreenEnergyHub;
 using Energinet.DataHub.PostOffice.Inbound.Parsing;
+using Energinet.DataHub.PostOffice.Infrastructure.Mappers;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
 
@@ -27,8 +31,10 @@ namespace Energinet.DataHub.PostOffice.Inbound
     {
         protected override void Configure(Container container)
         {
-            if (container == null) throw new ArgumentNullException(nameof(container));
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
 
+            container.Register<IMapper<DataAvailable, DataAvailableCommand>, DataAvailableMapper>(Lifestyle.Scoped);
             container.Register<DataAvailableContractParser>(Lifestyle.Scoped);
             container.Register<DataAvailableInbox>(Lifestyle.Scoped);
         }

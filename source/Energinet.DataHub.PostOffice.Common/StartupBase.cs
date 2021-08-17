@@ -15,21 +15,10 @@
 using System;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
-using Energinet.DataHub.PostOffice.Application;
 using Energinet.DataHub.PostOffice.Application.DataAvailable;
-using Energinet.DataHub.PostOffice.Application.GetMessage.Interfaces;
-using Energinet.DataHub.PostOffice.Application.Validation;
+using Energinet.DataHub.PostOffice.Application.GetMessage.Handlers;
 using Energinet.DataHub.PostOffice.Common.MediatR;
 using Energinet.DataHub.PostOffice.Common.SimpleInjector;
-using Energinet.DataHub.PostOffice.Contracts;
-using Energinet.DataHub.PostOffice.Domain.Repositories;
-using Energinet.DataHub.PostOffice.Infrastructure;
-using Energinet.DataHub.PostOffice.Infrastructure.ContentPath;
-using Energinet.DataHub.PostOffice.Infrastructure.GetMessage;
-using Energinet.DataHub.PostOffice.Infrastructure.Mappers;
-using Energinet.DataHub.PostOffice.Infrastructure.MessageReplyStorage;
-using Energinet.DataHub.PostOffice.Infrastructure.Repositories;
-using FluentValidation;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -46,53 +35,40 @@ namespace Energinet.DataHub.PostOffice.Common
 
         public Container Container { get; }
 
-        public void ConfigureServices(IServiceCollection services)
-        {
-            var descriptor = new ServiceDescriptor(
-                typeof(IFunctionActivator),
-                typeof(SimpleInjectorActivator),
-                ServiceLifetime.Singleton);
-            services.Replace(descriptor); // Replace existing activator
-
-            services.AddLogging();
-
-            // Add Custom Services
-            services.AddScoped<IMapper<DataAvailable, DataAvailableCommand>, DataAvailableMapper>();
-            services.AddScoped<IMessageReplyStorage, MessageReplyTableStorage>();
-            services.AddTransient<IGetContentPathStrategy, ContentPathFromSavedResponse>();
-            services.AddTransient<IGetContentPathStrategy, ContentPathFromSubDomain>();
-            services.AddScoped<IGetContentPathStrategyFactory, GetContentPathStrategyFactory>();
-            services.AddScoped<ISendMessageToServiceBus, SendMessageToServiceBus>();
-            services.AddScoped<IGetPathToDataFromServiceBus, GetPathToDataFromServiceBus>();
-
-            services.AddSingleton(_ => new ServiceBusClient(Environment.GetEnvironmentVariable("ServiceBusConnectionString")));
-            services.AddDatabaseCosmosConfig();
-            services.AddServiceBusConfig();
-            services.AddCosmosClientBuilder(useBulkExecution: false);
-
-            Configure(services);
-
-            services.AddSimpleInjector(Container);
-
-            // SimpleInjector registrations
-            Container.Register<IValidator<DataAvailableCommand>, DataAvailableRuleSet>(Lifestyle.Scoped);
-            Container.Register<IDataAvailableController, DataAvailableController>(Lifestyle.Scoped);
-            Container.Register<IStorageService, StorageService>(Lifestyle.Scoped);
-            Container.Register<IDataAvailableRepository, DataAvailableRepository>(Lifestyle.Scoped);
-
-            // Add MediatR
-            // todo mmj
-            Container.BuildMediator(new[] { typeof(DataAvailableHandler).Assembly }, Array.Empty<Type>());
-
-            Configure(Container);
-        }
-
         public async ValueTask DisposeAsync()
         {
             await DisposeAsyncCore().ConfigureAwait(false);
             GC.SuppressFinalize(this);
         }
 
+        public void ConfigureServices(IServiceCollection services)
+        {
+            SwitchToSimpleInjector(services);
+
+            // Configuration
+            services.AddSingleton(_ => new ServiceBusClient(Environment.GetEnvironmentVariable("ServiceBusConnectionString")));
+            services.AddDatabaseCosmosConfig();
+            services.AddServiceBusConfig();
+            services.AddCosmosClientBuilder(false);
+
+            Configure(services);
+
+            services.AddLogging();
+            services.AddSimpleInjector(Container);
+
+            Container.AddRepositories();
+            Container.AddDomainServices();
+            Container.AddApplicationServices();
+
+            // Add MediatR
+            Container.BuildMediator(
+                new[] { typeof(DataAvailableHandler).Assembly, typeof(GetMessageHandler).Assembly },
+                Array.Empty<Type>());
+
+            Configure(Container);
+        }
+
+        // Recommended convention is DisposeAsyncCore, Core being last.
 #pragma warning disable VSTHRD200
         protected virtual ValueTask DisposeAsyncCore()
 #pragma warning restore VSTHRD200
@@ -102,5 +78,15 @@ namespace Energinet.DataHub.PostOffice.Common
 
         protected abstract void Configure(Container container);
         protected abstract void Configure(IServiceCollection serviceCollection);
+
+        private static void SwitchToSimpleInjector(IServiceCollection services)
+        {
+            var descriptor = new ServiceDescriptor(
+                typeof(IFunctionActivator),
+                typeof(SimpleInjectorActivator),
+                ServiceLifetime.Singleton);
+
+            services.Replace(descriptor);
+        }
     }
 }
