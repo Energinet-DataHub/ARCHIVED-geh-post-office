@@ -15,7 +15,6 @@
 using Energinet.DataHub.PostOffice.Application.GetMessage.Interfaces;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
 using Energinet.DataHub.PostOffice.Infrastructure.GetMessage;
-using Energinet.DataHub.PostOffice.Infrastructure.MessageReplyStorage;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories;
 using SimpleInjector;
 
@@ -26,7 +25,7 @@ namespace Energinet.DataHub.PostOffice.Common
         public static void AddRepositories(this Container container)
         {
             container.Register<IDataAvailableRepository, DataAvailableRepository>(Lifestyle.Scoped);
-            container.Register<IMessageReplyStorage, MessageReplyTableStorage>(Lifestyle.Scoped);
+            container.Register<IMessageReplyRepository, MessageReplyRepository>(Lifestyle.Scoped);
             container.Register<IStorageService, StorageService>(Lifestyle.Scoped);
         }
     }
