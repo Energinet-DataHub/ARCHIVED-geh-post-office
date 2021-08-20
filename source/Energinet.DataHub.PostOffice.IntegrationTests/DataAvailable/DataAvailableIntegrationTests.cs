@@ -31,7 +31,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.DataAvailable
         public async Task Test_DataAvailable_Integration()
         {
             // Arrange
-            await using var host = new InboundIntegrationTestHost();
+            await using var host = await InboundIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
             var mediator = host.GetService<IMediator>();
             var dataAvailableCommand = GetDataAvailableCommand();
 
