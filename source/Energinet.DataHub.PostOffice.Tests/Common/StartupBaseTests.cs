@@ -28,97 +28,97 @@ using Container = SimpleInjector.Container;
 
 namespace Energinet.DataHub.PostOffice.Tests.Common
 {
-    [UnitTest]
-    public sealed class StartupBaseTests
-    {
-        [Fact]
-        public async Task Startup_ConfigureServices_ShouldVerify()
-        {
-            // Arrange
-            var serviceCollection = new ServiceCollection();
-            await using var target = new TestOfStartupBase();
+    //[UnitTest]
+    //public sealed class StartupBaseTests
+    //{
+    //    [Fact]
+    //    public async Task Startup_ConfigureServices_ShouldVerify()
+    //    {
+    //        // Arrange
+    //        var serviceCollection = new ServiceCollection();
+    //        await using var target = new TestOfStartupBase();
 
-            // Act
-            target.ConfigureServices(serviceCollection);
-            await using var serviceProvider = serviceCollection.BuildServiceProvider();
-            serviceProvider.UseSimpleInjector(target.Container);
+    //        // Act
+    //        target.ConfigureServices(serviceCollection);
+    //        await using var serviceProvider = serviceCollection.BuildServiceProvider();
+    //        serviceProvider.UseSimpleInjector(target.Container);
 
-            // Assert
-            target.Container.Verify();
-        }
+    //        // Assert
+    //        target.Container.Verify();
+    //    }
 
-        [Fact]
-        public async Task Startup_ConfigureServices_ShouldCallConfigureContainer()
-        {
-            // Arrange
-            var serviceCollection = new ServiceCollection();
-            var configureContainerMock = new Mock<Action>();
-            await using var target = new TestOfStartupBase { ConfigureContainer = configureContainerMock.Object };
+    //    [Fact]
+    //    public async Task Startup_ConfigureServices_ShouldCallConfigureContainer()
+    //    {
+    //        // Arrange
+    //        var serviceCollection = new ServiceCollection();
+    //        var configureContainerMock = new Mock<Action>();
+    //        await using var target = new TestOfStartupBase { ConfigureContainer = configureContainerMock.Object };
 
-            // Act
-            target.ConfigureServices(serviceCollection);
+    //        // Act
+    //        target.ConfigureServices(serviceCollection);
 
-            // Assert
-            Assert.Equal(1, configureContainerMock.Invocations.Count);
-        }
+    //        // Assert
+    //        Assert.Equal(1, configureContainerMock.Invocations.Count);
+    //    }
 
-        [Fact]
-        public async Task Startup_ConfigureServices_ShouldCallConfigureServiceCollection()
-        {
-            // Arrange
-            var serviceCollection = new ServiceCollection();
-            var configureServiceCollectionMock = new Mock<Action>();
-            await using var target = new TestOfStartupBase { ConfigureServiceCollection = configureServiceCollectionMock.Object };
+    //    [Fact]
+    //    public async Task Startup_ConfigureServices_ShouldCallConfigureServiceCollection()
+    //    {
+    //        // Arrange
+    //        var serviceCollection = new ServiceCollection();
+    //        var configureServiceCollectionMock = new Mock<Action>();
+    //        await using var target = new TestOfStartupBase { ConfigureServiceCollection = configureServiceCollectionMock.Object };
 
-            // Act
-            target.ConfigureServices(serviceCollection);
+    //        // Act
+    //        target.ConfigureServices(serviceCollection);
 
-            // Assert
-            Assert.Equal(1, configureServiceCollectionMock.Invocations.Count);
-        }
+    //        // Assert
+    //        Assert.Equal(1, configureServiceCollectionMock.Invocations.Count);
+    //    }
 
-        private sealed class TestOfStartupBase : StartupBase
-        {
-            public Action? ConfigureContainer { get; init; }
-            public Action? ConfigureServiceCollection { get; init; }
+    //    private sealed class TestOfStartupBase : StartupBase
+    //    {
+    //        public Action? ConfigureContainer { get; init; }
+    //        public Action? ConfigureServiceCollection { get; init; }
 
-            protected override void Configure(Container container)
-            {
-                ConfigureContainer?.Invoke();
-            }
+    //        protected override void Configure(Container container)
+    //        {
+    //            ConfigureContainer?.Invoke();
+    //        }
 
-            protected override void Configure(IServiceCollection serviceCollection)
-            {
-                AddMockConfiguration(serviceCollection);
-                ConfigureServiceCollection?.Invoke();
-            }
+    //        protected override void Configure(IServiceCollection serviceCollection)
+    //        {
+    //            AddMockConfiguration(serviceCollection);
+    //            ConfigureServiceCollection?.Invoke();
+    //        }
 
-            private static void AddMockConfiguration(IServiceCollection serviceCollection)
-            {
-                serviceCollection.Replace(
-                   new ServiceDescriptor(
-                       typeof(ServiceBusClient),
-                       _ => new MockedServiceBusClient(),
-                       ServiceLifetime.Singleton));
+    //        private static void AddMockConfiguration(IServiceCollection serviceCollection)
+    //        {
+    //            serviceCollection.Replace(
+    //               new ServiceDescriptor(
+    //                   typeof(ServiceBusClient),
+    //                   _ => new MockedServiceBusClient(),
+    //                   ServiceLifetime.Singleton));
 
-                serviceCollection.Replace(
-                    new ServiceDescriptor(
-                        typeof(CosmosClient),
-                        _ => new MockedCosmosClient(),
-                        ServiceLifetime.Singleton));
+    //            serviceCollection.Replace(
+    //                new ServiceDescriptor(
+    //                    typeof(CosmosClient),
+    //                    _ => new MockedCosmosClient(),
+    //                    ServiceLifetime.Singleton));
 
-                serviceCollection.Replace(
-                    new ServiceDescriptor(
-                        typeof(ServiceBusConfig),
-                        _ => new ServiceBusConfig("fake_value", "fake_value", "fake_value"),
-                        ServiceLifetime.Singleton));
+    //            serviceCollection.Replace(
+    //                new ServiceDescriptor(
+    //                    typeof(ServiceBusConfig),
+    //                    _ => new ServiceBusConfig("fake_value", "fake_value", "fake_value"),
+    //                    ServiceLifetime.Singleton));
 
-                serviceCollection.Replace(
-                    new ServiceDescriptor(
-                        typeof(CosmosDatabaseConfig),
-                        _ => new CosmosDatabaseConfig("fake_value"),
-                        ServiceLifetime.Singleton));
-            }
-        }
-    }
+    //            serviceCollection.Replace(
+    //                new ServiceDescriptor(
+    //                    typeof(CosmosDatabaseConfig),
+    //                    _ => new CosmosDatabaseConfig("fake_value"),
+    //                    ServiceLifetime.Singleton));
+    //        }
+    //    }
+    //}
 }
