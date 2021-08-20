@@ -13,15 +13,11 @@
 // limitations under the License.
 
 using System;
-using System.Net;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Inbound;
-using Energinet.DataHub.PostOffice.Infrastructure;
-using Energinet.DataHub.PostOffice.IntegrationTests.DataAvailable;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 
@@ -35,14 +31,12 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
         public InboundIntegrationTestHost()
         {
             InitSettings();
+
             _startup = new Startup();
 
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddSingleton<IConfiguration>(BuildConfig());
             _startup.ConfigureServices(serviceCollection);
-
-            // todo mjm : temp mocking of Cosmos
-            _startup.Container.Register(BuildMoqCosmosClient, Lifestyle.Scoped);
             serviceCollection.BuildServiceProvider().UseSimpleInjector(_startup.Container, o => o.Container.Options.EnableAutoVerification = false);
 
             _scope = AsyncScopedLifestyle.BeginScope(_startup.Container);
@@ -68,7 +62,20 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
         // todo mjm : temp initSttings
         private static void InitSettings()
         {
-            Environment.SetEnvironmentVariable("MESSAGES_DB_NAME", "fake_value");
+            Environment.SetEnvironmentVariable("MESSAGES_DB_NAME", "post-office");
+            Environment.SetEnvironmentVariable("MESSAGES_DB_CONNECTION_STRING", "AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==");
+
+            // TODO: AIU HACK for trial/error, should not merge into main
+#pragma warning disable
+            using var cosmosClient = new CosmosClient("AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==");
+            cosmosClient
+                .CreateDatabaseIfNotExistsAsync("post-office")
+                .Wait();
+        }
+
+        public static async Task InitializeAsync()
+        {
+
         }
 
         // todo mjm : github action creating test-config
@@ -82,25 +89,5 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
             foreach (var (key, value) in values)
                 Environment.SetEnvironmentVariable(key, value.ToString());
         }*/
-
-        private static CosmosClient BuildMoqCosmosClient()
-        {
-            var mockItemResponse = new Mock<ItemResponse<CosmosDataAvailable>>();
-            mockItemResponse.Setup(x => x.StatusCode)
-                .Returns(HttpStatusCode.Created);
-
-            var mockContainer = new Mock<Microsoft.Azure.Cosmos.Container>();
-            mockContainer
-                .Setup(e => e.CreateItemAsync(
-                    It.IsAny<CosmosDataAvailable>(),
-                    null,
-                    null,
-                    default))
-                .ReturnsAsync(mockItemResponse.Object);
-
-            return new CosmosClientWrapper(
-                "AccountEndpoint=https://localhost:8081/;AccountKey=1234",
-                mockContainer);
-        }
     }
 }
