@@ -61,6 +61,9 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
+      - name: Azure Cosmos DB Emulator Test
+        uses: southpolesteve/cosmos-emulator-github-action@v1
+
       - name: Build project
         shell: powershell
         run: |
@@ -71,6 +74,12 @@ jobs:
         run: |
           dotnet tool install --tool-path ./temp/reportgenerator dotnet-reportgenerator-globaltool
           dotnet test ${{ env.SOLUTION_FILE_PATH }} --filter Category=UnitTest /p:CollectCoverage=true /p:CoverletOutput=${{ github.workspace }}\output\ /p:CoverletOutputFormat=cobertura /p:Threshold=0
+
+      - name: test and publish report
+        shell: powershell
+        run: |
+          dotnet tool install --tool-path ./temp/reportgenerator dotnet-reportgenerator-globaltool
+          dotnet test ${{ env.SOLUTION_FILE_PATH }} --filter Category=Integration /p:CollectCoverage=true /p:CoverletOutput=${{ github.workspace }}\output\ /p:CoverletOutputFormat=cobertura /p:Threshold=0
 
       - name: Publish artifact
         uses: actions/upload-artifact@v2
