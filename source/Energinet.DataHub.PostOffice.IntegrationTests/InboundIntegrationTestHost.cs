@@ -28,18 +28,23 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
         private readonly Scope _scope;
         private readonly Startup _startup;
 
-        public InboundIntegrationTestHost()
+        private InboundIntegrationTestHost()
         {
-            InitSettings();
-
             _startup = new Startup();
-
-            var serviceCollection = new ServiceCollection();
-            serviceCollection.AddSingleton<IConfiguration>(BuildConfig());
-            _startup.ConfigureServices(serviceCollection);
-            serviceCollection.BuildServiceProvider().UseSimpleInjector(_startup.Container, o => o.Container.Options.EnableAutoVerification = false);
-
             _scope = AsyncScopedLifestyle.BeginScope(_startup.Container);
+        }
+
+        public static async Task<InboundIntegrationTestHost> InitializeAsync()
+        {
+            await InitSettingsAsync().ConfigureAwait(false);
+            var host = new InboundIntegrationTestHost();
+            var serviceCollection = new ServiceCollection();
+
+            serviceCollection.AddSingleton<IConfiguration>(BuildConfig());
+            host._startup.ConfigureServices(serviceCollection);
+            serviceCollection.BuildServiceProvider().UseSimpleInjector(host._startup.Container, o => o.Container.Options.EnableAutoVerification = false);
+
+            return host;
         }
 
         public async ValueTask DisposeAsync()
@@ -60,7 +65,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
         }
 
         // todo mjm : temp initSttings
-        private static void InitSettings()
+        private static async Task InitSettingsAsync()
         {
             Environment.SetEnvironmentVariable("MESSAGES_DB_NAME", "post-office");
             Environment.SetEnvironmentVariable("MESSAGES_DB_CONNECTION_STRING", "AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==");
@@ -68,14 +73,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
             // TODO: AIU HACK for trial/error, should not merge into main
 #pragma warning disable
             using var cosmosClient = new CosmosClient("AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==");
-            cosmosClient
+            await cosmosClient
                 .CreateDatabaseIfNotExistsAsync("post-office")
-                .Wait();
-        }
-
-        public static async Task InitializeAsync()
-        {
-
+                .ConfigureAwait(false);
         }
 
         // todo mjm : github action creating test-config
