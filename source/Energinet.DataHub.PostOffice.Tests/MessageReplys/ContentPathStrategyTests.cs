@@ -17,7 +17,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
-using Energinet.DataHub.PostOffice.Application.GetMessage.Interfaces;
 using Energinet.DataHub.PostOffice.Domain;
 using Energinet.DataHub.PostOffice.Infrastructure.ContentPath;
 using Energinet.DataHub.PostOffice.Infrastructure.GetMessage;
@@ -25,7 +24,6 @@ using FluentAssertions;
 using FluentAssertions.Common;
 using Google.Protobuf;
 using Moq;
-using NSubstitute;
 using Xunit;
 using Xunit.Categories;
 
