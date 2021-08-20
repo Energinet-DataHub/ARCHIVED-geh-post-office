@@ -14,8 +14,6 @@
 
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Common.SimpleInjector;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SimpleInjector;
 
@@ -28,11 +26,10 @@ namespace Energinet.DataHub.PostOffice.Outbound
             await using var startup = new Startup();
 
             var host = new HostBuilder()
-                .ConfigureAppConfiguration(configurationBuilder => configurationBuilder.AddEnvironmentVariables())
                 .ConfigureFunctionsWorkerDefaults(options => options.UseMiddleware<SimpleInjectorScopedRequest>())
                 .ConfigureServices(startup.ConfigureServices)
                 .Build()
-                .UseSimpleInjector(startup.Container, o => o.Container.Options.EnableAutoVerification = true);
+                .UseSimpleInjector(startup.Container);
 
             await host.RunAsync().ConfigureAwait(false);
         }
