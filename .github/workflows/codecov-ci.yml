@@ -51,7 +51,7 @@ jobs:
       matrix:
         project: [
           source/Energinet.DataHub.PostOffice.Tests/Energinet.DataHub.PostOffice.Tests.csproj,
-          source/Energinet.DataHub.PostOffice.Tests/Energinet.DataHub.PostOffice.IntegrationTests.csproj
+          source/Energinet.DataHub.PostOffice.IntegrationTests/Energinet.DataHub.PostOffice.IntegrationTests.csproj
         ]
         
     steps:
