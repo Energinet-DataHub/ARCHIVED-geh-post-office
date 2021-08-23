@@ -55,7 +55,7 @@ namespace Energinet.DataHub.PostOffice.Tests.MessageReplys
                 .ConfigureAwait(false);
 
             // Assert
-            messageReply.FailureReason.IsSameOrEqualTo(Domain.Enums.MessageReplyFailureReason.DatasetNotFound);
+            Assert.Equal(Domain.Enums.MessageReplyFailureReason.DatasetNotFound, messageReply.FailureReason);
         }
 
         [Fact]

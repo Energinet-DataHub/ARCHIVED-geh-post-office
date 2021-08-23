@@ -30,8 +30,6 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.DataAvailable
         [Fact]
         public async Task Test_DataAvailable_Integration()
         {
-            SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
-
             // Arrange
             await using var host = await InboundIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
             var scope = host.BeginScope();
