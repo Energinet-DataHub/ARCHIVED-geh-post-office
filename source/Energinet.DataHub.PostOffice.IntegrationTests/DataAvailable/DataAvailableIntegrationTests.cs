@@ -23,7 +23,8 @@ using Xunit.Categories;
 
 namespace Energinet.DataHub.PostOffice.IntegrationTests.DataAvailable
 {
-    [UnitTest]
+    [Collection("IntegrationTest")]
+    [IntegrationTest]
     public class DataAvailableIntegrationTests
     {
         [Fact]
