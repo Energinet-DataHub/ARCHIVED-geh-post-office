@@ -30,6 +30,13 @@ namespace Energinet.DataHub.PostOffice.Tests
     public class DataAvailableTests
     {
         [Fact]
+        public async Task Testing_Unit_Tests()
+        {
+            var arr = new int[] { 1, 2 };
+            arr.Should().BeEmpty(); // This should fail pipeline.
+        }
+        
+        [Fact]
         public async Task Validate_DataAvailable_Handler()
         {
             // Arrange
