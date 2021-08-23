@@ -25,21 +25,20 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
 {
     public sealed class InboundIntegrationTestHost : IAsyncDisposable
     {
-        private readonly Scope _scope;
         private readonly Startup _startup;
 
         private InboundIntegrationTestHost()
         {
             _startup = new Startup();
-            _scope = AsyncScopedLifestyle.BeginScope(_startup.Container);
         }
 
         public static async Task<InboundIntegrationTestHost> InitializeAsync()
         {
             await InitSettingsAsync().ConfigureAwait(false);
-            var host = new InboundIntegrationTestHost();
-            var serviceCollection = new ServiceCollection();
 
+            var host = new InboundIntegrationTestHost();
+
+            var serviceCollection = new ServiceCollection();
             serviceCollection.AddSingleton<IConfiguration>(BuildConfig());
             host._startup.ConfigureServices(serviceCollection);
             serviceCollection.BuildServiceProvider().UseSimpleInjector(host._startup.Container, o => o.Container.Options.EnableAutoVerification = false);
@@ -47,16 +46,14 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
             return host;
         }
 
-        public async ValueTask DisposeAsync()
+        public Scope BeginScope()
         {
-            await _scope.DisposeAsync().ConfigureAwait(false);
-            await _startup.DisposeAsync().ConfigureAwait(false);
+            return AsyncScopedLifestyle.BeginScope(_startup.Container);
         }
 
-        public TService GetService<TService>()
-            where TService : class
+        public async ValueTask DisposeAsync()
         {
-            return _startup.Container.GetInstance<TService>();
+            await _startup.DisposeAsync().ConfigureAwait(false);
         }
 
         private static IConfigurationRoot BuildConfig()
@@ -64,18 +61,20 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
             return new ConfigurationBuilder().AddEnvironmentVariables().Build();
         }
 
-        // todo mjm : temp initSttings
         private static async Task InitSettingsAsync()
         {
             Environment.SetEnvironmentVariable("MESSAGES_DB_NAME", "post-office");
             Environment.SetEnvironmentVariable("MESSAGES_DB_CONNECTION_STRING", "AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==");
 
-            // TODO: AIU HACK for trial/error, should not merge into main
-#pragma warning disable
             using var cosmosClient = new CosmosClient("AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==");
-            await cosmosClient
+            var databaseResponse = await cosmosClient
                 .CreateDatabaseIfNotExistsAsync("post-office")
-                .ConfigureAwait(false);
+                .ConfigureAwait(true);
+
+            var testDatabase = databaseResponse.Database;
+            await testDatabase
+                .CreateContainerIfNotExistsAsync("dataavailable", "/pk")
+                .ConfigureAwait(true);
         }
 
         // todo mjm : github action creating test-config

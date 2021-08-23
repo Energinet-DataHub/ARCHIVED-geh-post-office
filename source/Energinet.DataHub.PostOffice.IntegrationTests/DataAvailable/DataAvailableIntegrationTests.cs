@@ -23,16 +23,18 @@ using Xunit.Categories;
 
 namespace Energinet.DataHub.PostOffice.IntegrationTests.DataAvailable
 {
-    [Collection("IntegrationTest")]
-    [IntegrationTest]
+    [UnitTest]
     public class DataAvailableIntegrationTests
     {
         [Fact]
         public async Task Test_DataAvailable_Integration()
         {
+            SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
+
             // Arrange
             await using var host = await InboundIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
-            var mediator = host.GetService<IMediator>();
+            var scope = host.BeginScope();
+            var mediator = scope.GetInstance<IMediator>();
             var dataAvailableCommand = GetDataAvailableCommand();
 
             // Act
