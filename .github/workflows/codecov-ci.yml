@@ -58,26 +58,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@master
 
-      - name: Setup .NET 3.1 environment
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '3.1.x'
-        
       - name: Setup .NET ${{ env.DOTNET_VERSION }} environment
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Azure Cosmos DB Emulator Test
+      - name: Azure Cosmos DB Emulator
         uses: southpolesteve/cosmos-emulator-github-action@v1
           
       - name: Collect coverage
         run: dotnet test ${{ matrix.project }} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
         
-      - name: upload coverage
+      - name: Upload coverage
         uses: codecov/codecov-action@v1
         with:
           flags: unittests
           fail_ci_if_error: true
           verbose: true
-          
