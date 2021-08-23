@@ -33,7 +33,7 @@ limitations under the License.
 
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.17.0" />
-    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.2.1" />
+    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.1.0" />
     <PackageReference Include="Bogus" Version="33.0.2" />
     <PackageReference Include="Moq" Version="4.16.1" />
     <PackageReference Include="NodaTime.Serialization.JsonNet" Version="3.0.0" />
