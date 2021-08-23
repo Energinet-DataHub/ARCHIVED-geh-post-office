@@ -35,7 +35,7 @@ namespace Energinet.DataHub.PostOffice.Tests
             var arr = new int[] { 1, 2 };
             arr.Should().BeEmpty(); // This should fail pipeline.
         }
-        
+ 
         [Fact]
         public async Task Validate_DataAvailable_Handler()
         {
