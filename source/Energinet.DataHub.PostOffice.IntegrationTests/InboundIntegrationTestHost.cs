@@ -25,6 +25,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
 {
     public sealed class InboundIntegrationTestHost : IAsyncDisposable
     {
+        private const string AzureCosmosEmulatorConnectionString = "AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
+
         private readonly Startup _startup;
 
         private InboundIntegrationTestHost()
@@ -34,7 +36,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
 
         public static async Task<InboundIntegrationTestHost> InitializeAsync()
         {
-            await InitSettingsAsync().ConfigureAwait(false);
+            await InitCosmosTestDatabaseAsync().ConfigureAwait(false);
 
             var host = new InboundIntegrationTestHost();
 
@@ -61,12 +63,12 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
             return new ConfigurationBuilder().AddEnvironmentVariables().Build();
         }
 
-        private static async Task InitSettingsAsync()
+        private static async Task InitCosmosTestDatabaseAsync()
         {
             Environment.SetEnvironmentVariable("MESSAGES_DB_NAME", "post-office");
-            Environment.SetEnvironmentVariable("MESSAGES_DB_CONNECTION_STRING", "AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==");
+            Environment.SetEnvironmentVariable("MESSAGES_DB_CONNECTION_STRING", AzureCosmosEmulatorConnectionString);
 
-            using var cosmosClient = new CosmosClient("AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==");
+            using var cosmosClient = new CosmosClient(AzureCosmosEmulatorConnectionString);
             var databaseResponse = await cosmosClient
                 .CreateDatabaseIfNotExistsAsync("post-office")
                 .ConfigureAwait(true);
@@ -76,17 +78,5 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
                 .CreateContainerIfNotExistsAsync("dataavailable", "/pk")
                 .ConfigureAwait(true);
         }
-
-        // todo mjm : github action creating test-config
-        /*private static void InitSettings()
-        {
-            // Hack to include settings.json as xUnit does not include appSettings automatically as environment variables
-            // https://github.com/Azure/azure-functions-host/issues/6953
-            var settings = File.ReadAllText("local.settings.json");
-            var json = JObject.Parse(settings);
-            var values = json.Value<JObject>("Values");
-            foreach (var (key, value) in values)
-                Environment.SetEnvironmentVariable(key, value.ToString());
-        }*/
     }
 }
