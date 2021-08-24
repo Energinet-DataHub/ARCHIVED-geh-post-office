@@ -15,10 +15,10 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
-using Energinet.DataHub.PostOffice.Application;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Application.GetMessage.Queries;
 using Microsoft.Azure.Functions.Worker.Http;
+using DequeueCommand = Energinet.DataHub.PostOffice.Application.DequeueCommand;
 
 namespace Energinet.DataHub.PostOffice.Outbound.Extensions
 {
@@ -56,7 +56,23 @@ namespace Energinet.DataHub.PostOffice.Outbound.Extensions
             return documentQuery;
         }
 
-        public static DequeueCommand GetDequeueCommand(this HttpRequestData request)
+        public static Application.Commands.DequeueCommand GetDequeueCommand(this HttpRequestData request)
+        {
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+
+            var queryDictionary = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(request.Url.Query);
+            var recipient = queryDictionary.ContainsKey("recipient") ? queryDictionary["recipient"].ToString() : null;
+            if (recipient == null)
+            {
+                throw new InvalidOperationException("Request must include recipient.");
+            }
+
+            var dequeueCommand = new Application.Commands.DequeueCommand(recipient);
+            return dequeueCommand;
+        }
+
+        public static DequeueCommand GetDequeueOrigCommand(this HttpRequestData request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
 
