@@ -18,21 +18,24 @@ using Energinet.DataHub.PostOffice.Domain.Model;
 namespace Energinet.DataHub.PostOffice.Domain.Services
 {
     /// <summary>
-    /// WarehouseDomainService
+    /// Provides recipients with access to their messages. The messages may be grouped and returned as a bundle.
     /// </summary>
     public interface IWarehouseDomainService
     {
         /// <summary>
-        /// Peek next bundle for recipient
+        /// Peeks the next message for the given recipient.
+        /// Returns null when there are no new messages.
+        /// If a message is available, groups one or more messages into a bundle and returns that bundle.
+        /// Once a bundle has been created and returned, it has to be acknowledged through DequeueAsync, before the next bundle can be obtained.
         /// </summary>
-        /// <param name="recipient"></param>
-        /// <returns>Bundle</returns>
+        /// <param name="recipient">The recipient of the messages.</param>
+        /// <returns>A bundle of the next group of messages; or null, if there are no new messages.</returns>
         Task<IBundle?> PeekAsync(Recipient recipient);
 
         /// <summary>
-        /// Dequeue bundle for recipient
+        /// Acknowledges the current message bundle, as returned by PeekAsync. If there is nothing to acknowledge, the method does nothing.
         /// </summary>
-        /// <param name="recipient"></param>
+        /// <param name="recipient">The recipient of the messages.</param>
         Task DequeueAsync(Recipient recipient);
     }
 }
