@@ -37,7 +37,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
         {
             _cosmosClient = cosmosClient;
             _cosmosConfig = cosmosConfig;
-            _container = GetContainer(ContainerName);
+            _container = cosmosClient.GetContainer(_cosmosConfig.DatabaseId, ContainerName);
         }
 
         public async Task CreateAsync(DataAvailableNotification dataAvailableNotification)
@@ -123,14 +123,6 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             }
 
             return documentsResult;
-        }
-
-        private Container GetContainer(string containerName)
-        {
-            var container = _cosmosClient.GetContainer(
-                _cosmosConfig.DatabaseId,
-                containerName);
-            return container;
         }
     }
 }
