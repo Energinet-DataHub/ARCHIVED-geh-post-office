@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -26,18 +27,13 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
     public class DataAvailableNotificationRepository : IDataAvailableNotificationRepository
     {
         private const string ContainerName = "dataavailable";
-
-        private readonly CosmosClient _cosmosClient;
-        private readonly CosmosDatabaseConfig _cosmosConfig;
         private readonly Container _container;
 
         public DataAvailableNotificationRepository(
-            CosmosClient cosmosClient,
-            CosmosDatabaseConfig cosmosConfig)
+            [NotNull] CosmosClient cosmosClient,
+            [NotNull] CosmosDatabaseConfig cosmosConfig)
         {
-            _cosmosClient = cosmosClient;
-            _cosmosConfig = cosmosConfig;
-            _container = cosmosClient.GetContainer(_cosmosConfig.DatabaseId, ContainerName);
+            _container = cosmosClient.GetContainer(cosmosConfig.DatabaseId, ContainerName);
         }
 
         public async Task CreateAsync(DataAvailableNotification dataAvailableNotification)

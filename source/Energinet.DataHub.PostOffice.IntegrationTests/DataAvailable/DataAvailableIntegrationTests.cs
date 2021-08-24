@@ -16,6 +16,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Application.DataAvailable;
+using Energinet.DataHub.PostOffice.Domain.Model;
 using FluentAssertions;
 using MediatR;
 using Xunit;
@@ -49,7 +50,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.DataAvailable
                 Guid.NewGuid().ToString(),
                 Guid.NewGuid().ToString(),
                 "MessageType",
-                "Origin",
+                Origin.Charges.ToString(),
                 false,
                 1);
         }
