@@ -17,7 +17,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Energinet.DataHub.PostOffice.Domain;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
 using Microsoft.Azure.Cosmos;
@@ -80,14 +79,17 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             return document;
         }
 
-        public async Task DequeueAsync(IEnumerable<Uuid> ids)
+        public async Task DequeueAsync(IEnumerable<Uuid> dataAvailableNotificationUuids)
         {
-            foreach (var uuid in ids)
+            if (dataAvailableNotificationUuids is null)
+                throw new ArgumentNullException(nameof(dataAvailableNotificationUuids));
+
+            foreach (var uuid in dataAvailableNotificationUuids)
             {
-                var documentToUpdateResponse = await _container.ReadItemAsync<CosmosDataAvailable>(uuid.Value, new PartitionKey("recipient"));
+                var documentToUpdateResponse = await _container.ReadItemAsync<CosmosDataAvailable>(uuid.Value, new PartitionKey("recipient")).ConfigureAwait(false);
                 var documentToUpdate = documentToUpdateResponse.Resource;
                 documentToUpdate.acknowledge = true;
-                await _container.ReplaceItemAsync(documentToUpdate, uuid.Value, new PartitionKey(documentToUpdate.recipient));
+                await _container.ReplaceItemAsync(documentToUpdate, uuid.Value, new PartitionKey(documentToUpdate.recipient)).ConfigureAwait(false);
             }
         }
 
