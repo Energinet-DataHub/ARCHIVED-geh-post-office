@@ -11,18 +11,26 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-using System;
-using System.Collections.Generic;
 
-namespace Energinet.DataHub.PostOffice.Infrastructure
+using System;
+using SimpleInjector;
+
+namespace Energinet.DataHub.PostOffice.Common.SimpleInjector
 {
-    public class CosmosContainerConfig
+    public class SimpleInjectorServiceProviderAdapter : IServiceProvider
     {
-        public CosmosContainerConfig(string[] containers)
+        private readonly Container _container;
+
+        public SimpleInjectorServiceProviderAdapter(Container container)
         {
-            Containers = containers ?? throw new ArgumentNullException(nameof(containers));
+            _container = container;
         }
 
-        public IReadOnlyList<string> Containers { get; }
+        public object? GetService(Type serviceType)
+        {
+            if (serviceType == null) throw new ArgumentNullException(nameof(serviceType));
+
+            return _container.GetInstance(serviceType);
+        }
     }
 }

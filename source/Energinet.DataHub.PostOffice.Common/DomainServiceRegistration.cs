@@ -12,26 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Threading.Tasks;
-using Energinet.DataHub.PostOffice.Common.SimpleInjector;
-using Microsoft.Extensions.Hosting;
+using Energinet.DataHub.PostOffice.Application.GetMessage.Interfaces;
+using Energinet.DataHub.PostOffice.Domain.Services;
+using Energinet.DataHub.PostOffice.Infrastructure.GetMessage;
 using SimpleInjector;
 
-namespace Energinet.DataHub.PostOffice.Outbound
+namespace Energinet.DataHub.PostOffice.Common
 {
-    public static class Program
+    internal static class DomainServiceRegistration
     {
-        public static async Task Main()
+        public static void AddDomainServices(this Container container)
         {
-            await using var startup = new Startup();
+            container.Register<IWarehouseDomainService, WarehouseDomainService>(Lifestyle.Scoped);
 
-            var host = new HostBuilder()
-                .ConfigureFunctionsWorkerDefaults(options => options.UseMiddleware<SimpleInjectorScopedRequest>())
-                .ConfigureServices(startup.ConfigureServices)
-                .Build()
-                .UseSimpleInjector(startup.Container);
-
-            await host.RunAsync().ConfigureAwait(false);
+            container.Register<IDataAvailableController, DataAvailableController>(Lifestyle.Scoped);
         }
     }
 }
