@@ -91,7 +91,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Extensions
         }
 
         [Fact]
-        public void Should_tjek_uri_for_null()
+        public void Should_check_uri_for_null()
         {
             // arrange, act, assert
             Assert.Throws<ArgumentNullException>(() => default(Uri)!.ParseQuery<CommandWithEnumeralProps>());
