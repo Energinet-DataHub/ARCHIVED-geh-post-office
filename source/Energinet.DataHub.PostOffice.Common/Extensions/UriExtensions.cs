@@ -33,7 +33,7 @@ namespace Energinet.DataHub.PostOffice.Common.Extensions
 
             static object ChangeType(string val, Type type)
             {
-                return Convert.ChangeType(val, type, CultureInfo.CurrentCulture);
+                return Convert.ChangeType(val, type, CultureInfo.InvariantCulture);
             }
 
             static IEnumerable Cast(IEnumerable enumerable, Type type)
@@ -48,36 +48,24 @@ namespace Energinet.DataHub.PostOffice.Common.Extensions
 
             try
             {
-                var dict = QueryHelpers.ParseQuery(uri.Query).ToDictionary(x => x.Key, x => x.Value, new CaseIgnorantStringComparer());
-                var ctorParams = typeof(T).GetConstructors(BindingFlags.Public | BindingFlags.Instance).First().GetParameters().OrderBy(x => x.Position).Select(parameterInfo =>
+                var dict = QueryHelpers.ParseQuery(uri.Query).ToDictionary(x => x.Key, x => x.Value, StringComparer.OrdinalIgnoreCase);
+                var ctor = typeof(T).GetConstructors(BindingFlags.Public | BindingFlags.Instance).First();
+                var ctorParams = ctor.GetParameters().Select(parameterInfo =>
                 {
                     if (!dict.TryGetValue(parameterInfo.Name!, out var rawStringValues))
-                        return null;
+                        return parameterInfo.HasDefaultValue ? parameterInfo.DefaultValue : null;
 
                     if (rawStringValues.Count == 1)
                         return ChangeType(rawStringValues.First(), GetUnderlyingType(parameterInfo.ParameterType));
 
-                    var genericTypeArgument = parameterInfo.ParameterType.GenericTypeArguments[0];
-                    return Cast(rawStringValues.Select(value => ChangeType(value, GetUnderlyingType(genericTypeArgument))), GetUnderlyingType(genericTypeArgument));
+                    var genericEnumerableType = GetUnderlyingType(parameterInfo.ParameterType.GenericTypeArguments[0]);
+                    return Cast(rawStringValues.Select(value => ChangeType(value, genericEnumerableType)), genericEnumerableType);
                 });
                 return (T)Activator.CreateInstance(typeof(T), ctorParams.ToArray())!;
             }
             catch (Exception)
             {
-                throw new ArgumentException($"Could not parse query '{uri.Query}' to type {nameof(T)}");
-            }
-        }
-
-        private sealed class CaseIgnorantStringComparer : IEqualityComparer<string>
-        {
-            public bool Equals(string? x, string? y)
-            {
-                return string.Equals(x, y, StringComparison.OrdinalIgnoreCase);
-            }
-
-            public int GetHashCode(string obj)
-            {
-                return obj.GetHashCode(StringComparison.OrdinalIgnoreCase);
+                throw new ArgumentException($"Could not parse query '{uri.Query}' to type {typeof(T).Name}");
             }
         }
     }

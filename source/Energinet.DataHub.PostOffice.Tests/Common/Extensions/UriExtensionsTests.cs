@@ -31,7 +31,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Extensions
             const string someString = "value";
             const int someInt = 42;
             var someDate = new DateTime(2012, 08, 24, 14, 13, 12);
-            var url = new Uri($"http://localhost:8080?{nameof(someString)}={someString}&{nameof(someDate)}={someDate}&{nameof(someInt)}={someInt}");
+            var url = new Uri($"http://localhost:8080?{nameof(someString)}={someString}&{nameof(someDate)}={someDate:O}&{nameof(someInt)}={someInt}");
 
             // act
             var (actualString, actualInt, actualDate) = url.ParseQuery<CommandWithMultipleProps>();
@@ -65,7 +65,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Extensions
             var someNullableDateCollection = new[] { new DateTime(2021, 8, 25, 13, 14, 15), new DateTime(2021, 8, 26, 13, 14, 15) };
             var url = new Uri("http://localhost:8080" +
                               $"?{string.Join("&", someStringCollection.Select(x => $"{nameof(someStringCollection)}={x}"))}" +
-                              $"&{string.Join("&", someNullableDateCollection.Select(x => $"{nameof(someNullableDateCollection)}={x}"))}");
+                              $"&{string.Join("&", someNullableDateCollection.Select(x => $"{nameof(someNullableDateCollection)}={x:O}"))}");
 
             // act
             var (actualStringCollection, actualNullableIntCollection, actualNullableDateCollection) = url.ParseQuery<CommandWithEnumeralProps>();
@@ -74,6 +74,27 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Extensions
             Assert.Equal(someStringCollection, actualStringCollection);
             Assert.Null(actualNullableIntCollection);
             Assert.Equal(someNullableDateCollection, actualNullableDateCollection);
+        }
+
+        [Fact]
+        public void Should_throw_argument_exception_if_unable_to_parse()
+        {
+            // arrange
+            var url = new Uri($"http://localhost:8080?{nameof(CommandWithMultipleProps.SomeDate)}=invalid_date_value");
+
+            // act
+            var actual = Assert.Throws<ArgumentException>(() => url.ParseQuery<CommandWithMultipleProps>());
+
+            // assert
+            Assert.Contains(url.Query, actual.Message, StringComparison.InvariantCulture);
+            Assert.Contains(nameof(CommandWithMultipleProps), actual.Message, StringComparison.InvariantCulture);
+        }
+
+        [Fact]
+        public void Should_tjek_uri_for_null()
+        {
+            // arrange, act, assert
+            Assert.Throws<ArgumentNullException>(() => default(Uri)!.ParseQuery<CommandWithEnumeralProps>());
         }
 
         // ReSharper disable ClassNeverInstantiated.Local
