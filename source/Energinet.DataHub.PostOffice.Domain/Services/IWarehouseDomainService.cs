@@ -33,9 +33,12 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         Task<IBundle?> PeekAsync(Recipient recipient);
 
         /// <summary>
-        /// Acknowledges the current message bundle, as returned by PeekAsync. If there is nothing to acknowledge, the method does nothing.
+        /// Acknowledges the current message bundle, as returned by PeekAsync.
+        /// If there is nothing to acknowledge or the id does not match the peeked bundle, the method returns false.
         /// </summary>
         /// <param name="recipient">The recipient of the messages.</param>
-        Task DequeueAsync(Recipient recipient);
+        /// <param name="expectedId">The id of the bundle that is being acknowledged.</param>
+        /// <returns>true is the bundle was acknowledged; false if the id is incorrect or there is nothing to peek.</returns>
+        Task<bool> TryDequeueAsync(Recipient recipient, Uuid expectedId);
     }
 }

@@ -14,5 +14,5 @@
 
 namespace Energinet.DataHub.PostOffice.Application.Commands
 {
-    public record DequeueResponse;
+    public record DequeueResponse(bool IsDequeued);
 }

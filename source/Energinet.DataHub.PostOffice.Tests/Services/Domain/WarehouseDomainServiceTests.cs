@@ -125,7 +125,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         }
 
         [Fact]
-        public async Task DequeueAsync_HasNoBundle_DoesNothing()
+        public async Task DequeueAsync_HasBundle_ReturnsTrue()
         {
             // Arrange
             var recipient = new Recipient("fake_value");
@@ -154,18 +154,20 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 dataAvailableNotificationRepositoryMock.Object);
 
             // Act
-            await target.DequeueAsync(recipient).ConfigureAwait(false);
+            var result = await target.TryDequeueAsync(recipient, bundleUuid).ConfigureAwait(false);
 
             // Assert
+            Assert.True(result);
             bundleRepositoryMock.Verify(x => x.DequeueAsync(bundleUuid), Times.Once);
             dataAvailableNotificationRepositoryMock.Verify(x => x.DequeueAsync(idsInBundle), Times.Once);
         }
 
         [Fact]
-        public async Task DequeueAsync_HasBundle_DequeuesTheBundle()
+        public async Task DequeueAsync_HasNoBundle_ReturnsFalse()
         {
             // Arrange
             var recipient = new Recipient("fake_value");
+            var bundleUuid = new Uuid("60D041F5-548B-49C0-8118-BB0F3DF1E692");
             var dataAvailableNotificationRepositoryMock = new Mock<IDataAvailableNotificationRepository>();
 
             var bundleRepositoryMock = new Mock<IBundleRepository>();
@@ -178,9 +180,40 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 dataAvailableNotificationRepositoryMock.Object);
 
             // Act
-            await target.DequeueAsync(recipient).ConfigureAwait(false);
+            var result = await target.TryDequeueAsync(recipient, bundleUuid).ConfigureAwait(false);
 
             // Assert
+            Assert.False(result);
+            bundleRepositoryMock.Verify(x => x.DequeueAsync(It.IsAny<Uuid>()), Times.Never);
+            dataAvailableNotificationRepositoryMock.Verify(x => x.DequeueAsync(It.IsAny<IEnumerable<Uuid>>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task DequeueAsync_WrongId_ReturnsFalse()
+        {
+            // Arrange
+            var recipient = new Recipient("fake_value");
+            var bundleUuid = new Uuid("60D041F5-548B-49C0-8118-BB0F3DF1E692");
+            var incorrectId = new Uuid("8BF7791E-A179-4B86-AE2F-69B5C276E99F");
+            var dataAvailableNotificationRepositoryMock = new Mock<IDataAvailableNotificationRepository>();
+
+            var bundleMock = new Mock<IBundle>();
+            bundleMock.Setup(x => x.Id).Returns(bundleUuid);
+
+            var bundleRepositoryMock = new Mock<IBundleRepository>();
+            bundleRepositoryMock
+                .Setup(x => x.PeekAsync(recipient))
+                .ReturnsAsync(bundleMock.Object);
+
+            var target = new WarehouseDomainService(
+                bundleRepositoryMock.Object,
+                dataAvailableNotificationRepositoryMock.Object);
+
+            // Act
+            var result = await target.TryDequeueAsync(recipient, incorrectId).ConfigureAwait(false);
+
+            // Assert
+            Assert.False(result);
             bundleRepositoryMock.Verify(x => x.DequeueAsync(It.IsAny<Uuid>()), Times.Never);
             dataAvailableNotificationRepositoryMock.Verify(x => x.DequeueAsync(It.IsAny<IEnumerable<Uuid>>()), Times.Never);
         }

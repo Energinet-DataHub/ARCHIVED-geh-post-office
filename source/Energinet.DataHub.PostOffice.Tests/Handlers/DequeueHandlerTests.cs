@@ -42,11 +42,17 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         }
 
         [Fact]
-        public async Task Handle_WithData_Dequeues()
+        public async Task Handle_WithData_ReturnsTrue()
         {
             // Arrange
+            var request = new DequeueCommand("fake_value", "fake_value");
+
             var warehouseDomainServiceMock = new Mock<IWarehouseDomainService>();
-            var request = new DequeueCommand("fake_value");
+            warehouseDomainServiceMock.Setup(x => x.TryDequeueAsync(
+                    It.Is<Recipient>(r => string.Equals(r.Value, request.Recipient, StringComparison.OrdinalIgnoreCase)),
+                    It.Is<Uuid>(id => string.Equals(id.Value, request.BundleUuid, StringComparison.OrdinalIgnoreCase))))
+                .ReturnsAsync(true);
+
             var target = new DequeueHandler(warehouseDomainServiceMock.Object);
 
             // Act
@@ -54,8 +60,29 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
 
             // Assert
             Assert.NotNull(response);
-            warehouseDomainServiceMock
-                .Verify(x => x.DequeueAsync(It.Is<Recipient>(r => string.Equals(r.Value, request.Recipient, StringComparison.OrdinalIgnoreCase))), Times.Once);
+            Assert.True(response.IsDequeued);
+        }
+
+        [Fact]
+        public async Task Handle_WithoutData_ReturnsFalse()
+        {
+            // Arrange
+            var request = new DequeueCommand("fake_value", "fake_value");
+
+            var warehouseDomainServiceMock = new Mock<IWarehouseDomainService>();
+            warehouseDomainServiceMock.Setup(x => x.TryDequeueAsync(
+                    It.Is<Recipient>(r => string.Equals(r.Value, request.Recipient, StringComparison.OrdinalIgnoreCase)),
+                    It.Is<Uuid>(id => string.Equals(id.Value, request.BundleUuid, StringComparison.OrdinalIgnoreCase))))
+                .ReturnsAsync(false);
+
+            var target = new DequeueHandler(warehouseDomainServiceMock.Object);
+
+            // Act
+            var response = await target.Handle(request, CancellationToken.None).ConfigureAwait(false);
+
+            // Assert
+            Assert.NotNull(response);
+            Assert.False(response.IsDequeued);
         }
     }
 }

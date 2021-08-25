@@ -48,14 +48,15 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
                 .ConfigureAwait(false);
         }
 
-        public async Task DequeueAsync(Recipient recipient)
+        public async Task<bool> TryDequeueAsync(Recipient recipient, Uuid expectedId)
         {
             var bundle = await _bundleRepository.PeekAsync(recipient).ConfigureAwait(false);
-            if (bundle == null)
-                return;
+            if (bundle == null || bundle.Id != expectedId)
+                return false;
 
             await _dataAvailableRepository.DequeueAsync(bundle.NotificationsIds).ConfigureAwait(false);
             await _bundleRepository.DequeueAsync(bundle.Id).ConfigureAwait(false);
+            return true;
         }
     }
 }

@@ -36,11 +36,11 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
             if (request is null)
                 throw new ArgumentNullException(nameof(request));
 
-            await _warehouseDomainService
-                .DequeueAsync(new Recipient(request.Recipient))
+            var isDequeued = await _warehouseDomainService
+                .TryDequeueAsync(new Recipient(request.Recipient), new Uuid(request.BundleUuid))
                 .ConfigureAwait(false);
 
-            return new DequeueResponse();
+            return new DequeueResponse(isDequeued);
         }
     }
 }

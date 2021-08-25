@@ -29,8 +29,10 @@ namespace Energinet.DataHub.PostOffice.Outbound.Functions
 
             logger.LogInformation($"Processing Dequeue query: {command}.");
 
-            await _mediator.Send(command).ConfigureAwait(false);
-            return new HttpResponseMessage(HttpStatusCode.OK);
+            var response = await _mediator.Send(command).ConfigureAwait(false);
+            return response.IsDequeued
+                ? new HttpResponseMessage(HttpStatusCode.OK)
+                : new HttpResponseMessage(HttpStatusCode.NotFound);
         }
     }
 }
