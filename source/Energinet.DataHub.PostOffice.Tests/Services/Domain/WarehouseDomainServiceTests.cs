@@ -27,6 +27,12 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
     public sealed class WarehouseDomainServiceTests
     {
         [Fact]
+        public void SanityTest()
+        {
+            Assert.True(true);
+        }
+
+        [Fact]
         public async Task PeekAsync_NoMessagesReady_ReturnsNull()
         {
             // Arrange
