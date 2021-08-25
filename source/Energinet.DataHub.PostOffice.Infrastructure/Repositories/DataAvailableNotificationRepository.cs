@@ -66,7 +66,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             if (recipient is null)
                 throw new ArgumentNullException(nameof(recipient));
 
-            const string queryString = "SELECT * FROM c WHERE c.recipient = @recipient ORDER BY c._ts ASC OFFSET 0 LIMIT 1";
+            const string queryString = "SELECT * FROM c WHERE c.recipient = @recipient AND c.acknowledge = false ORDER BY c._ts ASC OFFSET 0 LIMIT 1";
             var parameters = new List<KeyValuePair<string, string>> { new("recipient", recipient.Value) };
 
             var documents = await GetDocumentsAsync(queryString, parameters).ConfigureAwait(false);
@@ -82,10 +82,14 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
             foreach (var uuid in dataAvailableNotificationUuids)
             {
-                var documentToUpdateResponse = await _container.ReadItemAsync<CosmosDataAvailable>(uuid.Value, new PartitionKey("recipient")).ConfigureAwait(false);
-                var documentToUpdate = documentToUpdateResponse.Resource;
-                documentToUpdate.acknowledge = true;
-                await _container.ReplaceItemAsync(documentToUpdate, uuid.Value, new PartitionKey(documentToUpdate.recipient)).ConfigureAwait(false);
+                var documentToUpdateResponse = _container.GetItemLinqQueryable<CosmosDataAvailable>(true)
+                    .Where(document => document.uuid == uuid.Value).AsEnumerable().FirstOrDefault();
+                if (documentToUpdateResponse is null)
+                    continue;
+
+                documentToUpdateResponse.acknowledge = true;
+                var updatedResource = await _container.ReplaceItemAsync(documentToUpdateResponse, documentToUpdateResponse.id, new PartitionKey(documentToUpdateResponse.recipient)).ConfigureAwait(false);
+                var t = updatedResource.StatusCode;
             }
         }
 
