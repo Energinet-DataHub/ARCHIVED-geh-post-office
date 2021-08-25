@@ -58,6 +58,19 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Extensions
         }
 
         [Fact]
+        public void Should_default_to_default_value()
+        {
+            // arrange
+            var url = new Uri("http://localhost:8080");
+
+            // act
+            var actual = url.ParseQuery<CommandWithDefaultValueParam>();
+
+            // assert
+            Assert.Equal("hello_there", actual.SomeString);
+        }
+
+        [Fact]
         public void Should_parse_collection_props()
         {
             // arrange
@@ -98,6 +111,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Extensions
         }
 
         // ReSharper disable ClassNeverInstantiated.Local
+        private record CommandWithDefaultValueParam(string SomeString = "hello_there");
         private record CommandWithMultipleProps(string SomeString, int SomeInt, DateTime SomeDate);
         private record CommandWithNullableProps(string? SomeNullableString, int? SomeNullableInt);
         private record CommandWithEnumeralProps(IEnumerable<string> SomeStringCollection, IEnumerable<int>? SomeNullableIntCollection, IEnumerable<DateTime>? SomeNullableDateCollection);
