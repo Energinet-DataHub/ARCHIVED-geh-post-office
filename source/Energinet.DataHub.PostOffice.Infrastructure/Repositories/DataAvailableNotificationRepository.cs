@@ -56,9 +56,18 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 throw new InvalidOperationException("Could not create document in cosmos");
         }
 
-        public Task<IEnumerable<DataAvailableNotification>> PeekAsync(Recipient recipient, MessageType messageType)
+        public async Task<IEnumerable<DataAvailableNotification>> PeekAsync(Recipient recipient, MessageType messageType)
         {
-            return Task.FromResult(Enumerable.Empty<DataAvailableNotification>());
+            if (recipient is null)
+                throw new ArgumentNullException(nameof(recipient));
+            if (messageType is null)
+                throw new ArgumentNullException(nameof(messageType));
+
+            const string queryString = "SELECT * FROM c WHERE c.recipient = @recipient AND c.acknowledge = false AND c.messageType = @messageType ORDER BY c._ts ASC OFFSET 0 LIMIT 1";
+            var parameters = new List<KeyValuePair<string, string>> { new("recipient", recipient.Value), new("messageType", messageType.Type) };
+
+            var documents = await GetDocumentsAsync(queryString, parameters).ConfigureAwait(false);
+            return documents;
         }
 
         public async Task<DataAvailableNotification?> PeekAsync(Recipient recipient)
@@ -83,13 +92,15 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             foreach (var uuid in dataAvailableNotificationUuids)
             {
                 var documentToUpdateResponse = _container.GetItemLinqQueryable<CosmosDataAvailable>(true)
-                    .Where(document => document.uuid == uuid.Value).AsEnumerable().FirstOrDefault();
-                if (documentToUpdateResponse is null)
+                    .Where(document => document.uuid == uuid.Value)
+                    .AsEnumerable()
+                    .FirstOrDefault();
+
+                if (documentToUpdateResponse is null) // Or Throw
                     continue;
 
                 documentToUpdateResponse.acknowledge = true;
-                var updatedResource = await _container.ReplaceItemAsync(documentToUpdateResponse, documentToUpdateResponse.id, new PartitionKey(documentToUpdateResponse.recipient)).ConfigureAwait(false);
-                var t = updatedResource.StatusCode;
+                await _container.ReplaceItemAsync(documentToUpdateResponse, documentToUpdateResponse.id, new PartitionKey(documentToUpdateResponse.recipient)).ConfigureAwait(false);
             }
         }
 

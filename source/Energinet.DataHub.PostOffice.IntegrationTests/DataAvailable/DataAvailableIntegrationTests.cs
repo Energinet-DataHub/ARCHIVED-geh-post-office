@@ -52,6 +52,29 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.DataAvailable
         }
 
         [Fact]
+        public async Task Test_DataAvailable_Integration_PeekByMessageType()
+        {
+            // Arrange
+            await using var host = await InboundIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
+            var scope = host.BeginScope();
+            var mediator = scope.GetInstance<IMediator>();
+            var dataAvailableCommand = GetDataAvailableCommand();
+
+            var dataAvailableNotificationRepository = scope.GetInstance<IDataAvailableNotificationRepository>();
+            var recipient = new Recipient(dataAvailableCommand.Recipient);
+            var messageType = new MessageType(1, dataAvailableCommand.MessageType);
+
+            // Act
+            var result = await mediator.Send(dataAvailableCommand, CancellationToken.None).ConfigureAwait(false);
+            var dataAvailablePeekResult = await dataAvailableNotificationRepository.PeekAsync(recipient, messageType).ConfigureAwait(false);
+
+            // Assert
+            result.Should().BeTrue();
+            dataAvailablePeekResult.Should().NotBeNullOrEmpty();
+            dataAvailablePeekResult?.Should().Contain(e => messageType.Type.Equals(e.MessageType.Type, StringComparison.Ordinal));
+        }
+
+        [Fact]
         public async Task Test_DataAvailable_Integration_Dequeue()
         {
             // Arrange
@@ -78,10 +101,10 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.DataAvailable
 
         private static DataAvailableCommand GetDataAvailableCommand()
         {
-            return new DataAvailableCommand(
+            return new(
                 Guid.NewGuid().ToString(),
                 Guid.NewGuid().ToString(),
-                "MessageType",
+                "address-change",
                 Origin.Charges.ToString(),
                 false,
                 1);
