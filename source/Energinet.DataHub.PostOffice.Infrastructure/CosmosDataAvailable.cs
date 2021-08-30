@@ -50,7 +50,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure
         [JsonPropertyName("priority")]
         public decimal priority { get; set; }
 
-        [JsonPropertyName("priority")]
+        [JsonPropertyName("acknowledge")]
         public bool acknowledge { get; set; }
     }
 #nullable restore

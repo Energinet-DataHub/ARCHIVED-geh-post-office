@@ -46,7 +46,6 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.DataAvailable
             var dataAvailablePeekResult = await dataAvailableNotificationRepository.PeekAsync(new Recipient(dataAvailableCommand.Recipient)).ConfigureAwait(false);
 
             // Assert
-            result.Should().BeTrue();
             dataAvailablePeekResult.Should().NotBeNull();
             dataAvailablePeekResult?.Recipient.Value.Should().Be(dataAvailableCommand.Recipient);
         }
@@ -69,7 +68,6 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.DataAvailable
             var dataAvailablePeekResult = await dataAvailableNotificationRepository.PeekAsync(recipient, messageType).ConfigureAwait(false);
 
             // Assert
-            result.Should().BeTrue();
             dataAvailablePeekResult.Should().NotBeNullOrEmpty();
             dataAvailablePeekResult?.Should().Contain(e => messageType.Type.Equals(e.MessageType.Type, StringComparison.Ordinal));
         }
@@ -93,7 +91,6 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.DataAvailable
             var dataAvailablePeekDequeuedResult = await dataAvailableNotificationRepository.PeekAsync(new Recipient(dataAvailableCommand.Recipient)).ConfigureAwait(false);
 
             // Assert
-            result.Should().BeTrue();
             dataAvailablePeekResult.Should().NotBeNull();
             dataAvailablePeekResult?.Recipient.Value.Should().Be(dataAvailableCommand.Recipient);
             dataAvailablePeekDequeuedResult.Should().BeNull();
