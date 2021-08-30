@@ -43,12 +43,12 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
             var cosmosDocument = new CosmosDataAvailable
             {
-                uuid = dataAvailableNotification.Id.Value,
-                recipient = dataAvailableNotification.Recipient.Value,
-                messageType = dataAvailableNotification.MessageType.Type,
-                origin = dataAvailableNotification.Origin.ToString(),
-                relativeWeight = dataAvailableNotification.Weight.Value,
-                priority = 1M,
+                Uuid = dataAvailableNotification.Id.Value,
+                Recipient = dataAvailableNotification.Recipient.Value,
+                MessageType = dataAvailableNotification.MessageType.Type,
+                Origin = dataAvailableNotification.Origin.ToString(),
+                RelativeWeight = dataAvailableNotification.Weight.Value,
+                Priority = 1M,
             };
 
             var response = await _container.CreateItemAsync(cosmosDocument).ConfigureAwait(false);
@@ -92,15 +92,15 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             foreach (var uuid in dataAvailableNotificationUuids)
             {
                 var documentToUpdateResponse = _container.GetItemLinqQueryable<CosmosDataAvailable>(true)
-                    .Where(document => document.uuid == uuid.Value)
+                    .Where(document => document.Uuid == uuid.Value)
                     .AsEnumerable()
                     .FirstOrDefault();
 
                 if (documentToUpdateResponse is null) // Or Throw
                     continue;
 
-                documentToUpdateResponse.acknowledge = true;
-                await _container.ReplaceItemAsync(documentToUpdateResponse, documentToUpdateResponse.id, new PartitionKey(documentToUpdateResponse.recipient)).ConfigureAwait(false);
+                documentToUpdateResponse.Acknowledge = true;
+                await _container.ReplaceItemAsync(documentToUpdateResponse, documentToUpdateResponse.Id, new PartitionKey(documentToUpdateResponse.Recipient)).ConfigureAwait(false);
             }
         }
 
@@ -123,11 +123,11 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                     var documentsFromCosmos = await feedIterator.ReadNextAsync().ConfigureAwait(false);
                     var documents = documentsFromCosmos
                         .Select(document => new DataAvailableNotification(
-                            new Uuid(document.uuid),
-                            new Recipient(document.recipient),
-                            new MessageType(document.relativeWeight, document.messageType),
-                            Enum.Parse<Origin>(document.origin, true),
-                            new Weight(document.relativeWeight)));
+                            new Uuid(document.Uuid),
+                            new Recipient(document.Recipient),
+                            new MessageType(document.RelativeWeight, document.MessageType),
+                            Enum.Parse<Origin>(document.Origin, true),
+                            new Weight(document.RelativeWeight)));
 
                     documentsResult.AddRange(documents);
                 }
