@@ -15,6 +15,7 @@
 using System;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Application;
+using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Application.DataAvailable;
 using Energinet.DataHub.PostOffice.Application.Handlers;
 using Energinet.DataHub.PostOffice.Domain.Model;
@@ -47,7 +48,7 @@ namespace Energinet.DataHub.PostOffice.Tests
             var result = await handler.Handle(command, System.Threading.CancellationToken.None).ConfigureAwait(false);
 
             // Assert
-            result.Should().Be(true);
+            result.Should().BeOfType(typeof(DataAvailableNotificationResponse));
         }
 
         [Fact]
