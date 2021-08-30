@@ -77,6 +77,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
             await testDatabase
                 .CreateContainerIfNotExistsAsync("dataavailable", "/recipient")
                 .ConfigureAwait(true);
+            await testDatabase
+                .CreateContainerIfNotExistsAsync("bundles", "/pk")
+                .ConfigureAwait(true);
         }
     }
 }
