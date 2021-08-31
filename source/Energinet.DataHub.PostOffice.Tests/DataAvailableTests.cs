@@ -19,7 +19,7 @@ using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Application.Handlers;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
-using Energinet.DataHub.PostOffice.Inbound.Parsing;
+using Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Parsing;
 using Energinet.DataHub.PostOffice.Infrastructure.Mappers;
 using FluentAssertions;
 using Google.Protobuf;
