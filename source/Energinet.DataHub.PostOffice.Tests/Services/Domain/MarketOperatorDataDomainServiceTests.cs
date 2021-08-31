@@ -80,7 +80,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             var contentTypeWeightMapMock = new Mock<IWeightCalculatorDomainService>();
             contentTypeWeightMapMock
-                .Setup(x => x.Map(ContentType.TimeSeries))
+                .Setup(x => x.CalculateMaxWeight(ContentType.TimeSeries))
                 .Returns(weight);
 
             dataAvailableNotificationRepositoryMock

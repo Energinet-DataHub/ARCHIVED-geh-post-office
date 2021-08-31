@@ -42,7 +42,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
                 return null;
 
             var dataAvailableNotifications = await _dataAvailableRepository
-                .GetNextUnacknowledgedAsync(recipient, dataAvailableNotification.ContentType, _weightCalculatorDomainService.Map(dataAvailableNotification.ContentType))
+                .GetNextUnacknowledgedAsync(recipient, dataAvailableNotification.ContentType, _weightCalculatorDomainService.CalculateMaxWeight(dataAvailableNotification.ContentType))
                 .ConfigureAwait(false);
 
             return await _bundleRepository

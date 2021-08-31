@@ -19,7 +19,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
 {
     public class WeightCalculatorDomainService : IWeightCalculatorDomainService
     {
-        public Weight Map(ContentType contentType)
+        public Weight CalculateMaxWeight(ContentType contentType)
         {
             return contentType switch
             {

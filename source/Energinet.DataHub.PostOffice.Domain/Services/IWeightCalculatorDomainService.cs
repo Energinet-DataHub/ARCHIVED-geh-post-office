@@ -26,6 +26,6 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         /// </summary>
         /// <param name="contentType">The <see cref="ContentType"/> for which a <see cref="Weight"/> is found and returned</param>
         /// <returns><see cref="Weight"/></returns>
-        Weight Map(ContentType contentType);
+        Weight CalculateMaxWeight(ContentType contentType);
     }
 }

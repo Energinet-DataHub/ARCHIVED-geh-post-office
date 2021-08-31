@@ -31,7 +31,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             var target = new WeightCalculatorDomainService();
 
             // act
-            var actual = target.Map(contentType);
+            var actual = target.CalculateMaxWeight(contentType);
 
             // assert
             Assert.Equal(new Weight(expectedWeight), actual);
@@ -44,7 +44,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             var target = new WeightCalculatorDomainService();
 
             // act, assert
-            Assert.Throws<InvalidOperationException>(() => target.Map(default));
+            Assert.Throws<InvalidOperationException>(() => target.CalculateMaxWeight(default));
         }
 
         [Fact]
@@ -54,7 +54,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             var target = new WeightCalculatorDomainService();
 
             // act, assert
-            Assert.Throws<ArgumentOutOfRangeException>(() => target.Map((ContentType)(-1)));
+            Assert.Throws<ArgumentOutOfRangeException>(() => target.CalculateMaxWeight((ContentType)(-1)));
         }
     }
 }
