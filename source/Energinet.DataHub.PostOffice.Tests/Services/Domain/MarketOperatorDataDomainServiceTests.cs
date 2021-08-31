@@ -42,7 +42,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 .Setup(x => x.GetNextUnacknowledgedAsync(recipient))
                 .ReturnsAsync((IBundle?)null);
 
-            var contentTypeWeightMap = new Mock<IContentTypeMaxWeightMap>();
+            var contentTypeWeightMap = new Mock<IWeightCalculatorDomainService>();
 
             var target = new MarketOperatorDataDomainService(
                 bundleRepositoryMock.Object,
@@ -78,7 +78,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             var weight = new Weight(1);
 
-            var contentTypeWeightMapMock = new Mock<IContentTypeMaxWeightMap>();
+            var contentTypeWeightMapMock = new Mock<IWeightCalculatorDomainService>();
             contentTypeWeightMapMock
                 .Setup(x => x.Map(ContentType.TimeSeries))
                 .Returns(weight);
@@ -123,7 +123,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 .Setup(x => x.GetNextUnacknowledgedAsync(recipient))
                 .ReturnsAsync(bundleMock.Object);
 
-            var contentTypeWeightMapMock = new Mock<IContentTypeMaxWeightMap>();
+            var contentTypeWeightMapMock = new Mock<IWeightCalculatorDomainService>();
 
             var target = new MarketOperatorDataDomainService(
                 bundleRepositoryMock.Object,
@@ -162,7 +162,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 .Setup(x => x.GetNextUnacknowledgedAsync(recipient))
                 .ReturnsAsync(bundleMock.Object);
 
-            var contentTypeWeightMapMock = new Mock<IContentTypeMaxWeightMap>();
+            var contentTypeWeightMapMock = new Mock<IWeightCalculatorDomainService>();
 
             var target = new MarketOperatorDataDomainService(
                 bundleRepositoryMock.Object,
@@ -191,7 +191,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 .Setup(x => x.GetNextUnacknowledgedAsync(recipient))
                 .ReturnsAsync((IBundle?)null);
 
-            var contentTypeWeightMapMock = new Mock<IContentTypeMaxWeightMap>();
+            var contentTypeWeightMapMock = new Mock<IWeightCalculatorDomainService>();
 
             var target = new MarketOperatorDataDomainService(
                 bundleRepositoryMock.Object,
@@ -224,7 +224,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 .Setup(x => x.GetNextUnacknowledgedAsync(recipient))
                 .ReturnsAsync(bundleMock.Object);
 
-            var contentTypeWeightMapMock = new Mock<IContentTypeMaxWeightMap>();
+            var contentTypeWeightMapMock = new Mock<IWeightCalculatorDomainService>();
 
             var target = new MarketOperatorDataDomainService(
                 bundleRepositoryMock.Object,

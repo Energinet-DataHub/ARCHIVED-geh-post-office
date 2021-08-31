@@ -22,13 +22,13 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
     {
         private readonly IBundleRepository _bundleRepository;
         private readonly IDataAvailableNotificationRepository _dataAvailableRepository;
-        private readonly IContentTypeMaxWeightMap _contentTypeMaxWeightMap;
+        private readonly IWeightCalculatorDomainService _weightCalculatorDomainService;
 
-        public MarketOperatorDataDomainService(IBundleRepository bundleRepository, IDataAvailableNotificationRepository dataAvailableRepository, IContentTypeMaxWeightMap contentTypeMaxWeightMap)
+        public MarketOperatorDataDomainService(IBundleRepository bundleRepository, IDataAvailableNotificationRepository dataAvailableRepository, IWeightCalculatorDomainService weightCalculatorDomainService)
         {
             _bundleRepository = bundleRepository;
             _dataAvailableRepository = dataAvailableRepository;
-            _contentTypeMaxWeightMap = contentTypeMaxWeightMap;
+            _weightCalculatorDomainService = weightCalculatorDomainService;
         }
 
         public async Task<IBundle?> GetNextUnacknowledgedAsync(MarketOperator recipient)
@@ -42,7 +42,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
                 return null;
 
             var dataAvailableNotifications = await _dataAvailableRepository
-                .GetNextUnacknowledgedAsync(recipient, dataAvailableNotification.ContentType, _contentTypeMaxWeightMap.Map(dataAvailableNotification.ContentType))
+                .GetNextUnacknowledgedAsync(recipient, dataAvailableNotification.ContentType, _weightCalculatorDomainService.Map(dataAvailableNotification.ContentType))
                 .ConfigureAwait(false);
 
             return await _bundleRepository

@@ -23,7 +23,7 @@ namespace Energinet.DataHub.PostOffice.Common
     {
         public static void AddDomainServices(this Container container)
         {
-            container.Register<IContentTypeMaxWeightMap, ContentTypeMaxWeightMap>(Lifestyle.Scoped);
+            container.Register<IWeightCalculatorDomainService, WeightCalculatorDomainService>(Lifestyle.Scoped);
             container.Register<IMarketOperatorDataDomainService, MarketOperatorDataDomainService>(Lifestyle.Scoped);
             container.Register<IDataAvailableController, DataAvailableController>(Lifestyle.Scoped);
         }

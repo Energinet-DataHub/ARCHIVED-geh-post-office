@@ -19,7 +19,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
     /// <summary>
     /// Maps <see cref="ContentType"/> to <see cref="Weight"/>
     /// </summary>
-    public interface IContentTypeMaxWeightMap
+    public interface IWeightCalculatorDomainService
     {
         /// <summary>
         /// Maps a given <see cref="ContentType"/> to its <see cref="Weight"/>

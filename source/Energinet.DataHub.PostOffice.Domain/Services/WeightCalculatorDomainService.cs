@@ -17,18 +17,16 @@ using Energinet.DataHub.PostOffice.Domain.Model;
 
 namespace Energinet.DataHub.PostOffice.Domain.Services
 {
-    public class ContentTypeMaxWeightMap : IContentTypeMaxWeightMap
+    public class WeightCalculatorDomainService : IWeightCalculatorDomainService
     {
         public Weight Map(ContentType contentType)
         {
-            switch (contentType)
+            return contentType switch
             {
-                case ContentType.Unknown:
-                case ContentType.TimeSeries:
-                    return new Weight(1);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(contentType), contentType, null);
-            }
+                ContentType.TimeSeries => new Weight(1),
+                ContentType.Unknown => throw new InvalidOperationException($"Mapping of enum {nameof(ContentType)}.{nameof(ContentType.Unknown)} to type {nameof(Weight)} is undefined"),
+                _ => throw new ArgumentOutOfRangeException(nameof(contentType), contentType, null)
+            };
         }
     }
 }

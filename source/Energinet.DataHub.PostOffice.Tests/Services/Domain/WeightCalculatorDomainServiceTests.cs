@@ -21,28 +21,37 @@ using Xunit.Categories;
 namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 {
     [UnitTest]
-    public class ContentTypeMaxWeightMapTests
+    public class WeightCalculatorDomainServiceTests
     {
         [Theory]
-        [InlineData(ContentType.Unknown)]
-        [InlineData(ContentType.TimeSeries)]
-        public void Map_ContentType_ReturnsWeight(ContentType contentType)
+        [InlineData(ContentType.TimeSeries, 1)]
+        public void Map_ContentType_ReturnsWeight(ContentType contentType, int expectedWeight)
         {
             // arrange
-            var target = new ContentTypeMaxWeightMap();
+            var target = new WeightCalculatorDomainService();
 
             // act
             var actual = target.Map(contentType);
 
             // assert
-            Assert.Equal(new Weight(1), actual);
+            Assert.Equal(new Weight(expectedWeight), actual);
+        }
+
+        [Fact]
+        public void Map_DefaultContentType_ThrowsException()
+        {
+            // arrange
+            var target = new WeightCalculatorDomainService();
+
+            // act, assert
+            Assert.Throws<InvalidOperationException>(() => target.Map(default));
         }
 
         [Fact]
         public void Map_ContentTypeUndefined_ThrowsException()
         {
             // arrange
-            var target = new ContentTypeMaxWeightMap();
+            var target = new WeightCalculatorDomainService();
 
             // act, assert
             Assert.Throws<ArgumentOutOfRangeException>(() => target.Map((ContentType)(-1)));
