@@ -43,8 +43,8 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
             var cosmosDocument = new CosmosDataAvailable
             {
-                Uuid = dataAvailableNotification.NotificationId.Value,
-                Recipient = dataAvailableNotification.Recipient.Value,
+                Uuid = dataAvailableNotification.NotificationId.ToString(),
+                Recipient = dataAvailableNotification.Recipient.Gln.Value,
                 MessageType = dataAvailableNotification.ContentType.Type,
                 Origin = dataAvailableNotification.Origin.ToString(),
                 RelativeWeight = dataAvailableNotification.Weight.Value,
@@ -64,7 +64,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 throw new ArgumentNullException(nameof(contentType));
 
             const string queryString = "SELECT * FROM c WHERE c.recipient = @recipient AND c.acknowledge = false AND c.messageType = @messageType ORDER BY c._ts ASC OFFSET 0 LIMIT 1";
-            var parameters = new List<KeyValuePair<string, string>> { new("recipient", recipient.Value), new("messageType", contentType.Type) };
+            var parameters = new List<KeyValuePair<string, string>> { new("recipient", recipient.Gln.Value), new("messageType", contentType.Type) };
 
             var documents = await GetDocumentsAsync(queryString, parameters).ConfigureAwait(false);
             return documents;
@@ -76,7 +76,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 throw new ArgumentNullException(nameof(recipient));
 
             const string queryString = "SELECT * FROM c WHERE c.recipient = @recipient AND c.acknowledge = false ORDER BY c._ts ASC OFFSET 0 LIMIT 1";
-            var parameters = new List<KeyValuePair<string, string>> { new("recipient", recipient.Value) };
+            var parameters = new List<KeyValuePair<string, string>> { new("recipient", recipient.Gln.Value) };
 
             var documents = await GetDocumentsAsync(queryString, parameters).ConfigureAwait(false);
             var document = documents.FirstOrDefault();
@@ -92,7 +92,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             foreach (var uuid in dataAvailableNotificationUuids)
             {
                 var documentToUpdateResponse = _container.GetItemLinqQueryable<CosmosDataAvailable>(true)
-                    .Where(document => document.Uuid == uuid.Value)
+                    .Where(document => document.Uuid == uuid.ToString())
                     .AsEnumerable()
                     .FirstOrDefault();
 
@@ -124,7 +124,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                     var documents = documentsFromCosmos
                         .Select(document => new DataAvailableNotification(
                             new Uuid(document.Uuid),
-                            new MarketOperator(document.Recipient),
+                            new MarketOperator(new GlobalLocationNumber(document.Recipient)),
                             new ContentType(document.RelativeWeight, document.MessageType),
                             Enum.Parse<SubDomain>(document.Origin, true),
                             new Weight(document.RelativeWeight)));

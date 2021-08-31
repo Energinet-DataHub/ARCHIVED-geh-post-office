@@ -12,17 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Energinet.DataHub.PostOffice.Application.GetMessage.Queries;
-using Energinet.DataHub.PostOffice.Application.Validation.Rules;
-using FluentValidation;
+using System;
+using FluentValidation.Validators;
+using GreenEnergyHub.Messaging.Validation;
 
-namespace Energinet.DataHub.PostOffice.Application.Validation
+namespace Energinet.DataHub.PostOffice.Application.Validation.Rules
 {
-    public class GetMessageRuleSetValidator : AbstractValidator<GetMessageQuery>
+    public class UuidValidationRule : PropertyRule<string>
     {
-        public GetMessageRuleSetValidator()
+        protected override string Code => "Uuid must be valid";
+
+        protected override string GetDefaultMessageTemplate()
         {
-            RuleFor(request => request.Recipient).NotEmpty().SetValidator(new GetMessageMustBeValidGuidRule());
+            return "'{PropertyName}' must have a valid guid.";
+        }
+
+        protected override bool IsValid(string propertyValue, PropertyValidatorContext context)
+        {
+            return Guid.TryParse(propertyValue, out _);
         }
     }
 }
