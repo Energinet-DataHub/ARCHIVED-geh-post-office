@@ -14,9 +14,11 @@
 
 namespace Energinet.DataHub.PostOffice.Domain.Model
 {
-    public enum ContentType
+    public enum DomainOrigin
     {
         Unknown = 0,
-        TimeSeries = 1,
+        Charges = 1,
+        TimeSeries = 2,
+        Aggregations = 3
     }
 }

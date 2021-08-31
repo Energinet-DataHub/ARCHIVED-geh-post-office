@@ -12,11 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.PostOffice.Domain.Model
+using Energinet.DataHub.PostOffice.Domain.Model;
+
+namespace Energinet.DataHub.PostOffice.Domain.Services
 {
-    public enum ContentType
+    /// <summary>
+    /// Maps <see cref="ContentType"/> to <see cref="Weight"/>
+    /// </summary>
+    public interface IContentTypeMaxWeightMap
     {
-        Unknown = 0,
-        TimeSeries = 1,
+        /// <summary>
+        /// Maps a given <see cref="ContentType"/> to its <see cref="Weight"/>
+        /// </summary>
+        /// <param name="contentType">The <see cref="ContentType"/> for which a <see cref="Weight"/> is found and returned</param>
+        /// <returns><see cref="Weight"/></returns>
+        Weight Map(ContentType contentType);
     }
 }

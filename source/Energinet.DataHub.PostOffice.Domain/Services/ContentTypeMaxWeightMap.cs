@@ -12,13 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.PostOffice.Domain.Model
+using System;
+using Energinet.DataHub.PostOffice.Domain.Model;
+
+namespace Energinet.DataHub.PostOffice.Domain.Services
 {
-    public enum SubDomain
+    public class ContentTypeMaxWeightMap : IContentTypeMaxWeightMap
     {
-        Unknown = 0,
-        Charges = 1,
-        TimeSeries = 2,
-        Aggregations = 3
+        public Weight Map(ContentType contentType)
+        {
+            switch (contentType)
+            {
+                case ContentType.Unknown:
+                case ContentType.TimeSeries:
+                    return new Weight(1);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(contentType), contentType, null);
+            }
+        }
     }
 }
