@@ -11,10 +11,10 @@
 // // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // // See the License for the specific language governing permissions and
 // // limitations under the License.
-using System;
+
 using System.Linq;
 using Energinet.DataHub.PostOffice.Domain.Model;
-using Energinet.DataHub.PostOffice.Infrastructure.Entities;
+using Energinet.DataHub.PostOffice.Infrastructure.Documents;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Mappers
 {

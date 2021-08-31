@@ -17,7 +17,7 @@ using Energinet.DataHub.PostOffice.Application;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Contracts;
 
-namespace Energinet.DataHub.PostOffice.Inbound.Parsing
+namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Parsing
 {
     public class DataAvailableContractParser
     {

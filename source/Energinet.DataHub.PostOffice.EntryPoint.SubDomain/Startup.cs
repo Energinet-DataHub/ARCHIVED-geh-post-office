@@ -18,14 +18,14 @@ using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Application.Validation;
 using Energinet.DataHub.PostOffice.Common;
 using Energinet.DataHub.PostOffice.Contracts;
-using Energinet.DataHub.PostOffice.Inbound.Functions;
-using Energinet.DataHub.PostOffice.Inbound.GreenEnergyHub;
-using Energinet.DataHub.PostOffice.Inbound.Parsing;
+using Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions;
+using Energinet.DataHub.PostOffice.EntryPoint.SubDomain.GreenEnergyHub;
+using Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Parsing;
 using Energinet.DataHub.PostOffice.Infrastructure.Mappers;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
 
-namespace Energinet.DataHub.PostOffice.Inbound
+namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain
 {
     public sealed class Startup : StartupBase
     {
