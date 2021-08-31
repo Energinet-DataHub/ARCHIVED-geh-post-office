@@ -14,7 +14,7 @@
 
 using System;
 using Energinet.DataHub.PostOffice.Application;
-using Energinet.DataHub.PostOffice.Application.DataAvailable;
+using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Application.Validation;
 using Energinet.DataHub.PostOffice.Common;
 using Energinet.DataHub.PostOffice.Contracts;
@@ -34,7 +34,7 @@ namespace Energinet.DataHub.PostOffice.Inbound
             if (container == null)
                 throw new ArgumentNullException(nameof(container));
 
-            container.Register<IMapper<DataAvailable, DataAvailableCommand>, DataAvailableMapper>(Lifestyle.Scoped);
+            container.Register<IMapper<DataAvailable, DataAvailableNotificationCommand>, DataAvailableMapper>(Lifestyle.Scoped);
             container.Register<DataAvailableContractParser>(Lifestyle.Scoped);
             container.Register<DataAvailableInbox>(Lifestyle.Scoped);
         }

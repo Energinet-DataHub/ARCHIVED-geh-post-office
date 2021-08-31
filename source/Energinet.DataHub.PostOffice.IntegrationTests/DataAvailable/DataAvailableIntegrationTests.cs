@@ -16,7 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Energinet.DataHub.PostOffice.Application.DataAvailable;
+using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
 using FluentAssertions;
@@ -80,7 +80,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.DataAvailable
             var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
             var dataAvailableCommand = GetDataAvailableCommand();
-            var dequeueUuids = new List<Uuid> { new(dataAvailableCommand.UUID) };
+            var dequeueUuids = new List<Uuid> { new(dataAvailableCommand.Uuid) };
 
             var dataAvailableNotificationRepository = scope.GetInstance<IDataAvailableNotificationRepository>();
 
@@ -96,7 +96,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.DataAvailable
             dataAvailablePeekDequeuedResult.Should().BeNull();
         }
 
-        private static DataAvailableCommand GetDataAvailableCommand()
+        private static DataAvailableNotificationCommand GetDataAvailableCommand()
         {
             return new(
                 Guid.NewGuid().ToString(),
