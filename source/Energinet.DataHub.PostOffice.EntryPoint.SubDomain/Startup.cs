@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using Energinet.DataHub.PostOffice.Application;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Common;
@@ -25,13 +24,10 @@ using SimpleInjector;
 
 namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain
 {
-    public sealed class Startup : StartupBase
+    internal sealed class Startup : StartupBase
     {
         protected override void Configure(Container container)
         {
-            if (container == null)
-                throw new ArgumentNullException(nameof(container));
-
             container.Register<IMapper<DataAvailable, DataAvailableNotificationCommand>, DataAvailableMapper>(Lifestyle.Scoped);
             container.Register<DataAvailableContractParser>(Lifestyle.Scoped);
             container.Register<DataAvailableInbox>(Lifestyle.Scoped);
