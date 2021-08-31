@@ -28,7 +28,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation
         private const string ValidUuid = "169B53A2-0A17-47D7-9603-4E41854E4181";
         private const string ValidOrigin = "Charges";
         private const string ValidRecipient = "5790000555550";
-        private const string ValidContentType = "unknown_value";
+        private const string ValidContentType = "TimeSeries";
 
         [Theory]
         [InlineData("", false)]
@@ -105,7 +105,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation
         [InlineData("", false)]
         [InlineData(null, false)]
         [InlineData("  ", false)]
-        [InlineData("unknown_value", true)]
+        [InlineData("Unknown", false)]
+        [InlineData("TimeSeries", true)]
+        [InlineData("timeseries", true)]
         public async Task Validate_ContentType_ValidatesProperty(string value, bool isValid)
         {
             // Arrange

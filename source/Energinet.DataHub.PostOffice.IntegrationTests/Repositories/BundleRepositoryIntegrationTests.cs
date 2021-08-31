@@ -33,15 +33,14 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
         {
             // Arrange
             var recipient = new MarketOperator(new GlobalLocationNumber(System.Guid.NewGuid().ToString()));
-            var messageType = new ContentType(1, "fake_value");
             await using var host = await InboundIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
             var scope = host.BeginScope();
 
             var dataAvailableNotificationIds = new List<DataAvailableNotification>()
             {
-                CreateDataAvailableNotifications(recipient, messageType),
-                CreateDataAvailableNotifications(recipient, messageType),
-                CreateDataAvailableNotifications(recipient, messageType)
+                CreateDataAvailableNotifications(recipient, ContentType.TimeSeries),
+                CreateDataAvailableNotifications(recipient, ContentType.TimeSeries),
+                CreateDataAvailableNotifications(recipient, ContentType.TimeSeries)
             };
             var client = scope.GetInstance<CosmosClient>();
             var bundleRepository = new BundleRepository(new BundleRepositoryContainer(client));
@@ -60,14 +59,13 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
         {
             // Arrange
             var recipient = new MarketOperator(new GlobalLocationNumber(System.Guid.NewGuid().ToString()));
-            var messageType = new ContentType(1, "fake_value");
             await using var host = await InboundIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
             var scope = host.BeginScope();
             var dataAvailableNotifications = new List<DataAvailableNotification>
             {
-                CreateDataAvailableNotifications(recipient, messageType),
-                CreateDataAvailableNotifications(recipient, messageType),
-                CreateDataAvailableNotifications(recipient, messageType),
+                CreateDataAvailableNotifications(recipient, ContentType.TimeSeries),
+                CreateDataAvailableNotifications(recipient, ContentType.TimeSeries),
+                CreateDataAvailableNotifications(recipient, ContentType.TimeSeries),
             };
             var client = scope.GetInstance<CosmosClient>();
             var bundleRepository = new BundleRepository(new BundleRepositoryContainer(client));
@@ -94,7 +92,6 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
         {
             var recipient = new MarketOperator(new GlobalLocationNumber(System.Guid.NewGuid().ToString()));
             var peakRecipient = new MarketOperator(new GlobalLocationNumber(System.Guid.NewGuid().ToString()));
-            var messageType = new ContentType(1, "fake_value");
             await using var host = await InboundIntegrationTestHost
                 .InitializeAsync()
                 .ConfigureAwait(false);
@@ -102,7 +99,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var scope = host.BeginScope();
             var dataAvailableNotifications = new List<DataAvailableNotification>()
             {
-                CreateDataAvailableNotifications(recipient, messageType)
+                CreateDataAvailableNotifications(recipient, ContentType.TimeSeries)
             };
             var client = scope.GetInstance<CosmosClient>();
             var bundleRepository = new BundleRepository(new BundleRepositoryContainer(client));
@@ -126,10 +123,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var recipient = new MarketOperator(new GlobalLocationNumber(System.Guid.NewGuid().ToString()));
             await using var host = await InboundIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
             var scope = host.BeginScope();
-            var messageType = new ContentType(1, "fake_value");
             var dataAvailableNotifications = new List<DataAvailableNotification>()
             {
-                CreateDataAvailableNotifications(recipient, messageType),
+                CreateDataAvailableNotifications(recipient, ContentType.TimeSeries),
             };
             var client = scope.GetInstance<CosmosClient>();
             var bundleRepository = new BundleRepository(new BundleRepositoryContainer(client));
@@ -160,7 +156,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
                 new Uuid(System.Guid.NewGuid()),
                 recipient,
                 contentType,
-                SubDomain.TimeSeries,
+                DomainOrigin.TimeSeries,
                 new Weight(1));
         }
     }

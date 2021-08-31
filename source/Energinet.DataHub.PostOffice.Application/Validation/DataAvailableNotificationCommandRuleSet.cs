@@ -32,12 +32,14 @@ namespace Energinet.DataHub.PostOffice.Application.Validation
                 .SetValidator(new GlobalLocationNumberValidationRule());
 
             RuleFor(command => command.ContentType)
-                .NotEmpty();
+                .NotEmpty()
+                .IsEnumName(typeof(ContentType), false)
+                .NotEqual(_ => ContentType.Unknown.ToString());
 
             RuleFor(command => command.Origin)
                 .NotEmpty()
-                .IsEnumName(typeof(SubDomain), false)
-                .NotEqual(_ => SubDomain.Unknown.ToString());
+                .IsEnumName(typeof(DomainOrigin), false)
+                .NotEqual(_ => DomainOrigin.Unknown.ToString());
 
             RuleFor(command => command.Weight)
                 .GreaterThan(0);
