@@ -64,7 +64,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Extensions
 #pragma warning disable 8618
             protected MockableHttpRequestData()
 #pragma warning restore 8618
-                : base(new FakeFunctionContext())
+                : base(new Mock<FunctionContext>().Object)
             {
             }
 
@@ -87,7 +87,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Extensions
 #pragma warning disable 8618
             protected MockableHttpResponseData()
 #pragma warning restore 8618
-                : base(new FakeFunctionContext())
+                : base(new Mock<FunctionContext>().Object)
             {
             }
 
@@ -97,20 +97,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Extensions
 
             // ReSharper disable once UnassignedGetOnlyAutoProperty
             public override HttpCookies Cookies { get; }
-        }
-
-        private sealed class FakeFunctionContext : FunctionContext
-        {
-#pragma warning disable 8618
-            public override string InvocationId => null!;
-            public override string FunctionId => null!;
-            public override TraceContext TraceContext => null!;
-            public override BindingContext BindingContext => null!;
-            public override IServiceProvider InstanceServices { get; set; } = null!;
-            public override FunctionDefinition FunctionDefinition => null!;
-            public override IDictionary<object, object> Items { get; set; } = null!;
-            public override IInvocationFeatures Features => null!;
-#pragma warning restore 8618
         }
     }
 }
