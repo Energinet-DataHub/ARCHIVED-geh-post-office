@@ -33,7 +33,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
         {
             // Arrange
             var recipient = new MarketOperator(System.Guid.NewGuid().ToString());
-            await using var host = await InboundIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
+            await using var host = await SubDomainIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
             var scope = host.BeginScope();
 
             var dataAvailableNotificationIds = new List<DataAvailableNotification>()
@@ -59,7 +59,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
         {
             // Arrange
             var recipient = new MarketOperator(System.Guid.NewGuid().ToString());
-            await using var host = await InboundIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
+            await using var host = await SubDomainIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
             var scope = host.BeginScope();
             var dataAvailableNotifications = new List<DataAvailableNotification>()
             {
@@ -92,7 +92,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
         {
             var recipient = new MarketOperator(System.Guid.NewGuid().ToString());
             var peakRecipient = new MarketOperator(System.Guid.NewGuid().ToString());
-            await using var host = await InboundIntegrationTestHost
+            await using var host = await SubDomainIntegrationTestHost
                 .InitializeAsync()
                 .ConfigureAwait(false);
 
@@ -121,7 +121,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
         public async Task Dequeue_Should_Set_Bundle_Dequeued()
         {
             var recipient = new MarketOperator(System.Guid.NewGuid().ToString());
-            await using var host = await InboundIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
+            await using var host = await SubDomainIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
             var scope = host.BeginScope();
             var dataAvailableNotifications = new List<DataAvailableNotification>()
             {

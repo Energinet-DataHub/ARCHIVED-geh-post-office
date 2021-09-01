@@ -15,7 +15,6 @@
 using System;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.EntryPoint.SubDomain;
-using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
@@ -23,22 +22,20 @@ using SimpleInjector.Lifestyles;
 
 namespace Energinet.DataHub.PostOffice.IntegrationTests
 {
-    public sealed class InboundIntegrationTestHost : IAsyncDisposable
+    public sealed class SubDomainIntegrationTestHost : IAsyncDisposable
     {
-        private const string AzureCosmosEmulatorConnectionString = "AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
-
         private readonly Startup _startup;
 
-        private InboundIntegrationTestHost()
+        private SubDomainIntegrationTestHost()
         {
             _startup = new Startup();
         }
 
-        public static async Task<InboundIntegrationTestHost> InitializeAsync()
+        public static async Task<SubDomainIntegrationTestHost> InitializeAsync()
         {
-            await InitCosmosTestDatabaseAsync().ConfigureAwait(false);
+            await CosmosTestIntegration.InitializeAsync().ConfigureAwait(false);
 
-            var host = new InboundIntegrationTestHost();
+            var host = new SubDomainIntegrationTestHost();
 
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddSingleton<IConfiguration>(BuildConfig());
@@ -61,25 +58,6 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
         private static IConfigurationRoot BuildConfig()
         {
             return new ConfigurationBuilder().AddEnvironmentVariables().Build();
-        }
-
-        private static async Task InitCosmosTestDatabaseAsync()
-        {
-            Environment.SetEnvironmentVariable("MESSAGES_DB_NAME", "post-office");
-            Environment.SetEnvironmentVariable("MESSAGES_DB_CONNECTION_STRING", AzureCosmosEmulatorConnectionString);
-
-            using var cosmosClient = new CosmosClient(AzureCosmosEmulatorConnectionString);
-            var databaseResponse = await cosmosClient
-                .CreateDatabaseIfNotExistsAsync("post-office")
-                .ConfigureAwait(true);
-
-            var testDatabase = databaseResponse.Database;
-            await testDatabase
-                .CreateContainerIfNotExistsAsync("dataavailable", "/recipient")
-                .ConfigureAwait(true);
-            await testDatabase
-                .CreateContainerIfNotExistsAsync("bundles", "/pk")
-                .ConfigureAwait(true);
         }
     }
 }

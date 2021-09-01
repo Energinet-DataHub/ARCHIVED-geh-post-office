@@ -59,4 +59,8 @@ limitations under the License.
       <HintPath>..\poor-man-package-sharing\GreenEnergyHub.Messaging.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Hosts\SubDomain\" />
+  </ItemGroup>
 </Project>
