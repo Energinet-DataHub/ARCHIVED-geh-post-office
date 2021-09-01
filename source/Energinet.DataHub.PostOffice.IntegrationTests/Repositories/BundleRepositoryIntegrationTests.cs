@@ -32,16 +32,15 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
         public async Task CreateBundle_Should_Return_Bundle()
         {
             // Arrange
-            var recipient = new MarketOperator(System.Guid.NewGuid().ToString());
-            var messageType = new ContentType(1, "fake_value");
+            var recipient = new MarketOperator(new GlobalLocationNumber(System.Guid.NewGuid().ToString()));
             await using var host = await InboundIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
             var scope = host.BeginScope();
 
             var dataAvailableNotificationIds = new List<DataAvailableNotification>()
             {
-                CreateDataAvailableNotifications(recipient, messageType),
-                CreateDataAvailableNotifications(recipient, messageType),
-                CreateDataAvailableNotifications(recipient, messageType)
+                CreateDataAvailableNotifications(recipient, ContentType.TimeSeries),
+                CreateDataAvailableNotifications(recipient, ContentType.TimeSeries),
+                CreateDataAvailableNotifications(recipient, ContentType.TimeSeries)
             };
             var client = scope.GetInstance<CosmosClient>();
             var bundleRepository = new BundleRepository(new BundleRepositoryContainer(client));
@@ -59,15 +58,14 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
         public async Task Peek_Should_Return_Bundle_Created_For_Same_Recipient()
         {
             // Arrange
-            var recipient = new MarketOperator(System.Guid.NewGuid().ToString());
-            var messageType = new ContentType(1, "fake_value");
+            var recipient = new MarketOperator(new GlobalLocationNumber(System.Guid.NewGuid().ToString()));
             await using var host = await InboundIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
             var scope = host.BeginScope();
-            var dataAvailableNotifications = new List<DataAvailableNotification>()
+            var dataAvailableNotifications = new List<DataAvailableNotification>
             {
-                CreateDataAvailableNotifications(recipient, messageType),
-                CreateDataAvailableNotifications(recipient, messageType),
-                CreateDataAvailableNotifications(recipient, messageType),
+                CreateDataAvailableNotifications(recipient, ContentType.TimeSeries),
+                CreateDataAvailableNotifications(recipient, ContentType.TimeSeries),
+                CreateDataAvailableNotifications(recipient, ContentType.TimeSeries),
             };
             var client = scope.GetInstance<CosmosClient>();
             var bundleRepository = new BundleRepository(new BundleRepositoryContainer(client));
@@ -84,17 +82,16 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             //Assert
             Assert.NotNull(createdBundle);
             Assert.NotNull(peakBundle);
-            Assert.Equal(createdBundle?.BundleId, peakBundle?.BundleId);
-            Assert.Equal(createdBundle?.NotificationIds.Count(), peakBundle?.NotificationIds.Count());
-            Assert.True(createdBundle!.NotificationIds.All(x => peakBundle!.NotificationIds.Contains(x)));
+            Assert.Equal(createdBundle.BundleId, peakBundle?.BundleId);
+            Assert.Equal(createdBundle.NotificationIds.Count(), peakBundle?.NotificationIds.Count());
+            Assert.True(createdBundle.NotificationIds.All(x => peakBundle!.NotificationIds.Contains(x)));
         }
 
         [Fact]
         public async Task Peek_Should_Not_Return_Bundle_Created_For_Another_Recipient()
         {
-            var recipient = new MarketOperator(System.Guid.NewGuid().ToString());
-            var peakRecipient = new MarketOperator(System.Guid.NewGuid().ToString());
-            var messageType = new ContentType(1, "fake_value");
+            var recipient = new MarketOperator(new GlobalLocationNumber(System.Guid.NewGuid().ToString()));
+            var peakRecipient = new MarketOperator(new GlobalLocationNumber(System.Guid.NewGuid().ToString()));
             await using var host = await InboundIntegrationTestHost
                 .InitializeAsync()
                 .ConfigureAwait(false);
@@ -102,7 +99,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var scope = host.BeginScope();
             var dataAvailableNotifications = new List<DataAvailableNotification>()
             {
-                CreateDataAvailableNotifications(recipient, messageType)
+                CreateDataAvailableNotifications(recipient, ContentType.TimeSeries)
             };
             var client = scope.GetInstance<CosmosClient>();
             var bundleRepository = new BundleRepository(new BundleRepositoryContainer(client));
@@ -123,13 +120,12 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
         [Fact]
         public async Task Dequeue_Should_Set_Bundle_Dequeued()
         {
-            var recipient = new MarketOperator(System.Guid.NewGuid().ToString());
+            var recipient = new MarketOperator(new GlobalLocationNumber(System.Guid.NewGuid().ToString()));
             await using var host = await InboundIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
             var scope = host.BeginScope();
-            var messageType = new ContentType(1, "fake_value");
             var dataAvailableNotifications = new List<DataAvailableNotification>()
             {
-                CreateDataAvailableNotifications(recipient, messageType),
+                CreateDataAvailableNotifications(recipient, ContentType.TimeSeries),
             };
             var client = scope.GetInstance<CosmosClient>();
             var bundleRepository = new BundleRepository(new BundleRepositoryContainer(client));
@@ -157,10 +153,10 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             ContentType contentType)
         {
             return new DataAvailableNotification(
-                new Uuid(System.Guid.NewGuid().ToString()),
+                new Uuid(System.Guid.NewGuid()),
                 recipient,
                 contentType,
-                SubDomain.TimeSeries,
+                DomainOrigin.TimeSeries,
                 new Weight(1));
         }
     }
