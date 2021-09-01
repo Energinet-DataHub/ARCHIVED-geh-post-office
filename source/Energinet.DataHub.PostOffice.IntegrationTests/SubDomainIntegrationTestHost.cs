@@ -24,6 +24,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
 {
     public sealed class SubDomainIntegrationTestHost : IAsyncDisposable
     {
+        private const string ServiceBusConnectionString = "INSERT CORRECT STRING HERE WHEN WE KNOW WHAT IT IS";
+
         private readonly Startup _startup;
 
         private SubDomainIntegrationTestHost()
@@ -34,7 +36,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
         public static async Task<SubDomainIntegrationTestHost> InitializeAsync()
         {
             await CosmosTestIntegration.InitializeAsync().ConfigureAwait(false);
-
+            InitTestServiceBus();
+            
             var host = new SubDomainIntegrationTestHost();
 
             var serviceCollection = new ServiceCollection();
@@ -58,6 +61,11 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
         private static IConfigurationRoot BuildConfig()
         {
             return new ConfigurationBuilder().AddEnvironmentVariables().Build();
+        }
+
+        private static void InitTestServiceBus()
+        {
+            Environment.SetEnvironmentVariable("ServiceBusConnectionString", ServiceBusConnectionString);
         }
     }
 }
