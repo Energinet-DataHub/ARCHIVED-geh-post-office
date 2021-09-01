@@ -22,7 +22,9 @@ namespace Energinet.DataHub.PostOffice.Application.Validation
     {
         public PeekCommandRuleSet()
         {
-            RuleFor(command => command.Recipient).NotEmpty().SetValidator(new GlobalLocationNumberValidationRule());
+            RuleFor(command => command.Recipient)
+                .NotEmpty()
+                .SetValidator(new GlobalLocationNumberValidationRule());
         }
     }
 }
