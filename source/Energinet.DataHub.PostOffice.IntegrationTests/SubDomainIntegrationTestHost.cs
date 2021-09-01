@@ -14,9 +14,12 @@
 
 using System;
 using System.Threading.Tasks;
+using Azure.Messaging.ServiceBus;
 using Energinet.DataHub.PostOffice.EntryPoint.SubDomain;
+using Energinet.DataHub.PostOffice.IntegrationTests.Common;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 
@@ -24,8 +27,6 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
 {
     public sealed class SubDomainIntegrationTestHost : IAsyncDisposable
     {
-        private const string ServiceBusConnectionString = "INSERT CORRECT STRING HERE WHEN WE KNOW WHAT IT IS";
-
         private readonly Startup _startup;
 
         private SubDomainIntegrationTestHost()
@@ -36,13 +37,13 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
         public static async Task<SubDomainIntegrationTestHost> InitializeAsync()
         {
             await CosmosTestIntegration.InitializeAsync().ConfigureAwait(false);
-            InitTestServiceBus();
-            
+
             var host = new SubDomainIntegrationTestHost();
 
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddSingleton<IConfiguration>(BuildConfig());
             host._startup.ConfigureServices(serviceCollection);
+            InitTestServiceBus(serviceCollection);
             serviceCollection.BuildServiceProvider().UseSimpleInjector(host._startup.Container, o => o.Container.Options.EnableAutoVerification = false);
 
             return host;
@@ -63,9 +64,12 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
             return new ConfigurationBuilder().AddEnvironmentVariables().Build();
         }
 
-        private static void InitTestServiceBus()
+        private static void InitTestServiceBus(IServiceCollection serviceCollection)
         {
-            Environment.SetEnvironmentVariable("ServiceBusConnectionString", ServiceBusConnectionString);
+            serviceCollection.Replace(new ServiceDescriptor(
+                typeof(ServiceBusClient),
+                typeof(MockedServiceBusClient),
+                ServiceLifetime.Scoped));
         }
     }
 }

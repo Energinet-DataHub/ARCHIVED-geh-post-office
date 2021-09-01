@@ -14,9 +14,12 @@
 
 using System;
 using System.Threading.Tasks;
+using Azure.Messaging.ServiceBus;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator;
+using Energinet.DataHub.PostOffice.IntegrationTests.Common;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 
@@ -40,6 +43,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddSingleton<IConfiguration>(BuildConfig());
             host._startup.ConfigureServices(serviceCollection);
+            InitTestServiceBus(serviceCollection);
             serviceCollection.BuildServiceProvider().UseSimpleInjector(host._startup.Container, o => o.Container.Options.EnableAutoVerification = false);
 
             return host;
@@ -58,6 +62,14 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
         private static IConfigurationRoot BuildConfig()
         {
             return new ConfigurationBuilder().AddEnvironmentVariables().Build();
+        }
+
+        private static void InitTestServiceBus(IServiceCollection serviceCollection)
+        {
+            serviceCollection.Replace(new ServiceDescriptor(
+                typeof(ServiceBusClient),
+                typeof(MockedServiceBusClient),
+                ServiceLifetime.Scoped));
         }
     }
 }
