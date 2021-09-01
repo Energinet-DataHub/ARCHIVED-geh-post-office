@@ -12,7 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Threading.Tasks;
+using Energinet.DataHub.PostOffice.Application.Commands;
+using FluentValidation;
+using Grpc.Core;
+using MediatR;
 using Xunit;
 using Xunit.Categories;
 
@@ -22,12 +27,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
     [IntegrationTest]
     public sealed class PeekIntegrationTests
     {
-        // Peek Validation
-        // Peek First
-        // Peek Second
-        // Peek After Acknowledge
         [Fact]
-        public async Task Peek_Empty_ReturnsNothing()
+        public async Task Peek_InvalidCommand_ThrowsException()
         {
             // Arrange
             await using var host = await MarketOperatorIntegrationTestHost
@@ -35,11 +36,110 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
                 .ConfigureAwait(false);
 
             await using var scope = host.BeginScope();
+            var mediator = scope.GetInstance<IMediator>();
+
+            var peekCommand = new PeekCommand("invalid_recipient");
+
+            // Act + Assert
+            await Assert.ThrowsAsync<ValidationException>(() => mediator.Send(peekCommand)).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task Peek_Empty_ReturnsNothing()
+        {
+            // Arrange
+            var recipientUuid = Guid.NewGuid().ToString();
+            var unrelatedUuid = Guid.NewGuid().ToString();
+
+            await AddDataAvailableNotificationAsync(unrelatedUuid).ConfigureAwait(false);
+
+            await using var host = await MarketOperatorIntegrationTestHost
+                .InitializeAsync()
+                .ConfigureAwait(false);
+
+            await using var scope = host.BeginScope();
+            var mediator = scope.GetInstance<IMediator>();
+
+            var peekCommand = new PeekCommand(recipientUuid);
 
             // Act
+            var response = await mediator.Send(peekCommand).ConfigureAwait(false);
 
             // Assert
-            Assert.NotNull(scope);
+            Assert.NotNull(response);
+            Assert.False(response.HasContent);
+        }
+
+        [Fact]
+        public async Task Peek_SingleNotification_ReturnsData()
+        {
+            // Arrange
+            var recipientUuid = Guid.NewGuid().ToString();
+            await AddDataAvailableNotificationAsync(recipientUuid).ConfigureAwait(false);
+
+            await using var host = await MarketOperatorIntegrationTestHost
+                .InitializeAsync()
+                .ConfigureAwait(false);
+
+            await using var scope = host.BeginScope();
+            var mediator = scope.GetInstance<IMediator>();
+
+            var peekCommand = new PeekCommand(recipientUuid);
+
+            // Act
+            var response = await mediator.Send(peekCommand).ConfigureAwait(false);
+
+            // Assert
+            Assert.NotNull(response);
+            Assert.True(response.HasContent);
+        }
+
+        [Fact]
+        public async Task Peek_SingleNotificationMultiplePeek_ReturnsData()
+        {
+            // Arrange
+            var recipientUuid = Guid.NewGuid().ToString();
+            await AddDataAvailableNotificationAsync(recipientUuid).ConfigureAwait(false);
+
+            await using var host = await MarketOperatorIntegrationTestHost
+                .InitializeAsync()
+                .ConfigureAwait(false);
+
+            await using var scope = host.BeginScope();
+            var mediator = scope.GetInstance<IMediator>();
+
+            var peekCommand = new PeekCommand(recipientUuid);
+
+            // Act
+            var responseA = await mediator.Send(peekCommand).ConfigureAwait(false);
+            var responseB = await mediator.Send(peekCommand).ConfigureAwait(false);
+
+            // Assert
+            Assert.NotNull(responseA);
+            Assert.True(responseA.HasContent);
+            Assert.NotNull(responseB);
+            Assert.True(responseB.HasContent);
+        }
+
+        private static async Task AddDataAvailableNotificationAsync(string recipient)
+        {
+            var dataAvailableUuid = Guid.NewGuid().ToString();
+            var dataAvailableCommand = new DataAvailableNotificationCommand(
+                dataAvailableUuid,
+                recipient,
+                "timeseries",
+                "timeseries",
+                false,
+                1);
+
+            await using var host = await SubDomainIntegrationTestHost
+                .InitializeAsync()
+                .ConfigureAwait(false);
+
+            await using var scope = host.BeginScope();
+            var mediator = scope.GetInstance<IMediator>();
+
+            await mediator.Send(dataAvailableCommand).ConfigureAwait(false);
         }
     }
 }
