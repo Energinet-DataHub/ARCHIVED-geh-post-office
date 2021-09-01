@@ -21,7 +21,6 @@ using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions;
 using Energinet.DataHub.PostOffice.Tests.Common;
 using MediatR;
-using Microsoft.Azure.Functions.Worker.Http;
 using Moq;
 using Xunit;
 using Xunit.Categories;
@@ -39,11 +38,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             // Arrange
             const string expectedData = "expected_data";
 
-            var mockedMediator = new Mock<IMediator>();
             var mockedFunctionContext = new MockedFunctionContext();
-
-            var mockedRequestData = new Mock<HttpRequestData>(mockedFunctionContext.FunctionContext);
-            mockedRequestData.Setup(x => x.Url).Returns(_functionRoute);
+            var mockedRequestData = new MockedHttpRequestData(mockedFunctionContext, _functionRoute);
+            var mockedMediator = new Mock<IMediator>();
 
             mockedMediator
                 .Setup(x => x.Send(It.IsAny<PeekCommand>(), default))
@@ -52,22 +49,22 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             var target = new Peek(mockedMediator.Object);
 
             // Act
-            var response = await target.RunAsync(mockedRequestData.Object, mockedFunctionContext).ConfigureAwait(false);
+            var response = await target.RunAsync(mockedRequestData, mockedFunctionContext).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(expectedData, await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+
+            using var streamReader = new StreamReader(response.Body);
+            Assert.Equal(expectedData, await streamReader.ReadToEndAsync().ConfigureAwait(false));
         }
 
         [Fact]
         public async Task Run_HasNoData_ReturnsStatusNoContent()
         {
             // Arrange
-            var mockedMediator = new Mock<IMediator>();
             var mockedFunctionContext = new MockedFunctionContext();
-
-            var mockedRequestData = new Mock<HttpRequestData>(mockedFunctionContext.FunctionContext);
-            mockedRequestData.Setup(x => x.Url).Returns(_functionRoute);
+            var mockedRequestData = new MockedHttpRequestData(mockedFunctionContext, _functionRoute);
+            var mockedMediator = new Mock<IMediator>();
 
             mockedMediator
                 .Setup(x => x.Send(It.IsAny<PeekCommand>(), default))
@@ -76,7 +73,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             var target = new Peek(mockedMediator.Object);
 
             // Act
-            var response = await target.RunAsync(mockedRequestData.Object, mockedFunctionContext).ConfigureAwait(false);
+            var response = await target.RunAsync(mockedRequestData, mockedFunctionContext).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);

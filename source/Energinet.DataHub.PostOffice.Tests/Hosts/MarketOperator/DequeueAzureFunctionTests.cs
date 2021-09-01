@@ -19,7 +19,6 @@ using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions;
 using Energinet.DataHub.PostOffice.Tests.Common;
 using MediatR;
-using Microsoft.Azure.Functions.Worker.Http;
 using Moq;
 using Xunit;
 using Xunit.Categories;
@@ -35,11 +34,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
         public async Task Run_DidDequeue_ReturnsStatusOk()
         {
             // Arrange
-            var mockedMediator = new Mock<IMediator>();
             var mockedFunctionContext = new MockedFunctionContext();
-
-            var mockedRequestData = new Mock<HttpRequestData>(mockedFunctionContext.FunctionContext);
-            mockedRequestData.Setup(x => x.Url).Returns(_functionRoute);
+            var mockedRequestData = new MockedHttpRequestData(mockedFunctionContext, _functionRoute);
+            var mockedMediator = new Mock<IMediator>();
 
             mockedMediator
                 .Setup(x => x.Send(It.IsAny<DequeueCommand>(), default))
@@ -48,7 +45,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             var target = new Dequeue(mockedMediator.Object);
 
             // Act
-            var response = await target.RunAsync(mockedRequestData.Object, mockedFunctionContext).ConfigureAwait(false);
+            var response = await target.RunAsync(mockedRequestData, mockedFunctionContext).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -58,11 +55,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
         public async Task Run_DidNotDequeue_ReturnsStatusNotFound()
         {
             // Arrange
-            var mockedMediator = new Mock<IMediator>();
             var mockedFunctionContext = new MockedFunctionContext();
-
-            var mockedRequestData = new Mock<HttpRequestData>(mockedFunctionContext.FunctionContext);
-            mockedRequestData.Setup(x => x.Url).Returns(_functionRoute);
+            var mockedRequestData = new MockedHttpRequestData(mockedFunctionContext, _functionRoute);
+            var mockedMediator = new Mock<IMediator>();
 
             mockedMediator
                 .Setup(x => x.Send(It.IsAny<DequeueCommand>(), default))
@@ -71,7 +66,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             var target = new Dequeue(mockedMediator.Object);
 
             // Act
-            var response = await target.RunAsync(mockedRequestData.Object, mockedFunctionContext).ConfigureAwait(false);
+            var response = await target.RunAsync(mockedRequestData, mockedFunctionContext).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
