@@ -13,12 +13,9 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Security.Claims;
 using Energinet.DataHub.PostOffice.Common.Extensions;
-using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Moq;
 using Xunit;
@@ -34,13 +31,14 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Extensions
         {
             // arrange
             using var stream = new MemoryStream();
-            var response = new Mock<MockableHttpResponseData>();
-            var request = new Mock<MockableHttpRequestData>();
-            request.Setup(x => x.CreateResponse())
+            var request = new MockedHttpRequestData(new MockedFunctionContext());
+            var response = request.HttpResponseDataMock;
+            request.HttpRequestDataMock
+                .Setup(x => x.CreateResponse())
                 .Returns(response.Object);
 
             // act
-            request.Object.CreateResponse(stream);
+            request.HttpRequestData.CreateResponse(stream);
 
             // assert
             // ReSharper disable once AccessToDisposedClosure
@@ -56,47 +54,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Extensions
 
             // act, assert
             Assert.Throws<ArgumentNullException>(() => request.CreateResponse(new MemoryStream()));
-        }
-
-        // ReSharper disable once MemberCanBePrivate.Global
-        internal abstract class MockableHttpRequestData : HttpRequestData
-        {
-#pragma warning disable 8618
-            protected MockableHttpRequestData()
-#pragma warning restore 8618
-                : base(new Mock<FunctionContext>().Object)
-            {
-            }
-
-            public override Stream Body => null!;
-            public override HttpHeadersCollection Headers => null!;
-            public override IReadOnlyCollection<IHttpCookie> Cookies => null!;
-            public override Uri Url => null!;
-            public override IEnumerable<ClaimsIdentity> Identities => null!;
-            public override string Method => null!;
-
-            public override HttpResponseData CreateResponse()
-            {
-                throw new NotSupportedException();
-            }
-        }
-
-        // ReSharper disable once MemberCanBePrivate.Global
-        internal abstract class MockableHttpResponseData : HttpResponseData
-        {
-#pragma warning disable 8618
-            protected MockableHttpResponseData()
-#pragma warning restore 8618
-                : base(new Mock<FunctionContext>().Object)
-            {
-            }
-
-            public override HttpStatusCode StatusCode { get; set; }
-            public override HttpHeadersCollection Headers { get; set; }
-            public override Stream Body { get; set; }
-
-            // ReSharper disable once UnassignedGetOnlyAutoProperty
-            public override HttpCookies Cookies { get; }
         }
     }
 }
