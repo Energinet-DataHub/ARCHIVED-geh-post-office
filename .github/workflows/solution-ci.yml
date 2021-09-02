@@ -48,47 +48,6 @@ jobs:
     if: ${{ needs.pre_job.outputs.should_skip != 'true' || github.ref == 'refs/heads/main' }}
     name: solution_ci
     runs-on: windows-latest
-    strategy:
-      matrix:
-        project: [
-          source/Energinet.DataHub.PostOffice.Tests/Energinet.DataHub.PostOffice.Tests.csproj,
-          source/Energinet.DataHub.PostOffice.IntegrationTests/Energinet.DataHub.PostOffice.IntegrationTests.csproj
-        ]
-        
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@master
-
-      - name: Setup .NET 3.1 environment
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '3.1.x'
-
-      - name: Setup .NET ${{ env.DOTNET_VERSION }} environment
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      - name: Setup Azure Cosmos DB Emulator
-        uses: southpolesteve/cosmos-emulator-github-action@v1
-
-      - name: Run tests and collect coverage
-        run: |
-          dotnet tool install --tool-path ./temp/reportgenerator dotnet-reportgenerator-globaltool
-          dotnet test ${{ matrix.project }} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover 
-
-      - name: Upload coverage
-        uses: codecov/codecov-action@v1
-        with:
-          flags: unittests
-          fail_ci_if_error: true
-          verbose: true
-
-  publish:
-    needs: solution_ci
-    if: ${{ needs.pre_job.outputs.should_skip != 'true' || github.ref == 'refs/heads/main' }}
-    name: publish_artifact
-    runs-on: ubuntu-latest
         
     steps:
       - name: Checkout repository
@@ -106,6 +65,21 @@ jobs:
 
       - name: Build solution
         run: dotnet build ${{ env.SOLUTION_FILE_PATH }} --configuration Release --output '${{ github.workspace }}/output'
+
+      - name: Setup Azure Cosmos DB Emulator
+        uses: southpolesteve/cosmos-emulator-github-action@v1
+
+      - name: Run tests and collect coverage
+        run: |
+          dotnet tool install --tool-path ./temp/reportgenerator dotnet-reportgenerator-globaltool
+          dotnet test ${{ env.SOLUTION_FILE_PATH }} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover 
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v1
+        with:
+          flags: unittests
+          fail_ci_if_error: true
+          verbose: true
 
       - name: Publish artifact
         uses: actions/upload-artifact@v2
