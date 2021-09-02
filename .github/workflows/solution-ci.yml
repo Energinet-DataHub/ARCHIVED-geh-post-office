@@ -43,8 +43,31 @@ jobs:
             ".github/workflows/solution-ci.yml"
           ]'
 
-  solution_ci:
+  build:
     needs: pre_job
+    if: ${{ needs.pre_job.outputs.should_skip != 'true' || github.ref == 'refs/heads/main' }}
+    name: Build solution
+    runs-on: ubuntu-latest
+        
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@master
+
+      - name: Setup .NET 3.1 environment
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.1.x'
+
+      - name: Setup .NET ${{ env.DOTNET_VERSION }} environment
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Build solution
+        run: dotnet build ${{ env.SOLUTION_FILE_PATH }} --configuration Release --output '${{ github.workspace }}/output'
+
+  solution_ci:
+    needs: build
     if: ${{ needs.pre_job.outputs.should_skip != 'true' || github.ref == 'refs/heads/main' }}
     name: Solution CI and Code Coverage
     runs-on: windows-latest
@@ -69,9 +92,6 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Build solution
-        run: dotnet build ${{ env.SOLUTION_FILE_PATH }} --configuration Release --output '${{ github.workspace }}/output'
-
       - name: Setup Azure Cosmos DB Emulator
         uses: southpolesteve/cosmos-emulator-github-action@v1
 
@@ -87,6 +107,13 @@ jobs:
           fail_ci_if_error: true
           verbose: true
 
+  publish:
+    needs: solution_ci
+    if: ${{ needs.pre_job.outputs.should_skip != 'true' || github.ref == 'refs/heads/main' }}
+    name: Publish artifact
+    runs-on: ubuntu-latest
+        
+    steps:
       - name: Publish artifact
         uses: actions/upload-artifact@v2
         with:
