@@ -50,7 +50,7 @@ namespace Energinet.DataHub.PostOffice.Common.Extensions
 
             try
             {
-                logger.Log(LogLevel.Information, $"Processing {callerClass}");
+                logger.LogInformation($"Processing {callerClass}");
                 return await worker().ConfigureAwait(false);
             }
 #pragma warning disable CA1031
