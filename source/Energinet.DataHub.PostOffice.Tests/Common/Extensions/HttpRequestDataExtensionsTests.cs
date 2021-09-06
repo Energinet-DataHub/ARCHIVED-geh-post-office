@@ -67,7 +67,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Extensions
             const string? responseData = "Some data";
 
             // act
-            var actual = await request.ProcessAsync(() => Task.FromResult(request.CreateResponse(new MemoryStream(Encoding.UTF8.GetBytes(responseData))))).ConfigureAwait(false);
+            var actual = await request.ProcessAsync(() => Task.FromResult(request.CreateResponse(
+                new MemoryStream(Encoding.UTF8.GetBytes(responseData))))).ConfigureAwait(false);
             var actualResponseMessage = Encoding.UTF8.GetString(((MemoryStream)actual.Body).ToArray());
 
             // assert
