@@ -115,5 +115,25 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Extensions
             Assert.Equal(HttpStatusCode.BadRequest, actual.StatusCode);
             Assert.Contains(validationErrorMessage, actualResponseMessage, StringComparison.OrdinalIgnoreCase);
         }
+
+        [Fact]
+        public async Task ProcessAsync_SourceIsNull_Throws()
+        {
+            // arrange, act, assert
+            await Assert.ThrowsAsync<ArgumentNullException>(() =>
+                ((HttpRequestData)null!).ProcessAsync(() =>
+                    Task.FromResult(new MockedHttpRequestData(new MockedFunctionContext()).HttpResponseData))).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task ProcessAsync_WorkerIsNull_Throws()
+        {
+            // arrange
+            var mockedHttpRequestData = new MockedHttpRequestData(new MockedFunctionContext());
+
+            // act, assert
+            await Assert.ThrowsAsync<ArgumentNullException>(() =>
+                mockedHttpRequestData.HttpRequestData.ProcessAsync(null!)).ConfigureAwait(false);
+        }
     }
 }
