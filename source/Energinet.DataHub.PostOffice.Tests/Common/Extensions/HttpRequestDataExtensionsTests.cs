@@ -19,6 +19,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Common.Extensions;
 using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.Azure.Functions.Worker.Http;
 using Moq;
 using Xunit;
@@ -102,12 +103,12 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Extensions
         {
             // arrange
             var request = new MockedHttpRequestData(new MockedFunctionContext()).HttpRequestData;
-            const string? validationErrorMessage = "Something's not right";
+            const string? validationErrorMessage = "Something is not right";
 
             // act
             var actual = await request.ProcessAsync(async () =>
             {
-                await Task.FromException(new ValidationException(validationErrorMessage)).ConfigureAwait(false);
+                await Task.FromException(new ValidationException(string.Empty, new[] { new ValidationFailure("propertyName", validationErrorMessage) })).ConfigureAwait(false);
                 return request.CreateResponse(HttpStatusCode.OK);
             }).ConfigureAwait(false);
             var actualResponseMessage = Encoding.UTF8.GetString(((MemoryStream)actual.Body).ToArray());

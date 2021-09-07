@@ -16,9 +16,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
-using FluentValidation;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
@@ -57,18 +55,9 @@ namespace Energinet.DataHub.PostOffice.Common.Extensions
             catch (Exception e)
 #pragma warning restore CA1031
             {
-                logger.LogError(e, "An error occurred while processing request");
-                return e switch
-                {
-                    ValidationException => request.CreateResponse($"A validation error occurred while processing {callerClass}: {e.Message}", HttpStatusCode.BadRequest),
-                    _ => request.CreateResponse($"An error occured while processing {callerClass}", HttpStatusCode.InternalServerError)
-                };
+                e.Log(logger);
+                return e.AsHttpResponseData(request);
             }
-        }
-
-        private static HttpResponseData CreateResponse(this HttpRequestData source, string message, HttpStatusCode statusCode)
-        {
-            return source.CreateResponse(new MemoryStream(Encoding.UTF8.GetBytes(message)), statusCode);
         }
     }
 }
