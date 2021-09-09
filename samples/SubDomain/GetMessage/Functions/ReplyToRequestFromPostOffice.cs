@@ -107,13 +107,13 @@ namespace GetMessage.Functions
 
         private async Task<DatasetReply> CreateSuccessResponse(RequestDataset requestData)
         {
-            var ressourceUrl = await SaveDataToBlobStorageAsync(requestData).ConfigureAwait(false);
+            var resourceUrl = await SaveDataToBlobStorageAsync(requestData).ConfigureAwait(false);
 
             var proto = new DatasetReply()
             {
                 Success = new DatasetReply.Types.FileResource()
                 {
-                    Uri = ressourceUrl.AbsoluteUri,
+                    Uri = resourceUrl.AbsoluteUri,
                 }
             };
             proto.Success.UUID.AddRange(requestData.UUID);
@@ -122,9 +122,9 @@ namespace GetMessage.Functions
 
         private async Task<Uri> SaveDataToBlobStorageAsync(RequestDataset requestData)
         {
-            var blobName = $"blob-ressource-{Environment.GetEnvironmentVariable("QueueListenerName")}-{DateTime.UtcNow:yyyy-MM-dd-HH-mm-ss-ff}.txt";
-            var data = $"<data>{blobName}</data>";
-            var blobUri = await _blobStorageController.CreateBlobRessourceAsync(blobName, new BinaryData(data)).ConfigureAwait(false);
+            var blobName = $"blob-resource-{Environment.GetEnvironmentVariable("QueueListenerName")}-{DateTime.UtcNow:yyyy-MM-dd-HH-mm-ss-ff}.txt";
+            var data = $"<data><uuid>{requestData.UUID}<uuid><blobname>{blobName}</blobname></data>";
+            var blobUri = await _blobStorageController.CreateBlobResourceAsync(blobName, new BinaryData(data)).ConfigureAwait(false);
             return blobUri;
         }
     }
