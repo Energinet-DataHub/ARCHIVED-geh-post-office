@@ -23,7 +23,7 @@ on:
   workflow_dispatch: {}
 
 env:
-  SOLUTION_FILE_PATH: 'source/Energinet.DataHub.PostOffice.sln'
+  SOLUTION_FILE_PATH: 'source/Energinet.DataHub.PostOffice.Libraries.sln'
   DOTNET_VERSION: '5.0'
   
 jobs:
@@ -39,7 +39,7 @@ jobs:
           github_token: ${{ github.token }}
           paths: '[
             "source/**",
-            ".github/workflows/solution-ci.yml"
+            ".github/workflows/package-ci.yml"
           ]'
 
   solution_ci:
@@ -64,9 +64,6 @@ jobs:
 
       - name: Build solution
         run: dotnet build ${{ env.SOLUTION_FILE_PATH }} --configuration Release --output '${{ github.workspace }}/output'
-
-      - name: Setup Azure Cosmos DB Emulator
-        uses: southpolesteve/cosmos-emulator-github-action@v1
 
       - name: Run tests and collect coverage
         run: |
