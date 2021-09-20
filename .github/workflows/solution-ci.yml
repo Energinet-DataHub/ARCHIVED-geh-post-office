@@ -23,7 +23,7 @@ on:
   workflow_dispatch: {}
 
 env:
-  SOLUTION_FILE_PATH: 'source/Energinet.DataHub.PostOffice.sln'
+  SOLUTION_GLOB_PATH: 'source/Energinet.DataHub.*.sln'
   DOTNET_VERSION: '5.0'
   
 jobs:
@@ -39,7 +39,6 @@ jobs:
           github_token: ${{ github.token }}
           paths: '[
             "source/**",
-            "Energinet.DataHub.PostOffice.sln",
             ".github/workflows/solution-ci.yml"
           ]'
 
@@ -64,7 +63,7 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Build solution
-        run: dotnet build ${{ env.SOLUTION_FILE_PATH }} --configuration Release --output '${{ github.workspace }}/output'
+        run: dotnet build ${{ env.SOLUTION_GLOB_PATH }} --configuration Release --output '${{ github.workspace }}/output'
 
       - name: Setup Azure Cosmos DB Emulator
         uses: southpolesteve/cosmos-emulator-github-action@v1
@@ -72,7 +71,7 @@ jobs:
       - name: Run tests and collect coverage
         run: |
           dotnet tool install --tool-path ./temp/reportgenerator dotnet-reportgenerator-globaltool
-          dotnet test ${{ env.SOLUTION_FILE_PATH }} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+          dotnet test ${{ env.SOLUTION_GLOB_PATH }} --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
       - name: Upload coverage
         uses: codecov/codecov-action@v1
