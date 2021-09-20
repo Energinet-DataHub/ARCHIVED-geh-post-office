@@ -33,22 +33,15 @@ limitations under the License.
     <Company>Energinet-DataHub</Company>
     <Authors>Titans</Authors>
     <RepositoryUrl>https://github.com/Energinet-DataHub/geh-post-office</RepositoryUrl>
-    <!-- PackageReleaseNotes:
-      Is shown in Azure DevOps artifacts Release Notes section.
-    -->
     <PackageReleaseNotes>
       [Release Notes](https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/PostOffice.Communicator/documents/release-notes/release-notes.md)
       [Documentation](https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/PostOffice.Communicator/documents/documentation.md)
     </PackageReleaseNotes>
-    <!-- PackageDescription:
-      Is shown in GitHub packages "About this package" section,
-      and in Visual Studio package manager view.
-    -->
     <PackageDescription>
       [Release Notes](https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/PostOffice.Communicator/documents/release-notes/release-notes.md)
       [Documentation](https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/PostOffice.Communicator/documents/documentation.md)
     </PackageDescription>
-    <Description>Library to demonstrate the use of NuGet packages in Green Energy Hub (abstractions).</Description>
+    <Description>Library containing communication API for GreenEnergyHub.PostOffice</Description>
     <PackageTags>geh;library</PackageTags>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
@@ -57,8 +50,6 @@ limitations under the License.
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-    <!-- Disable warning on your public types/methods for not having added full documentation tags -->
-    <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 
   <!-- Enable Source Link (https://github.com/dotnet/sourcelink/blob/master/README.md) -->
