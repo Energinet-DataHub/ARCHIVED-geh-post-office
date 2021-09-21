@@ -12,25 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using SimpleInjector;
-
-namespace Energinet.DataHub.PostOffice.Common.SimpleInjector
+namespace GreenEnergyHub.PostOffice.Communicator
 {
-    public class SimpleInjectorServiceProviderAdapter : IServiceProvider
+    public class DummyService
     {
-        private readonly Container _container;
-
-        public SimpleInjectorServiceProviderAdapter(Container container)
+        public int DummyTestValue()
         {
-            _container = container;
-        }
-
-        public object GetService(Type serviceType)
-        {
-            if (serviceType == null) throw new ArgumentNullException(nameof(serviceType));
-
-            return _container.GetInstance(serviceType);
+            return GetHashCode();
         }
     }
 }

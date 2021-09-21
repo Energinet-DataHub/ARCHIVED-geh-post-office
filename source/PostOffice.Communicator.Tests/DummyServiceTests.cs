@@ -12,25 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using SimpleInjector;
+using GreenEnergyHub.PostOffice.Communicator;
+using Xunit;
+using Xunit.Categories;
 
-namespace Energinet.DataHub.PostOffice.Common.SimpleInjector
+namespace PostOffice.Communicator.Tests
 {
-    public class SimpleInjectorServiceProviderAdapter : IServiceProvider
+    [UnitTest]
+    public class DummyServiceTests
     {
-        private readonly Container _container;
-
-        public SimpleInjectorServiceProviderAdapter(Container container)
+        [Fact]
+        public void DummyTestValue_Test_ReturnsHashCode()
         {
-            _container = container;
-        }
+            // Arrange
+            var obj = new DummyService();
 
-        public object GetService(Type serviceType)
-        {
-            if (serviceType == null) throw new ArgumentNullException(nameof(serviceType));
+            // Act
+            var actual = obj.DummyTestValue();
 
-            return _container.GetInstance(serviceType);
+            // Assert
+            Assert.Equal(obj.GetHashCode(), actual);
         }
     }
 }
