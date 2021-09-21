@@ -22,9 +22,9 @@ module "stor_marketoperator_response" {
   tags                      = data.azurerm_resource_group.postoffice.tags
 }
 
-module "container_response_reply" {
+module "container_postoffice_reply" {
   source                = "git::https://github.com/Energinet-DataHub/geh-terraform-modules.git//storage-container?ref=1.8.0"
-  container_name        = "response-blobstorage"
+  container_name        = "postoffice-blobstorage"
   storage_account_name  = module.stor_marketoperator_response.name
   container_access_type = "private"
   dependencies          = [
@@ -34,7 +34,7 @@ module "container_response_reply" {
 
 module "container_timeseries_reply" {
   source                = "git::https://github.com/Energinet-DataHub/geh-terraform-modules.git//storage-container?ref=1.8.0"
-  container_name        = "timeseries-response-blobstorage"
+  container_name        = "timeseries-postoffice-blobstorage"
   storage_account_name  = module.stor_marketoperator_response.name
   container_access_type = "private"
   dependencies          = [
@@ -44,7 +44,7 @@ module "container_timeseries_reply" {
 
 module "container_changes_reply" {
   source                = "git::https://github.com/Energinet-DataHub/geh-terraform-modules.git//storage-container?ref=1.8.0"
-  container_name        = "charges-response-blobstorage"
+  container_name        = "charges-postoffice-blobstorage"
   storage_account_name  = module.stor_marketoperator_response.name
   container_access_type = "private"
   dependencies          = [
@@ -54,7 +54,7 @@ module "container_changes_reply" {
 
 module "container_marketroles_reply" {
   source                = "git::https://github.com/Energinet-DataHub/geh-terraform-modules.git//storage-container?ref=1.8.0"
-  container_name        = "marketroles-response-blobstorage"
+  container_name        = "marketroles-postoffice-blobstorage"
   storage_account_name  = module.stor_marketoperator_response.name
   container_access_type = "private"
   dependencies          = [
@@ -64,7 +64,7 @@ module "container_marketroles_reply" {
 
 module "container_aggregations_reply" {
   source                = "git::https://github.com/Energinet-DataHub/geh-terraform-modules.git//storage-container?ref=1.8.0"
-  container_name        = "aggregations-response-blobstorage"
+  container_name        = "aggregations-postoffice-blobstorage"
   storage_account_name  = module.stor_marketoperator_response.name
   container_access_type = "private"
   dependencies          = [
@@ -74,7 +74,7 @@ module "container_aggregations_reply" {
 
 module "container_meteringpoint_reply" {
   source                = "git::https://github.com/Energinet-DataHub/geh-terraform-modules.git//storage-container?ref=1.8.0"
-  container_name        = "meteringpoint-response-blobstorage"
+  container_name        = "meteringpoint-postoffice-blobstorage"
   storage_account_name  = module.stor_marketoperator_response.name
   container_access_type = "private"
   dependencies          = [

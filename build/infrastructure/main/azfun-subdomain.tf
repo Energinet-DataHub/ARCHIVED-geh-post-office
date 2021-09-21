@@ -28,10 +28,11 @@ module "azfun_dataavailable" {
     WEBSITES_ENABLE_APP_SERVICE_STORAGE               = true
     FUNCTIONS_WORKER_RUNTIME                          = "dotnet-isolated"
     # Endregion
-    DATAAVAILABLE_DB_CONNECTION_STRING                = local.message_db_connection_string,
-    DATAAVAILABLE_DB_NAME                             = azurerm_cosmosdb_sql_database.db.name,
-    SUBDOMAIN_DATAAVAILABLE_QUEUE_CONNECTION_STRING   = module.sbnar_subdomain_listener.primary_connection_string
-    SUBDOMAIN_DATAAVAILABLE_QUEUE_NAME                = module.sbq_dataavailable.name
+    MESSAGES_DB_CONNECTION_STRING                     = local.message_db_connection_string,
+    MESSAGES_DB_NAME                                  = azurerm_cosmosdb_sql_database.db.name,
+    DATAAVAILABLE_QUEUE_CONNECTION_STRING             = module.sbnar_subdomain_listener.primary_connection_string
+    DATAAVAILABLE_QUEUE_NAME                          = module.sbq_dataavailable.name
+    ServiceBusConnectionString                        = module.sbnar_subdomain_listener.primary_connection_string
   }
   dependencies                              = [
     module.appi_postoffice.dependent_on,

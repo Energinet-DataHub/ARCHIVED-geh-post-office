@@ -28,3 +28,12 @@ module "sbnar_subdomain_listener" {
   listen                    = true
   dependencies              = [module.sbn_subdomain]
 }
+
+module "sbnar_subdomain_sender" {
+  source                    = "git::https://github.com/Energinet-DataHub/geh-terraform-modules.git//service-bus-namespace-auth-rule?ref=1.8.0"
+  name                      = "sbnar-subdomain-sender"
+  namespace_name            = module.sbn_subdomain.name
+  resource_group_name       = data.azurerm_resource_group.postoffice.name
+  send                    = true
+  dependencies              = [module.sbn_subdomain]
+}
