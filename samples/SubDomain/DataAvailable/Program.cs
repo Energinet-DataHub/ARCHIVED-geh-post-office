@@ -40,7 +40,7 @@ namespace DataAvailableNotification
 
                 var msgDto = CreateDto(origin ?? SubDomainOrigin.TimeSeries, messageType, recipient);
 
-                await dataAvailableNotificationSender.SendAsync(msgDto);
+                await dataAvailableNotificationSender.SendAsync(msgDto).ConfigureAwait(false);
             }
 
             Console.WriteLine($"A batch of messages has been published to the queue.");
