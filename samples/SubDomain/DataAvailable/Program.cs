@@ -34,13 +34,13 @@ namespace DataAvailableNotification
 
             for (var i = 0; i < interval; i++)
             {
-                if (i + 1 < interval) Thread.Sleep(5000);
-
                 var dataAvailableNotificationSender = new DataAvailableNotificationSender(connectionString);
 
                 var msgDto = CreateDto(origin ?? SubDomainOrigin.TimeSeries, messageType, recipient);
 
                 await dataAvailableNotificationSender.SendAsync(msgDto).ConfigureAwait(false);
+
+                if (i + 1 < interval) Thread.Sleep(5000);
             }
 
             Console.WriteLine($"A batch of messages has been published to the queue.");
