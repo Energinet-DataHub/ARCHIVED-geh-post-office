@@ -46,7 +46,6 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
                 .CreateContainerIfNotExistsAsync("bundles", "/pk")
                 .ConfigureAwait(true);
 
-            // TODO: Where do we put this?
             var singleBundleViolationTrigger = new TriggerProperties
             {
                 Id = "EnsureSingleUnacknowledgedBundle",
