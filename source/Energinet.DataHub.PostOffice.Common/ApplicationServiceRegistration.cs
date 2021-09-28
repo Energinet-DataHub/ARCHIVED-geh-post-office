@@ -33,9 +33,21 @@ namespace Energinet.DataHub.PostOffice.Common
             container.Register<IRequestBundleParser, RequestBundleParser>(Lifestyle.Singleton);
             container.Register<IResponseBundleParser, ResponseBundleParser>(Lifestyle.Singleton);
 
+            container.Register<IDataBundleRequestSender, DataBundleRequestSender>(Lifestyle.Singleton);
+
             // TODO: This should not be scoped. We need to change this to Singleton, but currently there is a limitation
             // in SimpleInjector when using IAsyncDisposable.
-            container.Register<IDataBundleRequestSender, DataBundleRequestSender>(Lifestyle.Scoped);
+            //container.Register<IDataBundleRequestSender>(
+            //    () =>
+            //    {
+            //        var dataBundleRequestSender = new DataBundleRequestSender(new RequestBundleParser(), new ResponseBundleParser(), container.GetInstance<IServiceBusClientFactory>());
+            //        dataBundleRequestSender.OnDispose = () =>
+            //        {
+            //            new object().GetHashCode();
+            //        };
+            //        return dataBundleRequestSender;
+            //    },
+            //    Lifestyle.Singleton);
         }
     }
 }
