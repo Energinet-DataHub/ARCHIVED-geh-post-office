@@ -45,13 +45,11 @@ namespace PostOffice.Communicator.Tests.Peek
         }
 
         [Fact]
-        public void Parse_BytesInvalidValid_Throws_Exception()
+        public void Parse_BytesInvalid_Throws_Exception()
         {
             // arrange
             var target = new RequestBundleParser();
-            var rnd = new Random();
-            var corruptBytes = new byte[10];
-            rnd.NextBytes(corruptBytes);
+            var corruptBytes = new byte[] { 1, 2, 3 };
 
             // act, assert
             Assert.Throws<PostOfficeCommunicatorException>(() => target.Parse(corruptBytes));

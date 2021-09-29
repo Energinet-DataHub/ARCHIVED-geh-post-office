@@ -38,12 +38,12 @@ namespace GreenEnergyHub.PostOffice.Communicator.Dequeue
                 throw new ArgumentNullException(nameof(dequeueNotificationDto));
 
             _serviceBusClient ??= _serviceBusClientFactory.Create();
-            await using var sender = _serviceBusClient.CreateSender($"sbq-{domainOrigin.ToString()}-dequeue");
+            await using var sender = _serviceBusClient.CreateSender($"sbq-{domainOrigin}-dequeue");
 
             var contract = new DequeueContract()
             {
                 DataAvailableIds = { dequeueNotificationDto.DataAvailableNotificationIds },
-                Recipient = dequeueNotificationDto.Recipient
+                Recipient = dequeueNotificationDto.GlobalLocationNumber.Value
             };
 
             var dequeueMessage = new ServiceBusMessage(new BinaryData(contract.ToByteArray()));

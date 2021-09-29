@@ -14,7 +14,6 @@
 
 using System;
 using System.Threading.Tasks;
-using Azure.Messaging.ServiceBus;
 using GreenEnergyHub.PostOffice.Communicator.Dequeue;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
@@ -43,8 +42,8 @@ namespace GetMessage.Functions
 
             try
             {
-                var (datasetIds, recipient) = _dequeueNotificationParser.Receive(dequeueNotification);
-                logger.LogInformation($"Dequeue received for {recipient} with notification Ids: {string.Join(",", datasetIds)}");
+                var (dataAvailableNotificationIds, recipient) = _dequeueNotificationParser.Parse(dequeueNotification);
+                logger.LogInformation($"Dequeue received for {recipient} with notification Ids: {string.Join(",", dataAvailableNotificationIds)}");
             }
             catch (Exception e)
             {

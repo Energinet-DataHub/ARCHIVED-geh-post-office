@@ -12,6 +12,8 @@
 // // See the License for the specific language governing permissions and
 // // limitations under the License.
 
+using System;
+using System.Linq;
 using Google.Protobuf;
 using GreenEnergyHub.PostOffice.Communicator.Contracts;
 using GreenEnergyHub.PostOffice.Communicator.Exceptions;
@@ -28,12 +30,25 @@ namespace GreenEnergyHub.PostOffice.Communicator.Dequeue
                 var dequeueContract = DequeueContract.Parser.ParseFrom(dequeueNotificationContract);
                 return new DequeueNotificationDto(
                     dequeueContract.DataAvailableIds,
-                    dequeueContract.Recipient);
+                    new GlobalLocationNumber(dequeueContract.Recipient));
             }
             catch (InvalidProtocolBufferException e)
             {
                 throw new PostOfficeCommunicatorException("Error parsing bytes for dequeue", e);
             }
+        }
+
+        public byte[] Parse(DequeueNotificationDto dequeueNotificationDto)
+        {
+            if (dequeueNotificationDto == null)
+                throw new ArgumentNullException(nameof(dequeueNotificationDto));
+
+            var message = new DequeueContract()
+            {
+                Recipient = dequeueNotificationDto.GlobalLocationNumber.Value,
+                DataAvailableIds = { dequeueNotificationDto.DataAvailableNotificationIds }
+            };
+            return message.ToByteArray();
         }
     }
 }
