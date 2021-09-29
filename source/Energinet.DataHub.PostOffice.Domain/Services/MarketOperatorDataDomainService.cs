@@ -39,7 +39,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
             _weightCalculatorDomainService = weightCalculatorDomainService;
         }
 
-        public async Task<Bundle?> GetNextUnacknowledgedAsync(MarketOperator recipient)
+        public async Task<Bundle?> GetNextUnacknowledgedAsync(MarketOperator recipient, Uuid bundleId)
         {
             var existingBundle = await _bundleRepository.GetNextUnacknowledgedAsync(recipient).ConfigureAwait(false);
             if (existingBundle != null)
@@ -50,9 +50,10 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
                 return null; // No new data.
 
             var newBundle = await CreateNextBundleAsync(
-                    dataAvailableNotification.Recipient,
-                    dataAvailableNotification.Origin,
-                    dataAvailableNotification.ContentType).ConfigureAwait(false);
+                bundleId,
+                dataAvailableNotification.Recipient,
+                dataAvailableNotification.Origin,
+                dataAvailableNotification.ContentType).ConfigureAwait(false);
 
             if (await _bundleRepository.TryAddNextUnacknowledgedAsync(newBundle).ConfigureAwait(false))
                 return await AskSubDomainForContentAsync(newBundle).ConfigureAwait(false);
@@ -90,6 +91,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         }
 
         private async Task<Bundle> CreateNextBundleAsync(
+            Uuid bundleUuid,
             MarketOperator recipient,
             DomainOrigin domainOrigin,
             ContentType contentType)
@@ -104,9 +106,8 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
                 .Select(x => x.NotificationId)
                 .ToList();
 
-            var bundleId = new Uuid(Guid.NewGuid());
             return new Bundle(
-                bundleId,
+                bundleUuid,
                 domainOrigin,
                 recipient,
                 notificationIds);

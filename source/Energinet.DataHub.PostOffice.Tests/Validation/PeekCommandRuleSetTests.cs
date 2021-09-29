@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Application.Commands;
@@ -35,7 +36,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation
             const string propertyName = nameof(PeekCommand.Recipient);
 
             var target = new PeekCommandRuleSet();
-            var command = new PeekCommand(value);
+            var command = new PeekCommand(value, Guid.NewGuid().ToString());
 
             // Act
             var result = await target.ValidateAsync(command).ConfigureAwait(false);

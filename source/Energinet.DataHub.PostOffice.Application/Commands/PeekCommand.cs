@@ -16,5 +16,5 @@ using MediatR;
 
 namespace Energinet.DataHub.PostOffice.Application.Commands
 {
-    public record PeekCommand(string Recipient) : IRequest<PeekResponse>;
+    public record PeekCommand(string Recipient, string BundleId) : IRequest<PeekResponse>;
 }
