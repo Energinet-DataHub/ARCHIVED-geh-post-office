@@ -106,7 +106,7 @@ namespace PostOffice.Communicator.Tests.Peek
                     FailureDescription = "error",
                     Reason = DataBundleResponseErrorReason.DatasetNotAvailable
                 },
-                new List<string> { "1", "2", "3" });
+                new[] { Guid.NewGuid(), Guid.NewGuid() });
 
             // act
             var actual = target.Parse(valid);
