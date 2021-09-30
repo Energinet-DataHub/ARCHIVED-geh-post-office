@@ -87,7 +87,7 @@ namespace PostOffice.Communicator.Tests.Peek
             var target = new ResponseBundleParser();
             var valid = new RequestDataBundleResponseDto(
                 new Uri("https://test.test.dk"),
-                new List<string>() { "1", "2", "3" });
+                new List<string> { "1", "2", "3" });
 
             // act
             var actual = target.Parse(valid);

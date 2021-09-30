@@ -13,7 +13,6 @@
 // // limitations under the License.
 
 using System;
-using System.Linq;
 using Google.Protobuf;
 using GreenEnergyHub.PostOffice.Communicator.Contracts;
 using GreenEnergyHub.PostOffice.Communicator.Exceptions;
@@ -43,7 +42,7 @@ namespace GreenEnergyHub.PostOffice.Communicator.Dequeue
             if (dequeueNotificationDto == null)
                 throw new ArgumentNullException(nameof(dequeueNotificationDto));
 
-            var message = new DequeueContract()
+            var message = new DequeueContract
             {
                 Recipient = dequeueNotificationDto.GlobalLocationNumber.Value,
                 DataAvailableIds = { dequeueNotificationDto.DataAvailableNotificationIds }
