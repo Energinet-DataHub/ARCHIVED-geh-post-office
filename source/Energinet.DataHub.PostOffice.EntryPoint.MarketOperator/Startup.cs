@@ -14,7 +14,6 @@
 
 using Energinet.DataHub.PostOffice.Common;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions;
-using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
 
 namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
@@ -25,10 +24,6 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
         {
             container.Register<Peek>(Lifestyle.Scoped);
             container.Register<Dequeue>(Lifestyle.Scoped);
-        }
-
-        protected override void Configure(IServiceCollection serviceCollection)
-        {
         }
     }
 }

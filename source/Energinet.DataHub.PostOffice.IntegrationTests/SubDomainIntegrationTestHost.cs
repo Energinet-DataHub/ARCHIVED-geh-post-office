@@ -21,7 +21,6 @@ using Energinet.DataHub.PostOffice.IntegrationTests.Common;
 using GreenEnergyHub.PostOffice.Communicator.Factories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 
@@ -45,9 +44,10 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddSingleton<IConfiguration>(BuildConfig());
             host._startup.ConfigureServices(serviceCollection);
-            InitTestServiceBus(serviceCollection);
             serviceCollection.BuildServiceProvider().UseSimpleInjector(host._startup.Container, o => o.Container.Options.EnableAutoVerification = false);
+            host._startup.Container.Options.AllowOverridingRegistrations = true;
             InitTestBlobStorage(host._startup.Container);
+            InitTestServiceBus(host._startup.Container);
 
             return host;
         }
@@ -69,21 +69,13 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
 
         private static void InitTestBlobStorage(Container container)
         {
-            container.Options.AllowOverridingRegistrations = true;
             container.Register<IMarketOperatorDataStorageService, MockedMarketOperatorDataStorageService>(Lifestyle.Scoped);
         }
 
-        private static void InitTestServiceBus(IServiceCollection serviceCollection)
+        private static void InitTestServiceBus(Container container)
         {
-            serviceCollection.Replace(new ServiceDescriptor(
-                typeof(ServiceBusClient),
-                typeof(MockedServiceBusClient),
-                ServiceLifetime.Scoped));
-
-            serviceCollection.Replace(new ServiceDescriptor(
-                typeof(IServiceBusClientFactory),
-                typeof(MockedServiceBusClientFactory),
-                ServiceLifetime.Scoped));
+            container.Register<ServiceBusClient, MockedServiceBusClient>(Lifestyle.Scoped);
+            container.Register<IServiceBusClientFactory, MockedServiceBusClientFactory>(Lifestyle.Singleton);
         }
     }
 }
