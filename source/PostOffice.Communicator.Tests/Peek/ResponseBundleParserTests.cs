@@ -73,9 +73,7 @@ namespace PostOffice.Communicator.Tests.Peek
         {
             // arrange
             var target = new ResponseBundleParser();
-            var rnd = new Random();
-            var corruptBytes = new byte[10];
-            rnd.NextBytes(corruptBytes);
+            var corruptBytes = new byte[] { 1, 2, 3 };
 
             // act, assert
             Assert.Throws<PostOfficeCommunicatorException>(() => target.Parse(corruptBytes));
@@ -89,6 +87,26 @@ namespace PostOffice.Communicator.Tests.Peek
             var valid = new RequestDataBundleResponseDto(
                 new Uri("https://test.test.dk"),
                 new[] { Guid.NewGuid(), Guid.NewGuid() });
+
+            // act
+            var actual = target.Parse(valid);
+
+            // assert
+            Assert.NotNull(actual);
+        }
+
+        [Fact]
+        public void Parse_ValidError_ReturnsBytes()
+        {
+            // arrange
+            var target = new ResponseBundleParser();
+            var valid = new RequestDataBundleResponseDto(
+                new DataBundleResponseError
+                {
+                    FailureDescription = "error",
+                    Reason = DataBundleResponseErrorReason.DatasetNotAvailable
+                },
+                new List<string> { "1", "2", "3" });
 
             // act
             var actual = target.Parse(valid);

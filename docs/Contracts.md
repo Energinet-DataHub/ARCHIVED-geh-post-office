@@ -7,11 +7,15 @@ All other users should skip the first section and only read section two where Pr
 ## Table of Contents
 
 - [.NET users](#.NETusers)
-    - [DataAvailableNotificationDto](#DataAvailableNotificationDto)
-    - [DataBundleRequestDto](#DataBundleRequestDto)
-    - [DataBundleResponseDto](#DataBundleResponseDto)
+    - [DataAvailableNotificationDto](#.DataAvailableNotificationDto)
+    - [DataBundleRequestDto](#.DataBundleRequestDto)
+    - [DataBundleResponseDto](#.DataBundleResponseDto)
+    - [DequeueNotificationDto](#.DequeueNotificationDto)
 - [Other users](#.OtherUsers)
-    - [DataAvailableNotificationContract.proto](#DataAvailableNotificationContract.proto)
+    - [DataAvailableNotificationContract.proto](#.DataAvailableNotificationContract.proto)
+    - [RequestBundleRequest.proto](#.RequestBundleRequest.proto)
+    - [RequestBundleResponse.proto](#.RequestBundleResponse.proto)
+    - [DequeueContract.proto](#.DequeueContract.proto)
 
 <a name=".NETusers"></a>
 
@@ -21,7 +25,7 @@ Here, all the contracts (DTO's) are described.
 
 To get the nuget package, search for 'GreenEnergyHub.PostOffice.Communicator' from nuget.org.
 
-<hr>
+<br>
 
 <a name=".DataAvailableNotificationDto"></a>
 
@@ -29,14 +33,14 @@ To get the nuget package, search for 'GreenEnergyHub.PostOffice.Communicator' fr
 
 | Field | Type | Label | Description | Limits |
 | ----- | ---- | ----- | ----------- | ------ |
-| Uuid | Guid | required | Identifier for the Data Available Notification sent from the sub domain | Must be a valid Guid |
-| GlobalLocationNumber | GlobalLocationNumber | required | The Market Operator to receive the data | Must be a known GLN number |
-| MessageType | MessageType | required | The RSM type the Data Available Notification consists of | Must be a known RSM type |
+| Uuid | Guid | required | Unique dataset identification | Must be a valid Guid |
+| GlobalLocationNumber | GlobalLocationNumber | required | Market Operator to receive dataset | Must be a known GLN number |
+| MessageType | MessageType | required | Message RSM type | Must be a known RSM type |
 | Origin | enum | required | The sub domain which sends the Data Available Notification | Must be a known sub domain within DataHub/GreenEnergyHub |
-| SupportsBundling | bool | required | Flag to indicate whether or not the data in the Data Available Notification can be bundled | N/A |
-| RelativeWeight | int | required | The weight of the data | Must be a number between 0 and 2147483647 (Int32.MaxValue) |
+| SupportsBundling | bool | required | Flag to indicate if message is capable of being bundled with similar messages | N/A |
+| RelativeWeight | int | required | The relative weight of the dataset | Must be a number between 0 and 2147483647 (Int32.MaxValue) |
 
-<hr>
+<br>
 
 <a name=".DataBundleRequestDto"></a>
 
@@ -47,7 +51,7 @@ To get the nuget package, search for 'GreenEnergyHub.PostOffice.Communicator' fr
 | IdempotencyId | string | required | An Id for sub domains to check whether or not it has received the same message multiple times | None at the moment |
 | DataAvailableNotificationIds | IEnumerable<string> | required | One or multiple Id's to identify requested data bundle | None at the moment |
   
-<hr>
+<br>
   
 <a name=".DataBundleResponseDto"></a>
 
@@ -58,9 +62,9 @@ To get the nuget package, search for 'GreenEnergyHub.PostOffice.Communicator' fr
 | DataAvailableNotificationIds | IEnumerable<string> | required | One or multiple Id's to identify requested data bundle | None at the moment |
 | ContentUri | Uri | optional | Uri to get requested data | Must be a valid Uri to data storage |
 | IsErrorResponse | bool | required | Flag to indicate if response is error | N/A |
-| ResponseError | DataBundleResponseError | optional | One or multiple Id's to identify requested data bundle | Must be a DataBundleResponseError available type |
+| ResponseError | DataBundleResponseError | optional | One or multiple Id's to identify requested data bundle | N/A |
 
-<hr>
+<br>
 
 <a name=".DequeueNotificationDto"></a>
 
@@ -71,44 +75,93 @@ To get the nuget package, search for 'GreenEnergyHub.PostOffice.Communicator' fr
 | DataAvailableNotificationIds | ICollection<string> | required | One or multiple Id's to identify data to dequeue | None at the moment |
 | GlobalLocationNumber | GlobalLocationNumber | required | The Market Operator to receive the data | Must be a known GLN number |
 
+<br>
+<br>
+    
 <hr>
-
+    
 <a name=".OtherUsers"></a>
-
+    
 ## Other users
-
-TODO
-
-<hr>
     
 <a name=".DataAvailableNotificationContract.proto"></a>
 
 ### DataAvailableNotificationContract.proto
 
-TODO
+| Field | Type | Label | Description | Limits |
+| ----- | ---- | ----- | ----------- | ------ |
+| UUID | string | required | Unique dataset identification | Must be a valid Guid in string format |
+| recipient | string | required | Market Operator to receive dataset | Must be a known GLN number |
+| messageType | string | required | Message RSM type | Must be a known RSM type |
+| origin | string | required | The sub domain which sends the Data Available Notification | Must be a known sub domain within DataHub/GreenEnergyHub |
+| supportsBundling | bool | required | Flag to indicate if message is capable of being bundled with similar messages | N/A |
+| relativeWeight | int32 | required | The relative weight of the dataset | Must be a number between 0 and 2147483647 (Int32.MaxValue) |
 
-    
-<hr>
+<br>
     
 <a name=".RequestBundleRequest.proto"></a>
 
 ### RequestBundleRequest.proto
 
-TODO
+| Field | Type | Label | Description | Limits |
+| ----- | ---- | ----- | ----------- | ------ |
+| IdempotencyId | string | required | An Id for sub domains to check whether or not it has received the same message multiple times | None at the moment |
+| UUID | repeated string | required | Unique dataset identification | Must be a valid Guid in string format |
     
-<hr>
+<br>
     
 <a name=".RequestBundleResponse.proto"></a>
 
 ### RequestBundleResponse.proto
 
-TODO
+RequestBundleResponse consists of four components. Below are five tables which describe each component in the message. The first component is the RequestBundleResponse itself. This component contains the four components in the inner layer of RequestBundleResponse.
 
+<b>RequestBundleResponse</b>
     
-<hr>
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Reply | oneof | required | Signals if the request was a success or a failure |
+| FileResource | message | requried if Reply is Success | Uri to get requested data along with dataset identifications |
+| RequestFailure | message | requried if Reply is Failure | Failure reason and description along with dataset identifications |
+| Reason | enum | requried if Reply is Failure | Multiple failure reasons to choose from |
+    
+<b>Reply</b>
+    
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| Success | FileResource | optional | Successful request |
+| Failure | RequestFailure | optional | Failed request |
+    
+<b>FileResource</b>
+    
+| Field | Type | Label | Description | Limits |
+| ----- | ---- | ----- | ----------- | ------ |
+| UUID | repeated string | required | Unique dataset identification | Must be a valid Guid in string format |
+| uri | string | requried | Uri to get requested data | Must be a valid Uri to data storage |
+    
+<b>RequestFailure</b>
+    
+| Field | Type | Label | Description | Limits |
+| ----- | ---- | ----- | ----------- | ------ |
+| UUID | repeated string | required | Unique dataset identification | Must be a valid Guid in string format |
+| reason | Reason | requried | Failure reason | Must be a constant from Reason |
+| failureDescription | string | optional | Description of the failure | N/A |
+    
+<b>Reason</b>
+    
+| Field | Value |
+| ----- | ---- |
+| DatasetNotFound | 0 |
+| DatasetNotAvailable | 1 |
+| InternalError | 15 |
+    
+<br>
     
 <a name=".DequeueContract.proto"></a>
 
 ### DequeueContract.proto
 
-TODO
+| Field | Type | Label | Description | Limits |
+| ----- | ---- | ----- | ----------- | ------ |
+| dataAvailableIds | repeated string | required | One or multiple Id's to identify data to dequeue | None at the moment |
+| recipient | string | required | Market Operator who sent the dequeue command | Must be a known GLN number |
