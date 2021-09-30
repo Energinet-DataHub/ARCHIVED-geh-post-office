@@ -42,7 +42,7 @@ namespace PostOffice.Communicator.Tests.Dequeue
 
             // assert
             Assert.NotNull(actual);
-            Assert.Equal("06FD1AB3-D650-45BC-860E-EE598A3623CA", actual.GlobalLocationNumberDto.Value);
+            Assert.Equal("06FD1AB3-D650-45BC-860E-EE598A3623CA", actual.Recipient.Value);
         }
 
         [Fact]

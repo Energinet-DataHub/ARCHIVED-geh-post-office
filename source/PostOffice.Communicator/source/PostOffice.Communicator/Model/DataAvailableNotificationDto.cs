@@ -24,10 +24,10 @@ namespace GreenEnergyHub.PostOffice.Communicator.Model
     /// A guid uniquely identifying the data. This guid will be passed back
     /// to the sub-domain with the request for data to be generated.
     /// </param>
-    /// <param name="GlobalLocationNumberDto">
+    /// <param name="Recipient">
     /// A Global Location Number identifying the market operator.
     /// </param>
-    /// <param name="MessageTypeDto">
+    /// <param name="MessageType">
     /// A unique case-insensitive identification of the type of data.
     /// Data with matching types can be bundled together.
     /// </param>
@@ -37,7 +37,7 @@ namespace GreenEnergyHub.PostOffice.Communicator.Model
     /// - When data has to be generated, the request will be sent to the specified origin (domain).
     /// </param>
     /// <param name="SupportsBundling">
-    /// Allows bundling this data with other data with an identical <paramref name="MessageTypeDto" />.
+    /// Allows bundling this data with other data with an identical <paramref name="MessageType" />.
     /// <paramref name="RelativeWeight" /> has no meaning, if bundling is disabled.
     /// </param>
     /// <param name="RelativeWeight">
@@ -48,8 +48,8 @@ namespace GreenEnergyHub.PostOffice.Communicator.Model
     /// </param>
     public sealed record DataAvailableNotificationDto(
         Guid Uuid,
-        GlobalLocationNumberDto GlobalLocationNumberDto,
-        MessageTypeDto MessageTypeDto,
+        GlobalLocationNumberDto Recipient,
+        MessageTypeDto MessageType,
         DomainOrigin Origin,
         bool SupportsBundling,
         int RelativeWeight);
