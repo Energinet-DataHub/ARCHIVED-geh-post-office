@@ -13,20 +13,18 @@
 // limitations under the License.
 
 using Azure.Storage.Blobs;
-using GreenEnergyHub.PostOffice.Communicator.Factories;
 
-namespace GreenEnergyHub.PostOffice.Communicator.Storage
+namespace GreenEnergyHub.PostOffice.Communicator.Factories
 {
-    internal static class BlobServiceStorageHelper
+    /// <summary>
+    /// Factory creating a new <see cref="BlobServiceClient"/>
+    /// </summary>
+    public interface IStorageServiceClientFactory
     {
-        private static BlobServiceClient? _blobServiceClient;
-
-        public static BlobServiceClient Instance
-        {
-            get
-            {
-                return _blobServiceClient ??= new BlobServiceClient(string.Empty);
-            }
-        }
+        /// <summary>
+        /// Create a new <see cref="BlobServiceClient"/>
+        /// </summary>
+        /// <returns><see cref="BlobServiceClient"/></returns>
+        public BlobServiceClient Create();
     }
 }

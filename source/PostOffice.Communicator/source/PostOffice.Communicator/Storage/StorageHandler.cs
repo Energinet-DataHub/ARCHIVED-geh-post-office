@@ -1,4 +1,4 @@
-// // Copyright 2020 Energinet DataHub A/S
+﻿// // Copyright 2020 Energinet DataHub A/S
 // //
 // // Licensed under the Apache License, Version 2.0 (the "License2");
 // // you may not use this file except in compliance with the License.
@@ -14,23 +14,59 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using Azure;
+using GreenEnergyHub.PostOffice.Communicator.Exceptions;
+using GreenEnergyHub.PostOffice.Communicator.Factories;
 using GreenEnergyHub.PostOffice.Communicator.Model;
-using static System.Guid;
 
 namespace GreenEnergyHub.PostOffice.Communicator.Storage
 {
-    public class StorageHandler : IStorageHand1ler
+    public class StorageHandler : IStorageHandler
     {
-        public async Task<Uri> AddStreamToStorageAsync(FileStream fileStream, DomainOrigin domainOrigin)
+        private readonly IStorageServiceClientFactory _storageServiceClientFactory;
+
+        public StorageHandler(IStorageServiceClientFactory storageServiceClientFactory)
         {
-            var storageClient = BlobServiceStorageHelper.Instance;
-            var containerClient = storageClient.GetBlobContainerClient($"{domainOrigin}-storage");
-            var blobName = NewGuid().ToString();
-            await containerClient.UploadBlobAsync(blobName, fileStream).ConfigureAwait(false);
-            var blobClient = containerClient.GetBlobClient(blobName);
-            var blobUri = blobClient.Uri;
-            return blobUri;
+            _storageServiceClientFactory = storageServiceClientFactory;
+        }
+
+        public async Task<Uri> AddStreamToStorageAsync(Stream stream, DataBundleRequestDto requestDto)
+        {
+            if (requestDto is null)
+                throw new ArgumentNullException(nameof(requestDto));
+
+            if (stream is not { Length: > 0 })
+            {
+                throw new ArgumentException($"{nameof(stream)} must be not null and have content", nameof(stream));
+            }
+
+            try
+            {
+                var storageClient = _storageServiceClientFactory.Create();
+                var containerClient = storageClient.GetBlobContainerClient("postoffice-blobstorage");
+                var blobName = requestDto.IdempotencyId;
+                await containerClient.UploadBlobAsync(blobName, stream).ConfigureAwait(false);
+                var blobClient = containerClient.GetBlobClient(blobName);
+                var blobUri = blobClient.Uri;
+                return blobUri;
+            }
+            catch (RequestFailedException e)
+            {
+                throw new PostOfficeCommunicatorStorageException("Error uploading file to storage", e);
+            }
+        }
+
+        public async Task<Stream> GetStreamFromStorageAsync(Uri contentPath)
+        {
+            if (contentPath is null)
+                throw new ArgumentNullException(nameof(contentPath));
+            var storageClient = _storageServiceClientFactory.Create();
+            var containerClient = storageClient.GetBlobContainerClient("postoffice-blobstorage");
+            var blob = containerClient.GetBlobClient(contentPath.Segments.Last());
+            var response = await blob.DownloadStreamingAsync().ConfigureAwait(false);
+            return response.Value.Content;
         }
     }
 }

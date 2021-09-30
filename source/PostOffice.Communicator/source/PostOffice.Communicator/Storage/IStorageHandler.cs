@@ -22,15 +22,22 @@ namespace GreenEnergyHub.PostOffice.Communicator.Storage
     /// <summary>
     /// Handles storing file data from the SubDomains
     /// </summary>
-    public interface IStorageHand1ler
+    public interface IStorageHandler
     {
         /// <summary>
         /// Stores a filestream in the PostOffice storage, and returns a path to the stored file,
         /// that is to be used when sending a response to the PostOffice
         /// </summary>
-        /// <param name="fileStream">A stream containing the file contents that should be stored</param>
-        /// <param name="domainOrigin">THe domain that is sending the data</param>
+        /// <param name="stream">A stream containing the contents that should be stored</param>
+        /// <param name="requestDto">THe domain that is sending the data</param>
         /// <returns>A string containing the path of the stored file</returns>
-        public Task<Uri> AddStreamToStorageAsync(FileStream fileStream, DomainOrigin domainOrigin);
+        Task<Uri> AddStreamToStorageAsync(Stream stream, DataBundleRequestDto requestDto);
+
+        /// <summary>
+        /// Retrieves a stream from the storage
+        /// </summary>
+        /// <param name="contentPath">The uri to the content in storage</param>
+        /// <returns>A Stream to the contents in storage</returns>
+        Task<Stream> GetStreamFromStorageAsync(Uri contentPath);
     }
 }
