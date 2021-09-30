@@ -12,18 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Energinet.DataHub.PostOffice.Common;
-using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions;
-using SimpleInjector;
-
-namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
+namespace GreenEnergyHub.PostOffice.Communicator.Model
 {
-    internal sealed class Startup : StartupBase
-    {
-        protected override void Configure(Container container)
-        {
-            container.Register<PeekFunction>(Lifestyle.Scoped);
-            container.Register<DequeueFunction>(Lifestyle.Scoped);
-        }
-    }
+    public record MessageType(string Value);
 }

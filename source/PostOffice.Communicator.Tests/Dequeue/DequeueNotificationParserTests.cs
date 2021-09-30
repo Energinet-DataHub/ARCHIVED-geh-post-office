@@ -13,10 +13,12 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using Google.Protobuf;
 using GreenEnergyHub.PostOffice.Communicator.Contracts;
 using GreenEnergyHub.PostOffice.Communicator.Dequeue;
 using GreenEnergyHub.PostOffice.Communicator.Exceptions;
+using GreenEnergyHub.PostOffice.Communicator.Model;
 using Xunit;
 using Xunit.Categories;
 
@@ -41,7 +43,7 @@ namespace PostOffice.Communicator.Tests.Dequeue
 
             // assert
             Assert.NotNull(actual);
-            Assert.Equal("06FD1AB3-D650-45BC-860E-EE598A3623CA", actual.Recipient);
+            Assert.Equal("06FD1AB3-D650-45BC-860E-EE598A3623CA", actual.GlobalLocationNumber.Value);
         }
 
         [Fact]
@@ -49,12 +51,26 @@ namespace PostOffice.Communicator.Tests.Dequeue
         {
             // arrange
             var target = new DequeueNotificationParser();
-            var rnd = new Random();
-            var corruptBytes = new byte[10];
-            rnd.NextBytes(corruptBytes);
+            var corruptBytes = new byte[] { 1, 2, 3 };
 
             // act, assert
             Assert.Throws<PostOfficeCommunicatorException>(() => target.Parse(corruptBytes));
+        }
+
+        [Fact]
+        public void Parse_ValidObject_Returns_Bytes()
+        {
+            // arrange
+            var target = new DequeueNotificationParser();
+            var valid = new DequeueNotificationDto(
+                new List<string>() { "1", "2", "3" },
+                new GlobalLocationNumber("test"));
+
+            // act
+            var actual = target.Parse(valid);
+
+            // assert
+            Assert.NotNull(actual);
         }
     }
 }
