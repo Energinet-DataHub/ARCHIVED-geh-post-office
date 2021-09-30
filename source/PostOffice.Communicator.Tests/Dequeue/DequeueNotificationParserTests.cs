@@ -42,7 +42,7 @@ namespace PostOffice.Communicator.Tests.Dequeue
 
             // assert
             Assert.NotNull(actual);
-            Assert.Equal("06FD1AB3-D650-45BC-860E-EE598A3623CA", actual.GlobalLocationNumber.Value);
+            Assert.Equal("06FD1AB3-D650-45BC-860E-EE598A3623CA", actual.GlobalLocationNumberDto.Value);
         }
 
         [Fact]
@@ -63,7 +63,7 @@ namespace PostOffice.Communicator.Tests.Dequeue
             var target = new DequeueNotificationParser();
             var valid = new DequeueNotificationDto(
                 new[] { Guid.NewGuid(), Guid.NewGuid() },
-                new GlobalLocationNumber("test"));
+                new GlobalLocationNumberDto("test"));
 
             // act
             var actual = target.Parse(valid);

@@ -38,12 +38,12 @@ namespace GreenEnergyHub.PostOffice.Communicator.Model
         /// <summary>
         /// Creates a failure response to the bundle contents request.
         /// </summary>
-        /// <param name="responseError">The information about the error.</param>
+        /// <param name="responseErrorDto">The information about the error.</param>
         /// <param name="dataAvailableNotificationIds">A collection of guids identifying which data has been requested.</param>
-        public RequestDataBundleResponseDto(DataBundleResponseError responseError, IEnumerable<Guid> dataAvailableNotificationIds)
+        public RequestDataBundleResponseDto(DataBundleResponseErrorDto responseErrorDto, IEnumerable<Guid> dataAvailableNotificationIds)
         {
             DataAvailableNotificationIds = dataAvailableNotificationIds;
-            ResponseError = responseError;
+            ResponseErrorDto = responseErrorDto;
             IsErrorResponse = true;
         }
 
@@ -53,7 +53,7 @@ namespace GreenEnergyHub.PostOffice.Communicator.Model
         /// If false, the ContentUri points to a location of the bundle contents.
         /// </summary>
         [MemberNotNullWhen(false, nameof(ContentUri))]
-        [MemberNotNullWhen(true, nameof(ResponseError))]
+        [MemberNotNullWhen(true, nameof(ResponseErrorDto))]
         public bool IsErrorResponse { get; }
 
         /// <summary>
@@ -70,6 +70,6 @@ namespace GreenEnergyHub.PostOffice.Communicator.Model
         /// <summary>
         /// Error information. Is null, if the request succeeded.
         /// </summary>
-        public DataBundleResponseError? ResponseError { get; }
+        public DataBundleResponseErrorDto? ResponseErrorDto { get; }
     }
 }

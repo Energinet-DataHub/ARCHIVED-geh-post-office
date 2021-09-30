@@ -22,9 +22,9 @@ namespace GreenEnergyHub.PostOffice.Communicator.Model
     /// <param name="DataAvailableNotificationIds">
     /// A collection of guids identifying which data the market operator has approved.
     /// </param>
-    /// <param name="GlobalLocationNumber">
+    /// <param name="GlobalLocationNumberDto">
     /// A Global Location Number identifying a market operator.
     /// </param>
     /// </summary>
-    public sealed record DequeueNotificationDto(ICollection<Guid> DataAvailableNotificationIds, GlobalLocationNumber GlobalLocationNumber);
+    public sealed record DequeueNotificationDto(ICollection<Guid> DataAvailableNotificationIds, GlobalLocationNumberDto GlobalLocationNumberDto);
 }

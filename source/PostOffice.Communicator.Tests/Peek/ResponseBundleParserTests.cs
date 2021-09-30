@@ -101,7 +101,7 @@ namespace PostOffice.Communicator.Tests.Peek
             // arrange
             var target = new ResponseBundleParser();
             var valid = new RequestDataBundleResponseDto(
-                new DataBundleResponseError
+                new DataBundleResponseErrorDto
                 {
                     FailureDescription = "error",
                     Reason = DataBundleResponseErrorReason.DatasetNotAvailable

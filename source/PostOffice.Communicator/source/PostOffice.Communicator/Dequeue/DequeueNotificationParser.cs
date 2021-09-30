@@ -30,7 +30,7 @@ namespace GreenEnergyHub.PostOffice.Communicator.Dequeue
                 var dequeueContract = DequeueContract.Parser.ParseFrom(dequeueNotificationContract);
                 return new DequeueNotificationDto(
                     dequeueContract.DataAvailableIds.Select(Guid.Parse).ToList(),
-                    new GlobalLocationNumber(dequeueContract.Recipient));
+                    new GlobalLocationNumberDto(dequeueContract.Recipient));
             }
             catch (InvalidProtocolBufferException e)
             {
@@ -45,7 +45,7 @@ namespace GreenEnergyHub.PostOffice.Communicator.Dequeue
 
             var message = new DequeueContract
             {
-                Recipient = dequeueNotificationDto.GlobalLocationNumber.Value,
+                Recipient = dequeueNotificationDto.GlobalLocationNumberDto.Value,
                 DataAvailableIds = { dequeueNotificationDto.DataAvailableNotificationIds.Select(x => x.ToString()) }
             };
 

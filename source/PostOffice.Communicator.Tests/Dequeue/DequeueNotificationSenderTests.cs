@@ -63,7 +63,7 @@ namespace PostOffice.Communicator.Tests.Dequeue
 
             var dataAvailable = new DequeueNotificationDto(
                 new[] { Guid.NewGuid(), Guid.NewGuid() },
-                new GlobalLocationNumber("fake_value"));
+                new GlobalLocationNumberDto("fake_value"));
 
             // Act
             await target.SendAsync(dataAvailable, domainOrigin).ConfigureAwait(false);
