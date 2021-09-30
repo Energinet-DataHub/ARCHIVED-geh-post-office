@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using Google.Protobuf;
 using GreenEnergyHub.PostOffice.Communicator.Contracts;
 using GreenEnergyHub.PostOffice.Communicator.Dequeue;
@@ -65,7 +64,7 @@ namespace PostOffice.Communicator.Tests.Dequeue
             // arrange
             var target = new DequeueNotificationParser();
             var valid = new DequeueNotificationDto(
-                new List<string>() { "1", "2", "3" },
+                new[] { Guid.NewGuid(), Guid.NewGuid() },
                 new GlobalLocationNumber("test"));
 
             // act
