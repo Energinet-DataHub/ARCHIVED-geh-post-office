@@ -25,13 +25,13 @@ namespace GreenEnergyHub.PostOffice.Communicator.SimpleInjector
 {
     public static class ContainerExtensions
     {
-        public static void AddPostOfficeCommunication(this Container container, string serviceBusConnectionString)
+        public static void AddPostOfficeCommunication(this Container container, string serviceBusConnectionStringConfigKey)
         {
-            container.AddServiceBus(serviceBusConnectionString);
+            container.AddServiceBus(serviceBusConnectionStringConfigKey);
             container.AddApplicationServices();
         }
 
-        private static void AddServiceBus(this Container container, string serviceBusConnectionString)
+        private static void AddServiceBus(this Container container, string serviceBusConnectionStringConfigKey)
         {
             if (container == null)
                 throw new ArgumentNullException(nameof(container));
@@ -39,8 +39,8 @@ namespace GreenEnergyHub.PostOffice.Communicator.SimpleInjector
             container.RegisterSingleton<IServiceBusClientFactory>(() =>
             {
                 var configuration = container.GetService<IConfiguration>();
-                var connectionString = configuration.GetConnectionString(serviceBusConnectionString)
-                                       ?? configuration![serviceBusConnectionString];
+                var connectionString = configuration.GetConnectionString(serviceBusConnectionStringConfigKey)
+                                       ?? configuration?[serviceBusConnectionStringConfigKey];
 
                 if (string.IsNullOrEmpty(connectionString))
                 {

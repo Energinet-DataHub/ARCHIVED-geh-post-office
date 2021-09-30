@@ -14,7 +14,6 @@
 
 using System;
 using System.Threading.Tasks;
-using Azure.Messaging.ServiceBus;
 using Energinet.DataHub.PostOffice.Domain.Services;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator;
 using Energinet.DataHub.PostOffice.IntegrationTests.Common;
@@ -74,7 +73,6 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
 
         private static void InitTestServiceBus(Container container)
         {
-            container.Register<ServiceBusClient, MockedServiceBusClient>(Lifestyle.Scoped);
             container.Register<IServiceBusClientFactory, MockedServiceBusClientFactory>(Lifestyle.Singleton);
         }
     }
