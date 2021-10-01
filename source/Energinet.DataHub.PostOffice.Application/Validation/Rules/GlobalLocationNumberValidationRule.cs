@@ -63,7 +63,7 @@ namespace Energinet.DataHub.PostOffice.Application.Validation.Rules
 
             for (var i = 1; i < glnNumber.Length; i++)
             {
-                var currentNumber = Parse(glnNumber.Substring(i - 1, 1));
+                var currentNumber = Parse(glnNumber[(i - 1)..1]);
 
                 if (IsEvenNumber(i))
                     sumOfEvenNumbers += currentNumber;
@@ -74,7 +74,6 @@ namespace Energinet.DataHub.PostOffice.Application.Validation.Rules
             var sum = (sumOfEvenNumbers * 3) + sumOfOddNumbers;
 
             var equalOrHigherMultipleOf = (int)(Math.Ceiling(sum / 10.0) * 10);
-
             return equalOrHigherMultipleOf - sum;
         }
 

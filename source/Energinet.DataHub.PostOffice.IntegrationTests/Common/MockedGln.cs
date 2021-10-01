@@ -77,7 +77,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Common
 
             for (var i = 1; i < glnNumber.Length; i++)
             {
-                var currentNumber = int.Parse(glnNumber.Substring(i - 1, 1), CultureInfo.InvariantCulture);
+                var currentNumber = int.Parse(glnNumber[(i - 1)..i], CultureInfo.InvariantCulture);
 
                 if (i % 2 == 0)
                     sumOfEvenNumbers += currentNumber;
@@ -88,7 +88,6 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Common
             var sum = (sumOfEvenNumbers * 3) + sumOfOddNumbers;
 
             var equalOrHigherMultipleOf = (int)(Math.Ceiling(sum / 10.0) * 10);
-
             return equalOrHigherMultipleOf - sum;
         }
     }
