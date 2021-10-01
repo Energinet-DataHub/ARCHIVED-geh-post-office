@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 using GreenEnergyHub.PostOffice.Communicator.Dequeue;
@@ -45,6 +44,8 @@ namespace PostOffice.Communicator.Tests.Dequeue
         [InlineData(DomainOrigin.TimeSeries, "sbq-TimeSeries-dequeue")]
         [InlineData(DomainOrigin.Charges, "sbq-Charges-dequeue")]
         [InlineData(DomainOrigin.Aggregations, "sbq-Aggregations-dequeue")]
+        [InlineData(DomainOrigin.MarketRoles, "sbq-MarketRoles-dequeue")]
+        [InlineData(DomainOrigin.MeteringPoints, "sbq-MeteringPoints-dequeue")]
         public async Task SendAsync_ValidInputForDomain_SendsMessage(DomainOrigin domainOrigin, string queueName)
         {
             // Arrange
@@ -63,8 +64,8 @@ namespace PostOffice.Communicator.Tests.Dequeue
             await using var target = new DequeueNotificationSender(serviceBusClientFactory.Object);
 
             var dataAvailable = new DequeueNotificationDto(
-                new List<string> { "7B492FFB-E9AD-442B-AA4E-972D59AD8C11", "A15AFD1F-A731-4BB5-A52D-F8A8841BBD49" },
-                new GlobalLocationNumber("fake_value"));
+                new[] { Guid.NewGuid(), Guid.NewGuid() },
+                new GlobalLocationNumberDto("fake_value"));
 
             // Act
             await target.SendAsync(dataAvailable, domainOrigin).ConfigureAwait(false);

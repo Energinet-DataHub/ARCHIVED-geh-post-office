@@ -45,7 +45,7 @@ namespace PostOffice.Communicator.Tests.DataAvailable
 
             // Assert
             Assert.NotNull(actual);
-            Assert.Equal(contract.UUID, actual.Uuid.ToString().ToUpper());
+            Assert.Equal(contract.UUID, actual.Uuid.ToString().ToUpper(CultureInfo.InvariantCulture));
             Assert.Equal(contract.MessageType, actual.MessageType.Value);
             Assert.Equal(contract.Origin, actual.Origin.ToString());
             Assert.Equal(contract.GlobalLocationNumber, actual.GlobalLocationNumber.Value);
