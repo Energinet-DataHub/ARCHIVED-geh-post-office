@@ -44,7 +44,7 @@ namespace GreenEnergyHub.PostOffice.Communicator.Dequeue
             var contract = new DequeueContract
             {
                 DataAvailableNotificationIds = { dequeueNotificationDto.DataAvailableNotificationIds.Select(x => x.ToString()) },
-                GlobalLocationNumber = dequeueNotificationDto.GlobalLocationNumber.Value
+                GlobalLocationNumber = dequeueNotificationDto.Recipient.Value
             };
 
             var dequeueMessage = new ServiceBusMessage(new BinaryData(contract.ToByteArray()));
