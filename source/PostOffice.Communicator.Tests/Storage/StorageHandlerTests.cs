@@ -18,6 +18,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Azure;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using GreenEnergyHub.PostOffice.Communicator.Exceptions;
 using GreenEnergyHub.PostOffice.Communicator.Factories;
 using GreenEnergyHub.PostOffice.Communicator.Model;
@@ -105,7 +106,7 @@ namespace PostOffice.Communicator.Tests.Storage
                 NewGuid().ToString(),
                 new List<Guid>() { NewGuid(), NewGuid(), NewGuid() });
 
-            var testUri = new Uri($"http://test.test.dk/FileStorage/{DomainOrigin.TimeSeries}-postoffice-blobstorage");
+            var testUri = new Uri("https://test.test.dk/FileStorage/postoffice-blobstorage");
             mockedBlobClient.Setup(
                     x => x.Uri)
                 .Returns(testUri);
@@ -133,6 +134,52 @@ namespace PostOffice.Communicator.Tests.Storage
 
             // assert
             Assert.Equal(testUri, result);
+        }
+
+        [Fact]
+        public async Task GetStreamFromStorageAsync_UriIsValid_ReturnsStream()
+        {
+            // arrange
+            var mockedStorageServiceClientFactory = new Mock<IStorageServiceClientFactory>();
+            var mockedBlobServiceClient = new Mock<BlobServiceClient>();
+            var mockedBlobContainerClient = new Mock<BlobContainerClient>();
+            var mockedBlobClient = new Mock<BlobClient>();
+            var mockedResponse = new Mock<Response<BlobDownloadStreamingResult>>();
+            await using var inputStream = new MemoryStream(new byte[] { 1, 2, 3 });
+            var mockedBlobDownloadStreamingResult = MockedBlobDownloadStreamingResult.Create(inputStream);
+            var testUri = new Uri("https://test.test.dk/FileStorage/postoffice-blobstorage");
+
+            mockedResponse.Setup(
+                    x => x.Value)
+                .Returns(mockedBlobDownloadStreamingResult);
+
+            mockedBlobClient.Setup(
+                    x => x.DownloadStreamingAsync(
+                        default,
+                        default,
+                        default,
+                        default))
+                .ReturnsAsync(mockedResponse.Object);
+
+            mockedBlobContainerClient.Setup(
+                    x => x.GetBlobClient(It.IsAny<string>()))
+                .Returns(mockedBlobClient.Object);
+
+            mockedBlobServiceClient.Setup(
+                    x => x.GetBlobContainerClient(It.IsAny<string>()))
+                .Returns(mockedBlobContainerClient.Object);
+
+            mockedStorageServiceClientFactory.Setup(
+                    x => x.Create())
+                .Returns(mockedBlobServiceClient.Object);
+
+            var target = new StorageHandler(mockedStorageServiceClientFactory.Object);
+
+            // act
+            var result = await target.GetStreamFromStorageAsync(testUri).ConfigureAwait(false);
+
+            // assert
+            Assert.NotNull(result);
         }
     }
 }

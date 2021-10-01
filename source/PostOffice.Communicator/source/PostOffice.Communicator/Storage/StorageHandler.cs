@@ -60,13 +60,21 @@ namespace GreenEnergyHub.PostOffice.Communicator.Storage
 
         public async Task<Stream> GetStreamFromStorageAsync(Uri contentPath)
         {
-            if (contentPath is null)
-                throw new ArgumentNullException(nameof(contentPath));
-            var storageClient = _storageServiceClientFactory.Create();
-            var containerClient = storageClient.GetBlobContainerClient("postoffice-blobstorage");
-            var blob = containerClient.GetBlobClient(contentPath.Segments.Last());
-            var response = await blob.DownloadStreamingAsync().ConfigureAwait(false);
-            return response.Value.Content;
+            try
+            {
+                if (contentPath is null)
+                    throw new ArgumentNullException(nameof(contentPath));
+
+                var storageClient = _storageServiceClientFactory.Create();
+                var containerClient = storageClient.GetBlobContainerClient("postoffice-blobstorage");
+                var blob = containerClient.GetBlobClient(contentPath.Segments.Last());
+                var response = await blob.DownloadStreamingAsync().ConfigureAwait(false);
+                return response.Value.Content;
+            }
+            catch (RequestFailedException e)
+            {
+                throw new PostOfficeCommunicatorStorageException("Error uploading file to storage", e);
+            }
         }
     }
 }

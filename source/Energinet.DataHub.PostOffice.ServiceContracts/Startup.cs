@@ -14,7 +14,6 @@
 
 using Energinet.DataHub.PostOffice.ServiceContracts;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 

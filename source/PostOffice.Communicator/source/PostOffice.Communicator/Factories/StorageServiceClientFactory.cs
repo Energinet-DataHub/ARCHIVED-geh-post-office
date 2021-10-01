@@ -18,6 +18,7 @@ namespace GreenEnergyHub.PostOffice.Communicator.Factories
 {
     public sealed class StorageServiceClientFactory : IStorageServiceClientFactory
     {
+        private static readonly object _lockObject = new();
         private static BlobServiceClient? _blobServiceClient;
         private readonly string _connectionString;
 
@@ -28,9 +29,9 @@ namespace GreenEnergyHub.PostOffice.Communicator.Factories
 
         public BlobServiceClient Create()
         {
-            if (_blobServiceClient is null)
+            lock (_lockObject)
             {
-                _blobServiceClient = new BlobServiceClient(_connectionString);
+                _blobServiceClient ??= new BlobServiceClient(_connectionString);
             }
 
             return _blobServiceClient;
