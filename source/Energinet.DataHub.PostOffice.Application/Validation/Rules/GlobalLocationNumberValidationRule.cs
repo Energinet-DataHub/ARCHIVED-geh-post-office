@@ -63,7 +63,7 @@ namespace Energinet.DataHub.PostOffice.Application.Validation.Rules
 
             for (var i = 1; i < glnNumber.Length; i++)
             {
-                var currentNumber = Parse(glnNumber[(i - 1)..1]);
+                var currentNumber = Parse(glnNumber[(i - 1)..i]);
 
                 if (IsEvenNumber(i))
                     sumOfEvenNumbers += currentNumber;
