@@ -75,8 +75,4 @@ limitations under the License.
     <Compile Remove="AssemblyInfo.cs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\PostOffice.Communicator\source\PostOffice.Communicator\PostOffice.Communicator.csproj" />
-  </ItemGroup>
-
 </Project>
