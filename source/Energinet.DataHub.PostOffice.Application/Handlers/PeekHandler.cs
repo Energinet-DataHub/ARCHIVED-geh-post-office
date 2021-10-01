@@ -23,7 +23,9 @@ using MediatR;
 
 namespace Energinet.DataHub.PostOffice.Application.Handlers
 {
-    public class PeekHandler : IRequestHandler<PeekCommand, PeekResponse>
+    public class PeekHandler :
+        IRequestHandler<PeekCommand, PeekResponse>,
+        IRequestHandler<PeekAggregationsOrTimeSeriesCommand, PeekResponse>
     {
         private readonly IMarketOperatorDataDomainService _marketOperatorDataDomainService;
 
@@ -37,10 +39,29 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
             if (request is null)
                 throw new ArgumentNullException(nameof(request));
 
+            var marketOperator = new MarketOperator(new GlobalLocationNumber(request.Recipient));
             var bundle = await _marketOperatorDataDomainService
-                .GetNextUnacknowledgedAsync(new MarketOperator(new GlobalLocationNumber(request.Recipient)))
+                .GetNextUnacknowledgedAsync(marketOperator)
                 .ConfigureAwait(false);
 
+            return await PrepareBundleAsync(bundle).ConfigureAwait(false);
+        }
+
+        public async Task<PeekResponse> Handle(PeekAggregationsOrTimeSeriesCommand request, CancellationToken cancellationToken)
+        {
+            if (request is null)
+                throw new ArgumentNullException(nameof(request));
+
+            var marketOperator = new MarketOperator(new GlobalLocationNumber(request.Recipient));
+            var bundle = await _marketOperatorDataDomainService
+                .GetNextUnacknowledgedAggregationsOrTimeSeriesAsync(marketOperator)
+                .ConfigureAwait(false);
+
+            return await PrepareBundleAsync(bundle).ConfigureAwait(false);
+        }
+
+        private static async Task<PeekResponse> PrepareBundleAsync(Bundle? bundle)
+        {
             return bundle != null && bundle.TryGetContent(out var bundleContent)
                 ? new PeekResponse(true, await bundleContent.OpenAsync().ConfigureAwait(false))
                 : new PeekResponse(false, Stream.Null);
