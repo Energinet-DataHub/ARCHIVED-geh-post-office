@@ -61,6 +61,19 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
             return null;
         }
 
+        public async Task<Bundle?> GetNextUnacknowledgedAggregationsOrTimeSeriesAsync(MarketOperator recipient)
+        {
+            var aggregations = await GetNextUnacknowledgedAsync(recipient, DomainOrigin.Aggregations).ConfigureAwait(false);
+            if (aggregations != null)
+                return aggregations;
+
+            var timeSeries = await GetNextUnacknowledgedAsync(recipient, DomainOrigin.TimeSeries).ConfigureAwait(false);
+            if (timeSeries != null)
+                return timeSeries;
+
+            return null;
+        }
+
         public async Task<(bool IsAcknowledged, Bundle? AcknowledgedBundle)> TryAcknowledgeAsync(MarketOperator recipient, Uuid bundleId)
         {
             var bundle = await _bundleRepository.GetNextUnacknowledgedAsync(recipient).ConfigureAwait(false);
@@ -70,6 +83,28 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
             await _dataAvailableNotificationRepository.AcknowledgeAsync(bundle.NotificationIds).ConfigureAwait(false);
             await _bundleRepository.AcknowledgeAsync(bundle.BundleId).ConfigureAwait(false);
             return (true, bundle);
+        }
+
+        private async Task<Bundle?> GetNextUnacknowledgedAsync(MarketOperator recipient, DomainOrigin domainOrigin)
+        {
+            var existingBundle = await _bundleRepository.GetNextUnacknowledgedAsync(recipient, domainOrigin).ConfigureAwait(false);
+            if (existingBundle != null)
+                return await AskSubDomainForContentAsync(existingBundle).ConfigureAwait(false);
+
+            var dataAvailableNotification = await _dataAvailableNotificationRepository.GetNextUnacknowledgedAsync(recipient, domainOrigin).ConfigureAwait(false);
+            if (dataAvailableNotification == null)
+                return null; // No new data.
+
+            var newBundle = await CreateNextBundleAsync(
+                dataAvailableNotification.Recipient,
+                dataAvailableNotification.Origin,
+                dataAvailableNotification.ContentType).ConfigureAwait(false);
+
+            if (await _bundleRepository.TryAddNextUnacknowledgedAsync(newBundle).ConfigureAwait(false))
+                return await AskSubDomainForContentAsync(newBundle).ConfigureAwait(false);
+
+            // Concurrent peek in progress; response is "no new data".
+            return null;
         }
 
         private async Task<Bundle?> AskSubDomainForContentAsync(Bundle bundle)
