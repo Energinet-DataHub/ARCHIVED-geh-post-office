@@ -26,16 +26,16 @@ namespace GreenEnergyHub.PostOffice.Communicator.Peek
         public byte[] Parse(RequestDataBundleResponseDto requestDataBundleResponseDto)
         {
             if (requestDataBundleResponseDto == null) throw new ArgumentNullException(nameof(requestDataBundleResponseDto));
-            var contract = new RequestBundleResponse();
+            var contract = new DataBundleResponseContract();
 
             if (!requestDataBundleResponseDto.IsErrorResponse)
             {
-                contract.Success = new RequestBundleResponse.Types.FileResource { Uri = requestDataBundleResponseDto.ContentUri?.AbsoluteUri };
+                contract.Success = new DataBundleResponseContract.Types.FileResource { ContentUri = requestDataBundleResponseDto.ContentUri?.AbsoluteUri };
                 return contract.ToByteArray();
             }
 
             var contractErrorReason = MapToFailureReason(requestDataBundleResponseDto.ResponseError!.Reason);
-            contract.Failure = new RequestBundleResponse.Types.RequestFailure { Reason = contractErrorReason, FailureDescription = requestDataBundleResponseDto.ResponseError.FailureDescription };
+            contract.Failure = new DataBundleResponseContract.Types.RequestFailure { Reason = contractErrorReason, FailureDescription = requestDataBundleResponseDto.ResponseError.FailureDescription };
             return contract.ToByteArray();
         }
 
@@ -43,10 +43,10 @@ namespace GreenEnergyHub.PostOffice.Communicator.Peek
         {
             try
             {
-                var bundleResponse = RequestBundleResponse.Parser.ParseFrom(dataBundleReplyContract);
-                return bundleResponse!.ReplyCase != RequestBundleResponse.ReplyOneofCase.Success
+                var bundleResponse = DataBundleResponseContract.Parser.ParseFrom(dataBundleReplyContract);
+                return bundleResponse!.ReplyCase != DataBundleResponseContract.ReplyOneofCase.Success
                     ? null
-                    : new RequestDataBundleResponseDto(new Uri(bundleResponse.Success.Uri), bundleResponse.Success.UUID.AsEnumerable());
+                    : new RequestDataBundleResponseDto(new Uri(bundleResponse.Success.ContentUri), bundleResponse.Success.DataAvailableNotificationIds.AsEnumerable());
             }
             catch (InvalidProtocolBufferException e)
             {
@@ -54,14 +54,14 @@ namespace GreenEnergyHub.PostOffice.Communicator.Peek
             }
         }
 
-        private static RequestBundleResponse.Types.RequestFailure.Types.Reason MapToFailureReason(DataBundleResponseErrorReason errorReason)
+        private static DataBundleResponseContract.Types.RequestFailure.Types.Reason MapToFailureReason(DataBundleResponseErrorReason errorReason)
         {
             return errorReason switch
             {
-                DataBundleResponseErrorReason.DatasetNotFound => RequestBundleResponse.Types.RequestFailure.Types.Reason.DatasetNotFound,
-                DataBundleResponseErrorReason.DatasetNotAvailable => RequestBundleResponse.Types.RequestFailure.Types.Reason.DatasetNotAvailable,
-                DataBundleResponseErrorReason.InternalError => RequestBundleResponse.Types.RequestFailure.Types.Reason.InternalError,
-                _ => RequestBundleResponse.Types.RequestFailure.Types.Reason.InternalError
+                DataBundleResponseErrorReason.DatasetNotFound => DataBundleResponseContract.Types.RequestFailure.Types.Reason.DatasetNotFound,
+                DataBundleResponseErrorReason.DatasetNotAvailable => DataBundleResponseContract.Types.RequestFailure.Types.Reason.DatasetNotAvailable,
+                DataBundleResponseErrorReason.InternalError => DataBundleResponseContract.Types.RequestFailure.Types.Reason.InternalError,
+                _ => DataBundleResponseContract.Types.RequestFailure.Types.Reason.InternalError
             };
         }
     }

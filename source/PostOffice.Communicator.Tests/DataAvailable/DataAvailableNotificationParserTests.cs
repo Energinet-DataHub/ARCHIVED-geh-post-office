@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Globalization;
 using Google.Protobuf;
 using GreenEnergyHub.PostOffice.Communicator.Contracts;
 using GreenEnergyHub.PostOffice.Communicator.DataAvailable;
@@ -34,7 +35,7 @@ namespace PostOffice.Communicator.Tests.DataAvailable
                 UUID = "94681547-C70D-409C-9255-83B310AF7010",
                 MessageType = "messageType",
                 Origin = "TimeSeries",
-                Recipient = "recipient",
+                GlobalLocationNumber = "recipient",
                 RelativeWeight = 5,
                 SupportsBundling = true
             };
@@ -47,7 +48,7 @@ namespace PostOffice.Communicator.Tests.DataAvailable
             Assert.Equal(contract.UUID, actual.Uuid.ToString().ToUpper());
             Assert.Equal(contract.MessageType, actual.MessageType.Value);
             Assert.Equal(contract.Origin, actual.Origin.ToString());
-            Assert.Equal(contract.Recipient, actual.GlobalLocationNumber.Value);
+            Assert.Equal(contract.GlobalLocationNumber, actual.GlobalLocationNumber.Value);
             Assert.Equal(contract.RelativeWeight, actual.RelativeWeight);
             Assert.Equal(contract.SupportsBundling, actual.SupportsBundling);
         }

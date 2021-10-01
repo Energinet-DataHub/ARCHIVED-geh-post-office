@@ -34,8 +34,8 @@ namespace PostOffice.Communicator.Tests.Dequeue
             var target = new DequeueNotificationParser();
             var validBytes = new DequeueContract()
             {
-                Recipient = "06FD1AB3-D650-45BC-860E-EE598A3623CA",
-                DataAvailableIds = { "1360036D-2AFB-4021-846E-2C3FF5AD8DBD" }
+                GlobalLocationNumber = "06FD1AB3-D650-45BC-860E-EE598A3623CA",
+                DataAvailableNotificationIds = { "1360036D-2AFB-4021-846E-2C3FF5AD8DBD" }
             }.ToByteArray();
 
             // act
