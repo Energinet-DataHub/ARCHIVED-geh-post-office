@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 using GreenEnergyHub.PostOffice.Communicator.Factories;
@@ -56,7 +55,7 @@ namespace PostOffice.Communicator.Tests.Peek
 
             var response = new RequestDataBundleResponseDto(
                 new Uri("https://test.dk/test"),
-                new List<string> { "874CE9C8-95B7-4697-95A6-46A79D9901AA" });
+                new[] { Guid.NewGuid(), Guid.NewGuid() });
 
             // Act + Assert
             await Assert
@@ -68,6 +67,8 @@ namespace PostOffice.Communicator.Tests.Peek
         [InlineData(DomainOrigin.TimeSeries, "sbq-TimeSeries-reply")]
         [InlineData(DomainOrigin.Charges, "sbq-Charges-reply")]
         [InlineData(DomainOrigin.Aggregations, "sbq-Aggregations-reply")]
+        [InlineData(DomainOrigin.MarketRoles, "sbq-MarketRoles-reply")]
+        [InlineData(DomainOrigin.MeteringPoints, "sbq-MeteringPoints-reply")]
         public async Task SendAsync_ValidInput_SendsMessage(DomainOrigin domainOrigin, string queueName)
         {
             // Arrange
@@ -90,7 +91,7 @@ namespace PostOffice.Communicator.Tests.Peek
 
             var response = new RequestDataBundleResponseDto(
                 new Uri("https://test.dk/test"),
-                new List<string> { "874CE9C8-95B7-4697-95A6-46A79D9901AA" });
+                new[] { Guid.NewGuid(), Guid.NewGuid() });
 
             // Act
             await target.SendAsync(response, "session").ConfigureAwait(false);
