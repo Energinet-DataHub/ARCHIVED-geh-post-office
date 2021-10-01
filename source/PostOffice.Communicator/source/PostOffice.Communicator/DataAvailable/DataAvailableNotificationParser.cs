@@ -30,7 +30,7 @@ namespace GreenEnergyHub.PostOffice.Communicator.DataAvailable
 
                 return new DataAvailableNotificationDto(
                     Uuid: Guid.Parse(dataAvailable.UUID),
-                    Recipient: new GlobalLocationNumberDto(dataAvailable.GlobalLocationNumber),
+                    Recipient: new GlobalLocationNumberDto(dataAvailable.Recipient),
                     MessageType: new MessageTypeDto(dataAvailable.MessageType),
                     Origin: Enum.Parse<DomainOrigin>(dataAvailable.Origin),
                     SupportsBundling: dataAvailable.SupportsBundling,

@@ -35,7 +35,7 @@ namespace PostOffice.Communicator.Tests.DataAvailable
                 UUID = "94681547-C70D-409C-9255-83B310AF7010",
                 MessageType = "messageType",
                 Origin = "TimeSeries",
-                GlobalLocationNumber = "recipient",
+                Recipient = "recipient",
                 RelativeWeight = 5,
                 SupportsBundling = true
             };
@@ -48,7 +48,7 @@ namespace PostOffice.Communicator.Tests.DataAvailable
             Assert.Equal(contract.UUID, actual.Uuid.ToString().ToUpper(CultureInfo.InvariantCulture));
             Assert.Equal(contract.MessageType, actual.MessageType.Value);
             Assert.Equal(contract.Origin, actual.Origin.ToString());
-            Assert.Equal(contract.GlobalLocationNumber, actual.Recipient.Value);
+            Assert.Equal(contract.Recipient, actual.Recipient.Value);
             Assert.Equal(contract.RelativeWeight, actual.RelativeWeight);
             Assert.Equal(contract.SupportsBundling, actual.SupportsBundling);
         }

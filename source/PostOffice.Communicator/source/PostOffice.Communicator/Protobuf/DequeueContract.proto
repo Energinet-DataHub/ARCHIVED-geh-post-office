@@ -19,5 +19,5 @@ option csharp_namespace = "GreenEnergyHub.PostOffice.Communicator.Contracts";
 
 message DequeueContract {
     repeated string dataAvailableNotificationIds = 1; // Unique datasets to be dequeued
-    string globalLocationNumber = 2; // Market Operator who sent the dequeue command
+    string marketOperator = 2; // Global location number to identify market operator who sent the dequeue command
 }
