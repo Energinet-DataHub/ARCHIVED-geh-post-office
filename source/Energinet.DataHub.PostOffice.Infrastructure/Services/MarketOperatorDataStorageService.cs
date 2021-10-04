@@ -30,12 +30,12 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
             _storageHandler = storageHandler;
         }
 
-        public async Task<Stream> GetMarketOperatorDataAsync(Uuid bundleUuid, Uri contentPath)
+        public Task<Stream> GetMarketOperatorDataAsync(Uuid bundleUuid, Uri contentPath)
         {
             if (contentPath is null)
                 throw new ArgumentNullException(nameof(contentPath));
 
-            return await _storageHandler.GetStreamFromStorageAsync(contentPath).ConfigureAwait(false);
+            return _storageHandler.GetStreamFromStorageAsync(contentPath);
         }
     }
 }
