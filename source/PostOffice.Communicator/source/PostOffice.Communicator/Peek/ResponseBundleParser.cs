@@ -36,7 +36,12 @@ namespace GreenEnergyHub.PostOffice.Communicator.Peek
             }
 
             var contractErrorReason = MapToFailureReason(requestDataBundleResponseDto.ResponseError!.Reason);
-            contract.Failure = new DataBundleResponseContract.Types.RequestFailure { Reason = contractErrorReason, FailureDescription = requestDataBundleResponseDto.ResponseError.FailureDescription };
+            contract.Failure = new DataBundleResponseContract.Types.RequestFailure
+            {
+                Reason = contractErrorReason,
+                FailureDescription = requestDataBundleResponseDto.ResponseError.FailureDescription
+            };
+
             return contract.ToByteArray();
         }
 
@@ -47,7 +52,9 @@ namespace GreenEnergyHub.PostOffice.Communicator.Peek
                 var bundleResponse = DataBundleResponseContract.Parser.ParseFrom(dataBundleReplyContract);
                 return bundleResponse!.ReplyCase != DataBundleResponseContract.ReplyOneofCase.Success
                     ? null
-                    : new RequestDataBundleResponseDto(new Uri(bundleResponse.Success.ContentUri), bundleResponse.Success.DataAvailableNotificationIds.Select(Guid.Parse).ToList());
+                    : new RequestDataBundleResponseDto(
+                        new Uri(bundleResponse.Success.ContentUri),
+                        bundleResponse.Success.DataAvailableNotificationIds.Select(Guid.Parse).ToList());
             }
             catch (InvalidProtocolBufferException e)
             {
