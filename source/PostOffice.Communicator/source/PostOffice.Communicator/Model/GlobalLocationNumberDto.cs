@@ -14,5 +14,5 @@
 
 namespace GreenEnergyHub.PostOffice.Communicator.Model
 {
-    public record GlobalLocationNumber(string Value);
+    public record GlobalLocationNumberDto(string Value);
 }

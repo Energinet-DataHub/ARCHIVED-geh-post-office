@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.IO;
-using System.Threading.Tasks;
-
-namespace Energinet.DataHub.PostOffice.Domain.Model
+namespace GreenEnergyHub.PostOffice.Communicator.Model
 {
-    public delegate Task<Stream> OpenBundleStreamAsync(Uuid bundleUuid, Uri contentPath);
+    public sealed class DataBundleResponseErrorDto
+    {
+        public DataBundleResponseErrorReason Reason { get; set; }
+        public string? FailureDescription { get; set; }
+    }
 }

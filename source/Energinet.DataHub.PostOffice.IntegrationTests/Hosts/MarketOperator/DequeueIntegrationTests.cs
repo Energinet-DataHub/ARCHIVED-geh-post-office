@@ -16,6 +16,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Application.Commands;
+using Energinet.DataHub.PostOffice.IntegrationTests.Common;
 using FluentValidation;
 using MediatR;
 using Xunit;
@@ -48,7 +49,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         public async Task Dequeue_NoData_ReturnsNotDequeued()
         {
             // Arrange
-            var recipientGln = Guid.NewGuid().ToString();
+            var recipientGln = new MockedGln();
             var bundleUuid = Guid.NewGuid().ToString();
 
             await using var host = await MarketOperatorIntegrationTestHost
@@ -72,7 +73,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         public async Task Dequeue_HasData_ReturnsIsDequeued()
         {
             // Arrange
-            var recipientGln = Guid.NewGuid().ToString();
+            var recipientGln = new MockedGln();
             var bundleId = Guid.NewGuid().ToString();
             await AddDataAvailableNotificationAsync(recipientGln).ConfigureAwait(false);
 
@@ -100,7 +101,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         public async Task Dequeue_HasDataTwoDequeue_ReturnsNotDequeued()
         {
             // Arrange
-            var recipientGln = Guid.NewGuid().ToString();
+            var recipientGln = new MockedGln();
             var bundleId = Guid.NewGuid().ToString();
             await AddDataAvailableNotificationAsync(recipientGln).ConfigureAwait(false);
 
@@ -131,8 +132,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         public async Task Dequeue_DifferentRecipient_ReturnsNotDequeued()
         {
             // Arrange
-            var recipientGln = Guid.NewGuid().ToString();
-            var unrelatedGln = Guid.NewGuid().ToString();
+            var recipientGln = new MockedGln();
+            var unrelatedGln = new MockedGln();
             var bundleId = Guid.NewGuid().ToString();
             await AddDataAvailableNotificationAsync(recipientGln).ConfigureAwait(false);
 

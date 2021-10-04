@@ -12,11 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace GreenEnergyHub.PostOffice.Communicator.Model
-{
-    public class DataBundleResponseError
-    {
-        public DataBundleResponseErrorReason Reason { get; set; }
-        public string? FailureDescription { get; set; }
-    }
-}
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("Energinet.DataHub.PostOffice.Tests")]
