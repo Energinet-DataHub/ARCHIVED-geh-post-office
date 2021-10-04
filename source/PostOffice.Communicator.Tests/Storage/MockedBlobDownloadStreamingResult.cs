@@ -15,7 +15,6 @@
 using System;
 using System.IO;
 using System.Reflection;
-using Azure.Messaging.ServiceBus;
 using Azure.Storage.Blobs.Models;
 
 namespace PostOffice.Communicator.Tests.Storage
