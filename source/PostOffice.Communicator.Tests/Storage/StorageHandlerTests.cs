@@ -58,6 +58,27 @@ namespace PostOffice.Communicator.Tests.Storage
         }
 
         [Fact]
+        public async Task AddStreamToStorageAsync_RequestDtoIsNull_ThrowsArgumentNullException()
+        {
+            // arrange
+            var mockedStorageServiceClientFactory = new Mock<IStorageServiceClientFactory>();
+            var mockedBlobServiceClient = new Mock<BlobServiceClient>();
+
+            mockedStorageServiceClientFactory.Setup(
+                    x => x.Create())
+                .Returns(mockedBlobServiceClient.Object);
+
+            var target = new StorageHandler(mockedStorageServiceClientFactory.Object);
+
+            // act, assert
+            await Assert.ThrowsAsync<ArgumentNullException>(
+                    () => target.AddStreamToStorageAsync(
+                        Stream.Null,
+                        null))
+                .ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task AddStreamToStorageAsync_RequestFailure_ThrowsCustomException()
         {
             // arrange
@@ -180,6 +201,57 @@ namespace PostOffice.Communicator.Tests.Storage
 
             // assert
             Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task GetStreamFromStorageAsync_ContentPathIsNull_ThrowsArgumentNullException()
+        {
+            // arrange
+            var mockedStorageServiceClientFactory = new Mock<IStorageServiceClientFactory>();
+            var target = new StorageHandler(mockedStorageServiceClientFactory.Object);
+
+            // act, assert
+            await Assert.ThrowsAsync<ArgumentNullException>(
+                    () => target.GetStreamFromStorageAsync(null))
+                .ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task GetStreamFromStorageAsync_StorageFailure_ThrowsCustomException()
+        {
+            // arrange
+            var mockedStorageServiceClientFactory = new Mock<IStorageServiceClientFactory>();
+            var mockedBlobServiceClient = new Mock<BlobServiceClient>();
+            var mockedBlobContainerClient = new Mock<BlobContainerClient>();
+            var mockedBlobClient = new Mock<BlobClient>();
+            var testUri = new Uri("https://test.test.dk/FileStorage/postoffice-blobstorage");
+
+            mockedBlobClient.Setup(
+                    x => x.DownloadStreamingAsync(
+                        default,
+                        default,
+                        default,
+                        default))
+                .ThrowsAsync(new RequestFailedException("test"));
+
+            mockedBlobContainerClient.Setup(
+                    x => x.GetBlobClient(It.IsAny<string>()))
+                .Returns(mockedBlobClient.Object);
+
+            mockedBlobServiceClient.Setup(
+                    x => x.GetBlobContainerClient(It.IsAny<string>()))
+                .Returns(mockedBlobContainerClient.Object);
+
+            mockedStorageServiceClientFactory.Setup(
+                    x => x.Create())
+                .Returns(mockedBlobServiceClient.Object);
+
+            var target = new StorageHandler(mockedStorageServiceClientFactory.Object);
+
+            // act, assert
+            await Assert.ThrowsAsync<PostOfficeCommunicatorStorageException>(
+                    () => target.GetStreamFromStorageAsync(testUri))
+                .ConfigureAwait(false);
         }
     }
 }
