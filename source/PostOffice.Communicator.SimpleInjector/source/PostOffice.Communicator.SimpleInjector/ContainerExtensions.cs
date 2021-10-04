@@ -17,6 +17,7 @@ using GreenEnergyHub.PostOffice.Communicator.DataAvailable;
 using GreenEnergyHub.PostOffice.Communicator.Dequeue;
 using GreenEnergyHub.PostOffice.Communicator.Factories;
 using GreenEnergyHub.PostOffice.Communicator.Peek;
+using GreenEnergyHub.PostOffice.Communicator.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
@@ -25,10 +26,11 @@ namespace GreenEnergyHub.PostOffice.Communicator.SimpleInjector
 {
     public static class ContainerExtensions
     {
-        public static void AddPostOfficeCommunication(this Container container, string serviceBusConnectionStringConfigKey)
+        public static void AddPostOfficeCommunication(this Container container, string serviceBusConnectionStringConfigKey, string storageServiceConnectionStringConfigKey)
         {
             container.AddServiceBus(serviceBusConnectionStringConfigKey);
             container.AddApplicationServices();
+            container.AddStorageHandler(storageServiceConnectionStringConfigKey);
         }
 
         private static void AddServiceBus(this Container container, string serviceBusConnectionStringConfigKey)
@@ -62,6 +64,29 @@ namespace GreenEnergyHub.PostOffice.Communicator.SimpleInjector
             container.Register<IResponseBundleParser, ResponseBundleParser>(Lifestyle.Singleton);
             container.Register<IDataBundleResponseSender, DataBundleResponseSender>(Lifestyle.Singleton);
             container.Register<IDequeueNotificationParser, DequeueNotificationParser>(Lifestyle.Singleton);
+        }
+
+        private static void AddStorageHandler(this Container container, string storageServiceConnectionStringConfigKey)
+        {
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+
+            container.RegisterSingleton<IStorageServiceClientFactory>(() =>
+            {
+                var configuration = container.GetService<IConfiguration>();
+                var connectionString = configuration.GetConnectionString(storageServiceConnectionStringConfigKey)
+                                       ?? configuration?[storageServiceConnectionStringConfigKey];
+
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    throw new InvalidOperationException(
+                        "Please specify a valid BlobStorageConnectionString in the appSettings.json file or your Azure Functions Settings.");
+                }
+
+                return new StorageServiceClientFactory(connectionString);
+            });
+
+            container.Register<IStorageHandler, StorageHandler>(Lifestyle.Singleton);
         }
     }
 }
