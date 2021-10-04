@@ -55,7 +55,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Repositories
         /// <param name="recipient">The market operator to get the next notification for.</param>
         /// <param name="domainOrigin">The domain the retrieved notification must belong to.</param>
         /// <returns>The next unacknowledged notification; or null, if there are no unacknowledged notifications.</returns>
-        Task<DataAvailableNotification?> GetNextUnacknowledgedAsync(MarketOperator recipient, DomainOrigin domainOrigin);
+        Task<DataAvailableNotification?> GetNextUnacknowledgedForDomainAsync(MarketOperator recipient, DomainOrigin domainOrigin);
 
         /// <summary>
         /// Acknowledges the specified list of notifications, based on their ids.

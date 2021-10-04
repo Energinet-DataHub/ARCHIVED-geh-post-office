@@ -12,19 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Energinet.DataHub.PostOffice.Common;
-using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions;
-using SimpleInjector;
+using System;
+using System.Threading.Tasks;
+using Energinet.DataHub.PostOffice.Domain.Model;
+using Energinet.DataHub.PostOffice.Domain.Services;
+using Energinet.DataHub.PostOffice.Infrastructure.Repositories;
+using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
+using Xunit;
+using Xunit.Categories;
 
-namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
+namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
 {
-    internal sealed class Startup : StartupBase
+    [Collection("IntegrationTest")]
+    [IntegrationTest]
+    public sealed class DataAvailableNotificationRepositoryTests
     {
-        protected override void Configure(Container container)
-        {
-            container.Register<PeekFunction>(Lifestyle.Scoped);
-            container.Register<PeekAggregationsOrTimeSeriesFunction>(Lifestyle.Scoped);
-            container.Register<DequeueFunction>(Lifestyle.Scoped);
-        }
+        // TODO: Update tests after cleanup of repo.
     }
 }

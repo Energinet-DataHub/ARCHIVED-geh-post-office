@@ -84,7 +84,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             return document;
         }
 
-        public async Task<DataAvailableNotification?> GetNextUnacknowledgedAsync(MarketOperator recipient, DomainOrigin domainOrigin)
+        public async Task<DataAvailableNotification?> GetNextUnacknowledgedForDomainAsync(MarketOperator recipient, DomainOrigin domainOrigin)
         {
             if (recipient is null)
                 throw new ArgumentNullException(nameof(recipient));

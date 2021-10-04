@@ -48,7 +48,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             const string query =
                 @"SELECT * FROM bundles
                   WHERE
-                    bundles.recipient = @recipient &&
+                    bundles.recipient = @recipient AND
                     bundles.dequeued = false
                   ORDER BY bundles._ts ASC
                   OFFSET 0 LIMIT 1";
@@ -59,7 +59,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             return GetNextUnacknowledgedAsync(recipient, bundlesQuery);
         }
 
-        public Task<Bundle?> GetNextUnacknowledgedAsync(MarketOperator recipient, DomainOrigin domainOrigin)
+        public Task<Bundle?> GetNextUnacknowledgedForDomainAsync(MarketOperator recipient, DomainOrigin domainOrigin)
         {
             if (recipient is null)
                 throw new ArgumentNullException(nameof(recipient));
@@ -67,8 +67,8 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             const string query =
                 @"SELECT * FROM bundles
                   WHERE
-                    bundles.recipient = @recipient &&
-                    bundles.origin = @domainOrigin &&
+                    bundles.recipient = @recipient AND
+                    bundles.origin = @domainOrigin AND
                     bundles.dequeued = false
                   ORDER BY bundles._ts ASC
                   OFFSET 0 LIMIT 1";

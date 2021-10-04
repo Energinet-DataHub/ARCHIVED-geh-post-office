@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Energinet.DataHub.PostOffice.Common;
-using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions;
-using SimpleInjector;
+using Energinet.DataHub.PostOffice.Application.Commands;
+using Energinet.DataHub.PostOffice.Application.Validation.Rules;
+using FluentValidation;
 
-namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
+namespace Energinet.DataHub.PostOffice.Application.Validation
 {
-    internal sealed class Startup : StartupBase
+    public class PeekAggregationsOrTimeSeriesCommandRuleSet : AbstractValidator<PeekAggregationsOrTimeSeriesCommand>
     {
-        protected override void Configure(Container container)
+        public PeekAggregationsOrTimeSeriesCommandRuleSet()
         {
-            container.Register<PeekFunction>(Lifestyle.Scoped);
-            container.Register<PeekAggregationsOrTimeSeriesFunction>(Lifestyle.Scoped);
-            container.Register<DequeueFunction>(Lifestyle.Scoped);
+            RuleFor(command => command.Recipient)
+                .NotEmpty()
+                .SetValidator(new GlobalLocationNumberValidationRule());
         }
     }
 }
