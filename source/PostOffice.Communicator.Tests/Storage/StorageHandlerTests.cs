@@ -41,7 +41,7 @@ namespace PostOffice.Communicator.Tests.Storage
             var mockedBlobServiceClient = new Mock<BlobServiceClient>();
             var mockedDataBundleRequestDto = new DataBundleRequestDto(
                 NewGuid().ToString(),
-                new List<Guid>() { NewGuid(), NewGuid(), NewGuid() });
+                new List<Guid> { NewGuid(), NewGuid(), NewGuid() });
 
             mockedStorageServiceClientFactory.Setup(
                     x => x.Create())
@@ -74,7 +74,7 @@ namespace PostOffice.Communicator.Tests.Storage
             await Assert.ThrowsAsync<ArgumentNullException>(
                     () => target.AddStreamToStorageAsync(
                         Stream.Null,
-                        null))
+                        null!))
                 .ConfigureAwait(false);
         }
 
@@ -87,7 +87,7 @@ namespace PostOffice.Communicator.Tests.Storage
             var mockedBlobContainerClient = new Mock<BlobContainerClient>();
             var mockedDataBundleRequestDto = new DataBundleRequestDto(
                 NewGuid().ToString(),
-                new List<Guid>() { NewGuid(), NewGuid(), NewGuid() });
+                new List<Guid> { NewGuid(), NewGuid(), NewGuid() });
 
             mockedBlobServiceClient.Setup(
                     x => x.GetBlobContainerClient(It.IsAny<string>()))
@@ -125,7 +125,7 @@ namespace PostOffice.Communicator.Tests.Storage
             var mockedBlobClient = new Mock<BlobClient>();
             var mockedDataBundleRequestDto = new DataBundleRequestDto(
                 NewGuid().ToString(),
-                new List<Guid>() { NewGuid(), NewGuid(), NewGuid() });
+                new List<Guid> { NewGuid(), NewGuid(), NewGuid() });
 
             var testUri = new Uri("https://test.test.dk/FileStorage/postoffice-blobstorage");
             mockedBlobClient.Setup(
@@ -212,7 +212,7 @@ namespace PostOffice.Communicator.Tests.Storage
 
             // act, assert
             await Assert.ThrowsAsync<ArgumentNullException>(
-                    () => target.GetStreamFromStorageAsync(null))
+                    () => target.GetStreamFromStorageAsync(null!))
                 .ConfigureAwait(false);
         }
 

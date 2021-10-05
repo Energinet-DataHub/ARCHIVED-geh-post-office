@@ -40,9 +40,7 @@ namespace GreenEnergyHub.PostOffice.Communicator.SimpleInjector
 
             container.RegisterSingleton<IServiceBusClientFactory>(() =>
             {
-                var configuration = container.GetService<IConfiguration>();
-                var connectionString = configuration.GetConnectionString(serviceBusConnectionStringConfigKey)
-                                       ?? configuration?[serviceBusConnectionStringConfigKey];
+                var connectionString = GetConnectionString(container, serviceBusConnectionStringConfigKey);
 
                 if (string.IsNullOrEmpty(connectionString))
                 {
@@ -73,9 +71,7 @@ namespace GreenEnergyHub.PostOffice.Communicator.SimpleInjector
 
             container.RegisterSingleton<IStorageServiceClientFactory>(() =>
             {
-                var configuration = container.GetService<IConfiguration>();
-                var connectionString = configuration.GetConnectionString(storageServiceConnectionStringConfigKey)
-                                       ?? configuration?[storageServiceConnectionStringConfigKey];
+                var connectionString = GetConnectionString(container, storageServiceConnectionStringConfigKey);
 
                 if (string.IsNullOrEmpty(connectionString))
                 {
@@ -87,6 +83,14 @@ namespace GreenEnergyHub.PostOffice.Communicator.SimpleInjector
             });
 
             container.Register<IStorageHandler, StorageHandler>(Lifestyle.Singleton);
+        }
+
+        private static string? GetConnectionString(Container container, string serviceConnectionStringConfigKey)
+        {
+            var configuration = container.GetService<IConfiguration>();
+            var connectionString = configuration.GetConnectionString(serviceConnectionStringConfigKey)
+                                   ?? configuration?[serviceConnectionStringConfigKey];
+            return connectionString;
         }
     }
 }
