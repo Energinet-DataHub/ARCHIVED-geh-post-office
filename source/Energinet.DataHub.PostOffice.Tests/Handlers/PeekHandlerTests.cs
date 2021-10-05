@@ -134,7 +134,10 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
 
             var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
             warehouseDomainServiceMock
-                .Setup(x => x.GetNextUnacknowledgedAggregationsOrTimeSeriesAsync(It.Is<MarketOperator>(r => string.Equals(r.Gln.Value, request.Recipient, StringComparison.OrdinalIgnoreCase))))
+                .Setup(x =>
+                    x.GetNextUnacknowledgedAggregationsOrTimeSeriesAsync(
+                        It.Is<MarketOperator>(r =>
+                            string.Equals(r.Gln.Value, request.Recipient, StringComparison.OrdinalIgnoreCase))))
                 .ReturnsAsync(bundle);
 
             var target = new PeekHandler(warehouseDomainServiceMock.Object);

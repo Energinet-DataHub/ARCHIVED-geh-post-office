@@ -15,7 +15,6 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Services;
 using GreenEnergyHub.PostOffice.Communicator.Storage;
 
@@ -30,7 +29,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
             _storageHandler = storageHandler;
         }
 
-        public Task<Stream> GetMarketOperatorDataAsync(Uuid bundleUuid, Uri contentPath)
+        public Task<Stream> GetMarketOperatorDataAsync(Uri contentPath)
         {
             if (contentPath is null)
                 throw new ArgumentNullException(nameof(contentPath));

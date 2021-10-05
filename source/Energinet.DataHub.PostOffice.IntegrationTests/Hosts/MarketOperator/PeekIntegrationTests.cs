@@ -244,8 +244,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         {
             // Arrange
             var recipientGln = new MockedGln();
-            await AddTimeSeriesNotificationAsync(recipientGln).ConfigureAwait(false);
-            await AddAggregationsNotificationAsync(recipientGln).ConfigureAwait(false);
+            var unexpectedGuid = await AddTimeSeriesNotificationAsync(recipientGln).ConfigureAwait(false);
+            var expectedGuid = await AddAggregationsNotificationAsync(recipientGln).ConfigureAwait(false);
 
             await using var host = await MarketOperatorIntegrationTestHost
                 .InitializeAsync()
@@ -262,13 +262,17 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             // Assert
             Assert.NotNull(response);
             Assert.True(response.HasContent);
+
+            var bundleContents = await response.Data.ReadAsDataBundleRequestAsync().ConfigureAwait(false);
+            Assert.Contains(expectedGuid, bundleContents.DataAvailableNotificationIds);
+            Assert.DoesNotContain(unexpectedGuid, bundleContents.DataAvailableNotificationIds);
         }
 
-        private static async Task AddTimeSeriesNotificationAsync(string recipientGln)
+        private static async Task<Guid> AddTimeSeriesNotificationAsync(string recipientGln)
         {
-            var dataAvailableUuid = Guid.NewGuid().ToString();
+            var dataAvailableUuid = Guid.NewGuid();
             var dataAvailableCommand = new DataAvailableNotificationCommand(
-                dataAvailableUuid,
+                dataAvailableUuid.ToString(),
                 recipientGln,
                 "timeseries",
                 "timeseries",
@@ -283,13 +287,14 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             var mediator = scope.GetInstance<IMediator>();
 
             await mediator.Send(dataAvailableCommand).ConfigureAwait(false);
+            return dataAvailableUuid;
         }
 
-        private static async Task AddAggregationsNotificationAsync(string recipientGln)
+        private static async Task<Guid> AddAggregationsNotificationAsync(string recipientGln)
         {
-            var dataAvailableUuid = Guid.NewGuid().ToString();
+            var dataAvailableUuid = Guid.NewGuid();
             var dataAvailableCommand = new DataAvailableNotificationCommand(
-                dataAvailableUuid,
+                dataAvailableUuid.ToString(),
                 recipientGln,
                 "aggregations",
                 "aggregations",
@@ -304,6 +309,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             var mediator = scope.GetInstance<IMediator>();
 
             await mediator.Send(dataAvailableCommand).ConfigureAwait(false);
+            return dataAvailableUuid;
         }
     }
 }

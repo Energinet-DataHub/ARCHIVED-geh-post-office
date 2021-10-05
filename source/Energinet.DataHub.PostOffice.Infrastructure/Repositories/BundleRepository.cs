@@ -170,10 +170,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
             if (!string.IsNullOrWhiteSpace(document.ContentPath))
             {
-                bundleContent = new AzureBlobBundleContent(
-                    _marketOperatorDataStorageService,
-                    new Uuid(document.Id),
-                    new Uri(document.ContentPath));
+                bundleContent = new AzureBlobBundleContent(_marketOperatorDataStorageService, new Uri(document.ContentPath));
             }
 
             return new Bundle(
