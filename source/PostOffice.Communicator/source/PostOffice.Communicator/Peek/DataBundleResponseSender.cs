@@ -15,6 +15,8 @@
 using System;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
+using Energinet.DataHub.MessageHub.Client.Factories;
+using Energinet.DataHub.MessageHub.Client.Model;
 using static System.DateTimeOffset;
 
 namespace Energinet.DataHub.MessageHub.Client.Peek
