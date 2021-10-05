@@ -43,7 +43,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
                 .ConfigureAwait(true);
 
             var bundlesResponse = await testDatabase
-                .CreateContainerIfNotExistsAsync("bundles", "/pk")
+                .CreateContainerIfNotExistsAsync("bundles", "/recipient")
                 .ConfigureAwait(true);
 
             var singleBundleViolationTrigger = new TriggerProperties
@@ -61,7 +61,7 @@ function trigger() {
 
     // Query for checking if there are other unacknowledged bundles for market operator.
     var filterQuery = `SELECT * FROM bundles b WHERE b.recipient = '${createdItem.recipient}' and b.dequeued = false`
-    
+
     var accept = container.queryDocuments(container.getSelfLink(), filterQuery, function(err, items, options)
     {
         if (err) throw err;

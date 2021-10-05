@@ -102,7 +102,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             bundleRepositoryMock
                 .Setup(x => x.TryAddNextUnacknowledgedAsync(It.IsAny<Bundle>()))
-                .ReturnsAsync(false);
+                .ReturnsAsync(BundleCreatedResponse.ConcurrencyError);
 
             var target = new MarketOperatorDataDomainService(
                 bundleRepositoryMock.Object,
@@ -160,7 +160,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             bundleRepositoryMock
                 .Setup(x => x.TryAddNextUnacknowledgedAsync(It.IsAny<Bundle>()))
-                .ReturnsAsync(true);
+                .ReturnsAsync(BundleCreatedResponse.Success);
 
             requestDomainServiceMock
                 .Setup(x => x.WaitForBundleContentFromSubDomainAsync(It.IsAny<Bundle>()))

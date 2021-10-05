@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Domain.Model;
@@ -55,11 +56,14 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
                 dataAvailableNotification.Origin,
                 dataAvailableNotification.ContentType).ConfigureAwait(false);
 
-            if (await _bundleRepository.TryAddNextUnacknowledgedAsync(newBundle).ConfigureAwait(false))
-                return await AskSubDomainForContentAsync(newBundle).ConfigureAwait(false);
-
-            // Concurrent peek in progress; response is "no new data".
-            return null;
+            var bundleCreatedResponse = await _bundleRepository.TryAddNextUnacknowledgedAsync(newBundle).ConfigureAwait(false);
+            return bundleCreatedResponse switch
+            {
+                BundleCreatedResponse.Success => await AskSubDomainForContentAsync(newBundle).ConfigureAwait(false),
+                BundleCreatedResponse.ConcurrencyError => null,
+                BundleCreatedResponse.BundleIdDuplicateError => throw new ValidationException(nameof(BundleCreatedResponse.BundleIdDuplicateError)),
+                _ => null
+            };
         }
 
         public async Task<(bool IsAcknowledged, Bundle? AcknowledgedBundle)> TryAcknowledgeAsync(MarketOperator recipient, Uuid bundleId)
