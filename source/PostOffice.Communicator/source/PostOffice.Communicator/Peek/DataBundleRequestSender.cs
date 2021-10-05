@@ -15,12 +15,10 @@
 using System;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
-using GreenEnergyHub.PostOffice.Communicator.Factories;
-using GreenEnergyHub.PostOffice.Communicator.Model;
 using static System.DateTimeOffset;
 using static System.Guid;
 
-namespace GreenEnergyHub.PostOffice.Communicator.Peek
+namespace Energinet.DataHub.MessageHub.Client.Peek
 {
     public sealed class DataBundleRequestSender : IDataBundleRequestSender, IAsyncDisposable
     {

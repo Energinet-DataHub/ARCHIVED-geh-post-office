@@ -16,14 +16,14 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
+using Energinet.DataHub.MessageHub.Client.Factories;
+using Energinet.DataHub.MessageHub.Client.Model;
 using Google.Protobuf;
 using GreenEnergyHub.PostOffice.Communicator.Contracts;
-using GreenEnergyHub.PostOffice.Communicator.Factories;
-using GreenEnergyHub.PostOffice.Communicator.Model;
 using static System.DateTimeOffset;
 using static System.Guid;
 
-namespace GreenEnergyHub.PostOffice.Communicator.Dequeue
+namespace Energinet.DataHub.MessageHub.Client.Dequeue
 {
     public sealed class DequeueNotificationSender : IDequeueNotificationSender, IAsyncDisposable
     {
