@@ -15,29 +15,29 @@
 using System;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
-using GreenEnergyHub.PostOffice.Communicator.Factories;
-using GreenEnergyHub.PostOffice.Communicator.Model;
+using Energinet.DataHub.MessageHub.Client.Factories;
+using Energinet.DataHub.MessageHub.Client.Model;
 
-namespace GreenEnergyHub.PostOffice.Communicator.Peek
+namespace Energinet.DataHub.MessageHub.Client.Peek
 {
     public sealed class DataBundleResponseSender : IDataBundleResponseSender, IAsyncDisposable
     {
         private readonly IResponseBundleParser _responseBundleParser;
         private readonly IServiceBusClientFactory _serviceBusClientFactory;
-        private readonly string _replyQueue;
         private ServiceBusClient? _serviceBusClient;
 
         public DataBundleResponseSender(
             IResponseBundleParser responseBundleParser,
-            IServiceBusClientFactory serviceBusClientFactory,
-            DomainOrigin domainOrigin)
+            IServiceBusClientFactory serviceBusClientFactory)
         {
             _responseBundleParser = responseBundleParser;
             _serviceBusClientFactory = serviceBusClientFactory;
-            _replyQueue = $"sbq-{domainOrigin}-reply";
         }
 
-        public async Task SendAsync(RequestDataBundleResponseDto requestDataBundleResponseDto, string sessionId)
+        public async Task SendAsync(
+            RequestDataBundleResponseDto requestDataBundleResponseDto,
+            string sessionId,
+            DomainOrigin domainOrigin)
         {
             if (requestDataBundleResponseDto == null)
                 throw new ArgumentNullException(nameof(requestDataBundleResponseDto));
@@ -53,7 +53,7 @@ namespace GreenEnergyHub.PostOffice.Communicator.Peek
 
             _serviceBusClient ??= _serviceBusClientFactory.Create();
 
-            await using var sender = _serviceBusClient.CreateSender(_replyQueue);
+            await using var sender = _serviceBusClient.CreateSender($"sbq-{domainOrigin}-reply");
             await sender.SendMessageAsync(serviceBusReplyMessage).ConfigureAwait(false);
         }
 

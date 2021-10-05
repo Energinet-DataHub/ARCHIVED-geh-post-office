@@ -13,9 +13,9 @@
 // limitations under the License.
 
 using System.Threading.Tasks;
-using GreenEnergyHub.PostOffice.Communicator.Model;
+using Energinet.DataHub.MessageHub.Client.Model;
 
-namespace GreenEnergyHub.PostOffice.Communicator.Peek
+namespace Energinet.DataHub.MessageHub.Client.Peek
 {
     /// <summary>
     /// Communicates to the post office a response to a given request for bundle contents.
@@ -27,6 +27,7 @@ namespace GreenEnergyHub.PostOffice.Communicator.Peek
         /// </summary>
         /// <param name="requestDataBundleResponseDto">The response to the request.</param>
         /// <param name="sessionId">The ServiceBus session id received from the session-enabled ServiceBusTrigger.</param>
-        Task SendAsync(RequestDataBundleResponseDto requestDataBundleResponseDto, string sessionId);
+        /// <param name="domainOrigin">The domain that the response is from.</param>
+        Task SendAsync(RequestDataBundleResponseDto requestDataBundleResponseDto, string sessionId, DomainOrigin domainOrigin);
     }
 }
