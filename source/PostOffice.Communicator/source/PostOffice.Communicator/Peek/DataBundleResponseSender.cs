@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 using GreenEnergyHub.PostOffice.Communicator.Factories;
 using GreenEnergyHub.PostOffice.Communicator.Model;
+using static System.DateTimeOffset;
 
 namespace GreenEnergyHub.PostOffice.Communicator.Peek
 {
@@ -50,6 +51,12 @@ namespace GreenEnergyHub.PostOffice.Communicator.Peek
             {
                 SessionId = sessionId,
             };
+
+            serviceBusReplyMessage.ApplicationProperties.Add("OperationTimestamp", UtcNow);
+            serviceBusReplyMessage.ApplicationProperties.Add("OperationCorrelationId", 1);
+            serviceBusReplyMessage.ApplicationProperties.Add("MessageVersion", 1);
+            serviceBusReplyMessage.ApplicationProperties.Add("MessageType ", "RequestDataBundleSent");
+            serviceBusReplyMessage.ApplicationProperties.Add("EventIdentification ", 1);
 
             _serviceBusClient ??= _serviceBusClientFactory.Create();
 

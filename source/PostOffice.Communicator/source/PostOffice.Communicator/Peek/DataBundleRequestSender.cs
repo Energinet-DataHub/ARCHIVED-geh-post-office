@@ -17,6 +17,8 @@ using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 using GreenEnergyHub.PostOffice.Communicator.Factories;
 using GreenEnergyHub.PostOffice.Communicator.Model;
+using static System.DateTimeOffset;
+using static System.Guid;
 
 namespace GreenEnergyHub.PostOffice.Communicator.Peek
 {
@@ -55,13 +57,18 @@ namespace GreenEnergyHub.PostOffice.Communicator.Peek
                 throw new ArgumentNullException(nameof(dataBundleRequestDto));
             var bytes = _requestBundleParser.Parse(dataBundleRequestDto);
 
-            var sessionId = Guid.NewGuid().ToString();
+            var sessionId = NewGuid().ToString();
             var serviceBusMessage = new ServiceBusMessage(bytes)
             {
                 SessionId = sessionId,
                 ReplyToSessionId = sessionId,
                 ReplyTo = $"sbq-{domainOrigin}-reply"
             };
+            serviceBusMessage.ApplicationProperties.Add("OperationTimestamp", UtcNow);
+            serviceBusMessage.ApplicationProperties.Add("OperationCorrelationId", dataBundleRequestDto.IdempotencyId);
+            serviceBusMessage.ApplicationProperties.Add("MessageVersion", 1);
+            serviceBusMessage.ApplicationProperties.Add("MessageType ", "RequestDataBundleSent");
+            serviceBusMessage.ApplicationProperties.Add("EventIdentification ", NewGuid().ToString());
 
             _serviceBusClient ??= _serviceBusClientFactory.Create();
 

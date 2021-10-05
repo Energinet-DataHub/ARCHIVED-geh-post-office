@@ -20,6 +20,8 @@ using Google.Protobuf;
 using GreenEnergyHub.PostOffice.Communicator.Contracts;
 using GreenEnergyHub.PostOffice.Communicator.Factories;
 using GreenEnergyHub.PostOffice.Communicator.Model;
+using static System.DateTimeOffset;
+using static System.Guid;
 
 namespace GreenEnergyHub.PostOffice.Communicator.Dequeue
 {
@@ -48,6 +50,11 @@ namespace GreenEnergyHub.PostOffice.Communicator.Dequeue
             };
 
             var dequeueMessage = new ServiceBusMessage(new BinaryData(contract.ToByteArray()));
+            dequeueMessage.ApplicationProperties.Add("OperationTimestamp", UtcNow);
+            dequeueMessage.ApplicationProperties.Add("OperationCorrelationId", NewGuid().ToString());
+            dequeueMessage.ApplicationProperties.Add("MessageVersion", 1);
+            dequeueMessage.ApplicationProperties.Add("MessageType ", "RequestDataBundleSent");
+            dequeueMessage.ApplicationProperties.Add("EventIdentification ", 1);
             await sender.SendMessageAsync(dequeueMessage).ConfigureAwait(false);
         }
 

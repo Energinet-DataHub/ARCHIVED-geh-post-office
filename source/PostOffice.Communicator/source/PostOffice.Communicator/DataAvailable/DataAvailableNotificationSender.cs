@@ -19,6 +19,8 @@ using Google.Protobuf;
 using GreenEnergyHub.PostOffice.Communicator.Contracts;
 using GreenEnergyHub.PostOffice.Communicator.Factories;
 using GreenEnergyHub.PostOffice.Communicator.Model;
+using static System.DateTimeOffset;
+using static System.Guid;
 
 namespace GreenEnergyHub.PostOffice.Communicator.DataAvailable
 {
@@ -52,6 +54,12 @@ namespace GreenEnergyHub.PostOffice.Communicator.DataAvailable
             };
 
             var message = new ServiceBusMessage(new BinaryData(contract.ToByteArray()));
+            message.ApplicationProperties.Add("OperationTimestamp", UtcNow);
+            message.ApplicationProperties.Add("OperationCorrelationId", dataAvailableNotificationDto.Uuid);
+            message.ApplicationProperties.Add("MessageVersion", 1);
+            message.ApplicationProperties.Add("MessageType ", "RequestDataBundleSent");
+            message.ApplicationProperties.Add("EventIdentification ", NewGuid().ToString());
+
             await sender.SendMessageAsync(message).ConfigureAwait(false);
         }
 
