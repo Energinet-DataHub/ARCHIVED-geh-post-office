@@ -42,8 +42,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             mockedRequestData.HttpRequestDataMock
                 .Setup(x => x.Url)
                 .Returns(_functionRoute);
-            var mockedMediator = new Mock<IMediator>();
 
+            var mockedMediator = new Mock<IMediator>();
             mockedMediator
                 .Setup(x => x.Send(It.IsAny<PeekAggregationsOrTimeSeriesCommand>(), default))
                 .ReturnsAsync(new PeekResponse(true, new MemoryStream(Encoding.ASCII.GetBytes(expectedData))));
@@ -68,8 +68,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             mockedRequestData.HttpRequestDataMock
                 .Setup(x => x.Url)
                 .Returns(_functionRoute);
-            var mockedMediator = new Mock<IMediator>();
 
+            var mockedMediator = new Mock<IMediator>();
             mockedMediator
                 .Setup(x => x.Send(It.IsAny<PeekAggregationsOrTimeSeriesCommand>(), default))
                 .ReturnsAsync(new PeekResponse(false, Stream.Null));

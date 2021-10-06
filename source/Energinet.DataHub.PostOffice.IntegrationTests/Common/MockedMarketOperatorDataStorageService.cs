@@ -27,7 +27,6 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Common
             // Integration testing: the Protobuf request is sent raw in the Url.
             var query = QueryHelpers.ParseQuery(contentPath.Query);
             var message = query["mocked"];
-
             var bytes = Convert.FromBase64String(message);
             return Task.FromResult<Stream>(new MemoryStream(bytes));
         }
