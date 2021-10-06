@@ -183,5 +183,82 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             Assert.Equal(0, stream.Length);
             await stream.DisposeAsync().ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task PeekChargesCommandHandle_NullArgument_ThrowsException()
+        {
+            // Arrange
+            var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
+            var target = new PeekHandler(warehouseDomainServiceMock.Object);
+
+            // Act + Assert
+            await Assert
+                .ThrowsAsync<ArgumentNullException>(() => target.Handle((PeekChargesCommand)null!, CancellationToken.None))
+                .ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task PeekChargesCommandHandle_WithData_ReturnsDataStream()
+        {
+            // Arrange
+            var request = new PeekChargesCommand("fake_value");
+
+            var bundleContentMock = new Mock<IBundleContent>();
+            bundleContentMock
+                .Setup(x => x.OpenAsync())
+                .ReturnsAsync(() => new MemoryStream(new byte[] { 1, 2, 3 }));
+
+            var bundle = new Bundle(
+                new Uuid(Guid.NewGuid()),
+                DomainOrigin.Charges,
+                new MarketOperator(new GlobalLocationNumber("fake_value")),
+                Array.Empty<Uuid>(),
+                bundleContentMock.Object);
+
+            var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
+            warehouseDomainServiceMock
+                .Setup(x =>
+                    x.GetNextUnacknowledgedChargesAsync(
+                        It.Is<MarketOperator>(r =>
+                            string.Equals(r.Gln.Value, request.Recipient, StringComparison.OrdinalIgnoreCase))))
+                .ReturnsAsync(bundle);
+
+            var target = new PeekHandler(warehouseDomainServiceMock.Object);
+
+            // Act
+            var (hasContent, stream) = await target.Handle(request, CancellationToken.None).ConfigureAwait(false);
+
+            // Assert
+            Assert.True(hasContent);
+            Assert.Equal(1, stream.ReadByte());
+            Assert.Equal(2, stream.ReadByte());
+            Assert.Equal(3, stream.ReadByte());
+            await stream.DisposeAsync().ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task PeekChargesCommandHandle_WithoutData_ReturnsNullStream()
+        {
+            // Arrange
+            var request = new PeekChargesCommand("fake_value");
+
+            var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
+            warehouseDomainServiceMock
+                .Setup(x =>
+                    x.GetNextUnacknowledgedChargesAsync(
+                        It.Is<MarketOperator>(r =>
+                            string.Equals(r.Gln.Value, request.Recipient, StringComparison.OrdinalIgnoreCase))))
+                .ReturnsAsync((Bundle?)null);
+
+            var target = new PeekHandler(warehouseDomainServiceMock.Object);
+
+            // Act
+            var (hasContent, stream) = await target.Handle(request, CancellationToken.None).ConfigureAwait(false);
+
+            // Assert
+            Assert.False(hasContent);
+            Assert.Equal(0, stream.Length);
+            await stream.DisposeAsync().ConfigureAwait(false);
+        }
     }
 }

@@ -61,20 +61,14 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
             return null;
         }
 
-        public async Task<Bundle?> GetNextUnacknowledgedAggregationsOrTimeSeriesAsync(MarketOperator recipient)
+        public Task<Bundle?> GetNextUnacknowledgedChargesAsync(MarketOperator recipient)
         {
-            var domains = new[] { DomainOrigin.Aggregations, DomainOrigin.TimeSeries };
+            return GetNextUnacknowledgedAsync(recipient, DomainOrigin.Charges);
+        }
 
-            foreach (var domainOrigin in domains)
-            {
-                var (hasData, bundle) = await GetNextUnacknowledgedAsync(recipient, domainOrigin).ConfigureAwait(false);
-                if (hasData)
-                {
-                    return bundle;
-                }
-            }
-
-            return null;
+        public Task<Bundle?> GetNextUnacknowledgedAggregationsOrTimeSeriesAsync(MarketOperator recipient)
+        {
+            return GetNextUnacknowledgedAsync(recipient, DomainOrigin.Aggregations, DomainOrigin.TimeSeries);
         }
 
         public async Task<(bool IsAcknowledged, Bundle? AcknowledgedBundle)> TryAcknowledgeAsync(MarketOperator recipient, Uuid bundleId)
@@ -88,26 +82,38 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
             return (true, bundle);
         }
 
-        private async Task<(bool HasData, Bundle? Bundle)> GetNextUnacknowledgedAsync(MarketOperator recipient, DomainOrigin domainOrigin)
+        private async Task<Bundle?> GetNextUnacknowledgedAsync(MarketOperator recipient, params DomainOrigin[] orderedDomains)
         {
-            var existingBundle = await _bundleRepository.GetNextUnacknowledgedForDomainAsync(recipient, domainOrigin).ConfigureAwait(false);
-            if (existingBundle != null)
-                return (true, await AskSubDomainForContentAsync(existingBundle).ConfigureAwait(false));
+            DataAvailableNotification? firstNotificationInBundle = null;
 
-            var dataAvailableNotification = await _dataAvailableNotificationRepository.GetNextUnacknowledgedForDomainAsync(recipient, domainOrigin).ConfigureAwait(false);
-            if (dataAvailableNotification == null)
-                return (false, null); // No new data.
+            foreach (var domainOrigin in orderedDomains)
+            {
+                var existingBundle = await _bundleRepository.GetNextUnacknowledgedForDomainAsync(recipient, domainOrigin).ConfigureAwait(false);
+                if (existingBundle != null)
+                    return await AskSubDomainForContentAsync(existingBundle).ConfigureAwait(false);
+
+                var dataAvailableNotification = await _dataAvailableNotificationRepository.GetNextUnacknowledgedForDomainAsync(recipient, domainOrigin).ConfigureAwait(false);
+                if (dataAvailableNotification == null)
+                    continue;
+
+                firstNotificationInBundle = dataAvailableNotification;
+                break;
+            }
+
+            // No new data in any domains.
+            if (firstNotificationInBundle == null)
+                return null;
 
             var newBundle = await CreateNextBundleAsync(
-                dataAvailableNotification.Recipient,
-                dataAvailableNotification.Origin,
-                dataAvailableNotification.ContentType).ConfigureAwait(false);
+                firstNotificationInBundle.Recipient,
+                firstNotificationInBundle.Origin,
+                firstNotificationInBundle.ContentType).ConfigureAwait(false);
 
             if (await _bundleRepository.TryAddNextUnacknowledgedAsync(newBundle).ConfigureAwait(false))
-                return (true, await AskSubDomainForContentAsync(newBundle).ConfigureAwait(false));
+                return await AskSubDomainForContentAsync(newBundle).ConfigureAwait(false);
 
             // Concurrent peek in progress; response is "no new data".
-            return (true, null);
+            return null;
         }
 
         private async Task<Bundle?> AskSubDomainForContentAsync(Bundle bundle)

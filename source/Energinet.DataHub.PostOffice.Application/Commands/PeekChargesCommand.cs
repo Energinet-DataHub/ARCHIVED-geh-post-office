@@ -12,19 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Energinet.DataHub.PostOffice.Application.Commands;
-using Energinet.DataHub.PostOffice.Application.Validation.Rules;
-using FluentValidation;
-
-namespace Energinet.DataHub.PostOffice.Application.Validation
+namespace Energinet.DataHub.PostOffice.Application.Commands
 {
-    public sealed class PeekCommandRuleSet : AbstractValidator<PeekCommand>
-    {
-        public PeekCommandRuleSet()
-        {
-            RuleFor(command => command.Recipient)
-                .NotEmpty()
-                .SetValidator(new GlobalLocationNumberValidationRule());
-        }
-    }
+    public sealed record PeekChargesCommand(string Recipient) : PeekCommandBase(Recipient);
 }

@@ -22,23 +22,23 @@ using Microsoft.Azure.Functions.Worker.Http;
 
 namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions
 {
-    public sealed class PeekAggregationsOrTimeSeriesFunction
+    public sealed class PeekChargesFunction
     {
         private readonly IMediator _mediator;
 
-        public PeekAggregationsOrTimeSeriesFunction(IMediator mediator)
+        public PeekChargesFunction(IMediator mediator)
         {
             _mediator = mediator;
         }
 
-        [Function("peek/aggregations")] // TODO: What do we call this endpoint?
+        [Function("peek/charges")]
         public Task<HttpResponseData> RunAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post")]
             HttpRequestData request)
         {
             return request.ProcessAsync(async () =>
             {
-                var command = request.Url.ParseQuery<PeekAggregationsOrTimeSeriesCommand>();
+                var command = request.Url.ParseQuery<PeekChargesCommand>();
                 var (hasContent, stream) = await _mediator.Send(command).ConfigureAwait(false);
                 return hasContent
                     ? request.CreateResponse(stream)
