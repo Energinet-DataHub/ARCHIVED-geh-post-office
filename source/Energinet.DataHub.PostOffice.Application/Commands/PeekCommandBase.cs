@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using MediatR;
+
 namespace Energinet.DataHub.PostOffice.Application.Commands
 {
-    public sealed record PeekCommand(string Recipient, string BundleId) : PeekCommandBase(Recipient, BundleId);
+    public abstract record PeekCommandBase(string Recipient, string BundleId) : IRequest<PeekResponse>;
 }

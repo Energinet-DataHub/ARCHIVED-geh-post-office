@@ -12,7 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.PostOffice.Application.Commands
+using System;
+using System.Threading.Tasks;
+using Energinet.DataHub.PostOffice.Domain.Model;
+using Energinet.DataHub.PostOffice.Domain.Services;
+using Energinet.DataHub.PostOffice.Infrastructure.Repositories;
+using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
+using Xunit;
+using Xunit.Categories;
+
+namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
 {
-    public sealed record PeekCommand(string Recipient, string BundleId) : PeekCommandBase(Recipient, BundleId);
+    [Collection("IntegrationTest")]
+    [IntegrationTest]
+    public sealed class DataAvailableNotificationRepositoryTests
+    {
+        // TODO: Update tests after cleanup of repo.
+    }
 }

@@ -31,7 +31,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
     public sealed class PeekHandlerTests
     {
         [Fact]
-        public async Task Handle_NullArgument_ThrowsException()
+        public async Task PeekCommandHandle_NullArgument_ThrowsException()
         {
             // Arrange
             var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
@@ -39,12 +39,12 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
 
             // Act + Assert
             await Assert
-                .ThrowsAsync<ArgumentNullException>(() => target.Handle(null!, CancellationToken.None))
+                .ThrowsAsync<ArgumentNullException>(() => target.Handle((PeekCommand)null!, CancellationToken.None))
                 .ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task Handle_WithData_ReturnsDataStream()
+        public async Task PeekCommandHandle_WithData_ReturnsDataStream()
         {
             // Arrange
             var request = new PeekCommand("fake_value", Guid.NewGuid().ToString());
@@ -63,7 +63,11 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
 
             var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
             warehouseDomainServiceMock
-                .Setup(x => x.GetNextUnacknowledgedAsync(It.Is<MarketOperator>(r => string.Equals(r.Gln.Value, request.Recipient, StringComparison.OrdinalIgnoreCase)), It.Is<Uuid>(r => BundleIdCheck(r, request))))
+                .Setup(x =>
+                    x.GetNextUnacknowledgedAsync(
+                        It.Is<MarketOperator>(r =>
+                            string.Equals(r.Gln.Value, request.Recipient, StringComparison.OrdinalIgnoreCase)),
+                        It.Is<Uuid>(r => BundleIdCheck(r, request))))
                 .ReturnsAsync(bundle);
 
             var target = new PeekHandler(warehouseDomainServiceMock.Object);
@@ -80,7 +84,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         }
 
         [Fact]
-        public async Task Handle_WithoutData_ReturnsNullStream()
+        public async Task PeekCommandHandle_WithoutData_ReturnsNullStream()
         {
             // Arrange
             var request = new PeekCommand("fake_value", Guid.NewGuid().ToString());
@@ -90,7 +94,89 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             var bundleId = It.Is<Uuid>(r => string.Equals(r.ToString(), request.BundleId, StringComparison.OrdinalIgnoreCase));
 
             warehouseDomainServiceMock
-                .Setup(x => x.GetNextUnacknowledgedAsync(marketOperator, bundleId))
+                .Setup(x =>
+                    x.GetNextUnacknowledgedAsync(
+                        It.Is<MarketOperator>(r =>
+                            string.Equals(r.Gln.Value, request.Recipient, StringComparison.OrdinalIgnoreCase)),
+                        bundleId))
+                .ReturnsAsync((Bundle?)null);
+
+            var target = new PeekHandler(warehouseDomainServiceMock.Object);
+
+            // Act
+            var (hasContent, stream) = await target.Handle(request, CancellationToken.None).ConfigureAwait(false);
+
+            // Assert
+            Assert.False(hasContent);
+            Assert.Equal(0, stream.Length);
+            await stream.DisposeAsync().ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task PeekAggregationsOrTimeSeriesCommandHandle_NullArgument_ThrowsException()
+        {
+            // Arrange
+            var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
+            var target = new PeekHandler(warehouseDomainServiceMock.Object);
+
+            // Act + Assert
+            await Assert
+                .ThrowsAsync<ArgumentNullException>(() => target.Handle((PeekAggregationsOrTimeSeriesCommand)null!, CancellationToken.None))
+                .ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task PeekAggregationsOrTimeSeriesCommandHandle_WithData_ReturnsDataStream()
+        {
+            // Arrange
+            var request = new PeekAggregationsOrTimeSeriesCommand("fake_value", Guid.NewGuid().ToString());
+
+            var bundleContentMock = new Mock<IBundleContent>();
+            bundleContentMock
+                .Setup(x => x.OpenAsync())
+                .ReturnsAsync(() => new MemoryStream(new byte[] { 1, 2, 3 }));
+
+            var bundle = new Bundle(
+                new Uuid(Guid.NewGuid()),
+                DomainOrigin.TimeSeries,
+                new MarketOperator(new GlobalLocationNumber("fake_value")),
+                Array.Empty<Uuid>(),
+                bundleContentMock.Object);
+
+            var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
+            warehouseDomainServiceMock
+                .Setup(x =>
+                    x.GetNextUnacknowledgedAggregationsOrTimeSeriesAsync(
+                        It.Is<MarketOperator>(r =>
+                            string.Equals(r.Gln.Value, request.Recipient, StringComparison.OrdinalIgnoreCase)),
+                        It.Is<Uuid>(r => r.ToString().Equals(request.BundleId, StringComparison.OrdinalIgnoreCase))))
+                .ReturnsAsync(bundle);
+
+            var target = new PeekHandler(warehouseDomainServiceMock.Object);
+
+            // Act
+            var (hasContent, stream) = await target.Handle(request, CancellationToken.None).ConfigureAwait(false);
+
+            // Assert
+            Assert.True(hasContent);
+            Assert.Equal(1, stream.ReadByte());
+            Assert.Equal(2, stream.ReadByte());
+            Assert.Equal(3, stream.ReadByte());
+            await stream.DisposeAsync().ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task PeekAggregationsOrTimeSeriesCommandHandle_WithoutData_ReturnsNullStream()
+        {
+            // Arrange
+            var request = new PeekAggregationsOrTimeSeriesCommand("fake_value", "fake_bundle");
+
+            var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
+            warehouseDomainServiceMock
+                .Setup(x =>
+                    x.GetNextUnacknowledgedAggregationsOrTimeSeriesAsync(
+                        It.Is<MarketOperator>(r => string.Equals(r.Gln.Value, request.Recipient, StringComparison.OrdinalIgnoreCase)),
+                        It.Is<Uuid>(r => string.Equals(r.ToString(), request.BundleId, StringComparison.OrdinalIgnoreCase))))
                 .ReturnsAsync((Bundle?)null);
 
             var target = new PeekHandler(warehouseDomainServiceMock.Object);

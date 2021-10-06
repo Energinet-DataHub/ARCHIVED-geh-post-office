@@ -32,6 +32,15 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         Task<Bundle?> GetNextUnacknowledgedAsync(MarketOperator recipient, Uuid bundleId);
 
         /// <summary>
+        /// Get the next bundle of unacknowledged time series and aggregations data for a given market operator.
+        /// Returns null when there is no new unacknowledged data to get.
+        /// </summary>
+        /// <param name="recipient">The market operator to get the next unacknowledged bundle for.</param>
+        /// <param name="bundleId">id for data response.</param>
+        /// <returns>The next unacknowledged bundle; or null, if there is no new data.</returns>
+        Task<Bundle?> GetNextUnacknowledgedAggregationsOrTimeSeriesAsync(MarketOperator recipient, Uuid bundleId);
+
+        /// <summary>
         /// Acknowledges the current bundle, as returned by GetNextUnacknowledgedAsync.
         /// If there is nothing to acknowledge or the id does not match the bundle, the method returns false.
         /// </summary>

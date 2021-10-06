@@ -40,45 +40,44 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             _marketOperatorDataStorageService = marketOperatorDataStorageService;
         }
 
-        public async Task<Bundle?> GetNextUnacknowledgedAsync(MarketOperator recipient)
+        public Task<Bundle?> GetNextUnacknowledgedAsync(MarketOperator recipient)
         {
             if (recipient is null)
                 throw new ArgumentNullException(nameof(recipient));
 
-            var documentQuery =
-                new QueryDefinition(
-                        "SELECT * FROM c WHERE c.recipient = @recipient AND c.dequeued = @dequeued ORDER BY c._ts ASC OFFSET 0 LIMIT 1")
+            const string query =
+                @"SELECT * FROM bundles
+                  WHERE
+                    bundles.recipient = @recipient AND
+                    bundles.dequeued = false
+                  ORDER BY bundles._ts ASC
+                  OFFSET 0 LIMIT 1";
+
+            var bundlesQuery = new QueryDefinition(query)
+                .WithParameter("@recipient", recipient.Gln.Value);
+
+            return GetNextUnacknowledgedAsync(recipient, bundlesQuery);
+        }
+
+        public Task<Bundle?> GetNextUnacknowledgedForDomainAsync(MarketOperator recipient, DomainOrigin domainOrigin)
+        {
+            if (recipient is null)
+                throw new ArgumentNullException(nameof(recipient));
+
+            const string query =
+                @"SELECT * FROM bundles
+                  WHERE
+                    bundles.recipient = @recipient AND
+                    bundles.origin = @domainOrigin AND
+                    bundles.dequeued = false
+                  ORDER BY bundles._ts ASC
+                  OFFSET 0 LIMIT 1";
+
+            var documentQuery = new QueryDefinition(query)
                     .WithParameter("@recipient", recipient.Gln.Value)
-                    .WithParameter("@dequeued", false);
+                    .WithParameter("@domainOrigin", domainOrigin.ToString());
 
-            using FeedIterator<BundleDocument> feedIterator =
-                _repositoryContainer.Container.GetItemQueryIterator<BundleDocument>(documentQuery);
-
-            var documentsFromCosmos =
-                await feedIterator
-                    .ReadNextAsync()
-                    .ConfigureAwait(false);
-
-            var document = documentsFromCosmos.FirstOrDefault();
-            if (document is null)
-                return null;
-
-            IBundleContent? bundleContent = null;
-
-            if (!string.IsNullOrWhiteSpace(document.ContentPath))
-            {
-                bundleContent = new AzureBlobBundleContent(
-                   _marketOperatorDataStorageService,
-                   new Uuid(document.Id),
-                   new Uri(document.ContentPath));
-            }
-
-            return new Bundle(
-                new Uuid(document.Id),
-                Enum.Parse<DomainOrigin>(document.Origin),
-                recipient,
-                document.NotificationIds.Select(x => new Uuid(x)).ToList(),
-                bundleContent);
+            return GetNextUnacknowledgedAsync(recipient, documentQuery);
         }
 
         public async Task<BundleCreatedResponse> TryAddNextUnacknowledgedAsync(Bundle bundle)
@@ -160,6 +159,35 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
         private static bool IsBundleIdDuplicateError(CosmosException ex)
         {
             return ex.StatusCode == HttpStatusCode.Conflict;
+        }
+
+        private async Task<Bundle?> GetNextUnacknowledgedAsync(MarketOperator recipient, QueryDefinition bundleQuery)
+        {
+            using var feedIterator = _repositoryContainer
+                .Container
+                .GetItemQueryIterator<BundleDocument>(bundleQuery);
+
+            var documentsFromCosmos = await feedIterator
+                .ReadNextAsync()
+                .ConfigureAwait(false);
+
+            var document = documentsFromCosmos.FirstOrDefault();
+            if (document == null)
+                return null;
+
+            IBundleContent? bundleContent = null;
+
+            if (!string.IsNullOrWhiteSpace(document.ContentPath))
+            {
+                bundleContent = new AzureBlobBundleContent(_marketOperatorDataStorageService, new Uri(document.ContentPath));
+            }
+
+            return new Bundle(
+                new Uuid(document.Id),
+                Enum.Parse<DomainOrigin>(document.Origin),
+                recipient,
+                document.NotificationIds.Select(x => new Uuid(x)).ToList(),
+                bundleContent);
         }
     }
 }
