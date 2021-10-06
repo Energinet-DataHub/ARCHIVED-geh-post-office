@@ -46,7 +46,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@master
-
       - name: Pack and publish nuget package
         uses: ./.github/actions/publish-nuget-package
         with:
