@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
@@ -181,6 +182,68 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             Assert.Equal(dataAvailableNotificationFirst.Origin, bundle.Origin);
             Assert.True(bundle.TryGetContent(out var actualBundleContent));
             Assert.Equal(bundleContentMock.Object, actualBundleContent);
+        }
+
+        [Fact]
+        public async Task GetNextUnacknowledgedAsync_BundleIdAlreadyInUse_ReturnsValidationException()
+        {
+            // Arrange
+            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var bundleId = new Uuid("7dfb2080-fb56-4a37-a85d-1ac2f1559b45");
+            var contentType = new ContentType("timeseries");
+
+            var dataAvailableNotificationFirst = CreateDataAvailableNotification(recipient, contentType);
+            var allDataAvailableNotificationsForMessageType = new[]
+            {
+                dataAvailableNotificationFirst,
+                CreateDataAvailableNotification(recipient, contentType),
+                CreateDataAvailableNotification(recipient, contentType),
+                CreateDataAvailableNotification(recipient, contentType)
+            };
+
+            var dataAvailableNotificationRepositoryMock = new Mock<IDataAvailableNotificationRepository>();
+            dataAvailableNotificationRepositoryMock
+                .Setup(x => x.GetNextUnacknowledgedAsync(recipient))
+                .ReturnsAsync(dataAvailableNotificationFirst);
+
+            var weight = new Weight(1);
+
+            var contentTypeWeightMapMock = new Mock<IWeightCalculatorDomainService>();
+            contentTypeWeightMapMock
+                .Setup(x => x.CalculateMaxWeight(DomainOrigin.TimeSeries))
+                .Returns(weight);
+
+            dataAvailableNotificationRepositoryMock
+                .Setup(x => x.GetNextUnacknowledgedAsync(recipient, contentType, weight))
+                .ReturnsAsync(allDataAvailableNotificationsForMessageType);
+
+            var requestDomainServiceMock = new Mock<IRequestBundleDomainService>();
+            var bundleContentMock = new Mock<IBundleContent>();
+
+            var bundleRepositoryMock = new Mock<IBundleRepository>();
+            bundleRepositoryMock
+                .Setup(x => x.GetNextUnacknowledgedAsync(recipient))
+                .ReturnsAsync((Bundle?)null);
+
+            bundleRepositoryMock
+                .Setup(x => x.TryAddNextUnacknowledgedAsync(It.IsAny<Bundle>()))
+                .ReturnsAsync(BundleCreatedResponse.BundleIdAlreadyInUse);
+
+            requestDomainServiceMock
+                .Setup(x => x.WaitForBundleContentFromSubDomainAsync(It.IsAny<Bundle>()))
+                .ReturnsAsync(bundleContentMock.Object);
+
+            var target = new MarketOperatorDataDomainService(
+                bundleRepositoryMock.Object,
+                dataAvailableNotificationRepositoryMock.Object,
+                requestDomainServiceMock.Object,
+                contentTypeWeightMapMock.Object);
+
+            // Act
+            var nextUnacknowledged = target.GetNextUnacknowledgedAsync(recipient, bundleId).ConfigureAwait(true);
+
+            // Assert
+            await Assert.ThrowsAsync<ValidationException>(async () => await nextUnacknowledged).ConfigureAwait(true);
         }
 
         [Fact]
