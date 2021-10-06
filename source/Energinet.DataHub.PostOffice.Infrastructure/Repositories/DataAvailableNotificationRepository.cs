@@ -14,26 +14,23 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
-using Microsoft.Azure.Cosmos;
+using Energinet.DataHub.PostOffice.Infrastructure.Common;
+using Energinet.DataHub.PostOffice.Infrastructure.Documents;
+using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 {
     public class DataAvailableNotificationRepository : IDataAvailableNotificationRepository
     {
-        private const string ContainerName = "dataavailable";
-        private readonly Container _container;
+        private readonly IDataAvailableNotificationRepositoryContainer _dataAvailableNotificationRepositoryContainer;
 
-        public DataAvailableNotificationRepository(
-            [NotNull] CosmosClient cosmosClient,
-            [NotNull] CosmosDatabaseConfig cosmosConfig)
+        public DataAvailableNotificationRepository(IDataAvailableNotificationRepositoryContainer dataAvailableNotificationRepositoryContainer)
         {
-            _container = cosmosClient.GetContainer(cosmosConfig.DatabaseId, ContainerName);
+            _dataAvailableNotificationRepositoryContainer = dataAvailableNotificationRepositoryContainer;
         }
 
         public async Task SaveAsync(DataAvailableNotification dataAvailableNotification)
@@ -47,13 +44,55 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 Recipient = dataAvailableNotification.Recipient.Gln.Value,
                 ContentType = dataAvailableNotification.ContentType.Value,
                 Origin = dataAvailableNotification.Origin.ToString(),
+                SupportsBundling = dataAvailableNotification.SupportsBundling.Value,
                 RelativeWeight = dataAvailableNotification.Weight.Value,
-                Priority = 1M
+                Acknowledge = false
             };
 
-            var response = await _container.CreateItemAsync(cosmosDocument).ConfigureAwait(false);
-            if (response.StatusCode != HttpStatusCode.Created)
-                throw new InvalidOperationException("Could not create document in cosmos");
+            await _dataAvailableNotificationRepositoryContainer.Container
+                .CreateItemAsync(cosmosDocument)
+                .ConfigureAwait(false);
+        }
+
+        public async Task<DataAvailableNotification?> GetNextUnacknowledgedAsync(MarketOperator recipient)
+        {
+            if (recipient is null)
+                throw new ArgumentNullException(nameof(recipient));
+
+            var asLinq = _dataAvailableNotificationRepositoryContainer
+                .Container
+                .GetItemLinqQueryable<CosmosDataAvailable>();
+
+            var query =
+                from dataAvailable in asLinq
+                where
+                    dataAvailable.Recipient == recipient.Gln.Value &&
+                    !dataAvailable.Acknowledge
+                orderby dataAvailable._ts
+                select dataAvailable;
+
+            return await ExecuteQueryAsync(query).FirstOrDefaultAsync().ConfigureAwait(false);
+        }
+
+        public async Task<DataAvailableNotification?> GetNextUnacknowledgedForDomainAsync(MarketOperator recipient, DomainOrigin domainOrigin)
+        {
+            if (recipient is null)
+                throw new ArgumentNullException(nameof(recipient));
+
+            var asLinq = _dataAvailableNotificationRepositoryContainer
+                .Container
+                .GetItemLinqQueryable<CosmosDataAvailable>();
+
+            var query =
+                from dataAvailable in asLinq
+                where
+                    dataAvailable.Recipient == recipient.Gln.Value &&
+                    dataAvailable.Origin == domainOrigin.ToString() &&
+                    !dataAvailable.Acknowledge
+                orderby dataAvailable._ts
+                select dataAvailable;
+
+            return await ExecuteQueryAsync(query).FirstOrDefaultAsync().ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<DataAvailableNotification>> GetNextUnacknowledgedAsync(MarketOperator recipient, ContentType contentType, Weight weight)
@@ -64,41 +103,20 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             if (contentType is null)
                 throw new ArgumentNullException(nameof(contentType));
 
-            const string queryString = "SELECT * FROM c WHERE c.recipient = @recipient AND c.acknowledge = false AND c.contentType = @contentType ORDER BY c._ts ASC OFFSET 0 LIMIT 1";
-            var parameters = new List<KeyValuePair<string, string>> { new("recipient", recipient.Gln.Value), new("contentType", contentType.Value) };
+            var asLinq = _dataAvailableNotificationRepositoryContainer
+                .Container
+                .GetItemLinqQueryable<CosmosDataAvailable>();
 
-            var documents = await GetDocumentsAsync(queryString, parameters).ConfigureAwait(false);
-            return documents;
-        }
+            var query =
+                from dataAvailable in asLinq
+                where
+                    dataAvailable.Recipient == recipient.Gln.Value &&
+                    dataAvailable.ContentType == contentType.Value &&
+                    !dataAvailable.Acknowledge
+                orderby dataAvailable._ts
+                select dataAvailable;
 
-        public async Task<DataAvailableNotification?> GetNextUnacknowledgedAsync(MarketOperator recipient)
-        {
-            if (recipient is null)
-                throw new ArgumentNullException(nameof(recipient));
-
-            const string queryString = "SELECT * FROM c WHERE c.recipient = @recipient AND c.acknowledge = false ORDER BY c._ts ASC OFFSET 0 LIMIT 1";
-            var parameters = new List<KeyValuePair<string, string>> { new("recipient", recipient.Gln.Value) };
-
-            var documents = await GetDocumentsAsync(queryString, parameters).ConfigureAwait(false);
-            var document = documents.FirstOrDefault();
-            return document;
-        }
-
-        public async Task<DataAvailableNotification?> GetNextUnacknowledgedForDomainAsync(MarketOperator recipient, DomainOrigin domainOrigin)
-        {
-            if (recipient is null)
-                throw new ArgumentNullException(nameof(recipient));
-
-            const string queryString = "SELECT * FROM c WHERE c.recipient = @recipient AND c.origin = @domainOrigin AND c.acknowledge = false ORDER BY c._ts ASC OFFSET 0 LIMIT 1";
-            var parameters = new List<KeyValuePair<string, string>>
-            {
-                new("recipient", recipient.Gln.Value),
-                new("domainOrigin", domainOrigin.ToString())
-            };
-
-            var documents = await GetDocumentsAsync(queryString, parameters).ConfigureAwait(false);
-            var document = documents.FirstOrDefault();
-            return document;
+            return await ExecuteQueryAsync(query).ToListAsync().ConfigureAwait(false);
         }
 
         public async Task AcknowledgeAsync(IEnumerable<Uuid> dataAvailableNotificationUuids)
@@ -106,50 +124,38 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             if (dataAvailableNotificationUuids is null)
                 throw new ArgumentNullException(nameof(dataAvailableNotificationUuids));
 
-            foreach (var uuid in dataAvailableNotificationUuids)
+            var stringIds = dataAvailableNotificationUuids
+                .Select(x => x.ToString())
+                .ToList();
+
+            var container = _dataAvailableNotificationRepositoryContainer.Container;
+            var asLinq = container
+                .GetItemLinqQueryable<CosmosDataAvailable>();
+
+            var query =
+                from dataAvailable in asLinq
+                where stringIds.Contains(dataAvailable.Uuid)
+                select dataAvailable;
+
+            await foreach (var document in query.AsCosmosIteratorAsync())
             {
-                var documentToUpdateResponse = _container.GetItemLinqQueryable<CosmosDataAvailable>(true)
-                    .Where(document => document.Uuid == uuid.ToString())
-                    .AsEnumerable()
-                    .FirstOrDefault();
-
-                if (documentToUpdateResponse is null) // Or Throw
-                    continue;
-
-                documentToUpdateResponse.Acknowledge = true;
-                await _container.ReplaceItemAsync(documentToUpdateResponse, documentToUpdateResponse.Id, new PartitionKey(documentToUpdateResponse.Recipient)).ConfigureAwait(false);
+                document.Acknowledge = true;
+                await container.ReplaceItemAsync(document, document.Id).ConfigureAwait(false);
             }
         }
 
-        private async Task<IEnumerable<DataAvailableNotification>> GetDocumentsAsync(string query, List<KeyValuePair<string, string>> parameters)
+        private static async IAsyncEnumerable<DataAvailableNotification> ExecuteQueryAsync(IQueryable<CosmosDataAvailable> query)
         {
-            if (query is null)
-                throw new ArgumentNullException(nameof(query));
-            if (parameters is null)
-                throw new ArgumentNullException(nameof(parameters));
-
-            var documentQuery = new QueryDefinition(query);
-            parameters.ForEach(item => documentQuery.WithParameter($"@{item.Key}", item.Value));
-
-            var documentsResult = new List<DataAvailableNotification>();
-
-            using FeedIterator<CosmosDataAvailable> feedIterator = _container.GetItemQueryIterator<CosmosDataAvailable>(documentQuery);
-            while (feedIterator.HasMoreResults)
+            await foreach (var document in query.AsCosmosIteratorAsync())
             {
-                var documentsFromCosmos = await feedIterator.ReadNextAsync().ConfigureAwait(false);
-                var documents = documentsFromCosmos
-                    .Select(document => new DataAvailableNotification(
-                        new Uuid(document.Uuid),
-                        new MarketOperator(new GlobalLocationNumber(document.Recipient)),
-                        new ContentType(document.ContentType),
-                        Enum.Parse<DomainOrigin>(document.Origin, true),
-                        new SupportsBundling(document.SupportsBundling),
-                        new Weight(document.RelativeWeight)));
-
-                documentsResult.AddRange(documents);
+                yield return new DataAvailableNotification(
+                    new Uuid(document.Uuid),
+                    new MarketOperator(new GlobalLocationNumber(document.Recipient)),
+                    new ContentType(document.ContentType),
+                    Enum.Parse<DomainOrigin>(document.Origin, true),
+                    new SupportsBundling(document.SupportsBundling),
+                    new Weight(document.RelativeWeight));
             }
-
-            return documentsResult;
         }
     }
 }

@@ -12,17 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.PostOffice.Infrastructure
+using System;
+
+namespace Energinet.DataHub.PostOffice.Infrastructure.Documents
 {
     public class CosmosDataAvailable
     {
         public CosmosDataAvailable()
         {
-            Id = System.Guid.NewGuid().ToString();
+            Id = Guid.NewGuid().ToString();
             Uuid = null!;
             ContentType = null!;
             Origin = null!;
             Recipient = null!;
+            _ts = null!;
         }
 
         public string Id { get; set; }
@@ -39,8 +42,10 @@ namespace Energinet.DataHub.PostOffice.Infrastructure
 
         public int RelativeWeight { get; set; }
 
-        public decimal Priority { get; set; }
-
         public bool Acknowledge { get; set; }
+
+#pragma warning disable CA1707, SA1300
+        public string _ts { get; set; }
+#pragma warning restore
     }
 }
