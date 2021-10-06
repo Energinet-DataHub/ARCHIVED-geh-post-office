@@ -102,7 +102,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             bundleRepositoryMock
                 .Setup(x => x.TryAddNextUnacknowledgedAsync(It.IsAny<Bundle>()))
-                .ReturnsAsync(BundleCreatedResponse.ConcurrencyError);
+                .ReturnsAsync(BundleCreatedResponse.AnotherBundleExists);
 
             var target = new MarketOperatorDataDomainService(
                 bundleRepositoryMock.Object,

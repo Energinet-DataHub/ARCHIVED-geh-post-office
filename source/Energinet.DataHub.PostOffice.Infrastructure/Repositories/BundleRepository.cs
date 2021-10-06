@@ -101,11 +101,11 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             }
             catch (CosmosException ex) when (IsConcurrencyError(ex))
             {
-                return BundleCreatedResponse.ConcurrencyError;
+                return BundleCreatedResponse.AnotherBundleExists;
             }
             catch (CosmosException ex) when (IsBundleIdDuplicateError(ex))
             {
-                return BundleCreatedResponse.BundleIdDuplicateError;
+                return BundleCreatedResponse.BundleIdAlreadyInUse;
             }
         }
 

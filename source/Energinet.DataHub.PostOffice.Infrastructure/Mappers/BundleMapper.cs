@@ -37,7 +37,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Mappers
 
         private static string GenerateProcessId(Bundle bundle)
         {
-            return string.Concat(bundle.BundleId.ToString(), bundle.Recipient.Gln.Value);
+            return string.Join('+', bundle.BundleId.ToString(), bundle.Recipient.Gln.Value);
         }
 
         private static string MapBundleContent(Bundle bundle)

@@ -121,7 +121,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Extensions
         public void AsHttpResponseData_ExceptionIsDataAnnotationException_ReturnsResponseWithGenericErrorAndStatusValidationError()
         {
             var request = new MockedHttpRequestData(new MockedFunctionContext());
-            const string validationErrorMessage = nameof(BundleCreatedResponse.BundleIdDuplicateError);
+            const string validationErrorMessage = nameof(BundleCreatedResponse.BundleIdAlreadyInUse);
             var exception = new System.ComponentModel.DataAnnotations.ValidationException(validationErrorMessage);
 
             // act
@@ -134,7 +134,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Extensions
             // assert
             Assert.Equal(HttpStatusCode.BadRequest, actual.StatusCode);
             Assert.Equal("VALIDATION_EXCEPTION", actualCode);
-            Assert.Equal(nameof(BundleCreatedResponse.BundleIdDuplicateError), actualMessage);
+            Assert.Equal(nameof(BundleCreatedResponse.BundleIdAlreadyInUse), actualMessage);
             Assert.Null(actualTarget);
         }
 

@@ -60,8 +60,8 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
             return bundleCreatedResponse switch
             {
                 BundleCreatedResponse.Success => await AskSubDomainForContentAsync(newBundle).ConfigureAwait(false),
-                BundleCreatedResponse.ConcurrencyError => null,
-                BundleCreatedResponse.BundleIdDuplicateError => throw new ValidationException(nameof(BundleCreatedResponse.BundleIdDuplicateError)),
+                BundleCreatedResponse.AnotherBundleExists => null,
+                BundleCreatedResponse.BundleIdAlreadyInUse => throw new ValidationException(nameof(BundleCreatedResponse.BundleIdAlreadyInUse)),
                 _ => null
             };
         }

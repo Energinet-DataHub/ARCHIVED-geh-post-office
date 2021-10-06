@@ -162,7 +162,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var couldAdd = await target.TryAddNextUnacknowledgedAsync(setupBundle).ConfigureAwait(false);
 
             // Assert
-            Assert.True(couldAdd == BundleCreatedResponse.Success);
+            Assert.Equal(BundleCreatedResponse.Success, couldAdd);
             Assert.NotNull(await target.GetNextUnacknowledgedAsync(recipient).ConfigureAwait(false));
         }
 
@@ -187,7 +187,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var couldAdd = await target.TryAddNextUnacknowledgedAsync(setupBundle).ConfigureAwait(false);
 
             // Assert
-            Assert.False(couldAdd == BundleCreatedResponse.Success);
+            Assert.Equal(BundleCreatedResponse.AnotherBundleExists, couldAdd);
         }
 
         [Fact]
@@ -210,13 +210,13 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var recipient2 = new MarketOperator(recipientGln);
             var bundleWithDuplicateId = CreateBundle(bundleId.AsGuid(), recipient2);
 
-            var firstSaveResult = await target.TryAddNextUnacknowledgedAsync(setupBundle).ConfigureAwait(false);
+            await target.TryAddNextUnacknowledgedAsync(setupBundle).ConfigureAwait(false);
 
             // Act
             var couldAddBundleWithDuplicateId = await target.TryAddNextUnacknowledgedAsync(bundleWithDuplicateId).ConfigureAwait(false);
 
             // Assert
-            Assert.True(couldAddBundleWithDuplicateId == BundleCreatedResponse.BundleIdDuplicateError);
+            Assert.Equal(BundleCreatedResponse.BundleIdAlreadyInUse, couldAddBundleWithDuplicateId);
         }
 
         [Fact]

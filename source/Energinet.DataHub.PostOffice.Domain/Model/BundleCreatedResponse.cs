@@ -17,7 +17,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Model
     public enum BundleCreatedResponse
     {
         Success = 0,
-        ConcurrencyError = 1,
-        BundleIdDuplicateError = 2,
+        AnotherBundleExists = 1,
+        BundleIdAlreadyInUse = 2,
     }
 }
