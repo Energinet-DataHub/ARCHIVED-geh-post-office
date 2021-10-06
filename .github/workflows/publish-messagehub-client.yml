@@ -21,14 +21,14 @@ on:
     paths:
       - source/PostOffice.Communicator/**
       - .github/workflows/publish-messagehub-client.yml
-      - .github/actions/publish/**
+      - .github/actions/publish-nuget-package/**
   pull_request:
     branches:
       - main
     paths:
       - source/PostOffice.Communicator/**
       - .github/workflows/publish-messagehub-client.yml
-      - .github/actions/publish/**
+      - .github/actions/publish-nuget-package/**
   workflow_dispatch: {}
 
 env:
@@ -48,7 +48,7 @@ jobs:
         uses: actions/checkout@master
 
       - name: Pack and publish nuget package
-        uses: ./.github/actions/publish
+        uses: ./.github/actions/publish-nuget-package
         with:
           dotnet_version: ${{ env.DOTNET_VERSION }}
           csproj_file_path: ${{ env.CSPROJ_FILE_PATH }}
