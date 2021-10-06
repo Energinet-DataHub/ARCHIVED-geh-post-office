@@ -64,10 +64,10 @@ runs:
       run: |
         dotnet pack ${{ inputs.csproj_file_path }} --configuration Release --include-symbols -p:SymbolPackageFormat=snupkg -p:RepositoryCommit=${{ github.sha }} ${{ steps.determine_version_suffix.outputs.property }}
 
-    # - name: Temp output
-    #   shell: bash
-    #   run: |
-    #     ls ${{ inputs.binary_path }}
+    - name: Temp output
+      shell: bash
+      run: |
+        ls ${{ inputs.binary_path }}
 
     # - name: Push to GitHub
     #   shell: bash
@@ -76,9 +76,9 @@ runs:
     #   env:
     #     NUGET_FEED_PATH: 'https://nuget.pkg.github.com/Energinet-DataHub/index.json'
 
-    - name: Push to NuGet.org
-      shell: bash
-      run: |
-        dotnet nuget push ${{ inputs.binary_path }} --api-key ${{ inputs.nuget_token }} --source ${{ env.NUGET_FEED_PATH }}
-      env:
-        NUGET_FEED_PATH: 'https://api.nuget.org/v3/index.json'
+    # - name: Push to NuGet.org
+    #   shell: bash
+    #   run: |
+    #     dotnet nuget push ${{ inputs.binary_path }} --api-key ${{ inputs.nuget_token }} --source ${{ env.NUGET_FEED_PATH }}
+    #   env:
+    #     NUGET_FEED_PATH: 'https://api.nuget.org/v3/index.json'
