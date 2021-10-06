@@ -62,7 +62,8 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
                 BundleCreatedResponse.Success => await AskSubDomainForContentAsync(newBundle).ConfigureAwait(false),
                 BundleCreatedResponse.AnotherBundleExists => null,
                 BundleCreatedResponse.BundleIdAlreadyInUse => throw new ValidationException(nameof(BundleCreatedResponse.BundleIdAlreadyInUse)),
-                _ => null
+                _ => throw new InvalidOperationException($"bundleCreatedResponse was {bundleCreatedResponse}")
+
             };
         }
 
@@ -115,7 +116,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
                 BundleCreatedResponse.Success => (true, await AskSubDomainForContentAsync(newBundle).ConfigureAwait(false)),
                 BundleCreatedResponse.AnotherBundleExists => (true, null),
                 BundleCreatedResponse.BundleIdAlreadyInUse => throw new ValidationException(nameof(BundleCreatedResponse.BundleIdAlreadyInUse)),
-                _ => (false, null)
+                _ => throw new InvalidOperationException($"bundleCreatedResponse was {bundleCreatedResponse}")
             };
         }
 
