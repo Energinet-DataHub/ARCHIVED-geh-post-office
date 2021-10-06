@@ -79,6 +79,8 @@ runs:
     - name: Push to NuGet.org
       shell: bash
       run: |
-        dotnet nuget push ${{ inputs.binary_path }} --api-key ${{ inputs.nuget_token }} --source ${{ env.NUGET_FEED_PATH }}
+        FILE_PATH=$(ls ${{ inputs.binary_path }} | tr -d '\n')
+        echo $FILE_PATH
+        #dotnet nuget push ${{ inputs.binary_path }} --api-key ${{ inputs.nuget_token }} --source ${{ env.NUGET_FEED_PATH }}
       env:
         NUGET_FEED_PATH: 'https://api.nuget.org/v3/index.json'
