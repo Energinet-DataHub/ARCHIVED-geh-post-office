@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Energinet.DataHub.MessageHub.Client.DataAvailable;
+using Energinet.DataHub.MessageHub.Client.Dequeue;
+using Energinet.DataHub.MessageHub.Client.Peek;
+using Energinet.DataHub.MessageHub.Client.Storage;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Application.Validation;
 using FluentValidation;
-using GreenEnergyHub.PostOffice.Communicator.DataAvailable;
-using GreenEnergyHub.PostOffice.Communicator.Dequeue;
-using GreenEnergyHub.PostOffice.Communicator.Peek;
 using SimpleInjector;
 
 namespace Energinet.DataHub.PostOffice.Common
@@ -28,6 +29,7 @@ namespace Energinet.DataHub.PostOffice.Common
         {
             container.Register<IValidator<DataAvailableNotificationCommand>, DataAvailableNotificationCommandRuleSet>(Lifestyle.Scoped);
             container.Register<IValidator<PeekCommand>, PeekCommandRuleSet>(Lifestyle.Scoped);
+            container.Register<IValidator<PeekAggregationsOrTimeSeriesCommand>, PeekAggregationsOrTimeSeriesCommandRuleSet>(Lifestyle.Scoped);
             container.Register<IValidator<DequeueCommand>, DequeueCommandRuleSet>(Lifestyle.Scoped);
 
             container.Register<IDataAvailableNotificationParser, DataAvailableNotificationParser>(Lifestyle.Singleton);
@@ -35,6 +37,7 @@ namespace Energinet.DataHub.PostOffice.Common
             container.Register<IResponseBundleParser, ResponseBundleParser>(Lifestyle.Singleton);
             container.Register<IDataBundleRequestSender, DataBundleRequestSender>(Lifestyle.Singleton);
             container.Register<IDequeueNotificationSender, DequeueNotificationSender>(Lifestyle.Singleton);
+            container.Register<IStorageHandler, StorageHandler>(Lifestyle.Singleton);
         }
     }
 }

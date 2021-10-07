@@ -17,13 +17,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
+using Energinet.DataHub.MessageHub.Client.Dequeue;
+using Energinet.DataHub.MessageHub.Client.Model;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Services;
-using GreenEnergyHub.PostOffice.Communicator.Dequeue;
-using GreenEnergyHub.PostOffice.Communicator.Model;
 using MediatR;
-using DomainOrigin = GreenEnergyHub.PostOffice.Communicator.Model.DomainOrigin;
+using DomainOrigin = Energinet.DataHub.MessageHub.Client.Model.DomainOrigin;
 
 namespace Energinet.DataHub.PostOffice.Application.Handlers
 {
@@ -47,7 +47,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
 
             var (isDequeued, dequeuedBundle) = await _marketOperatorDataDomainService
                 .TryAcknowledgeAsync(
-                    new MarketOperator(new GlobalLocationNumber(request.Recipient)),
+                    new MarketOperator(new GlobalLocationNumber(request.MarketOperator)),
                     new Uuid(request.BundleUuid))
                 .ConfigureAwait(false);
 
@@ -58,7 +58,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
                 {
                     var dequeueNotificationDto = new DequeueNotificationDto(
                         dequeuedBundle.NotificationIds.Select(x => x.AsGuid()).ToList(),
-                        new GlobalLocationNumberDto(request.Recipient));
+                        new GlobalLocationNumberDto(request.MarketOperator));
 
                     await _dequeueNotificationSender
                         .SendAsync(dequeueNotificationDto, (DomainOrigin)dequeuedBundle.Origin)

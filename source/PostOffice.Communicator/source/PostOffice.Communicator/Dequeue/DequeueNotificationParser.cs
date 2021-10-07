@@ -14,12 +14,12 @@
 
 using System;
 using System.Linq;
+using Energinet.DataHub.MessageHub.Client.Exceptions;
+using Energinet.DataHub.MessageHub.Client.Model;
 using Google.Protobuf;
 using GreenEnergyHub.PostOffice.Communicator.Contracts;
-using GreenEnergyHub.PostOffice.Communicator.Exceptions;
-using GreenEnergyHub.PostOffice.Communicator.Model;
 
-namespace GreenEnergyHub.PostOffice.Communicator.Dequeue
+namespace Energinet.DataHub.MessageHub.Client.Dequeue
 {
     public class DequeueNotificationParser : IDequeueNotificationParser
     {
@@ -29,8 +29,8 @@ namespace GreenEnergyHub.PostOffice.Communicator.Dequeue
             {
                 var dequeueContract = DequeueContract.Parser.ParseFrom(dequeueNotificationContract);
                 return new DequeueNotificationDto(
-                    dequeueContract.DataAvailableIds.Select(Guid.Parse).ToList(),
-                    new GlobalLocationNumberDto(dequeueContract.Recipient));
+                    dequeueContract.DataAvailableNotificationIds.Select(Guid.Parse).ToList(),
+                    new GlobalLocationNumberDto(dequeueContract.MarketOperator));
             }
             catch (InvalidProtocolBufferException e)
             {
@@ -45,8 +45,8 @@ namespace GreenEnergyHub.PostOffice.Communicator.Dequeue
 
             var message = new DequeueContract
             {
-                Recipient = dequeueNotificationDto.Recipient.Value,
-                DataAvailableIds = { dequeueNotificationDto.DataAvailableNotificationIds.Select(x => x.ToString()) }
+                MarketOperator = dequeueNotificationDto.MarketOperator.Value,
+                DataAvailableNotificationIds = { dequeueNotificationDto.DataAvailableNotificationIds.Select(x => x.ToString()) }
             };
 
             return message.ToByteArray();

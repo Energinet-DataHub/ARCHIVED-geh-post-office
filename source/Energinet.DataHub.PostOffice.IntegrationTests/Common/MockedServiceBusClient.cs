@@ -61,7 +61,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Common
             {
                 var compositeKey = $"{message.ReplyTo}-{message.SessionId}";
                 var receiver = _receivers.GetOrAdd(compositeKey, _ => new MockedServiceBusSessionReceiver());
-                receiver.EnqueueMockedMessage();
+                receiver.EnqueueMockedMessage(message.Body);
                 return Task.CompletedTask;
             }
 
@@ -82,16 +82,19 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Common
         {
             private readonly ConcurrentQueue<ServiceBusReceivedMessage> _queue = new();
 
-            public void EnqueueMockedMessage()
+            public void EnqueueMockedMessage(BinaryData binaryMessageRequest)
             {
                 const string pathToMockedContent = "https://localhost:8000/path/to/content";
 
-                var protobufMessage = new RequestBundleResponse()
+                var messageAsBase64 = Convert.ToBase64String(binaryMessageRequest.ToArray());
+                var pathWithMessage = $"{pathToMockedContent}?mocked={messageAsBase64}";
+
+                var protobufMessage = new DataBundleResponseContract
                 {
-                    Success = new RequestBundleResponse.Types.FileResource()
+                    Success = new DataBundleResponseContract.Types.FileResource
                     {
-                        Uri = pathToMockedContent,
-                        UUID = { Guid.NewGuid().ToString(), Guid.NewGuid().ToString() }
+                        ContentUri = pathWithMessage,
+                        DataAvailableNotificationIds = { Guid.NewGuid().ToString(), Guid.NewGuid().ToString() }
                     }
                 };
 

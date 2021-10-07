@@ -12,7 +12,6 @@
 // // See the License for the specific language governing permissions and
 // // limitations under the License.
 
-using System;
 using Microsoft.Azure.Cosmos;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers

@@ -14,18 +14,21 @@
 
 using System;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
-using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Services;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace Energinet.DataHub.PostOffice.IntegrationTests.Common
 {
     internal sealed class MockedMarketOperatorDataStorageService : IMarketOperatorDataStorageService
     {
-        public Task<Stream> GetMarketOperatorDataAsync(Uuid bundleUuid, Uri contentPath)
+        public Task<Stream> GetMarketOperatorDataAsync(Uri contentPath)
         {
-            return Task.FromResult<Stream>(new MemoryStream(Encoding.ASCII.GetBytes(bundleUuid.ToString())));
+            // Integration testing: the Protobuf request is sent raw in the Url.
+            var query = QueryHelpers.ParseQuery(contentPath.Query);
+            var message = query["mocked"];
+            var bytes = Convert.FromBase64String(message);
+            return Task.FromResult<Stream>(new MemoryStream(bytes));
         }
     }
 }

@@ -15,12 +15,12 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Energinet.DataHub.MessageHub.Client.Model;
+using Energinet.DataHub.MessageHub.Client.Peek;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Services;
 using Energinet.DataHub.PostOffice.Infrastructure.Model;
-using GreenEnergyHub.PostOffice.Communicator.Model;
-using GreenEnergyHub.PostOffice.Communicator.Peek;
-using DomainOrigin = GreenEnergyHub.PostOffice.Communicator.Model.DomainOrigin;
+using DomainOrigin = Energinet.DataHub.MessageHub.Client.Model.DomainOrigin;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Services
 {
@@ -46,15 +46,11 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
                 bundle.BundleId.ToString(),
                 bundle.NotificationIds.Select(x => x.AsGuid()));
 
-            // TODO: Fy!
             var response = await _dataBundleRequestSender.SendAsync(request, (DomainOrigin)bundle.Origin).ConfigureAwait(false);
             if (response == null || response.IsErrorResponse)
                 return null;
 
-            return new AzureBlobBundleContent(
-                _marketOperatorDataStorageService,
-                bundle.BundleId,
-                response.ContentUri);
+            return new AzureBlobBundleContent(_marketOperatorDataStorageService, response.ContentUri);
         }
     }
 }

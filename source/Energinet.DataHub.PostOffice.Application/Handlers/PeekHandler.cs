@@ -26,7 +26,9 @@ using MediatR;
 
 namespace Energinet.DataHub.PostOffice.Application.Handlers
 {
-    public class PeekHandler : IRequestHandler<PeekCommand, PeekResponse>
+    public class PeekHandler :
+        IRequestHandler<PeekCommand, PeekResponse>,
+        IRequestHandler<PeekAggregationsOrTimeSeriesCommand, PeekResponse>
     {
         private const string EndpointType = "All";
         private readonly IMarketOperatorDataDomainService _marketOperatorDataDomainService;
@@ -40,10 +42,10 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
             _log = log;
         }
 
-        public async Task<PeekResponse> Handle(PeekCommand request, CancellationToken cancellationToken)
+        public Task<PeekResponse> Handle(PeekCommand request, CancellationToken cancellationToken)
         {
-            if (request is null)
-                throw new ArgumentNullException(nameof(request));
+            return HandleAsync(request);
+        }
 
             await _log.SaveLogOccurrenceAsync(
                     new Log(
@@ -56,6 +58,10 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
             var bundle = await _marketOperatorDataDomainService
                 .GetNextUnacknowledgedAsync(new MarketOperator(new GlobalLocationNumber(request.Recipient)))
                 .ConfigureAwait(false);
+        public Task<PeekResponse> Handle(PeekAggregationsOrTimeSeriesCommand request, CancellationToken cancellationToken)
+        {
+            return HandleAsync(request);
+        }
 
             if (!(bundle != null && bundle.TryGetContent(out var bundleContent)))
             {
@@ -86,6 +92,28 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
                 .ConfigureAwait(false);
 
             return new PeekResponse(true, await bundleContent.OpenAsync().ConfigureAwait(false));
+        private static async Task<PeekResponse> PrepareBundleAsync(Bundle? bundle)
+        {
+            return bundle != null && bundle.TryGetContent(out var bundleContent)
+                ? new PeekResponse(true, await bundleContent.OpenAsync().ConfigureAwait(false))
+                : new PeekResponse(false, Stream.Null);
+        }
+
+        private async Task<PeekResponse> HandleAsync(PeekCommandBase request)
+        {
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+
+            Func<MarketOperator, Task<Bundle?>> requestHandler = request switch
+            {
+                PeekCommand => _marketOperatorDataDomainService.GetNextUnacknowledgedAsync,
+                PeekAggregationsOrTimeSeriesCommand => _marketOperatorDataDomainService.GetNextUnacknowledgedAggregationsOrTimeSeriesAsync,
+                _ => throw new ArgumentOutOfRangeException(nameof(request))
+            };
+
+            var marketOperator = new MarketOperator(new GlobalLocationNumber(request.Recipient));
+            var bundle = await requestHandler(marketOperator).ConfigureAwait(false);
+            return await PrepareBundleAsync(bundle).ConfigureAwait(false);
         }
     }
 }
