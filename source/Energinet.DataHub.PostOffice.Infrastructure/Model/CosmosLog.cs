@@ -13,35 +13,45 @@
 // limitations under the License.
 
 using System;
-#pragma warning disable
-namespace Energinet.DataHub.PostOffice.Domain.Model.Logging
+using Energinet.DataHub.PostOffice.Domain.Model;
+using Energinet.DataHub.PostOffice.Domain.Model.Logging;
+
+namespace Energinet.DataHub.PostOffice.Infrastructure.Model
 {
-    public sealed class Log
+    public sealed class CosmosLog
     {
-        public Log(
+        public CosmosLog(
+            string id,
             string endpointType,
-            GlobalLocationNumber gln,
+            string globalLocationNumber,
             string processId,
             string description,
-            Reply? replyToMarketOperator = null,
+            string? bundleReference = null,
+            string? errorReason = null,
+            string? failureDescription = null,
             string? logReferenceId = null)
         {
+            Id = id;
             EndpointType = endpointType;
-            MarketOperator = gln;
+            GlobalLocationNumber = globalLocationNumber;
             ProcessId = processId;
             Description = description;
-            ReplyToMarketOperator = replyToMarketOperator;
+            BundleReference = bundleReference;
+            ErrorReason = errorReason;
+            FailureDescription = failureDescription;
             LogReferenceId = logReferenceId;
         }
 
-        public string Id { get; } = Guid.NewGuid().ToString();
+        public string Id { get; set; }
 
         public DateTime Timestamp { get; set; } = DateTime.Now;
         public string EndpointType { get; }
-        public GlobalLocationNumber MarketOperator { get; }
+        public string GlobalLocationNumber { get; }
         public string ProcessId { get; }
-        public string Description { get; }
-        public Reply? ReplyToMarketOperator { get; }
-        public string? LogReferenceId { get; }
+        public string Description { get; set; }
+        public string? BundleReference { get; set; }
+        public string? ErrorReason { get; set; }
+        public string? FailureDescription { get; set; }
+        public string? LogReferenceId { get; set; }
     }
 }

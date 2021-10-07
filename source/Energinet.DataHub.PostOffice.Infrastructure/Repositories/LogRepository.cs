@@ -33,14 +33,37 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             _logRepositoryContainer = logRepositoryContainer;
         }
 
-        public async Task SaveLogOccurrenceAsync(Log log)
+        public async Task<string> SaveLogOccurrenceAsync(Log log)
         {
             if (log is null)
                 throw new ArgumentNullException(nameof(log));
 
-            var response = await _logRepositoryContainer.Container.CreateItemAsync(log).ConfigureAwait(false);
+            var instanceToLog = new CosmosLog(
+                log.Id,
+                log.EndpointType,
+                log.MarketOperator.Value,
+                log.ProcessId,
+                log.Description);
+
+            if (log.LogReferenceId is not null)
+                instanceToLog.LogReferenceId = log.LogReferenceId;
+
+            if (log.ReplyToMarketOperator is not null && log.ReplyToMarketOperator.BundleReference is not null)
+            {
+                var azureBundleContent = (AzureBlobBundleContent)log.ReplyToMarketOperator.BundleReference;
+                instanceToLog.BundleReference = azureBundleContent.ContentPath.AbsoluteUri.ToString();
+            }
+            else if (log.ReplyToMarketOperator?.BundleError is not null)
+            {
+                instanceToLog.ErrorReason = log.ReplyToMarketOperator.BundleError.Reason.ToString();
+                instanceToLog.FailureDescription = log.ReplyToMarketOperator.BundleError.FailureDescription;
+            }
+
+            var response = await _logRepositoryContainer.Container.CreateItemAsync(instanceToLog).ConfigureAwait(false);
             if (response.StatusCode is not HttpStatusCode.Created)
                 throw new InvalidOperationException("Could not create document in cosmos");
+
+            return log.Id;
         }
     }
 }

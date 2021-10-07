@@ -26,6 +26,6 @@ namespace Energinet.DataHub.PostOffice.Domain.Repositories
         /// Save Logging occurence to data storage.
         /// </summary>
         /// <param name="log">The log occurence to save.</param>
-        Task SaveLogOccurrenceAsync(Log log);
+        Task<string> SaveLogOccurrenceAsync(Log log);
     }
 }
