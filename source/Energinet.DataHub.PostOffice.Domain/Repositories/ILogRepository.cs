@@ -12,19 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
+using System.Threading.Tasks;
+using Energinet.DataHub.PostOffice.Domain.Model.Logging;
 
-namespace Energinet.DataHub.PostOffice.Infrastructure
+namespace Energinet.DataHub.PostOffice.Domain.Repositories
 {
-    public class CosmosDatabaseConfig
+    /// <summary>
+    /// Provides access to Logging occurence in data storage.
+    /// </summary>
+    public interface ILogRepository
     {
-        public CosmosDatabaseConfig(string messageHubDatabaseId, string logDatabaseId)
-        {
-            MessageHubDatabaseId = messageHubDatabaseId ?? throw new ArgumentNullException(nameof(messageHubDatabaseId));
-            LogDatabaseId = logDatabaseId;
-        }
-
-        public string MessageHubDatabaseId { get; }
-        public string LogDatabaseId { get; }
+        /// <summary>
+        /// Save Logging occurence to data storage.
+        /// </summary>
+        /// <param name="log">The log occurence to save.</param>
+        Task SaveLogOccurrenceAsync(Log log);
     }
 }

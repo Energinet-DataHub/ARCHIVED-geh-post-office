@@ -18,18 +18,26 @@ using System.Threading;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Domain.Model;
+using Energinet.DataHub.PostOffice.Domain.Model.Logging;
+using Energinet.DataHub.PostOffice.Domain.Repositories;
 using Energinet.DataHub.PostOffice.Domain.Services;
+using GreenEnergyHub.PostOffice.Communicator.Model;
 using MediatR;
 
 namespace Energinet.DataHub.PostOffice.Application.Handlers
 {
     public class PeekHandler : IRequestHandler<PeekCommand, PeekResponse>
     {
+        private const string EndpointType = "All";
         private readonly IMarketOperatorDataDomainService _marketOperatorDataDomainService;
+        private ILogRepository _log;
 
-        public PeekHandler(IMarketOperatorDataDomainService marketOperatorDataDomainService)
+        public PeekHandler(
+            IMarketOperatorDataDomainService marketOperatorDataDomainService,
+            ILogRepository log)
         {
             _marketOperatorDataDomainService = marketOperatorDataDomainService;
+            _log = log;
         }
 
         public async Task<PeekResponse> Handle(PeekCommand request, CancellationToken cancellationToken)
@@ -37,13 +45,47 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
             if (request is null)
                 throw new ArgumentNullException(nameof(request));
 
+            await _log.SaveLogOccurrenceAsync(
+                    new Log(
+                        endpointType: EndpointType,
+                        gln: new GlobalLocationNumber(request.Recipient),
+                        processId: "processId", // TODO: Should be a value passed from the caller/market operator.
+                        description: "Endpoint was called."))
+                .ConfigureAwait(false);
+
             var bundle = await _marketOperatorDataDomainService
                 .GetNextUnacknowledgedAsync(new MarketOperator(new GlobalLocationNumber(request.Recipient)))
                 .ConfigureAwait(false);
 
-            return bundle != null && bundle.TryGetContent(out var bundleContent)
-                ? new PeekResponse(true, await bundleContent.OpenAsync().ConfigureAwait(false))
-                : new PeekResponse(false, Stream.Null);
+            if (!(bundle != null && bundle.TryGetContent(out var bundleContent)))
+            {
+                await _log.SaveLogOccurrenceAsync(
+                        new Log(
+                            endpointType: EndpointType,
+                            gln: new GlobalLocationNumber(request.Recipient),
+                            processId: "processId", // TODO: Should be a value passed from the caller/market operator.
+                            replyToMarketOperator: new Reply(
+                                new DataBundleResponseErrorDto
+                                {
+                                    Reason = DataBundleResponseErrorReason.DatasetNotFound,
+                                    FailureDescription = "No data bundle found."
+                                }),
+                            description: "Endpoint was called."))
+                    .ConfigureAwait(false);
+
+                return new PeekResponse(false, Stream.Null);
+            }
+
+            await _log.SaveLogOccurrenceAsync(
+                    new Log(
+                        endpointType: EndpointType,
+                        gln: new GlobalLocationNumber(request.Recipient),
+                        processId: "processId", // TODO: Should be a value passed from the caller/market operator.
+                        replyToMarketOperator: new Reply(bundleContent),
+                        description: "Endpoint was called."))
+                .ConfigureAwait(false);
+
+            return new PeekResponse(true, await bundleContent.OpenAsync().ConfigureAwait(false));
         }
     }
 }

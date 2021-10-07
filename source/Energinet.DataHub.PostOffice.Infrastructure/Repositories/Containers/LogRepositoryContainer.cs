@@ -12,19 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
+using Microsoft.Azure.Cosmos;
 
-namespace Energinet.DataHub.PostOffice.Infrastructure
+namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers
 {
-    public class CosmosDatabaseConfig
+    public class LogRepositoryContainer : ILogRepositoryContainer
     {
-        public CosmosDatabaseConfig(string messageHubDatabaseId, string logDatabaseId)
+        private readonly CosmosClient _client;
+        private readonly CosmosDatabaseConfig _cosmosConfig;
+
+        public LogRepositoryContainer(CosmosClient client, CosmosDatabaseConfig cosmosConfig)
         {
-            MessageHubDatabaseId = messageHubDatabaseId ?? throw new ArgumentNullException(nameof(messageHubDatabaseId));
-            LogDatabaseId = logDatabaseId;
+            _client = client;
+            _cosmosConfig = cosmosConfig;
         }
 
-        public string MessageHubDatabaseId { get; }
-        public string LogDatabaseId { get; }
+        public Container Container => _client.GetContainer(_cosmosConfig.LogDatabaseId, "Endpoint-All"); // TODO: Add config variables once config is in place.
     }
 }
