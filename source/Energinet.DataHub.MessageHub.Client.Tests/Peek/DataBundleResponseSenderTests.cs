@@ -130,7 +130,7 @@ namespace Energinet.DataHub.MessageHub.Client.Tests.Peek
                 response,
                 "session",
                 domainOrigin,
-                string.Empty)
+                "A147388C-93F3-4F71-9535-7C21105F2270")
             .ConfigureAwait(false);
 
             // Assert
@@ -169,7 +169,7 @@ namespace Energinet.DataHub.MessageHub.Client.Tests.Peek
                     response,
                     "session",
                     DomainOrigin.TimeSeries,
-                    NewGuid().ToString())
+                    "E1290E44-3546-4030-822B-7AAF6A7FDF85")
                 .ConfigureAwait(false);
 
             // Assert
