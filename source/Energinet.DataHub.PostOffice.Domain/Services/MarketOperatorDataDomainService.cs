@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Domain.Model;
@@ -39,7 +40,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
             _weightCalculatorDomainService = weightCalculatorDomainService;
         }
 
-        public async Task<Bundle?> GetNextUnacknowledgedAsync(MarketOperator recipient)
+        public async Task<Bundle?> GetNextUnacknowledgedAsync(MarketOperator recipient, Uuid bundleId)
         {
             var existingBundle = await _bundleRepository.GetNextUnacknowledgedAsync(recipient).ConfigureAwait(false);
             if (existingBundle != null)
@@ -50,25 +51,30 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
                 return null; // No new data.
 
             var newBundle = await CreateNextBundleAsync(
-                    dataAvailableNotification.Recipient,
-                    dataAvailableNotification.Origin,
-                    dataAvailableNotification.ContentType).ConfigureAwait(false);
+                bundleId,
+                dataAvailableNotification.Recipient,
+                dataAvailableNotification.Origin,
+                dataAvailableNotification.ContentType).ConfigureAwait(false);
 
-            if (await _bundleRepository.TryAddNextUnacknowledgedAsync(newBundle).ConfigureAwait(false))
-                return await AskSubDomainForContentAsync(newBundle).ConfigureAwait(false);
+            var bundleCreatedResponse = await _bundleRepository.TryAddNextUnacknowledgedAsync(newBundle).ConfigureAwait(false);
+            return bundleCreatedResponse switch
+            {
+                BundleCreatedResponse.Success => await AskSubDomainForContentAsync(newBundle).ConfigureAwait(false),
+                BundleCreatedResponse.AnotherBundleExists => null,
+                BundleCreatedResponse.BundleIdAlreadyInUse => throw new ValidationException(nameof(BundleCreatedResponse.BundleIdAlreadyInUse)),
+                _ => throw new InvalidOperationException($"bundleCreatedResponse was {bundleCreatedResponse}")
 
-            // Concurrent peek in progress; response is "no new data".
-            return null;
+            };
         }
 
-        public Task<Bundle?> GetNextUnacknowledgedChargesAsync(MarketOperator recipient)
+        public Task<Bundle?> GetNextUnacknowledgedChargesAsync(MarketOperator recipient, Uuid bundleId)
         {
-            return GetNextUnacknowledgedAsync(recipient, DomainOrigin.Charges);
+            return GetNextUnacknowledgedAsync(recipient, bundleId, DomainOrigin.Charges);
         }
 
-        public Task<Bundle?> GetNextUnacknowledgedAggregationsOrTimeSeriesAsync(MarketOperator recipient)
+        public Task<Bundle?> GetNextUnacknowledgedAggregationsOrTimeSeriesAsync(MarketOperator recipient, Uuid bundleId)
         {
-            return GetNextUnacknowledgedAsync(recipient, DomainOrigin.Aggregations, DomainOrigin.TimeSeries);
+            return GetNextUnacknowledgedAsync(recipient, bundleId, DomainOrigin.Aggregations, DomainOrigin.TimeSeries);
         }
 
         public async Task<(bool IsAcknowledged, Bundle? AcknowledgedBundle)> TryAcknowledgeAsync(MarketOperator recipient, Uuid bundleId)
@@ -82,7 +88,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
             return (true, bundle);
         }
 
-        private async Task<Bundle?> GetNextUnacknowledgedAsync(MarketOperator recipient, params DomainOrigin[] orderedDomains)
+        private async Task<Bundle?> GetNextUnacknowledgedAsync(MarketOperator recipient, Uuid bundleId, params DomainOrigin[] orderedDomains)
         {
             DataAvailableNotification? firstNotificationInBundle = null;
 
@@ -105,15 +111,19 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
                 return null;
 
             var newBundle = await CreateNextBundleAsync(
+                bundleId,
                 firstNotificationInBundle.Recipient,
                 firstNotificationInBundle.Origin,
                 firstNotificationInBundle.ContentType).ConfigureAwait(false);
 
-            if (await _bundleRepository.TryAddNextUnacknowledgedAsync(newBundle).ConfigureAwait(false))
-                return await AskSubDomainForContentAsync(newBundle).ConfigureAwait(false);
-
-            // Concurrent peek in progress; response is "no new data".
-            return null;
+            var bundleCreatedResponse = await _bundleRepository.TryAddNextUnacknowledgedAsync(newBundle).ConfigureAwait(false);
+            return bundleCreatedResponse switch
+            {
+                BundleCreatedResponse.Success => await AskSubDomainForContentAsync(newBundle).ConfigureAwait(false),
+                BundleCreatedResponse.AnotherBundleExists => null,
+                BundleCreatedResponse.BundleIdAlreadyInUse => throw new ValidationException(nameof(BundleCreatedResponse.BundleIdAlreadyInUse)),
+                _ => throw new InvalidOperationException($"bundleCreatedResponse was {bundleCreatedResponse}")
+            };
         }
 
         private async Task<Bundle?> AskSubDomainForContentAsync(Bundle bundle)
@@ -134,6 +144,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         }
 
         private async Task<Bundle> CreateNextBundleAsync(
+            Uuid bundleUuid,
             MarketOperator recipient,
             DomainOrigin domainOrigin,
             ContentType contentType)
@@ -148,9 +159,8 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
                 .Select(x => x.NotificationId)
                 .ToList();
 
-            var bundleId = new Uuid(Guid.NewGuid());
             return new Bundle(
-                bundleId,
+                bundleUuid,
                 domainOrigin,
                 recipient,
                 notificationIds);

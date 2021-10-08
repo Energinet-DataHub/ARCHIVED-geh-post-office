@@ -62,7 +62,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
 
-            Func<MarketOperator, Task<Bundle?>> requestHandler = request switch
+            Func<MarketOperator, Uuid, Task<Bundle?>> requestHandler = request switch
             {
                 PeekCommand => _marketOperatorDataDomainService.GetNextUnacknowledgedAsync,
                 PeekChargesCommand => _marketOperatorDataDomainService.GetNextUnacknowledgedChargesAsync,
@@ -71,7 +71,8 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
             };
 
             var marketOperator = new MarketOperator(new GlobalLocationNumber(request.Recipient));
-            var bundle = await requestHandler(marketOperator).ConfigureAwait(false);
+            var bundleId = new Uuid(request.BundleId);
+            var bundle = await requestHandler(marketOperator, bundleId).ConfigureAwait(false);
             return await PrepareBundleAsync(bundle).ConfigureAwait(false);
         }
     }

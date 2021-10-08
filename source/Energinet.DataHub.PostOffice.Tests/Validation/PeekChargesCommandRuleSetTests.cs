@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Application.Commands;
@@ -24,6 +25,40 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation
     [UnitTest]
     public sealed class PeekChargesCommandRuleSetTests
     {
+        private const string ValidRecipient = "5790000555550";
+
+        [Theory]
+        [InlineData("", false)]
+        [InlineData(null, false)]
+        [InlineData("  ", false)]
+        [InlineData("8F9B8218-BAE6-412B-B91B-0C78A55FF128", true)]
+        [InlineData("8F9B8218-BAE6-412B-B91B-0C78A55FF1XX", false)]
+        public async Task Validate_BundleId_ValidatesProperty(string value, bool isValid)
+        {
+            // Arrange
+            const string propertyName = nameof(PeekCommand.BundleId);
+
+            var target = new PeekChargesCommandRuleSet();
+            var command = new PeekChargesCommand(
+                ValidRecipient,
+                value);
+
+            // Act
+            var result = await target.ValidateAsync(command).ConfigureAwait(false);
+
+            // Assert
+            if (isValid)
+            {
+                Assert.True(result.IsValid);
+                Assert.DoesNotContain(propertyName, result.Errors.Select(x => x.PropertyName));
+            }
+            else
+            {
+                Assert.False(result.IsValid);
+                Assert.Contains(propertyName, result.Errors.Select(x => x.PropertyName));
+            }
+        }
+
         [Theory]
         [InlineData("", false)]
         [InlineData(null, false)]
@@ -35,7 +70,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation
             const string propertyName = nameof(PeekChargesCommand.Recipient);
 
             var target = new PeekChargesCommandRuleSet();
-            var command = new PeekChargesCommand(value);
+            var command = new PeekChargesCommand(value, Guid.NewGuid().ToString());
 
             // Act
             var result = await target.ValidateAsync(command).ConfigureAwait(false);

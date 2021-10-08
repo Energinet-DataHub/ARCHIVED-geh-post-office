@@ -31,9 +31,9 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions
             _mediator = mediator;
         }
 
-        [Function("peek/charges")]
+        [Function("PeekCharges")]
         public Task<HttpResponseData> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post")]
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "peek/charges")]
             HttpRequestData request)
         {
             return request.ProcessAsync(async () =>
