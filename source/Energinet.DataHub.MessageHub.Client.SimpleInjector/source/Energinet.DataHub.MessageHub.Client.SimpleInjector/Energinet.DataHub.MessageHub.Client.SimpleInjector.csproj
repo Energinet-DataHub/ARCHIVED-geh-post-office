@@ -35,8 +35,11 @@ limitations under the License.
     <Authors>Energinet-DataHub</Authors>
     <RepositoryUrl>https://github.com/Energinet-DataHub/geh-post-office</RepositoryUrl>
     <PackageReleaseNotes>
-      [Release Notes](https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energinet.DataHub.MessageHub.Client.SimpleInjector/documents/release-notes/release-notes.md)
-      [Documentation](https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energinet.DataHub.MessageHub.Client.SimpleInjector/documents/documentation.md)
+      Release Notes
+	  https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energinet.DataHub.MessageHub.Client.SimpleInjector/documents/release-notes/release-notes.md
+
+      Documentation
+	  https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energinet.DataHub.MessageHub.Client.SimpleInjector/documents/documentation.md
     </PackageReleaseNotes>
     <PackageDescription>
       [Release Notes](https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energinet.DataHub.MessageHub.Client.SimpleInjector/documents/release-notes/release-notes.md)
