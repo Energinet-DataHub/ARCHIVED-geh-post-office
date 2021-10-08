@@ -25,6 +25,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
 {
     public class PeekHandler :
         IRequestHandler<PeekCommand, PeekResponse>,
+        IRequestHandler<PeekChargesCommand, PeekResponse>,
         IRequestHandler<PeekAggregationsOrTimeSeriesCommand, PeekResponse>
     {
         private readonly IMarketOperatorDataDomainService _marketOperatorDataDomainService;
@@ -35,6 +36,11 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
         }
 
         public Task<PeekResponse> Handle(PeekCommand request, CancellationToken cancellationToken)
+        {
+            return HandleAsync(request);
+        }
+
+        public Task<PeekResponse> Handle(PeekChargesCommand request, CancellationToken cancellationToken)
         {
             return HandleAsync(request);
         }
@@ -56,15 +62,17 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
 
-            Func<MarketOperator, Task<Bundle?>> requestHandler = request switch
+            Func<MarketOperator, Uuid, Task<Bundle?>> requestHandler = request switch
             {
                 PeekCommand => _marketOperatorDataDomainService.GetNextUnacknowledgedAsync,
+                PeekChargesCommand => _marketOperatorDataDomainService.GetNextUnacknowledgedChargesAsync,
                 PeekAggregationsOrTimeSeriesCommand => _marketOperatorDataDomainService.GetNextUnacknowledgedAggregationsOrTimeSeriesAsync,
                 _ => throw new ArgumentOutOfRangeException(nameof(request))
             };
 
             var marketOperator = new MarketOperator(new GlobalLocationNumber(request.Recipient));
-            var bundle = await requestHandler(marketOperator).ConfigureAwait(false);
+            var bundleId = new Uuid(request.BundleId);
+            var bundle = await requestHandler(marketOperator, bundleId).ConfigureAwait(false);
             return await PrepareBundleAsync(bundle).ConfigureAwait(false);
         }
     }

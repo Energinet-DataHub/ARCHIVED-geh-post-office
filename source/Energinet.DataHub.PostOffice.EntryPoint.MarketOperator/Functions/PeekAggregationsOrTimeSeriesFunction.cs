@@ -33,7 +33,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions
 
         [Function("PeekAggregationsOrTimeSeries")]
         public Task<HttpResponseData> RunAsync(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post")]
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "peek/aggregations")] // TODO: What do we call this endpoint?
             HttpRequestData request)
         {
             return request.ProcessAsync(async () =>

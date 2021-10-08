@@ -38,7 +38,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekCommand("   ");
+            var peekCommand = new PeekCommand("   ", "   ");
 
             // Act + Assert
             await Assert.ThrowsAsync<ValidationException>(() => mediator.Send(peekCommand)).ConfigureAwait(false);
@@ -50,6 +50,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             // Arrange
             var recipientGln = new MockedGln();
             var unrelatedGln = new MockedGln();
+            var bundleId = Guid.NewGuid().ToString();
 
             await AddTimeSeriesNotificationAsync(unrelatedGln).ConfigureAwait(false);
 
@@ -60,7 +61,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekCommand(recipientGln);
+            var peekCommand = new PeekCommand(recipientGln, bundleId);
 
             // Act
             var response = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -75,6 +76,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         {
             // Arrange
             var recipientGln = new MockedGln();
+            var bundleId = Guid.NewGuid().ToString();
             await AddTimeSeriesNotificationAsync(recipientGln).ConfigureAwait(false);
 
             await using var host = await MarketOperatorIntegrationTestHost
@@ -84,7 +86,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekCommand(recipientGln);
+            var peekCommand = new PeekCommand(recipientGln, bundleId);
 
             // Act
             var response = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -99,6 +101,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         {
             // Arrange
             var recipientGln = new MockedGln();
+            var bundleId = Guid.NewGuid().ToString();
             await AddTimeSeriesNotificationAsync(recipientGln).ConfigureAwait(false);
 
             await using var host = await MarketOperatorIntegrationTestHost
@@ -108,7 +111,106 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekCommand(recipientGln);
+            var peekCommand = new PeekCommand(recipientGln, bundleId);
+
+            // Act
+            var responseA = await mediator.Send(peekCommand).ConfigureAwait(false);
+            var responseB = await mediator.Send(peekCommand).ConfigureAwait(false);
+
+            // Assert
+            Assert.NotNull(responseA);
+            Assert.True(responseA.HasContent);
+            Assert.NotNull(responseB);
+            Assert.True(responseB.HasContent);
+        }
+
+        [Fact]
+        public async Task PeekChargesCommand_InvalidCommand_ThrowsException()
+        {
+            // Arrange
+            await using var host = await MarketOperatorIntegrationTestHost
+                .InitializeAsync()
+                .ConfigureAwait(false);
+
+            await using var scope = host.BeginScope();
+            var mediator = scope.GetInstance<IMediator>();
+
+            var peekCommand = new PeekChargesCommand("   ", "   ");
+
+            // Act + Assert
+            await Assert.ThrowsAsync<ValidationException>(() => mediator.Send(peekCommand)).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task PeekChargesCommand_Empty_ReturnsNothing()
+        {
+            // Arrange
+            var recipientGln = new MockedGln();
+            var unrelatedGln = new MockedGln();
+            var bundleId = Guid.NewGuid().ToString();
+
+            await AddChargesNotificationAsync(unrelatedGln).ConfigureAwait(false);
+
+            await using var host = await MarketOperatorIntegrationTestHost
+                .InitializeAsync()
+                .ConfigureAwait(false);
+
+            await using var scope = host.BeginScope();
+            var mediator = scope.GetInstance<IMediator>();
+
+            var peekCommand = new PeekChargesCommand(recipientGln, bundleId);
+
+            // Act
+            var response = await mediator.Send(peekCommand).ConfigureAwait(false);
+
+            // Assert
+            Assert.NotNull(response);
+            Assert.False(response.HasContent);
+        }
+
+        [Fact]
+        public async Task PeekChargesCommand_SingleNotification_ReturnsData()
+        {
+            // Arrange
+            var recipientGln = new MockedGln();
+            var bundleId = Guid.NewGuid().ToString();
+
+            await AddChargesNotificationAsync(recipientGln).ConfigureAwait(false);
+
+            await using var host = await MarketOperatorIntegrationTestHost
+                .InitializeAsync()
+                .ConfigureAwait(false);
+
+            await using var scope = host.BeginScope();
+            var mediator = scope.GetInstance<IMediator>();
+
+            var peekCommand = new PeekChargesCommand(recipientGln, bundleId);
+
+            // Act
+            var response = await mediator.Send(peekCommand).ConfigureAwait(false);
+
+            // Assert
+            Assert.NotNull(response);
+            Assert.True(response.HasContent);
+        }
+
+        [Fact]
+        public async Task PeekChargesCommand_SingleNotificationMultiplePeek_ReturnsData()
+        {
+            // Arrange
+            var recipientGln = new MockedGln();
+            var bundleId = Guid.NewGuid().ToString();
+
+            await AddChargesNotificationAsync(recipientGln).ConfigureAwait(false);
+
+            await using var host = await MarketOperatorIntegrationTestHost
+                .InitializeAsync()
+                .ConfigureAwait(false);
+
+            await using var scope = host.BeginScope();
+            var mediator = scope.GetInstance<IMediator>();
+
+            var peekCommand = new PeekChargesCommand(recipientGln, bundleId);
 
             // Act
             var responseA = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -132,7 +234,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekAggregationsOrTimeSeriesCommand("   ");
+            var peekCommand = new PeekAggregationsOrTimeSeriesCommand("   ", "    ");
 
             // Act + Assert
             await Assert.ThrowsAsync<ValidationException>(() => mediator.Send(peekCommand)).ConfigureAwait(false);
@@ -144,6 +246,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             // Arrange
             var recipientGln = new MockedGln();
             var unrelatedGln = new MockedGln();
+            var bundleId = Guid.NewGuid().ToString();
 
             await AddTimeSeriesNotificationAsync(unrelatedGln).ConfigureAwait(false);
 
@@ -154,7 +257,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekAggregationsOrTimeSeriesCommand(recipientGln);
+            var peekCommand = new PeekAggregationsOrTimeSeriesCommand(recipientGln, bundleId);
 
             // Act
             var response = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -169,6 +272,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         {
             // Arrange
             var recipientGln = new MockedGln();
+            var bundleId = Guid.NewGuid().ToString();
             await AddAggregationsNotificationAsync(recipientGln).ConfigureAwait(false);
 
             await using var host = await MarketOperatorIntegrationTestHost
@@ -178,7 +282,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekAggregationsOrTimeSeriesCommand(recipientGln);
+            var peekCommand = new PeekAggregationsOrTimeSeriesCommand(recipientGln, bundleId);
 
             // Act
             var response = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -193,6 +297,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         {
             // Arrange
             var recipientGln = new MockedGln();
+            var bundleId = Guid.NewGuid().ToString();
             await AddTimeSeriesNotificationAsync(recipientGln).ConfigureAwait(false);
 
             await using var host = await MarketOperatorIntegrationTestHost
@@ -202,7 +307,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekAggregationsOrTimeSeriesCommand(recipientGln);
+            var peekCommand = new PeekAggregationsOrTimeSeriesCommand(recipientGln, bundleId);
 
             // Act
             var response = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -217,6 +322,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         {
             // Arrange
             var recipientGln = new MockedGln();
+            var bundleId = Guid.NewGuid().ToString();
             await AddTimeSeriesNotificationAsync(recipientGln).ConfigureAwait(false);
 
             await using var host = await MarketOperatorIntegrationTestHost
@@ -226,7 +332,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekAggregationsOrTimeSeriesCommand(recipientGln);
+            var peekCommand = new PeekAggregationsOrTimeSeriesCommand(recipientGln, bundleId);
 
             // Act
             var responseA = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -246,6 +352,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             var recipientGln = new MockedGln();
             var unexpectedGuid = await AddTimeSeriesNotificationAsync(recipientGln).ConfigureAwait(false);
             var expectedGuid = await AddAggregationsNotificationAsync(recipientGln).ConfigureAwait(false);
+            var bundleId = Guid.NewGuid().ToString();
 
             await using var host = await MarketOperatorIntegrationTestHost
                 .InitializeAsync()
@@ -254,7 +361,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekAggregationsOrTimeSeriesCommand(recipientGln);
+            var peekCommand = new PeekAggregationsOrTimeSeriesCommand(recipientGln, bundleId);
 
             // Act
             var response = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -268,6 +375,27 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             Assert.DoesNotContain(unexpectedGuid, bundleContents.DataAvailableNotificationIds);
         }
 
+        private static async Task AddChargesNotificationAsync(string recipientGln)
+        {
+            var dataAvailableUuid = Guid.NewGuid();
+            var dataAvailableCommand = new DataAvailableNotificationCommand(
+                dataAvailableUuid.ToString(),
+                recipientGln,
+                "charges",
+                "Charges",
+                false,
+                1);
+
+            await using var host = await SubDomainIntegrationTestHost
+                .InitializeAsync()
+                .ConfigureAwait(false);
+
+            await using var scope = host.BeginScope();
+            var mediator = scope.GetInstance<IMediator>();
+
+            await mediator.Send(dataAvailableCommand).ConfigureAwait(false);
+        }
+
         private static async Task<Guid> AddTimeSeriesNotificationAsync(string recipientGln)
         {
             var dataAvailableUuid = Guid.NewGuid();
@@ -275,7 +403,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
                 dataAvailableUuid.ToString(),
                 recipientGln,
                 "timeseries",
-                "timeseries",
+                "TimeSeries",
                 false,
                 1);
 
@@ -297,7 +425,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
                 dataAvailableUuid.ToString(),
                 recipientGln,
                 "aggregations",
-                "aggregations",
+                "Aggregations",
                 false,
                 1);
 
