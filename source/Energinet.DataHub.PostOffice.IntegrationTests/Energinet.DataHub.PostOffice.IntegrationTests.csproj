@@ -40,7 +40,6 @@ limitations under the License.
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="Google.Protobuf" Version="3.18.0" />
     <PackageReference Include="Grpc.Tools" Version="2.39.1" PrivateAssets="All" />
-    <PackageReference Include="Energinet.DataHub.MessageHub.Client" Version="1.0.1" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
     <PackageReference Include="Moq" Version="4.16.1" />
@@ -53,11 +52,5 @@ limitations under the License.
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="GreenEnergyHub.Messaging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\poor-man-package-sharing\GreenEnergyHub.Messaging.dll</HintPath>
-    </Reference>
   </ItemGroup>
 </Project>
