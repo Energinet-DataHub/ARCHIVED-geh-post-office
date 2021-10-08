@@ -99,11 +99,11 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
                     return await AskSubDomainForContentAsync(existingBundle).ConfigureAwait(false);
 
                 var dataAvailableNotification = await _dataAvailableNotificationRepository.GetNextUnacknowledgedForDomainAsync(recipient, domainOrigin).ConfigureAwait(false);
-                if (dataAvailableNotification == null)
-                    continue;
-
-                firstNotificationInBundle = dataAvailableNotification;
-                break;
+                if (dataAvailableNotification != null)
+                {
+                    firstNotificationInBundle = dataAvailableNotification;
+                    break;
+                }
             }
 
             // No new data in any domains.
