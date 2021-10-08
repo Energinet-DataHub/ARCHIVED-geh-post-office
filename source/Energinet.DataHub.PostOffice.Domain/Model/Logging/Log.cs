@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using System;
-#pragma warning disable
+
 namespace Energinet.DataHub.PostOffice.Domain.Model.Logging
 {
     public sealed class Log

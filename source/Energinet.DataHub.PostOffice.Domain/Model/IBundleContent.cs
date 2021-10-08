@@ -23,6 +23,11 @@ namespace Energinet.DataHub.PostOffice.Domain.Model
     public interface IBundleContent
     {
         /// <summary>
+        /// Content path to the content contained within the bundle.
+        /// </summary>
+        public string LogIdentifier { get; }
+
+        /// <summary>
         /// Opens a stream to the content contained within the bundle.
         /// It is the responsibility of the caller to close the stream after use.
         /// </summary>

@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Application.Handlers;
 using Energinet.DataHub.PostOffice.Domain.Model;
+using Energinet.DataHub.PostOffice.Domain.Repositories;
 using Energinet.DataHub.PostOffice.Domain.Services;
 using Moq;
 using Xunit;
@@ -35,7 +36,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         {
             // Arrange
             var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
-            var target = new PeekHandler(warehouseDomainServiceMock.Object);
+            var logRepositoryMock = new Mock<ILogRepository>();
+            var target = new PeekHandler(warehouseDomainServiceMock.Object, logRepositoryMock.Object);
 
             // Act + Assert
             await Assert
@@ -48,6 +50,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         {
             // Arrange
             var request = new PeekCommand("fake_value");
+
+            var logRepositoryMock = new Mock<ILogRepository>();
 
             var bundleContentMock = new Mock<IBundleContent>();
             bundleContentMock
@@ -69,7 +73,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                             string.Equals(r.Gln.Value, request.Recipient, StringComparison.OrdinalIgnoreCase))))
                 .ReturnsAsync(bundle);
 
-            var target = new PeekHandler(warehouseDomainServiceMock.Object);
+            var target = new PeekHandler(warehouseDomainServiceMock.Object, logRepositoryMock.Object);
 
             // Act
             var (hasContent, stream) = await target.Handle(request, CancellationToken.None).ConfigureAwait(false);
@@ -88,6 +92,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             // Arrange
             var request = new PeekCommand("fake_value");
 
+            var logRepositoryMock = new Mock<ILogRepository>();
+
             var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
             warehouseDomainServiceMock
                 .Setup(x =>
@@ -96,7 +102,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                             string.Equals(r.Gln.Value, request.Recipient, StringComparison.OrdinalIgnoreCase))))
                 .ReturnsAsync((Bundle?)null);
 
-            var target = new PeekHandler(warehouseDomainServiceMock.Object);
+            var target = new PeekHandler(warehouseDomainServiceMock.Object, logRepositoryMock.Object);
 
             // Act
             var (hasContent, stream) = await target.Handle(request, CancellationToken.None).ConfigureAwait(false);
@@ -112,7 +118,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         {
             // Arrange
             var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
-            var target = new PeekHandler(warehouseDomainServiceMock.Object);
+            var logRepositoryMock = new Mock<ILogRepository>();
+            var target = new PeekHandler(warehouseDomainServiceMock.Object, logRepositoryMock.Object);
 
             // Act + Assert
             await Assert
@@ -125,6 +132,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         {
             // Arrange
             var request = new PeekAggregationsOrTimeSeriesCommand("fake_value");
+
+            var logRepositoryMock = new Mock<ILogRepository>();
 
             var bundleContentMock = new Mock<IBundleContent>();
             bundleContentMock
@@ -146,7 +155,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                             string.Equals(r.Gln.Value, request.Recipient, StringComparison.OrdinalIgnoreCase))))
                 .ReturnsAsync(bundle);
 
-            var target = new PeekHandler(warehouseDomainServiceMock.Object);
+            var target = new PeekHandler(warehouseDomainServiceMock.Object, logRepositoryMock.Object);
 
             // Act
             var (hasContent, stream) = await target.Handle(request, CancellationToken.None).ConfigureAwait(false);
@@ -164,6 +173,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         {
             // Arrange
             var request = new PeekAggregationsOrTimeSeriesCommand("fake_value");
+            var logRepositoryMock = new Mock<ILogRepository>();
 
             var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
             warehouseDomainServiceMock
@@ -173,7 +183,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                             string.Equals(r.Gln.Value, request.Recipient, StringComparison.OrdinalIgnoreCase))))
                 .ReturnsAsync((Bundle?)null);
 
-            var target = new PeekHandler(warehouseDomainServiceMock.Object);
+            var target = new PeekHandler(warehouseDomainServiceMock.Object, logRepositoryMock.Object);
 
             // Act
             var (hasContent, stream) = await target.Handle(request, CancellationToken.None).ConfigureAwait(false);

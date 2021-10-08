@@ -51,13 +51,6 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
             return HandleAsync(request);
         }
 
-        private static async Task<PeekResponse> PrepareBundleAsync(Bundle? bundle)
-        {
-            return bundle != null && bundle.TryGetContent(out var bundleContent)
-                ? new PeekResponse(true, await bundleContent.OpenAsync().ConfigureAwait(false))
-                : new PeekResponse(false, Stream.Null);
-        }
-
         private async Task<PeekResponse> HandleAsync(PeekCommandBase request)
         {
             if (request == null)
@@ -81,38 +74,21 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
             var marketOperator = new MarketOperator(new GlobalLocationNumber(request.Recipient));
             var bundle = await requestHandler(marketOperator).ConfigureAwait(false);
 
-            var bundleToReturn = await PrepareBundleAsync(bundle).ConfigureAwait(false);
+            IBundleContent? bundleContent = null;
 
-            if (bundleToReturn.HasContent)
-            {
-                bundle!.TryGetContent(out var bundleContent);
+            var bundleToReturn = bundle != null && bundle.TryGetContent(out bundleContent)
+                ? new PeekResponse(true, await bundleContent.OpenAsync().ConfigureAwait(false))
+                : new PeekResponse(false, Stream.Null);
 
-                await _log.SaveLogOccurrenceAsync(
-                        new Log(
-                            endpointType: request.GetType().Name,
-                            gln: new GlobalLocationNumber(request.Recipient),
-                            processId: "processId", // TODO: Should be a value passed from the caller/market operator.
-                            description: "Returning valid data.",
-                            replyToMarketOperator: new Reply(
-                                bundleReference: bundleContent!),
-                            logReferenceId: logReferenceId))
-                    .ConfigureAwait(false);
-            }
-            else
-            {
-                await _log.SaveLogOccurrenceAsync(
-                        new Log(
-                            endpointType: request.GetType().Name,
-                            gln: new GlobalLocationNumber(request.Recipient),
-                            processId: "processId", // TODO: Should be a value passed from the caller/market operator.
-                            description: "Returning no data.",
-                            new Reply(new DataBundleResponseErrorDto
-                            {
-                                Reason = DataBundleResponseErrorReason.DatasetNotFound
-                            }),
-                            logReferenceId: logReferenceId))
-                    .ConfigureAwait(false);
-            }
+            await _log.SaveLogOccurrenceAsync(
+                    new Log(
+                        endpointType: request.GetType().Name,
+                        gln: new GlobalLocationNumber(request.Recipient),
+                        processId: "processId", // TODO: Should be a value passed from the caller/market operator.
+                        description: "Returning valid data.",
+                        replyToMarketOperator: bundleToReturn.HasContent ? new Reply(bundleReference: bundleContent!) : new Reply(new DataBundleResponseErrorDto { Reason = DataBundleResponseErrorReason.DatasetNotFound }),
+                        logReferenceId: logReferenceId))
+                .ConfigureAwait(false);
 
             return bundleToReturn;
         }

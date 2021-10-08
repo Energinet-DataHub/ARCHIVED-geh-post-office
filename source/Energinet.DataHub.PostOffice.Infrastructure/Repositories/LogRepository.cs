@@ -13,14 +13,11 @@
 // limitations under the License.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Net;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Domain.Model.Logging;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
 using Energinet.DataHub.PostOffice.Infrastructure.Model;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
-using Microsoft.Azure.Cosmos;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 {
@@ -50,8 +47,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
             if (log.ReplyToMarketOperator is not null && log.ReplyToMarketOperator.BundleReference is not null)
             {
-                var azureBundleContent = (AzureBlobBundleContent)log.ReplyToMarketOperator.BundleReference;
-                instanceToLog.BundleReference = azureBundleContent.ContentPath.AbsoluteUri.ToString();
+                instanceToLog.BundleReference = log.ReplyToMarketOperator.BundleReference.LogIdentifier;
             }
             else if (log.ReplyToMarketOperator?.BundleError is not null)
             {
@@ -59,9 +55,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 instanceToLog.FailureDescription = log.ReplyToMarketOperator.BundleError.FailureDescription;
             }
 
-            var response = await _logRepositoryContainer.Container.CreateItemAsync(instanceToLog).ConfigureAwait(false);
-            if (response.StatusCode is not HttpStatusCode.Created)
-                throw new InvalidOperationException("Could not create document in cosmos");
+            await _logRepositoryContainer.Container.CreateItemAsync(instanceToLog).ConfigureAwait(false);
 
             return log.Id;
         }

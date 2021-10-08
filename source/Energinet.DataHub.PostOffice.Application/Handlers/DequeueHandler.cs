@@ -21,6 +21,8 @@ using Energinet.DataHub.MessageHub.Client.Dequeue;
 using Energinet.DataHub.MessageHub.Client.Model;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Domain.Model;
+using Energinet.DataHub.PostOffice.Domain.Model.Logging;
+using Energinet.DataHub.PostOffice.Domain.Repositories;
 using Energinet.DataHub.PostOffice.Domain.Services;
 using MediatR;
 using DomainOrigin = Energinet.DataHub.MessageHub.Client.Model.DomainOrigin;
@@ -31,13 +33,16 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
     {
         private readonly IMarketOperatorDataDomainService _marketOperatorDataDomainService;
         private readonly IDequeueNotificationSender _dequeueNotificationSender;
+        private readonly ILogRepository _log;
 
         public DequeueHandler(
             IMarketOperatorDataDomainService marketOperatorDataDomainService,
-            IDequeueNotificationSender dequeueNotificationSender)
+            IDequeueNotificationSender dequeueNotificationSender,
+            ILogRepository log)
         {
             _marketOperatorDataDomainService = marketOperatorDataDomainService;
             _dequeueNotificationSender = dequeueNotificationSender;
+            _log = log;
         }
 
         public async Task<DequeueResponse> Handle(DequeueCommand request, CancellationToken cancellationToken)
@@ -45,10 +50,27 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
             if (request is null)
                 throw new ArgumentNullException(nameof(request));
 
+            var logReferenceId = await _log.SaveLogOccurrenceAsync(
+                    new Log(
+                        endpointType: request.GetType().Name,
+                        gln: new GlobalLocationNumber(request.MarketOperator),
+                        processId: "processId", // TODO: Should be a value passed from the caller/market operator.
+                        description: "Endpoint was called."))
+                .ConfigureAwait(false);
+
             var (isDequeued, dequeuedBundle) = await _marketOperatorDataDomainService
                 .TryAcknowledgeAsync(
                     new MarketOperator(new GlobalLocationNumber(request.MarketOperator)),
                     new Uuid(request.BundleUuid))
+                .ConfigureAwait(false);
+
+            await _log.SaveLogOccurrenceAsync(
+                    new Log(
+                        endpointType: request.GetType().Name,
+                        gln: new GlobalLocationNumber(request.MarketOperator),
+                        processId: "processId", // TODO: Should be a value passed from the caller/market operator.
+                        description: isDequeued ? "Bundle was successfully dequeued." : "Bundle was not successfully dequeued.",
+                        logReferenceId: logReferenceId))
                 .ConfigureAwait(false);
 
             // TODO: Should we capture an exception here, and in case one happens, what should we do?
