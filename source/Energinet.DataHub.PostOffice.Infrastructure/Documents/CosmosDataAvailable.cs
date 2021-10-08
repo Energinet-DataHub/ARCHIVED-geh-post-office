@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using Newtonsoft.Json;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Documents
@@ -20,7 +21,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Documents
     {
         public CosmosDataAvailable()
         {
-            Id = null!;
+            Id = Guid.NewGuid().ToString();
             Uuid = null!;
             ContentType = null!;
             Origin = null!;

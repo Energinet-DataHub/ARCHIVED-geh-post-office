@@ -142,7 +142,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             {
                 var updatedDocument = document with { Acknowledge = true };
                 await container
-                    .ReplaceItemAsync(updatedDocument, updatedDocument.Id, new PartitionKey("recipient"))
+                    .ReplaceItemAsync(updatedDocument, updatedDocument.Id, new PartitionKey(updatedDocument.Recipient))
                     .ConfigureAwait(false);
             }
         }

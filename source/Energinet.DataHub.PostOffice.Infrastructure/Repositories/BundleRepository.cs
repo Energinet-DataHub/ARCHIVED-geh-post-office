@@ -110,6 +110,9 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
         public async Task AcknowledgeAsync(MarketOperator recipient, Uuid bundleId)
         {
+            if (recipient is null)
+                throw new ArgumentNullException(nameof(recipient));
+
             if (bundleId is null)
                 throw new ArgumentNullException(nameof(bundleId));
 
@@ -129,7 +132,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
             var updatedBundle = bundleToUpdate with { Dequeued = true };
             await _repositoryContainer.Container
-                .ReplaceItemAsync(updatedBundle, updatedBundle.Id, new PartitionKey("recipient"))
+                .ReplaceItemAsync(updatedBundle, updatedBundle.Id, new PartitionKey(updatedBundle.Recipient))
                 .ConfigureAwait(false);
         }
 
