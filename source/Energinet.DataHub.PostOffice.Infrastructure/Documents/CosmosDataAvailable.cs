@@ -12,16 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using Newtonsoft.Json;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Documents
 {
-    public class CosmosDataAvailable
+    internal sealed record CosmosDataAvailable
     {
         public CosmosDataAvailable()
         {
-            Id = Guid.NewGuid().ToString();
+            Id = null!;
             Uuid = null!;
             ContentType = null!;
             Origin = null!;
@@ -29,23 +28,16 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Documents
             Timestamp = null!;
         }
 
-        public string Id { get; set; }
-
-        public string Uuid { get; set; }
-
-        public string ContentType { get; set; }
-
-        public string Origin { get; set; }
-
-        public string Recipient { get; set; }
-
-        public bool SupportsBundling { get; set; }
-
-        public int RelativeWeight { get; set; }
-
-        public bool Acknowledge { get; set; }
+        public string Id { get; init; }
+        public string Uuid { get; init; }
+        public string ContentType { get; init; }
+        public string Origin { get; init; }
+        public string Recipient { get; init; }
+        public bool SupportsBundling { get; init; }
+        public int RelativeWeight { get; init; }
+        public bool Acknowledge { get; init; }
 
         [JsonProperty(PropertyName = "_ts")]
-        public string Timestamp { get; set; }
+        public string Timestamp { get; init; }
     }
 }

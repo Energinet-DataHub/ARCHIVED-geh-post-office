@@ -1164,7 +1164,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             // Assert
             Assert.True(result.IsAcknowledged);
-            bundleRepositoryMock.Verify(x => x.AcknowledgeAsync(bundleUuid), Times.Once);
+            bundleRepositoryMock.Verify(x => x.AcknowledgeAsync(recipient, bundleUuid), Times.Once);
             dataAvailableNotificationRepositoryMock.Verify(x => x.AcknowledgeAsync(idsInBundle), Times.Once);
         }
 
@@ -1194,7 +1194,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             // Assert
             Assert.False(result.IsAcknowledged);
-            bundleRepositoryMock.Verify(x => x.AcknowledgeAsync(It.IsAny<Uuid>()), Times.Never);
+            bundleRepositoryMock.Verify(x => x.AcknowledgeAsync(recipient, It.IsAny<Uuid>()), Times.Never);
             dataAvailableNotificationRepositoryMock.Verify(x => x.AcknowledgeAsync(It.IsAny<IEnumerable<Uuid>>()), Times.Never);
         }
 
@@ -1231,7 +1231,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             // Assert
             Assert.False(result.IsAcknowledged);
-            bundleRepositoryMock.Verify(x => x.AcknowledgeAsync(It.IsAny<Uuid>()), Times.Never);
+            bundleRepositoryMock.Verify(x => x.AcknowledgeAsync(recipient, It.IsAny<Uuid>()), Times.Never);
             dataAvailableNotificationRepositoryMock.Verify(x => x.AcknowledgeAsync(It.IsAny<IEnumerable<Uuid>>()), Times.Never);
         }
 

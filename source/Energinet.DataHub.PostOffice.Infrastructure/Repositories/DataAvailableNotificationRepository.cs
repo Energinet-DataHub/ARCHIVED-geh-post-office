@@ -21,16 +21,17 @@ using Energinet.DataHub.PostOffice.Domain.Repositories;
 using Energinet.DataHub.PostOffice.Infrastructure.Common;
 using Energinet.DataHub.PostOffice.Infrastructure.Documents;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
+using Microsoft.Azure.Cosmos;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 {
     public class DataAvailableNotificationRepository : IDataAvailableNotificationRepository
     {
-        private readonly IDataAvailableNotificationRepositoryContainer _dataAvailableNotificationRepositoryContainer;
+        private readonly IDataAvailableNotificationRepositoryContainer _repositoryContainer;
 
-        public DataAvailableNotificationRepository(IDataAvailableNotificationRepositoryContainer dataAvailableNotificationRepositoryContainer)
+        public DataAvailableNotificationRepository(IDataAvailableNotificationRepositoryContainer repositoryContainer)
         {
-            _dataAvailableNotificationRepositoryContainer = dataAvailableNotificationRepositoryContainer;
+            _repositoryContainer = repositoryContainer;
         }
 
         public async Task SaveAsync(DataAvailableNotification dataAvailableNotification)
@@ -49,7 +50,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 Acknowledge = false
             };
 
-            await _dataAvailableNotificationRepositoryContainer.Container
+            await _repositoryContainer.Container
                 .CreateItemAsync(cosmosDocument)
                 .ConfigureAwait(false);
         }
@@ -59,7 +60,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             if (recipient is null)
                 throw new ArgumentNullException(nameof(recipient));
 
-            var asLinq = _dataAvailableNotificationRepositoryContainer
+            var asLinq = _repositoryContainer
                 .Container
                 .GetItemLinqQueryable<CosmosDataAvailable>();
 
@@ -79,7 +80,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             if (recipient is null)
                 throw new ArgumentNullException(nameof(recipient));
 
-            var asLinq = _dataAvailableNotificationRepositoryContainer
+            var asLinq = _repositoryContainer
                 .Container
                 .GetItemLinqQueryable<CosmosDataAvailable>();
 
@@ -103,7 +104,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             if (contentType is null)
                 throw new ArgumentNullException(nameof(contentType));
 
-            var asLinq = _dataAvailableNotificationRepositoryContainer
+            var asLinq = _repositoryContainer
                 .Container
                 .GetItemLinqQueryable<CosmosDataAvailable>();
 
@@ -128,7 +129,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 .Select(x => x.ToString())
                 .ToList();
 
-            var container = _dataAvailableNotificationRepositoryContainer.Container;
+            var container = _repositoryContainer.Container;
             var asLinq = container
                 .GetItemLinqQueryable<CosmosDataAvailable>();
 
@@ -139,8 +140,10 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
             await foreach (var document in query.AsCosmosIteratorAsync())
             {
-                document.Acknowledge = true;
-                await container.ReplaceItemAsync(document, document.Id).ConfigureAwait(false);
+                var updatedDocument = document with { Acknowledge = true };
+                await container
+                    .ReplaceItemAsync(updatedDocument, updatedDocument.Id, new PartitionKey("recipient"))
+                    .ConfigureAwait(false);
             }
         }
 

@@ -90,7 +90,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
                 return (false, null);
 
             await _dataAvailableNotificationRepository.AcknowledgeAsync(bundle.NotificationIds).ConfigureAwait(false);
-            await _bundleRepository.AcknowledgeAsync(bundle.BundleId).ConfigureAwait(false);
+            await _bundleRepository.AcknowledgeAsync(recipient, bundle.BundleId).ConfigureAwait(false);
             return (true, bundle);
         }
 

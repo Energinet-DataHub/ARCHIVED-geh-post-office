@@ -65,7 +65,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Repositories
 
             // Act + Assert
             await Assert
-                .ThrowsAsync<ArgumentNullException>(() => target.AcknowledgeAsync(null!))
+                .ThrowsAsync<ArgumentNullException>(() => target.AcknowledgeAsync(null!, new Uuid("E6C4A3CA-D49A-4F09-929A-605C403DEEB9")))
                 .ConfigureAwait(false);
         }
 

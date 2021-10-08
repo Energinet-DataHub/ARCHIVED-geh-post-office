@@ -216,7 +216,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var afterAdd = await target.GetNextUnacknowledgedAsync(recipient).ConfigureAwait(false);
 
             // Act
-            await target.AcknowledgeAsync(setupBundle.BundleId).ConfigureAwait(false);
+            await target.AcknowledgeAsync(recipient, setupBundle.BundleId).ConfigureAwait(false);
 
             // Assert
             Assert.Null(beforeAdd);
