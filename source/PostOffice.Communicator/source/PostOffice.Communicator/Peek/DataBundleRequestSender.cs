@@ -15,9 +15,9 @@
 using System;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
+using Energinet.DataHub.MessageHub.Client.Extensions;
 using Energinet.DataHub.MessageHub.Client.Factories;
 using Energinet.DataHub.MessageHub.Client.Model;
-using static System.DateTimeOffset;
 using static System.Guid;
 
 namespace Energinet.DataHub.MessageHub.Client.Peek
@@ -63,15 +63,9 @@ namespace Energinet.DataHub.MessageHub.Client.Peek
                 SessionId = sessionId,
                 ReplyToSessionId = sessionId,
                 ReplyTo = $"sbq-{domainOrigin}-reply"
-            };
-            serviceBusMessage.ApplicationProperties.Add("OperationTimestamp", UtcNow);
-            serviceBusMessage.ApplicationProperties.Add("OperationCorrelationId", dataBundleRequestDto.IdempotencyId);
-            serviceBusMessage.ApplicationProperties.Add("MessageVersion", 1);
-            serviceBusMessage.ApplicationProperties.Add("MessageType ", "RequestDataBundleSent");
-            serviceBusMessage.ApplicationProperties.Add("EventIdentification ", NewGuid().ToString());
+            }.AddRequestDataBundleIntegrationEvents(dataBundleRequestDto.IdempotencyId);
 
             _serviceBusClient ??= _serviceBusClientFactory.Create();
-
             await using var sender = _serviceBusClient.CreateSender($"sbq-{domainOrigin}");
             await sender.SendMessageAsync(serviceBusMessage).ConfigureAwait(false);
 

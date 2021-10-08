@@ -28,6 +28,11 @@ namespace Energinet.DataHub.MessageHub.Client.Peek
         /// <param name="requestDataBundleResponseDto">The response to the request.</param>
         /// <param name="sessionId">The ServiceBus session id received from the session-enabled ServiceBusTrigger.</param>
         /// <param name="domainOrigin">The domain that the response is from.</param>
-        Task SendAsync(RequestDataBundleResponseDto requestDataBundleResponseDto, string sessionId, DomainOrigin domainOrigin);
+        /// <param name="requestIdempotencyId">The request id that the response is in reply to.</param>
+        Task SendAsync(
+            RequestDataBundleResponseDto requestDataBundleResponseDto,
+            string sessionId,
+            DomainOrigin domainOrigin,
+            string requestIdempotencyId);
     }
 }

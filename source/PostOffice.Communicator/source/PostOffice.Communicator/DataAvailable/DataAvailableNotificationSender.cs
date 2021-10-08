@@ -15,12 +15,11 @@
 using System;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
+using Energinet.DataHub.MessageHub.Client.Extensions;
 using Energinet.DataHub.MessageHub.Client.Factories;
 using Energinet.DataHub.MessageHub.Client.Model;
 using Google.Protobuf;
 using GreenEnergyHub.PostOffice.Communicator.Contracts;
-using static System.DateTimeOffset;
-using static System.Guid;
 
 namespace Energinet.DataHub.MessageHub.Client.DataAvailable
 {
@@ -53,12 +52,8 @@ namespace Energinet.DataHub.MessageHub.Client.DataAvailable
                 RelativeWeight = dataAvailableNotificationDto.RelativeWeight
             };
 
-            var message = new ServiceBusMessage(new BinaryData(contract.ToByteArray()));
-            message.ApplicationProperties.Add("OperationTimestamp", UtcNow);
-            message.ApplicationProperties.Add("OperationCorrelationId", dataAvailableNotificationDto.Uuid);
-            message.ApplicationProperties.Add("MessageVersion", 1);
-            message.ApplicationProperties.Add("MessageType ", "RequestDataBundleSent");
-            message.ApplicationProperties.Add("EventIdentification ", NewGuid().ToString());
+            var message = new ServiceBusMessage(new BinaryData(contract.ToByteArray()))
+                .AddDataAvailableIntegrationEvents(dataAvailableNotificationDto.Uuid.ToString());
 
             await sender.SendMessageAsync(message).ConfigureAwait(false);
         }

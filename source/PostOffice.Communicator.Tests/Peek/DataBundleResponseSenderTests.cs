@@ -21,6 +21,7 @@ using Energinet.DataHub.MessageHub.Client.Peek;
 using Moq;
 using Xunit;
 using Xunit.Categories;
+using static System.Guid;
 
 namespace PostOffice.Communicator.Tests.Peek
 {
@@ -42,7 +43,8 @@ namespace PostOffice.Communicator.Tests.Peek
                     target.SendAsync(
                         null!,
                         "sessionId",
-                        DomainOrigin.TimeSeries))
+                        DomainOrigin.TimeSeries,
+                        string.Empty))
                 .ConfigureAwait(false);
         }
 
@@ -57,7 +59,7 @@ namespace PostOffice.Communicator.Tests.Peek
 
             var response = new RequestDataBundleResponseDto(
                 new Uri("https://test.dk/test"),
-                new[] { Guid.NewGuid(), Guid.NewGuid() });
+                new[] { NewGuid(), NewGuid() });
 
             // Act + Assert
             await Assert
@@ -65,7 +67,32 @@ namespace PostOffice.Communicator.Tests.Peek
                     target.SendAsync(
                         response,
                         null!,
-                        DomainOrigin.TimeSeries))
+                        DomainOrigin.TimeSeries,
+                        string.Empty))
+                .ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task SendAsync_NullIdempotencyId_ThrowsException()
+        {
+            // Arrange
+            var serviceBusClientFactory = new Mock<IServiceBusClientFactory>();
+            await using var target = new DataBundleResponseSender(
+                new ResponseBundleParser(),
+                serviceBusClientFactory.Object);
+
+            var response = new RequestDataBundleResponseDto(
+                new Uri("https://test.dk/test"),
+                new[] { NewGuid(), NewGuid() });
+
+            // Act + Assert
+            await Assert
+                .ThrowsAsync<ArgumentException>(() =>
+                    target.SendAsync(
+                        response,
+                        NewGuid().ToString(),
+                        DomainOrigin.TimeSeries,
+                        string.Empty))
                 .ConfigureAwait(false);
         }
 
@@ -96,13 +123,67 @@ namespace PostOffice.Communicator.Tests.Peek
 
             var response = new RequestDataBundleResponseDto(
                 new Uri("https://test.dk/test"),
-                new[] { Guid.NewGuid(), Guid.NewGuid() });
+                new[] { NewGuid(), NewGuid() });
 
             // Act
-            await target.SendAsync(response, "session", domainOrigin).ConfigureAwait(false);
+            await target.SendAsync(
+                response,
+                "session",
+                domainOrigin,
+                string.Empty)
+            .ConfigureAwait(false);
 
             // Assert
             serviceBusSenderMock.Verify(x => x.SendMessageAsync(It.IsAny<ServiceBusMessage>(), default), Times.Once);
+        }
+
+        [Fact]
+        public async Task SendAsync_ValidInput_AddsCorrectIntegrationEvents()
+        {
+            // Arrange
+            var serviceBusSenderMock = new Mock<ServiceBusSender>();
+            var serviceBusSessionReceiverMock = new Mock<ServiceBusSessionReceiver>();
+
+            await using var mockedServiceBusClient = new MockedServiceBusClient(
+                "sbq-TimeSeries-reply",
+                string.Empty,
+                serviceBusSenderMock.Object,
+                serviceBusSessionReceiverMock.Object);
+
+            var serviceBusClientFactory = new Mock<IServiceBusClientFactory>();
+            serviceBusClientFactory.Setup(x => x.Create()).Returns(mockedServiceBusClient);
+
+            // var applicationPropertiesMock = new Dictionary<string, string>();
+            // var serviceBusMessageMock = new Mock<ServiceBusMessage>();
+            // ServiceBusMessage
+            await using var target = new DataBundleResponseSender(
+                new ResponseBundleParser(),
+                serviceBusClientFactory.Object);
+
+            var response = new RequestDataBundleResponseDto(
+                new Uri("https://test.dk/test"),
+                new[] { NewGuid(), NewGuid() });
+
+            // Act
+            await target.SendAsync(
+                    response,
+                    "session",
+                    DomainOrigin.TimeSeries,
+                    NewGuid().ToString())
+                .ConfigureAwait(false);
+
+            // Assert
+            serviceBusSenderMock.Verify(
+                x => x.SendMessageAsync(
+                    It.Is<ServiceBusMessage>(
+                        message =>
+                            message.ApplicationProperties.ContainsKey("OperationTimestamp")
+                            && message.ApplicationProperties.ContainsKey("OperationCorrelationId")
+                            && message.ApplicationProperties.ContainsKey("MessageVersion")
+                            && message.ApplicationProperties.ContainsKey("MessageType")
+                            && message.ApplicationProperties.ContainsKey("EventIdentification")),
+                    default),
+                Times.Once);
         }
     }
 }

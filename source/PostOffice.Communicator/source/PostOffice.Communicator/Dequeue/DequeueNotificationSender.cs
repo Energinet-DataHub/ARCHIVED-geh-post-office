@@ -16,12 +16,11 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
+using Energinet.DataHub.MessageHub.Client.Extensions;
 using Energinet.DataHub.MessageHub.Client.Factories;
 using Energinet.DataHub.MessageHub.Client.Model;
 using Google.Protobuf;
 using GreenEnergyHub.PostOffice.Communicator.Contracts;
-using static System.DateTimeOffset;
-using static System.Guid;
 
 namespace Energinet.DataHub.MessageHub.Client.Dequeue
 {
@@ -49,12 +48,7 @@ namespace Energinet.DataHub.MessageHub.Client.Dequeue
                 MarketOperator = dequeueNotificationDto.MarketOperator.Value
             };
 
-            var dequeueMessage = new ServiceBusMessage(new BinaryData(contract.ToByteArray()));
-            dequeueMessage.ApplicationProperties.Add("OperationTimestamp", UtcNow);
-            dequeueMessage.ApplicationProperties.Add("OperationCorrelationId", NewGuid().ToString());
-            dequeueMessage.ApplicationProperties.Add("MessageVersion", 1);
-            dequeueMessage.ApplicationProperties.Add("MessageType ", "RequestDataBundleSent");
-            dequeueMessage.ApplicationProperties.Add("EventIdentification ", 1);
+            var dequeueMessage = new ServiceBusMessage(new BinaryData(contract.ToByteArray())).AddDequeueIntegrationEvents();
             await sender.SendMessageAsync(dequeueMessage).ConfigureAwait(false);
         }
 
