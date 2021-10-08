@@ -142,7 +142,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var expected = new DataAvailableNotification(
                 new Uuid(Guid.NewGuid()),
                 recipient,
-                new ContentType("target"),
+                new ContentType("fake_value"),
                 DomainOrigin.Aggregations,
                 new SupportsBundling(false),
                 new Weight(1));
@@ -152,7 +152,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
                 var other = new DataAvailableNotification(
                     new Uuid(Guid.NewGuid()),
                     expected.Recipient,
-                    expected.ContentType,
+                    new ContentType("target"),
                     expected.Origin,
                     expected.SupportsBundling,
                     expected.Weight);
@@ -164,7 +164,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
 
             // Act
             var actual = await dataAvailableNotificationRepository
-                .GetNextUnacknowledgedAsync(recipient, expected.ContentType, new Weight(1))
+                .GetNextUnacknowledgedAsync(recipient, new ContentType("target"), new Weight(1))
                 .ConfigureAwait(false);
 
             // Assert
