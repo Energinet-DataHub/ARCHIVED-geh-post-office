@@ -35,18 +35,18 @@ limitations under the License.
     <Authors>Energinet-DataHub</Authors>
     <RepositoryUrl>https://github.com/Energinet-DataHub/geh-post-office</RepositoryUrl>
     <PackageReleaseNotes>
-      Release Notes
-	  https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energinet.DataHub.MessageHub.Client/documents/release-notes/release-notes.md
+Release Notes
+https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energinet.DataHub.MessageHub.Client/documents/release-notes/release-notes.md
 
-      Documentation
-	  https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energinet.DataHub.MessageHub.Client/documents/documentation.md
+Documentation
+https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energinet.DataHub.MessageHub.Client/documents/documentation.md
     </PackageReleaseNotes>
     <PackageDescription>
-      Release Notes
-	  https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energinet.DataHub.MessageHub.Client/documents/release-notes/release-notes.md
+Release Notes
+https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energinet.DataHub.MessageHub.Client/documents/release-notes/release-notes.md
 
-      Documentation
-	  https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energinet.DataHub.MessageHub.Client/documents/documentation.md
+Documentation
+https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energinet.DataHub.MessageHub.Client/documents/documentation.md
     </PackageDescription>
     <Description>Library containing communication API for Energinet.DataHub.MessageHub</Description>
     <PackageTags>geh;library</PackageTags>
