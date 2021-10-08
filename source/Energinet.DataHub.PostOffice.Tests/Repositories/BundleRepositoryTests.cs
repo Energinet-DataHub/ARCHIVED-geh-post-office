@@ -25,7 +25,7 @@ using Xunit.Categories;
 namespace Energinet.DataHub.PostOffice.Tests.Repositories
 {
     [UnitTest]
-    public class BundleRepositoryTests
+    public sealed class BundleRepositoryTests
     {
         [Fact]
         public async Task GetNextUnacknowledgedAsync_NullRecipient_ThrowsException()

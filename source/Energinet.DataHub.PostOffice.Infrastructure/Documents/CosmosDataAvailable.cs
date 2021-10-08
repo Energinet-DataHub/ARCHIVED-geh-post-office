@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Newtonsoft.Json;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Documents
 {
@@ -25,7 +26,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Documents
             ContentType = null!;
             Origin = null!;
             Recipient = null!;
-            _ts = null!;
+            Timestamp = null!;
         }
 
         public string Id { get; set; }
@@ -44,8 +45,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Documents
 
         public bool Acknowledge { get; set; }
 
-#pragma warning disable CA1707, SA1300
-        public string _ts { get; set; }
-#pragma warning restore
+        [JsonProperty(PropertyName = "_ts")]
+        public string Timestamp { get; set; }
     }
 }

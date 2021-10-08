@@ -68,7 +68,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 where
                     dataAvailable.Recipient == recipient.Gln.Value &&
                     !dataAvailable.Acknowledge
-                orderby dataAvailable._ts
+                orderby dataAvailable.Timestamp
                 select dataAvailable;
 
             return await ExecuteQueryAsync(query).FirstOrDefaultAsync().ConfigureAwait(false);
@@ -89,7 +89,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                     dataAvailable.Recipient == recipient.Gln.Value &&
                     dataAvailable.Origin == domainOrigin.ToString() &&
                     !dataAvailable.Acknowledge
-                orderby dataAvailable._ts
+                orderby dataAvailable.Timestamp
                 select dataAvailable;
 
             return await ExecuteQueryAsync(query).FirstOrDefaultAsync().ConfigureAwait(false);
@@ -113,7 +113,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                     dataAvailable.Recipient == recipient.Gln.Value &&
                     dataAvailable.ContentType == contentType.Value &&
                     !dataAvailable.Acknowledge
-                orderby dataAvailable._ts
+                orderby dataAvailable.Timestamp
                 select dataAvailable;
 
             return await ExecuteQueryAsync(query).ToListAsync().ConfigureAwait(false);
