@@ -178,7 +178,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         public async Task PeekAggregationsOrTimeSeriesCommandHandle_WithoutData_ReturnsNullStream()
         {
             // Arrange
-            var request = new PeekAggregationsOrTimeSeriesCommand("fake_value");
             var logRepositoryMock = new Mock<ILogRepository>();
             var request = new PeekAggregationsOrTimeSeriesCommand("fake_value", Guid.NewGuid().ToString());
 

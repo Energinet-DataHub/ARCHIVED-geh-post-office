@@ -64,7 +64,6 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
                         description: "Endpoint was called."))
                 .ConfigureAwait(false);
 
-            Func<MarketOperator, Task<Bundle?>> requestHandler = request switch
             Func<MarketOperator, Uuid, Task<Bundle?>> requestHandler = request switch
             {
                 PeekCommand => _marketOperatorDataDomainService.GetNextUnacknowledgedAsync,
@@ -73,7 +72,8 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
             };
 
             var marketOperator = new MarketOperator(new GlobalLocationNumber(request.Recipient));
-            var bundle = await requestHandler(marketOperator).ConfigureAwait(false);
+            var uuid = new Uuid(request.BundleId);
+            var bundle = await requestHandler(marketOperator, uuid).ConfigureAwait(false);
 
             IBundleContent? bundleContent = null;
 
@@ -91,10 +91,12 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
                         logReferenceId: logReferenceId))
                 .ConfigureAwait(false);
 
-            return bundleToReturn;
             var bundleId = new Uuid(request.BundleId);
-            var bundle = await requestHandler(marketOperator, bundleId).ConfigureAwait(false);
-            return await PrepareBundleAsync(bundle).ConfigureAwait(false);
+            var bundleToPrepare = await requestHandler(marketOperator, bundleId).ConfigureAwait(false);
+
+            return bundleToPrepare != null && bundleToPrepare.TryGetContent(out bundleContent)
+                ? new PeekResponse(true, await bundleContent.OpenAsync().ConfigureAwait(false))
+                : new PeekResponse(false, Stream.Null);
         }
     }
 }
