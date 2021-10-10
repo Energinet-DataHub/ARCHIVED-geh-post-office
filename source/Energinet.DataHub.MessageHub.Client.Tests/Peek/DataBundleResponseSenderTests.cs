@@ -36,15 +36,18 @@ namespace Energinet.DataHub.MessageHub.Client.Tests.Peek
             await using var target = new DataBundleResponseSender(
                 new ResponseBundleParser(),
                 serviceBusClientFactory.Object);
+            var requestMock = new DataBundleRequestDto(
+                "80BB9BB8-CDE8-4C77-BE76-FDC886FD75A3",
+                new[] { Guid.NewGuid(), Guid.NewGuid() });
 
             // Act + Assert
             await Assert
                 .ThrowsAsync<ArgumentNullException>(() =>
                     target.SendAsync(
                         null!,
+                        requestMock,
                         "sessionId",
-                        DomainOrigin.TimeSeries,
-                        string.Empty))
+                        DomainOrigin.TimeSeries))
                 .ConfigureAwait(false);
         }
 
@@ -61,19 +64,23 @@ namespace Energinet.DataHub.MessageHub.Client.Tests.Peek
                 new Uri("https://test.dk/test"),
                 new[] { NewGuid(), NewGuid() });
 
+            var requestMock = new DataBundleRequestDto(
+                "80BB9BB8-CDE8-4C77-BE76-FDC886FD75A3",
+                new[] { Guid.NewGuid(), Guid.NewGuid() });
+
             // Act + Assert
             await Assert
                 .ThrowsAsync<ArgumentNullException>(() =>
                     target.SendAsync(
                         response,
+                        requestMock,
                         null!,
-                        DomainOrigin.TimeSeries,
-                        string.Empty))
+                        DomainOrigin.TimeSeries))
                 .ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task SendAsync_NullIdempotencyId_ThrowsException()
+        public async Task SendAsync_NullRequestDto_ThrowsException()
         {
             // Arrange
             var serviceBusClientFactory = new Mock<IServiceBusClientFactory>();
@@ -90,9 +97,9 @@ namespace Energinet.DataHub.MessageHub.Client.Tests.Peek
                 .ThrowsAsync<ArgumentException>(() =>
                     target.SendAsync(
                         response,
+                        null!,
                         NewGuid().ToString(),
-                        DomainOrigin.TimeSeries,
-                        string.Empty))
+                        DomainOrigin.TimeSeries))
                 .ConfigureAwait(false);
         }
 
@@ -125,12 +132,16 @@ namespace Energinet.DataHub.MessageHub.Client.Tests.Peek
                 new Uri("https://test.dk/test"),
                 new[] { NewGuid(), NewGuid() });
 
+            var requestMock = new DataBundleRequestDto(
+                "80BB9BB8-CDE8-4C77-BE76-FDC886FD75A3",
+                new[] { Guid.NewGuid(), Guid.NewGuid() });
+
             // Act
             await target.SendAsync(
                 response,
+                requestMock,
                 "session",
-                domainOrigin,
-                "A147388C-93F3-4F71-9535-7C21105F2270")
+                domainOrigin)
             .ConfigureAwait(false);
 
             // Assert
@@ -164,12 +175,16 @@ namespace Energinet.DataHub.MessageHub.Client.Tests.Peek
                 new Uri("https://test.dk/test"),
                 new[] { NewGuid(), NewGuid() });
 
+            var requestMock = new DataBundleRequestDto(
+                "80BB9BB8-CDE8-4C77-BE76-FDC886FD75A3",
+                new[] { Guid.NewGuid(), Guid.NewGuid() });
+
             // Act
             await target.SendAsync(
                     response,
+                    requestMock,
                     "session",
-                    DomainOrigin.TimeSeries,
-                    "E1290E44-3546-4030-822B-7AAF6A7FDF85")
+                    DomainOrigin.TimeSeries)
                 .ConfigureAwait(false);
 
             // Assert

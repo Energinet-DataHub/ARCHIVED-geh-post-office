@@ -37,9 +37,9 @@ namespace Energinet.DataHub.MessageHub.Client.Peek
 
         public async Task SendAsync(
             RequestDataBundleResponseDto requestDataBundleResponseDto,
+            DataBundleRequestDto requestDto,
             string sessionId,
-            DomainOrigin domainOrigin,
-            string requestIdempotencyId)
+            DomainOrigin domainOrigin)
         {
             if (requestDataBundleResponseDto == null)
                 throw new ArgumentNullException(nameof(requestDataBundleResponseDto));
@@ -47,14 +47,14 @@ namespace Energinet.DataHub.MessageHub.Client.Peek
             if (sessionId == null)
                 throw new ArgumentNullException(nameof(sessionId));
 
-            if (requestIdempotencyId is not { Length: > 0 })
-                throw new ArgumentException($"{nameof(requestIdempotencyId)} must contain a request idempotency id which is at least one character in length");
+            if (requestDto is null)
+                throw new ArgumentException($"{nameof(requestDto)} must contain a request idempotency id which is at least one character in length");
 
             var contractBytes = _responseBundleParser.Parse(requestDataBundleResponseDto);
             var serviceBusReplyMessage = new ServiceBusMessage(contractBytes)
             {
                 SessionId = sessionId,
-            }.AddDataBundleResponseIntegrationEvents(requestIdempotencyId);
+            }.AddDataBundleResponseIntegrationEvents(requestDto.IdempotencyId);
 
             _serviceBusClient ??= _serviceBusClientFactory.Create();
             await using var sender = _serviceBusClient.CreateSender($"sbq-{domainOrigin}-reply");
