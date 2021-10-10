@@ -12,20 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Energinet.DataHub.PostOffice.Common;
-using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions;
-using SimpleInjector;
+using Energinet.DataHub.MessageHub.Client.Factories;
+using Xunit;
 
-namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
+namespace Energinet.DataHub.MessageHub.Client.Tests.Factories
 {
-    internal sealed class Startup : StartupBase
+    public sealed class ServiceBusClientFactoryTests
     {
-        protected override void Configure(Container container)
+        [Fact]
+        public void Create_ReturnsServiceBusClient()
         {
-            container.Register<PeekFunction>(Lifestyle.Scoped);
-            container.Register<PeekChargesFunction>(Lifestyle.Scoped);
-            container.Register<PeekAggregationsOrTimeSeriesFunction>(Lifestyle.Scoped);
-            container.Register<DequeueFunction>(Lifestyle.Scoped);
+            // arrange
+            var target = new ServiceBusClientFactory("Endpoint=sb://sbn-postoffice.servicebus.windows.net/;SharedAccessKeyName=Hello;SharedAccessKey=there");
+
+            // act
+            var actual = target.Create();
+
+            // assert
+            Assert.NotNull(actual);
         }
     }
 }
