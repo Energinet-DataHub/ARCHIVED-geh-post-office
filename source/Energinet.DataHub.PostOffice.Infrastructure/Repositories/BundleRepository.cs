@@ -132,7 +132,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
             var updatedBundle = bundleToUpdate with { Dequeued = true };
             await _repositoryContainer.Container
-                .ReplaceItemAsync(updatedBundle, updatedBundle.Id, new PartitionKey(updatedBundle.Recipient))
+                .ReplaceItemAsync(updatedBundle, updatedBundle.Id)
                 .ConfigureAwait(false);
         }
 

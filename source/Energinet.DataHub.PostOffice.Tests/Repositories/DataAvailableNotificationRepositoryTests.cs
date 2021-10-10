@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories;
@@ -79,6 +80,21 @@ namespace Energinet.DataHub.PostOffice.Tests.Repositories
         }
 
         [Fact]
+        public async Task AcknowledgeAsync_NullRecipient_ThrowsException()
+        {
+            // Arrange
+            var dataAvailableNotificationRepositoryContainer = new Mock<IDataAvailableNotificationRepositoryContainer>();
+            var target = new DataAvailableNotificationRepository(dataAvailableNotificationRepositoryContainer.Object);
+
+            // Act + Assert
+            await Assert
+                .ThrowsAsync<ArgumentNullException>(() => target.AcknowledgeAsync(
+                    null!,
+                    Enumerable.Empty<Uuid>()))
+                .ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task AcknowledgeAsync_NullCollection_ThrowsException()
         {
             // Arrange
@@ -87,7 +103,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Repositories
 
             // Act + Assert
             await Assert
-                .ThrowsAsync<ArgumentNullException>(() => target.AcknowledgeAsync(null!))
+                .ThrowsAsync<ArgumentNullException>(() => target.AcknowledgeAsync(
+                    new MarketOperator(new GlobalLocationNumber("fake_value")),
+                    null!))
                 .ConfigureAwait(false);
         }
 

@@ -21,7 +21,6 @@ using Energinet.DataHub.PostOffice.Domain.Repositories;
 using Energinet.DataHub.PostOffice.Infrastructure.Common;
 using Energinet.DataHub.PostOffice.Infrastructure.Documents;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
-using Microsoft.Azure.Cosmos;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 {
@@ -41,7 +40,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
             var cosmosDocument = new CosmosDataAvailable
             {
-                Uuid = dataAvailableNotification.NotificationId.ToString(),
+                Id = dataAvailableNotification.NotificationId.ToString(),
                 Recipient = dataAvailableNotification.Recipient.Gln.Value,
                 ContentType = dataAvailableNotification.ContentType.Value,
                 Origin = dataAvailableNotification.Origin.ToString(),
@@ -96,7 +95,10 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             return await ExecuteQueryAsync(query).FirstOrDefaultAsync().ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<DataAvailableNotification>> GetNextUnacknowledgedAsync(MarketOperator recipient, ContentType contentType, Weight weight)
+        public async Task<IEnumerable<DataAvailableNotification>> GetNextUnacknowledgedAsync(
+            MarketOperator recipient,
+            ContentType contentType,
+            Weight weight)
         {
             if (recipient is null)
                 throw new ArgumentNullException(nameof(recipient));
@@ -120,8 +122,11 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             return await ExecuteQueryAsync(query).ToListAsync().ConfigureAwait(false);
         }
 
-        public async Task AcknowledgeAsync(IEnumerable<Uuid> dataAvailableNotificationUuids)
+        public async Task AcknowledgeAsync(MarketOperator recipient, IEnumerable<Uuid> dataAvailableNotificationUuids)
         {
+            if (recipient is null)
+                throw new ArgumentNullException(nameof(recipient));
+
             if (dataAvailableNotificationUuids is null)
                 throw new ArgumentNullException(nameof(dataAvailableNotificationUuids));
 
@@ -135,14 +140,14 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
             var query =
                 from dataAvailable in asLinq
-                where stringIds.Contains(dataAvailable.Uuid)
+                where dataAvailable.Recipient == recipient.Gln.Value && stringIds.Contains(dataAvailable.Id)
                 select dataAvailable;
 
             await foreach (var document in query.AsCosmosIteratorAsync())
             {
                 var updatedDocument = document with { Acknowledge = true };
                 await container
-                    .ReplaceItemAsync(updatedDocument, updatedDocument.Id, new PartitionKey(updatedDocument.Recipient))
+                    .ReplaceItemAsync(updatedDocument, updatedDocument.Id)
                     .ConfigureAwait(false);
             }
         }
@@ -152,7 +157,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             await foreach (var document in query.AsCosmosIteratorAsync())
             {
                 yield return new DataAvailableNotification(
-                    new Uuid(document.Uuid),
+                    new Uuid(document.Id),
                     new MarketOperator(new GlobalLocationNumber(document.Recipient)),
                     new ContentType(document.ContentType),
                     Enum.Parse<DomainOrigin>(document.Origin, true),
