@@ -23,7 +23,8 @@ using Xunit.Categories;
 
 namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
 {
-    [UnitTest]
+    [Collection("IntegrationTest")]
+    [IntegrationTest]
     public class LogRepositoryIntegrationTests
     {
         [Fact]
