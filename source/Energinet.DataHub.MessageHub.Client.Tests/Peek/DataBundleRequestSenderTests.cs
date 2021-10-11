@@ -181,7 +181,7 @@ namespace Energinet.DataHub.MessageHub.Client.Tests.Peek
                 serviceBusClientFactoryMock.Object);
 
             // act
-            var result = await target.SendAsync(
+            await target.SendAsync(
                     new DataBundleRequestDto(
                         "80BB9BB8-CDE8-4C77-BE76-FDC886FD75A3",
                         new[] { Guid.NewGuid(), Guid.NewGuid() }),
