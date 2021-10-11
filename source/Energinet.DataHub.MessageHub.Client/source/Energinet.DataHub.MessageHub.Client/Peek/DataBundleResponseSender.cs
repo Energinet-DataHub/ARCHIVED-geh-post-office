@@ -41,10 +41,10 @@ namespace Energinet.DataHub.MessageHub.Client.Peek
             string sessionId,
             DomainOrigin domainOrigin)
         {
-            if (requestDataBundleResponseDto == null)
+            if (requestDataBundleResponseDto is null)
                 throw new ArgumentNullException(nameof(requestDataBundleResponseDto));
 
-            if (sessionId == null)
+            if (sessionId is null)
                 throw new ArgumentNullException(nameof(sessionId));
 
             if (requestDto is null)
@@ -63,7 +63,7 @@ namespace Energinet.DataHub.MessageHub.Client.Peek
 
         public async ValueTask DisposeAsync()
         {
-            if (_serviceBusClient != null)
+            if (_serviceBusClient is not null)
             {
                 await _serviceBusClient.DisposeAsync().ConfigureAwait(false);
                 _serviceBusClient = null;

@@ -25,33 +25,33 @@ namespace Energinet.DataHub.MessageHub.Client.Extensions
         public static ServiceBusMessage AddDequeueIntegrationEvents(this ServiceBusMessage serviceBusMessage)
         {
             return serviceBusMessage.AddIntegrationsEvents(
-                operationCorrelationId: NewGuid().ToString(),
-                messageType: IntegrationEventsMessageType.Dequeue,
-                eventIdentification: NewGuid().ToString());
+                NewGuid().ToString(),
+                IntegrationEventsMessageType.Dequeue,
+                NewGuid().ToString());
         }
 
         public static ServiceBusMessage AddRequestDataBundleIntegrationEvents(this ServiceBusMessage serviceBusMessage, string operationCorrelationId)
         {
             return serviceBusMessage.AddIntegrationsEvents(
-                operationCorrelationId: operationCorrelationId,
-                messageType: IntegrationEventsMessageType.RequestDataBundle,
-                eventIdentification: NewGuid().ToString());
+                operationCorrelationId,
+                IntegrationEventsMessageType.RequestDataBundle,
+                NewGuid().ToString());
         }
 
         public static ServiceBusMessage AddDataBundleResponseIntegrationEvents(this ServiceBusMessage serviceBusMessage, string operationCorrelationId)
         {
             return serviceBusMessage.AddIntegrationsEvents(
-                operationCorrelationId: operationCorrelationId,
-                messageType: IntegrationEventsMessageType.DataBundleResponse,
-                eventIdentification: NewGuid().ToString());
+                operationCorrelationId,
+                IntegrationEventsMessageType.DataBundleResponse,
+                NewGuid().ToString());
         }
 
         public static ServiceBusMessage AddDataAvailableIntegrationEvents(this ServiceBusMessage serviceBusMessage, string operationCorrelationId)
         {
             return serviceBusMessage.AddIntegrationsEvents(
-                operationCorrelationId: operationCorrelationId,
-                messageType: IntegrationEventsMessageType.DataBundleResponse,
-                eventIdentification: NewGuid().ToString());
+                operationCorrelationId,
+                IntegrationEventsMessageType.DataBundleResponse,
+                NewGuid().ToString());
         }
 
         private static ServiceBusMessage AddIntegrationsEvents(

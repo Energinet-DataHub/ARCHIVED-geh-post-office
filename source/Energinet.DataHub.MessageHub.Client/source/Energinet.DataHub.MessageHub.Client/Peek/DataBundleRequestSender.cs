@@ -18,7 +18,6 @@ using Azure.Messaging.ServiceBus;
 using Energinet.DataHub.MessageHub.Client.Extensions;
 using Energinet.DataHub.MessageHub.Client.Factories;
 using Energinet.DataHub.MessageHub.Client.Model;
-using static System.Guid;
 
 namespace Energinet.DataHub.MessageHub.Client.Peek
 {
@@ -57,7 +56,7 @@ namespace Energinet.DataHub.MessageHub.Client.Peek
                 throw new ArgumentNullException(nameof(dataBundleRequestDto));
             var bytes = _requestBundleParser.Parse(dataBundleRequestDto);
 
-            var sessionId = NewGuid().ToString();
+            var sessionId = Guid.NewGuid().ToString();
             var serviceBusMessage = new ServiceBusMessage(bytes)
             {
                 SessionId = sessionId,
