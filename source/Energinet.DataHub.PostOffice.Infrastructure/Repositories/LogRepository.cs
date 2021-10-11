@@ -41,6 +41,9 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 log.MarketOperator.Value,
                 log.ProcessId);
 
+            if (log.BundleReference is not null)
+                instanceToLog.BundleReference = log.BundleReference.LogIdentifier;
+
             await _logRepositoryContainer.Container.CreateItemAsync(instanceToLog).ConfigureAwait(false);
 
             return log.Id;
