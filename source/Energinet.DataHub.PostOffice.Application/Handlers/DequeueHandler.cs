@@ -50,28 +50,21 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
             if (request is null)
                 throw new ArgumentNullException(nameof(request));
 
-            var logReferenceId = await _log.SaveLogOccurrenceAsync(
-                    new Log(
-                        endpointType: request.GetType().Name,
-                        gln: new GlobalLocationNumber(request.MarketOperator),
-                        processId: "processId", // TODO: Should be a value passed from the caller/market operator.
-                        description: "Endpoint was called."))
-                .ConfigureAwait(false);
-
             var (isDequeued, dequeuedBundle) = await _marketOperatorDataDomainService
                 .TryAcknowledgeAsync(
                     new MarketOperator(new GlobalLocationNumber(request.MarketOperator)),
                     new Uuid(request.BundleUuid))
                 .ConfigureAwait(false);
 
-            await _log.SaveLogOccurrenceAsync(
-                    new Log(
-                        endpointType: request.GetType().Name,
-                        gln: new GlobalLocationNumber(request.MarketOperator),
-                        processId: "processId", // TODO: Should be a value passed from the caller/market operator.
-                        description: isDequeued ? "Bundle was successfully dequeued." : "Bundle was not successfully dequeued.",
-                        logReferenceId: logReferenceId))
-                .ConfigureAwait(false);
+            if (isDequeued)
+            {
+                await _log.SaveLogOccurrenceAsync(
+                        new Log(
+                            request.GetType().Name,
+                            new GlobalLocationNumber(request.MarketOperator),
+                            request.MarketOperator + "+" + request.BundleUuid))
+                    .ConfigureAwait(false);
+            }
 
             // TODO: Should we capture an exception here, and in case one happens, what should we do?
             if (isDequeued && dequeuedBundle is not null)

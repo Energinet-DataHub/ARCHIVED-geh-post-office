@@ -67,7 +67,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation
         public async Task Validate_Recipient_ValidatesProperty(string value, bool isValid)
         {
             // Arrange
-            const string propertyName = nameof(PeekChargesCommand.Recipient);
+            const string propertyName = nameof(PeekChargesCommand.MarketOperator);
 
             var target = new PeekChargesCommandRuleSet();
             var command = new PeekChargesCommand(value, Guid.NewGuid().ToString());

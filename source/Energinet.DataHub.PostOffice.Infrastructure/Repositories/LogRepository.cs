@@ -39,21 +39,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 log.Id,
                 log.EndpointType,
                 log.MarketOperator.Value,
-                log.ProcessId,
-                log.Description);
-
-            if (log.LogReferenceId is not null)
-                instanceToLog.LogReferenceId = log.LogReferenceId;
-
-            if (log.ReplyToMarketOperator is not null && log.ReplyToMarketOperator.BundleReference is not null)
-            {
-                instanceToLog.BundleReference = log.ReplyToMarketOperator.BundleReference.LogIdentifier;
-            }
-            else if (log.ReplyToMarketOperator?.BundleError is not null)
-            {
-                instanceToLog.ErrorReason = log.ReplyToMarketOperator.BundleError.Reason.ToString();
-                instanceToLog.FailureDescription = log.ReplyToMarketOperator.BundleError.FailureDescription;
-            }
+                log.ProcessId);
 
             await _logRepositoryContainer.Container.CreateItemAsync(instanceToLog).ConfigureAwait(false);
 

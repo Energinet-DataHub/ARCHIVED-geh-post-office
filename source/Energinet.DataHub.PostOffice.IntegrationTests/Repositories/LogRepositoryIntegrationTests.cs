@@ -46,9 +46,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
                 "fake_value",
                 new GlobalLocationNumber("fake_value"),
                 "fake_value",
-                "fake_value",
-                new Reply(fakeIBundleContent.Object),
-                "fake_value");
+                fakeIBundleContent.Object);
 
             // Act
             var actual = await target.SaveLogOccurrenceAsync(logObject).ConfigureAwait(false);

@@ -62,14 +62,6 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
 
-            var logReferenceId = await _log.SaveLogOccurrenceAsync(
-                    new Log(
-                        endpointType: request.GetType().Name,
-                        gln: new GlobalLocationNumber(request.Recipient),
-                        processId: "processId", // TODO: Should be a value passed from the caller/market operator.
-                        description: "Endpoint was called."))
-                .ConfigureAwait(false);
-
             Func<MarketOperator, Uuid, Task<Bundle?>> requestHandler = request switch
             {
                 PeekCommand => _marketOperatorDataDomainService.GetNextUnacknowledgedAsync,
@@ -78,7 +70,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
                 _ => throw new ArgumentOutOfRangeException(nameof(request))
             };
 
-            var marketOperator = new MarketOperator(new GlobalLocationNumber(request.Recipient));
+            var marketOperator = new MarketOperator(new GlobalLocationNumber(request.MarketOperator));
             var uuid = new Uuid(request.BundleId);
             var bundle = await requestHandler(marketOperator, uuid).ConfigureAwait(false);
 
@@ -88,15 +80,16 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
                 ? new PeekResponse(true, await bundleContent.OpenAsync().ConfigureAwait(false))
                 : new PeekResponse(false, Stream.Null);
 
-            await _log.SaveLogOccurrenceAsync(
-                    new Log(
-                        endpointType: request.GetType().Name,
-                        gln: new GlobalLocationNumber(request.Recipient),
-                        processId: "processId", // TODO: Should be a value passed from the caller/market operator.
-                        description: "Returning valid data.",
-                        replyToMarketOperator: bundleToReturn.HasContent ? new Reply(bundleReference: bundleContent!) : new Reply(new DataBundleResponseErrorDto { Reason = DataBundleResponseErrorReason.DatasetNotFound }),
-                        logReferenceId: logReferenceId))
-                .ConfigureAwait(false);
+            if (bundleToReturn.HasContent)
+            {
+                await _log.SaveLogOccurrenceAsync(
+                        new Log(
+                            request.GetType().Name,
+                            new GlobalLocationNumber(request.MarketOperator),
+                            request.MarketOperator + "+" + request.BundleId,
+                            bundleContent!))
+                    .ConfigureAwait(false);
+            }
 
             var bundleId = new Uuid(request.BundleId);
             var bundleToPrepare = await requestHandler(marketOperator, bundleId).ConfigureAwait(false);

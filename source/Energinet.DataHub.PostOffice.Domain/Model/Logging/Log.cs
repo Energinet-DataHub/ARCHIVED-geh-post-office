@@ -22,16 +22,12 @@ namespace Energinet.DataHub.PostOffice.Domain.Model.Logging
             string endpointType,
             GlobalLocationNumber gln,
             string processId,
-            string description,
-            Reply? replyToMarketOperator = null,
-            string? logReferenceId = null)
+            IBundleContent? bundleReference = null)
         {
             EndpointType = endpointType;
             MarketOperator = gln;
             ProcessId = processId;
-            Description = description;
-            ReplyToMarketOperator = replyToMarketOperator;
-            LogReferenceId = logReferenceId;
+            BundleReference = bundleReference;
         }
 
         public string Id { get; } = Guid.NewGuid().ToString();
@@ -40,8 +36,6 @@ namespace Energinet.DataHub.PostOffice.Domain.Model.Logging
         public string EndpointType { get; }
         public GlobalLocationNumber MarketOperator { get; }
         public string ProcessId { get; }
-        public string Description { get; }
-        public Reply? ReplyToMarketOperator { get; }
-        public string? LogReferenceId { get; }
+        public IBundleContent? BundleReference { get; }
     }
 }

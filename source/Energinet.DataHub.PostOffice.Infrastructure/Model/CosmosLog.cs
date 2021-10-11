@@ -25,21 +25,13 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Model
             string endpointType,
             string globalLocationNumber,
             string processId,
-            string description,
-            string? bundleReference = null,
-            string? errorReason = null,
-            string? failureDescription = null,
-            string? logReferenceId = null)
+            string? bundleReference = null)
         {
             Id = id;
             EndpointType = endpointType;
             GlobalLocationNumber = globalLocationNumber;
             ProcessId = processId;
-            Description = description;
             BundleReference = bundleReference;
-            ErrorReason = errorReason;
-            FailureDescription = failureDescription;
-            LogReferenceId = logReferenceId;
         }
 
         public string Id { get; set; }
@@ -48,10 +40,6 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Model
         public string EndpointType { get; }
         public string GlobalLocationNumber { get; }
         public string ProcessId { get; }
-        public string Description { get; set; }
         public string? BundleReference { get; set; }
-        public string? ErrorReason { get; set; }
-        public string? FailureDescription { get; set; }
-        public string? LogReferenceId { get; set; }
     }
 }
