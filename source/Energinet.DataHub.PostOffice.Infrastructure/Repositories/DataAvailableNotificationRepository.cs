@@ -30,7 +30,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
         public DataAvailableNotificationRepository(IDataAvailableNotificationRepositoryContainer repositoryContainer)
         {
-            _container = cosmosClient.GetContainer(cosmosConfig.MessageHubDatabaseId, ContainerName);
+            _repositoryContainer = repositoryContainer;
         }
 
         public async Task SaveAsync(DataAvailableNotification dataAvailableNotification)

@@ -204,7 +204,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         {
             // Arrange
             var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
-            var target = new PeekHandler(warehouseDomainServiceMock.Object);
+            var logMock = new Mock<ILogRepository>();
+            var target = new PeekHandler(warehouseDomainServiceMock.Object, logMock.Object);
 
             // Act + Assert
             await Assert
@@ -216,6 +217,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         public async Task PeekChargesCommandHandle_WithData_ReturnsDataStream()
         {
             // Arrange
+            var logMock = new Mock<ILogRepository>();
             var request = new PeekChargesCommand("fake_value", Guid.NewGuid().ToString());
 
             var bundleContentMock = new Mock<IBundleContent>();
@@ -239,7 +241,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                         It.Is<Uuid>(r => BundleIdCheck(r, request))))
                 .ReturnsAsync(bundle);
 
-            var target = new PeekHandler(warehouseDomainServiceMock.Object);
+            var target = new PeekHandler(warehouseDomainServiceMock.Object, logMock.Object);
 
             // Act
             var (hasContent, stream) = await target.Handle(request, CancellationToken.None).ConfigureAwait(false);
@@ -256,6 +258,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         public async Task PeekChargesCommandHandle_WithoutData_ReturnsNullStream()
         {
             // Arrange
+            var logMock = new Mock<ILogRepository>();
             var request = new PeekChargesCommand("fake_value", Guid.NewGuid().ToString());
 
             var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
@@ -267,7 +270,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                         It.Is<Uuid>(r => BundleIdCheck(r, request))))
                 .ReturnsAsync((Bundle?)null);
 
-            var target = new PeekHandler(warehouseDomainServiceMock.Object);
+            var target = new PeekHandler(warehouseDomainServiceMock.Object, logMock.Object);
 
             // Act
             var (hasContent, stream) = await target.Handle(request, CancellationToken.None).ConfigureAwait(false);
