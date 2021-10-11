@@ -17,6 +17,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Azure;
+using Azure.Storage.Blobs.Models;
+using Azure.Storage.Blobs.Specialized;
 using Energinet.DataHub.MessageHub.Client.Exceptions;
 using Energinet.DataHub.MessageHub.Client.Factories;
 using Energinet.DataHub.MessageHub.Client.Model;
@@ -47,8 +49,8 @@ namespace Energinet.DataHub.MessageHub.Client.Storage
                 var storageClient = _storageServiceClientFactory.Create();
                 var containerClient = storageClient.GetBlobContainerClient("postoffice-blobstorage");
                 var blobName = requestDto.IdempotencyId;
-                await containerClient.UploadBlobAsync(blobName, stream).ConfigureAwait(false);
                 var blobClient = containerClient.GetBlobClient(blobName);
+                await blobClient.UploadAsync(stream).ConfigureAwait(false);
                 var blobUri = blobClient.Uri;
                 return blobUri;
             }
