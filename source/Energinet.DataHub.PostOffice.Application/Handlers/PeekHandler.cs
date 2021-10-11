@@ -16,12 +16,12 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Energinet.DataHub.MessageHub.Client.Model;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Model.Logging;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
 using Energinet.DataHub.PostOffice.Domain.Services;
-using GreenEnergyHub.PostOffice.Communicator.Model;
 using MediatR;
 
 namespace Energinet.DataHub.PostOffice.Application.Handlers

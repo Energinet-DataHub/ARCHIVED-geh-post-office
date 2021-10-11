@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Diagnostics.CodeAnalysis;
-using GreenEnergyHub.PostOffice.Communicator.Model;
+using Energinet.DataHub.MessageHub.Client.Model;
 
 namespace Energinet.DataHub.PostOffice.Domain.Model.Logging
 {
