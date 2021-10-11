@@ -94,7 +94,7 @@ namespace Energinet.DataHub.MessageHub.Client.Tests.Peek
 
             // Act + Assert
             await Assert
-                .ThrowsAsync<ArgumentException>(() =>
+                .ThrowsAsync<ArgumentNullException>(() =>
                     target.SendAsync(
                         response,
                         null!,

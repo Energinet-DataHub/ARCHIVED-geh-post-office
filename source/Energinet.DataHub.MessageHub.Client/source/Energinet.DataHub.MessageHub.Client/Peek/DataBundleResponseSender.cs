@@ -48,7 +48,7 @@ namespace Energinet.DataHub.MessageHub.Client.Peek
                 throw new ArgumentNullException(nameof(sessionId));
 
             if (requestDto is null)
-                throw new ArgumentException($"{nameof(requestDto)} must contain a request idempotency id which is at least one character in length");
+                throw new ArgumentNullException(nameof(requestDto), $"{nameof(requestDto)} must contain a request idempotency id which is at least one character in length");
 
             var contractBytes = _responseBundleParser.Parse(requestDataBundleResponseDto);
             var serviceBusReplyMessage = new ServiceBusMessage(contractBytes)
