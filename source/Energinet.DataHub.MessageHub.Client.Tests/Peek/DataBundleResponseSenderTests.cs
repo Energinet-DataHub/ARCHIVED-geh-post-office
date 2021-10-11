@@ -48,8 +48,7 @@ namespace Energinet.DataHub.MessageHub.Client.Tests.Peek
                     target.SendAsync(
                         null!,
                         requestMock,
-                        "sessionId",
-                        DomainOrigin.TimeSeries))
+                        "sessionId"))
                 .ConfigureAwait(false);
         }
 
@@ -78,8 +77,7 @@ namespace Energinet.DataHub.MessageHub.Client.Tests.Peek
                     target.SendAsync(
                         response,
                         requestMock,
-                        null!,
-                        DomainOrigin.TimeSeries))
+                        null!))
                 .ConfigureAwait(false);
         }
 
@@ -104,20 +102,15 @@ namespace Energinet.DataHub.MessageHub.Client.Tests.Peek
                     target.SendAsync(
                         response,
                         null!,
-                        NewGuid().ToString(),
-                        DomainOrigin.TimeSeries))
+                        NewGuid().ToString()))
                 .ConfigureAwait(false);
         }
 
-        [Theory]
-        [InlineData(DomainOrigin.TimeSeries, "sbq-TimeSeries-reply")]
-        [InlineData(DomainOrigin.Charges, "sbq-Charges-reply")]
-        [InlineData(DomainOrigin.Aggregations, "sbq-Aggregations-reply")]
-        [InlineData(DomainOrigin.MarketRoles, "sbq-MarketRoles-reply")]
-        [InlineData(DomainOrigin.MeteringPoints, "sbq-MeteringPoints-reply")]
-        public async Task SendAsync_ValidInput_SendsMessage(DomainOrigin domainOrigin, string queueName)
+        [Fact]
+        public async Task SendAsync_ValidInput_SendsMessage()
         {
             // Arrange
+            const string queueName = "sbq-MeteringPoints-reply";
             var serviceBusSenderMock = new Mock<ServiceBusSender>();
             var serviceBusSessionReceiverMock = new Mock<ServiceBusSessionReceiver>();
 
@@ -149,8 +142,7 @@ namespace Energinet.DataHub.MessageHub.Client.Tests.Peek
             await target.SendAsync(
                 response,
                 requestMock,
-                "session",
-                domainOrigin)
+                "session")
             .ConfigureAwait(false);
 
             // Assert
@@ -196,8 +188,7 @@ namespace Energinet.DataHub.MessageHub.Client.Tests.Peek
             await target.SendAsync(
                     response,
                     requestMock,
-                    "session",
-                    DomainOrigin.TimeSeries)
+                    "session")
                 .ConfigureAwait(false);
 
             // Assert

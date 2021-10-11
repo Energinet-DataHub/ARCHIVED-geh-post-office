@@ -41,8 +41,7 @@ namespace Energinet.DataHub.MessageHub.Client.Peek
         public async Task SendAsync(
             DataBundleResponseDto dataBundleResponseDto,
             DataBundleRequestDto requestDto,
-            string sessionId,
-            DomainOrigin domainOrigin)
+            string sessionId)
         {
             if (dataBundleResponseDto is null)
                 throw new ArgumentNullException(nameof(dataBundleResponseDto));
