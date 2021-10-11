@@ -17,8 +17,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Azure;
-using Azure.Storage.Blobs.Models;
-using Azure.Storage.Blobs.Specialized;
 using Energinet.DataHub.MessageHub.Client.Exceptions;
 using Energinet.DataHub.MessageHub.Client.Factories;
 using Energinet.DataHub.MessageHub.Client.Model;
