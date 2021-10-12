@@ -26,18 +26,22 @@ namespace Energinet.DataHub.MessageHub.Client.SimpleInjector
 {
     public static class ContainerExtensions
     {
-        public static void AddPostOfficeCommunication(this Container container, string serviceBusConnectionStringConfigKey, string storageServiceConnectionStringConfigKey)
-        {
-            container.AddServiceBus(serviceBusConnectionStringConfigKey);
-            container.AddApplicationServices();
-            container.AddStorageHandler(storageServiceConnectionStringConfigKey);
-        }
-
-        private static void AddServiceBus(this Container container, string serviceBusConnectionStringConfigKey)
+        public static void AddPostOfficeCommunication(this Container container, DomainConfig config)
         {
             if (container == null)
                 throw new ArgumentNullException(nameof(container));
 
+            if (config == null)
+                throw new ArgumentNullException(nameof(config));
+
+            container.RegisterSingleton(() => config);
+            container.AddServiceBus(config.ServiceBusConnectionString);
+            container.AddApplicationServices();
+            container.AddStorageHandler(config.StorageServiceConnectionString);
+        }
+
+        private static void AddServiceBus(this Container container, string serviceBusConnectionStringConfigKey)
+        {
             container.RegisterSingleton<IServiceBusClientFactory>(() =>
             {
                 var connectionString = GetConnectionString(container, serviceBusConnectionStringConfigKey);
@@ -54,9 +58,6 @@ namespace Energinet.DataHub.MessageHub.Client.SimpleInjector
 
         private static void AddApplicationServices(this Container container)
         {
-            if (container == null)
-                throw new ArgumentNullException(nameof(container));
-
             container.Register<IDataAvailableNotificationSender, DataAvailableNotificationSender>(Lifestyle.Singleton);
             container.Register<IRequestBundleParser, RequestBundleParser>(Lifestyle.Singleton);
             container.Register<IResponseBundleParser, ResponseBundleParser>(Lifestyle.Singleton);
@@ -66,9 +67,6 @@ namespace Energinet.DataHub.MessageHub.Client.SimpleInjector
 
         private static void AddStorageHandler(this Container container, string storageServiceConnectionStringConfigKey)
         {
-            if (container == null)
-                throw new ArgumentNullException(nameof(container));
-
             container.RegisterSingleton<IStorageServiceClientFactory>(() =>
             {
                 var connectionString = GetConnectionString(container, storageServiceConnectionStringConfigKey);
@@ -88,9 +86,8 @@ namespace Energinet.DataHub.MessageHub.Client.SimpleInjector
         private static string? GetConnectionString(Container container, string serviceConnectionStringConfigKey)
         {
             var configuration = container.GetService<IConfiguration>();
-            var connectionString = configuration.GetConnectionString(serviceConnectionStringConfigKey)
-                                   ?? configuration?[serviceConnectionStringConfigKey];
-            return connectionString;
+            return configuration.GetConnectionString(serviceConnectionStringConfigKey)
+                   ?? configuration?[serviceConnectionStringConfigKey];
         }
     }
 }
