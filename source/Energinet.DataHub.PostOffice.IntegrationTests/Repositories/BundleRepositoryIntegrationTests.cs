@@ -262,8 +262,14 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             Assert.Equal(BundleCreatedResponse.BundleIdAlreadyInUse, couldAddBundleWithDuplicateId);
         }
 
-        [Fact]
-        public async Task TryAddNextUnacknowledgedAsync_HasAggregationsBundle_ReturnsFalse()
+        [Theory]
+        [InlineData(DomainOrigin.MarketRoles, DomainOrigin.MeteringPoints)]
+        [InlineData(DomainOrigin.MarketRoles, DomainOrigin.Charges)]
+        [InlineData(DomainOrigin.Charges, DomainOrigin.MarketRoles)]
+        [InlineData(DomainOrigin.Charges, DomainOrigin.MeteringPoints)]
+        [InlineData(DomainOrigin.MeteringPoints, DomainOrigin.MarketRoles)]
+        [InlineData(DomainOrigin.MeteringPoints, DomainOrigin.Charges)]
+        public async Task TryAddNextUnacknowledgedAsync_HasMeteringPointsBundle_ReturnsFalse(DomainOrigin initial, DomainOrigin conflicting)
         {
             // Arrange
             await using var host = await MarketOperatorIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
@@ -274,32 +280,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var target = new BundleRepository(container, storageService);
 
             var recipient = new MarketOperator(new GlobalLocationNumber(Guid.NewGuid().ToString()));
-            var setupBundle = CreateBundle(recipient);
-            var conflictBundle = CreateBundle(recipient, domainOrigin: DomainOrigin.Aggregations);
-
-            await target.TryAddNextUnacknowledgedAsync(conflictBundle).ConfigureAwait(false);
-
-            // Act
-            var couldAdd = await target.TryAddNextUnacknowledgedAsync(setupBundle).ConfigureAwait(false);
-
-            // Assert
-            Assert.Equal(BundleCreatedResponse.AnotherBundleExists, couldAdd);
-        }
-
-        [Fact]
-        public async Task TryAddNextUnacknowledgedAsync_HasTimeSeriesBundle_ReturnsFalse()
-        {
-            // Arrange
-            await using var host = await MarketOperatorIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
-            var scope = host.BeginScope();
-
-            var container = scope.GetInstance<IBundleRepositoryContainer>();
-            var storageService = scope.GetInstance<IMarketOperatorDataStorageService>();
-            var target = new BundleRepository(container, storageService);
-
-            var recipient = new MarketOperator(new GlobalLocationNumber(Guid.NewGuid().ToString()));
-            var setupBundle = CreateBundle(recipient, domainOrigin: DomainOrigin.Aggregations);
-            var conflictBundle = CreateBundle(recipient);
+            var setupBundle = CreateBundle(recipient, domainOrigin: initial);
+            var conflictBundle = CreateBundle(recipient, domainOrigin: conflicting);
 
             await target.TryAddNextUnacknowledgedAsync(conflictBundle).ConfigureAwait(false);
 

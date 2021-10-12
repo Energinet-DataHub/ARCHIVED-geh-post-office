@@ -59,6 +59,9 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             if (recipient is null)
                 throw new ArgumentNullException(nameof(recipient));
 
+            if (domains is not { Length: > 0 })
+                domains = Enum.GetValues<DomainOrigin>();
+
             var selectedDomains = domains.Select(x => x.ToString());
 
             var asLinq = _repositoryContainer

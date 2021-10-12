@@ -42,18 +42,17 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
 
         public Task<Bundle?> GetNextUnacknowledgedAsync(MarketOperator recipient, Uuid bundleId)
         {
-            var allDomains = Enum.GetValues<DomainOrigin>();
-            return GetNextUnacknowledgedAsync(recipient, bundleId, allDomains);
+            return GetNextUnacknowledgedForDomainsAsync(recipient, bundleId);
         }
 
         public Task<Bundle?> GetNextUnacknowledgedTimeSeriesAsync(MarketOperator recipient, Uuid bundleId)
         {
-            return GetNextUnacknowledgedAsync(recipient, bundleId, DomainOrigin.TimeSeries);
+            return GetNextUnacknowledgedForDomainsAsync(recipient, bundleId, DomainOrigin.TimeSeries);
         }
 
         public Task<Bundle?> GetNextUnacknowledgedMasterDataAsync(MarketOperator recipient, Uuid bundleId)
         {
-            return GetNextUnacknowledgedAsync(
+            return GetNextUnacknowledgedForDomainsAsync(
                 recipient,
                 bundleId,
                 DomainOrigin.MarketRoles,
@@ -63,7 +62,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
 
         public Task<Bundle?> GetNextUnacknowledgedAggregationsAsync(MarketOperator recipient, Uuid bundleId)
         {
-            return GetNextUnacknowledgedAsync(recipient, bundleId, DomainOrigin.Aggregations);
+            return GetNextUnacknowledgedForDomainsAsync(recipient, bundleId, DomainOrigin.Aggregations);
         }
 
         public async Task<(bool IsAcknowledged, Bundle? AcknowledgedBundle)> TryAcknowledgeAsync(MarketOperator recipient, Uuid bundleId)
@@ -83,7 +82,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
             return (true, bundle);
         }
 
-        private async Task<Bundle?> GetNextUnacknowledgedAsync(MarketOperator recipient, Uuid bundleId, params DomainOrigin[] domains)
+        private async Task<Bundle?> GetNextUnacknowledgedForDomainsAsync(MarketOperator recipient, Uuid bundleId, params DomainOrigin[] domains)
         {
             var existingBundle = await _bundleRepository.GetNextUnacknowledgedAsync(recipient, domains).ConfigureAwait(false);
             if (existingBundle != null)
