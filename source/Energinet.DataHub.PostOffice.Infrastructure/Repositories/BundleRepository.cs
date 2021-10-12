@@ -41,28 +41,12 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             _marketOperatorDataStorageService = marketOperatorDataStorageService;
         }
 
-        public Task<Bundle?> GetNextUnacknowledgedAsync(MarketOperator recipient)
+        public Task<Bundle?> GetNextUnacknowledgedAsync(MarketOperator recipient, params DomainOrigin[] domains)
         {
             if (recipient is null)
                 throw new ArgumentNullException(nameof(recipient));
 
-            var asLinq = _repositoryContainer
-                .Container
-                .GetItemLinqQueryable<CosmosBundleDocument>();
-
-            var query =
-                from bundle in asLinq
-                where bundle.Recipient == recipient.Gln.Value && !bundle.Dequeued
-                orderby bundle.Timestamp
-                select bundle;
-
-            return GetNextUnacknowledgedAsync(recipient, query);
-        }
-
-        public Task<Bundle?> GetNextUnacknowledgedForDomainAsync(MarketOperator recipient, DomainOrigin domainOrigin)
-        {
-            if (recipient is null)
-                throw new ArgumentNullException(nameof(recipient));
+            var selectedDomains = domains.Select(x => x.ToString());
 
             var asLinq = _repositoryContainer
                 .Container
@@ -72,7 +56,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 from bundle in asLinq
                 where
                     bundle.Recipient == recipient.Gln.Value &&
-                    bundle.Origin == domainOrigin.ToString() &&
+                    selectedDomains.Contains(bundle.Origin) &&
                     !bundle.Dequeued
                 orderby bundle.Timestamp
                 select bundle;

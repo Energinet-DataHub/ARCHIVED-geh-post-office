@@ -54,10 +54,12 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 .ConfigureAwait(false);
         }
 
-        public async Task<DataAvailableNotification?> GetNextUnacknowledgedAsync(MarketOperator recipient)
+        public async Task<DataAvailableNotification?> GetNextUnacknowledgedAsync(MarketOperator recipient, params DomainOrigin[] domains)
         {
             if (recipient is null)
                 throw new ArgumentNullException(nameof(recipient));
+
+            var selectedDomains = domains.Select(x => x.ToString());
 
             var asLinq = _repositoryContainer
                 .Container
@@ -67,27 +69,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 from dataAvailable in asLinq
                 where
                     dataAvailable.Recipient == recipient.Gln.Value &&
-                    !dataAvailable.Acknowledge
-                orderby dataAvailable.Timestamp
-                select dataAvailable;
-
-            return await ExecuteQueryAsync(query).FirstOrDefaultAsync().ConfigureAwait(false);
-        }
-
-        public async Task<DataAvailableNotification?> GetNextUnacknowledgedForDomainAsync(MarketOperator recipient, DomainOrigin domainOrigin)
-        {
-            if (recipient is null)
-                throw new ArgumentNullException(nameof(recipient));
-
-            var asLinq = _repositoryContainer
-                .Container
-                .GetItemLinqQueryable<CosmosDataAvailable>();
-
-            var query =
-                from dataAvailable in asLinq
-                where
-                    dataAvailable.Recipient == recipient.Gln.Value &&
-                    dataAvailable.Origin == domainOrigin.ToString() &&
+                    selectedDomains.Contains(dataAvailable.Origin) &&
                     !dataAvailable.Acknowledge
                 orderby dataAvailable.Timestamp
                 select dataAvailable;

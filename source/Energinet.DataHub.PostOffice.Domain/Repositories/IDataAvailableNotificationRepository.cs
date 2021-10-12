@@ -41,21 +41,13 @@ namespace Energinet.DataHub.PostOffice.Domain.Repositories
         Task<IEnumerable<DataAvailableNotification>> GetNextUnacknowledgedAsync(MarketOperator recipient, ContentType contentType, Weight weight);
 
         /// <summary>
-        /// Gets the next unacknowledged notification for the given market operator.
+        /// Gets the next unacknowledged notification for the given market operator and domains.
         /// Returns null if there are no unacknowledged notifications.
         /// </summary>
         /// <param name="recipient">The market operator to get the next notification for.</param>
+        /// <param name="domains">The domains the retrieved notification must belong to.</param>
         /// <returns>The next unacknowledged notification; or null, if there are no unacknowledged notifications.</returns>
-        Task<DataAvailableNotification?> GetNextUnacknowledgedAsync(MarketOperator recipient);
-
-        /// <summary>
-        /// Gets the next unacknowledged notification for the given market operator and domain.
-        /// Returns null if there are no unacknowledged notifications.
-        /// </summary>
-        /// <param name="recipient">The market operator to get the next notification for.</param>
-        /// <param name="domainOrigin">The domain the retrieved notification must belong to.</param>
-        /// <returns>The next unacknowledged notification; or null, if there are no unacknowledged notifications.</returns>
-        Task<DataAvailableNotification?> GetNextUnacknowledgedForDomainAsync(MarketOperator recipient, DomainOrigin domainOrigin);
+        Task<DataAvailableNotification?> GetNextUnacknowledgedAsync(MarketOperator recipient, params DomainOrigin[] domains);
 
         /// <summary>
         /// Acknowledges the specified list of notifications, based on their ids.
