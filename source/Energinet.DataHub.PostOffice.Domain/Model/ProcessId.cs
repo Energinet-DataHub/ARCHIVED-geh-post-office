@@ -12,13 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Energinet.DataHub.PostOffice.Domain.Model
 {
     public sealed record ProcessId
     {
         private readonly string _processId;
 
-        public ProcessId(Uuid bundleId, MarketOperator recipient)
+        public ProcessId([NotNull] Uuid bundleId, [NotNull] MarketOperator recipient)
         {
             _processId = string.Join("+", bundleId.ToString(), recipient.Gln.Value);
         }
