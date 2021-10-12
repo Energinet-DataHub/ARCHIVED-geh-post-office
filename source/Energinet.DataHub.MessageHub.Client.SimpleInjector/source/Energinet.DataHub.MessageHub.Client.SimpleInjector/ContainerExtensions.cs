@@ -42,7 +42,7 @@ namespace Energinet.DataHub.MessageHub.Client.SimpleInjector
         {
             container.RegisterSingleton<IServiceBusClientFactory>(() =>
             {
-                if (string.IsNullOrEmpty(serviceBusConnectionStringConfig))
+                if (string.IsNullOrWhiteSpace(serviceBusConnectionStringConfig))
                 {
                     throw new InvalidOperationException(
                         "Please specify a valid ServiceBus in the appSettings.json file or your Azure Functions Settings.");
@@ -65,7 +65,7 @@ namespace Energinet.DataHub.MessageHub.Client.SimpleInjector
         {
             container.RegisterSingleton<IStorageServiceClientFactory>(() =>
             {
-                if (string.IsNullOrEmpty(storageServiceConnectionStringConfig))
+                if (string.IsNullOrWhiteSpace(storageServiceConnectionStringConfig))
                 {
                     throw new InvalidOperationException(
                         "Please specify a valid BlobStorageConnectionString in the appSettings.json file or your Azure Functions Settings.");
