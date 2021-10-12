@@ -38,17 +38,17 @@ namespace Energinet.DataHub.MessageHub.Client.SimpleInjector
             container.AddStorageHandler(config.StorageServiceConnectionString);
         }
 
-        private static void AddServiceBus(this Container container, string serviceBusConnectionStringConfig)
+        private static void AddServiceBus(this Container container, string serviceBusConnectionString)
         {
             container.RegisterSingleton<IServiceBusClientFactory>(() =>
             {
-                if (string.IsNullOrWhiteSpace(serviceBusConnectionStringConfig))
+                if (string.IsNullOrWhiteSpace(serviceBusConnectionString))
                 {
                     throw new InvalidOperationException(
                         "Please specify a valid ServiceBus in the appSettings.json file or your Azure Functions Settings.");
                 }
 
-                return new ServiceBusClientFactory(serviceBusConnectionStringConfig);
+                return new ServiceBusClientFactory(serviceBusConnectionString);
             });
         }
 
@@ -61,17 +61,17 @@ namespace Energinet.DataHub.MessageHub.Client.SimpleInjector
             container.Register<IDequeueNotificationParser, DequeueNotificationParser>(Lifestyle.Singleton);
         }
 
-        private static void AddStorageHandler(this Container container, string storageServiceConnectionStringConfig)
+        private static void AddStorageHandler(this Container container, string storageServiceConnectionString)
         {
             container.RegisterSingleton<IStorageServiceClientFactory>(() =>
             {
-                if (string.IsNullOrWhiteSpace(storageServiceConnectionStringConfig))
+                if (string.IsNullOrWhiteSpace(storageServiceConnectionString))
                 {
                     throw new InvalidOperationException(
                         "Please specify a valid BlobStorageConnectionString in the appSettings.json file or your Azure Functions Settings.");
                 }
 
-                return new StorageServiceClientFactory(storageServiceConnectionStringConfig);
+                return new StorageServiceClientFactory(storageServiceConnectionString);
             });
 
             container.Register<IStorageHandler, StorageHandler>(Lifestyle.Singleton);
