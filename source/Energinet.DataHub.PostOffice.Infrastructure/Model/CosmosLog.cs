@@ -13,8 +13,6 @@
 // limitations under the License.
 
 using System;
-using Energinet.DataHub.PostOffice.Domain.Model;
-using Energinet.DataHub.PostOffice.Domain.Model.Logging;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Model
 {
@@ -22,24 +20,25 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Model
     {
         public CosmosLog(
             string id,
+            DateTime timestamp,
             string endpointType,
-            string globalLocationNumber,
+            string marketOperator,
             string processId,
             string? bundleReference = null)
         {
             Id = id;
+            Timestamp = timestamp;
             EndpointType = endpointType;
-            GlobalLocationNumber = globalLocationNumber;
+            MarketOperator = marketOperator;
             ProcessId = processId;
             BundleReference = bundleReference;
         }
 
-        public string Id { get; set; }
-
-        public DateTime Timestamp { get; set; } = DateTime.Now;
+        public string Id { get; }
+        public DateTime Timestamp { get; }
         public string EndpointType { get; }
-        public string GlobalLocationNumber { get; }
+        public string MarketOperator { get; }
         public string ProcessId { get; }
-        public string? BundleReference { get; set; }
+        public string? BundleReference { get; }
     }
 }

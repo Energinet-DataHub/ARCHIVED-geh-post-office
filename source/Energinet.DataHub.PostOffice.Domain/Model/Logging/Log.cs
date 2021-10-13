@@ -16,26 +16,16 @@ using System;
 
 namespace Energinet.DataHub.PostOffice.Domain.Model.Logging
 {
-    public sealed class Log
+    public abstract class Log
     {
-        public Log(
-            string endpointType,
-            GlobalLocationNumber gln,
-            string processId,
-            IBundleContent? bundleReference = null)
+        protected Log(ProcessId processId)
         {
-            EndpointType = endpointType;
-            MarketOperator = gln;
             ProcessId = processId;
-            BundleReference = bundleReference;
         }
 
-        public string Id { get; } = Guid.NewGuid().ToString();
-
-        public DateTime Timestamp { get; set; } = DateTime.Now;
-        public string EndpointType { get; }
-        public GlobalLocationNumber MarketOperator { get; }
-        public string ProcessId { get; }
-        public IBundleContent? BundleReference { get; }
+        public Guid Id { get; } = Guid.NewGuid();
+        public DateTime Timestamp { get; } = DateTime.Now;
+        public abstract string EndpointType { get; }
+        public ProcessId ProcessId { get; }
     }
 }

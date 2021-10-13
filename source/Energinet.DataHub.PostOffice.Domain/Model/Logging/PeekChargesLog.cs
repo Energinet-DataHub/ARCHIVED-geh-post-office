@@ -12,7 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.PostOffice.Application.Commands
+namespace Energinet.DataHub.PostOffice.Domain.Model.Logging
 {
-    public sealed record PeekMasterDataCommand(string MarketOperator, string BundleId) : PeekCommandBase(MarketOperator, BundleId);
+    public class PeekChargesLog : PeekLog
+    {
+        public PeekChargesLog(ProcessId processId, IBundleContent bundleReference)
+            : base(processId, bundleReference)
+        {
+        }
+
+        public override string EndpointType => "PeekCharges";
+    }
 }

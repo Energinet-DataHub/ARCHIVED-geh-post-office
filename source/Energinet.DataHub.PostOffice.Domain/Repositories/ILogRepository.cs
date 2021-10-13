@@ -18,14 +18,20 @@ using Energinet.DataHub.PostOffice.Domain.Model.Logging;
 namespace Energinet.DataHub.PostOffice.Domain.Repositories
 {
     /// <summary>
-    /// Provides access to Logging occurence in data storage.
+    /// Saves log occurence in data storage.
     /// </summary>
     public interface ILogRepository
     {
         /// <summary>
-        /// Save Logging occurence to data storage.
+        /// Save Peek log occurence to data storage.
         /// </summary>
         /// <param name="log">The log occurence to save.</param>
-        Task<string> SaveLogOccurrenceAsync(Log log);
+        Task SavePeekLogOccurrenceAsync(PeekLog log);
+
+        /// <summary>
+        /// Save Dequeue log occurence to data storage.
+        /// </summary>
+        /// <param name="log">The log occurence to save.</param>
+        Task SaveDequeueLogOccurrenceAsync(DequeueLog log);
     }
 }

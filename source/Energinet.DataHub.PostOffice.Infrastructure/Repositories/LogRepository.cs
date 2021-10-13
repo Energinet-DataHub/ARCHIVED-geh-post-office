@@ -30,23 +30,35 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             _logRepositoryContainer = logRepositoryContainer;
         }
 
-        public async Task<string> SaveLogOccurrenceAsync(Log log)
+        public async Task SavePeekLogOccurrenceAsync(PeekLog log)
         {
             if (log is null)
                 throw new ArgumentNullException(nameof(log));
 
             var instanceToLog = new CosmosLog(
-                log.Id,
+                log.Id.ToString(),
+                log.Timestamp,
                 log.EndpointType,
-                log.MarketOperator.Value,
-                log.ProcessId);
-
-            if (log.BundleReference is not null)
-                instanceToLog.BundleReference = log.BundleReference.LogIdentifier;
+                log.ProcessId.Recipient.Gln.Value,
+                log.ProcessId.ToString(),
+                log.BundleReference.LogIdentifier);
 
             await _logRepositoryContainer.Container.CreateItemAsync(instanceToLog).ConfigureAwait(false);
+        }
 
-            return log.Id;
+        public async Task SaveDequeueLogOccurrenceAsync(DequeueLog log)
+        {
+            if (log is null)
+                throw new ArgumentNullException(nameof(log));
+
+            var instanceToLog = new CosmosLog(
+                log.Id.ToString(),
+                log.Timestamp,
+                log.EndpointType,
+                log.ProcessId.Recipient.Gln.Value,
+                log.ProcessId.ToString());
+
+            await _logRepositoryContainer.Container.CreateItemAsync(instanceToLog).ConfigureAwait(false);
         }
     }
 }

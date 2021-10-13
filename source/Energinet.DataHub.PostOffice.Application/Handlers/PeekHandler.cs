@@ -45,37 +45,43 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
 
         public Task<PeekResponse> Handle(PeekCommand request, CancellationToken cancellationToken)
         {
-            return HandleAsync(request);
+            return HandleAsync(
+                request,
+                _marketOperatorDataDomainService.GetNextUnacknowledgedAsync,
+                (processId, bundleContent) => new PeekLog(processId, bundleContent));
         }
 
         public Task<PeekResponse> Handle(PeekChargesCommand request, CancellationToken cancellationToken)
         {
-            return HandleAsync(request);
+            return HandleAsync(
+                request,
+                _marketOperatorDataDomainService.GetNextUnacknowledgedChargesAsync,
+                (processId, uuid) => new PeekChargesLog(processId, uuid));
         }
 
         public Task<PeekResponse> Handle(PeekMasterDataCommand request, CancellationToken cancellationToken)
         {
-            return HandleAsync(request);
+            return HandleAsync(
+                request,
+                _marketOperatorDataDomainService.GetNextUnacknowledgedMasterDataAsync,
+                (processId, uuid) => new PeekMasterDataLog(processId, uuid));
         }
 
         public Task<PeekResponse> Handle(PeekAggregationsOrTimeSeriesCommand request, CancellationToken cancellationToken)
         {
-            return HandleAsync(request);
+            return HandleAsync(
+                request,
+                _marketOperatorDataDomainService.GetNextUnacknowledgedAggregationsOrTimeSeriesAsync,
+                (processId, uuid) => new PeekAggregationsOrTimeSeriesLog(processId, uuid));
         }
 
-        private async Task<PeekResponse> HandleAsync(PeekCommandBase request)
+        private async Task<PeekResponse> HandleAsync(
+            PeekCommandBase request,
+            Func<MarketOperator, Uuid, Task<Bundle?>> requestHandler,
+            Func<ProcessId, IBundleContent, PeekLog> logProvider)
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
-
-            Func<MarketOperator, Uuid, Task<Bundle?>> requestHandler = request switch
-            {
-                PeekCommand => _marketOperatorDataDomainService.GetNextUnacknowledgedAsync,
-                PeekChargesCommand => _marketOperatorDataDomainService.GetNextUnacknowledgedChargesAsync,
-                PeekMasterDataCommand => _marketOperatorDataDomainService.GetNextUnacknowledgedMasterDataAsync,
-                PeekAggregationsOrTimeSeriesCommand => _marketOperatorDataDomainService.GetNextUnacknowledgedAggregationsOrTimeSeriesAsync,
-                _ => throw new ArgumentOutOfRangeException(nameof(request))
-            };
 
             var marketOperator = new MarketOperator(new GlobalLocationNumber(request.MarketOperator));
             var uuid = new Uuid(request.BundleId);
@@ -89,21 +95,12 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
 
             if (bundleToReturn.HasContent)
             {
-                await _log.SaveLogOccurrenceAsync(
-                        new Log(
-                            request.GetType().Name,
-                            new GlobalLocationNumber(request.MarketOperator),
-                            request.MarketOperator + "+" + request.BundleId,
-                            bundleContent!))
-                    .ConfigureAwait(false);
+                var processId = new ProcessId(uuid, marketOperator);
+
+                await _log.SavePeekLogOccurrenceAsync(logProvider(processId, bundleContent!)).ConfigureAwait(false);
             }
 
-            var bundleId = new Uuid(request.BundleId);
-            var bundleToPrepare = await requestHandler(marketOperator, bundleId).ConfigureAwait(false);
-
-            return bundleToPrepare != null && bundleToPrepare.TryGetContent(out bundleContent)
-                ? new PeekResponse(true, await bundleContent.OpenAsync().ConfigureAwait(false))
-                : new PeekResponse(false, Stream.Null);
+            return bundleToReturn;
         }
     }
 }

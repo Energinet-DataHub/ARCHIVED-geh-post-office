@@ -12,11 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Model.Logging;
+using Energinet.DataHub.PostOffice.Infrastructure.Model;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
+using Microsoft.Azure.Cosmos;
 using Moq;
 using Xunit;
 using Xunit.Categories;
@@ -28,13 +31,10 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
     public class LogRepositoryIntegrationTests
     {
         [Fact]
-        public async Task SaveLogOccurrenceAsync_ValidData_LogOccurrenceIsSavedToStorage()
+        public async Task SaveLogOccurrenceAsync_PeekLogValidData_LogOccurrenceIsSavedToStorage()
         {
             // Arrange
-            await using var host = await MarketOperatorIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
-            var scope = host.BeginScope();
-
-            var container = scope.GetInstance<ILogRepositoryContainer>();
+            var container = await SetUpTestBasis().ConfigureAwait(true);
 
             var target = new LogRepository(container);
 
@@ -42,18 +42,55 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             fakeIBundleContent
                 .Setup(e => e.LogIdentifier).Returns("https://127.0.0.1");
 
-            var logObject = new Log(
-                "fake_value",
-                new GlobalLocationNumber("fake_value"),
-                "fake_value",
+            var processId = GetFakeProcessId();
+
+            var logObject = new PeekLog(
+                processId,
                 fakeIBundleContent.Object);
 
             // Act
-            var actual = await target.SaveLogOccurrenceAsync(logObject).ConfigureAwait(false);
+            await target.SavePeekLogOccurrenceAsync(logObject).ConfigureAwait(true);
+
+            var cosmosItem = await container.Container.ReadItemAsync<CosmosLog>(
+                logObject.Id.ToString(),
+                new PartitionKey(logObject.ProcessId.Recipient.Gln.Value))
+                .ConfigureAwait(true);
 
             // Assert
-            Assert.NotNull(actual);
-            Assert.NotEmpty(actual);
+            Assert.Equal(logObject.Id.ToString(), cosmosItem.Resource.Id);
+        }
+
+        [Fact]
+        public async Task SaveLogOccurrenceAsync_DequeueLogValidData_LogOccurrenceIsSavedToStorage()
+        {
+            // Arrange
+            var container = await SetUpTestBasis().ConfigureAwait(false);
+
+            var target = new LogRepository(container);
+
+            var processId = GetFakeProcessId();
+
+            var logObject = new DequeueLog(processId);
+
+            // Act
+            await target.SaveDequeueLogOccurrenceAsync(logObject).ConfigureAwait(false);
+
+            // Assert
+        }
+
+        private static async Task<ILogRepositoryContainer> SetUpTestBasis()
+        {
+            await using var host = await MarketOperatorIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
+            var scope = host.BeginScope();
+
+            return scope.GetInstance<ILogRepositoryContainer>();
+        }
+
+        private static ProcessId GetFakeProcessId()
+        {
+            return new(
+                new Uuid(Guid.NewGuid()),
+                new MarketOperator(new GlobalLocationNumber("fake_value")));
         }
     }
 }

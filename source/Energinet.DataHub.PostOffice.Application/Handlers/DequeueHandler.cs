@@ -56,16 +56,6 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
                     new Uuid(request.BundleUuid))
                 .ConfigureAwait(false);
 
-            if (isDequeued)
-            {
-                await _log.SaveLogOccurrenceAsync(
-                        new Log(
-                            request.GetType().Name,
-                            new GlobalLocationNumber(request.MarketOperator),
-                            request.MarketOperator + "+" + request.BundleUuid))
-                    .ConfigureAwait(false);
-            }
-
             // TODO: Should we capture an exception here, and in case one happens, what should we do?
             if (isDequeued && dequeuedBundle is not null)
             {
@@ -84,6 +74,11 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
                     // TODO: Currently ignored until we know what to do if this call fails.
                     // This ensures that Dequeue is working for now
                 }
+
+                await _log.SaveDequeueLogOccurrenceAsync(
+                        new DequeueLog(
+                            dequeuedBundle.ProcessId))
+                    .ConfigureAwait(false);
             }
 
             return new DequeueResponse(isDequeued);
