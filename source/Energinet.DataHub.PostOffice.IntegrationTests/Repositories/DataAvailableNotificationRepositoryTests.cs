@@ -82,6 +82,35 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
         }
 
         [Fact]
+        public async Task GetNextUnacknowledgedAsync_HasUnrelatedData_ReturnsData()
+        {
+            // Arrange
+            await using var host = await SubDomainIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
+            var scope = host.BeginScope();
+
+            var dataAvailableNotificationRepository = scope.GetInstance<IDataAvailableNotificationRepository>();
+
+            var recipient = new MarketOperator(new MockedGln());
+            var expected = new DataAvailableNotification(
+                new Uuid(Guid.NewGuid()),
+                recipient,
+                new ContentType("fake_value"),
+                DomainOrigin.Aggregations,
+                new SupportsBundling(false),
+                new Weight(1));
+
+            await dataAvailableNotificationRepository.SaveAsync(expected).ConfigureAwait(false);
+
+            // Act
+            var actual = await dataAvailableNotificationRepository
+                .GetNextUnacknowledgedAsync(recipient, DomainOrigin.MarketRoles)
+                .ConfigureAwait(false);
+
+            // Assert
+            Assert.Null(actual);
+        }
+
+        [Fact]
         public async Task GetNextUnacknowledgedAsync_HasMultipleData_ReturnsOldestData()
         {
             // Arrange

@@ -30,6 +30,15 @@ namespace Energinet.DataHub.PostOffice.Domain.Repositories
         Task SaveAsync(DataAvailableNotification dataAvailableNotification);
 
         /// <summary>
+        /// Gets the next unacknowledged notification for the given market operator and domains.
+        /// Returns null if there are no unacknowledged notifications.
+        /// </summary>
+        /// <param name="recipient">The market operator to get the next notification for.</param>
+        /// <param name="domains">The domains the retrieved notification must belong to.</param>
+        /// <returns>The next unacknowledged notification; or null, if there are no unacknowledged notifications.</returns>
+        Task<DataAvailableNotification?> GetNextUnacknowledgedAsync(MarketOperator recipient, params DomainOrigin[] domains);
+
+        /// <summary>
         /// Gets the next ordered list of unacknowledged notifications of a specific type for the given market operator.
         /// The list is limited by maximum weight, based on the given content type.
         /// The list is empty if there are no unacknowledged notifications.
@@ -39,15 +48,6 @@ namespace Energinet.DataHub.PostOffice.Domain.Repositories
         /// <param name="weight">The max weight to fetch.</param>
         /// <returns>An ordered list of unacknowledged notifications for the given market operator and content type.</returns>
         Task<IEnumerable<DataAvailableNotification>> GetNextUnacknowledgedAsync(MarketOperator recipient, ContentType contentType, Weight weight);
-
-        /// <summary>
-        /// Gets the next unacknowledged notification for the given market operator and domains.
-        /// Returns null if there are no unacknowledged notifications.
-        /// </summary>
-        /// <param name="recipient">The market operator to get the next notification for.</param>
-        /// <param name="domains">The domains the retrieved notification must belong to.</param>
-        /// <returns>The next unacknowledged notification; or null, if there are no unacknowledged notifications.</returns>
-        Task<DataAvailableNotification?> GetNextUnacknowledgedAsync(MarketOperator recipient, params DomainOrigin[] domains);
 
         /// <summary>
         /// Acknowledges the specified list of notifications, based on their ids.

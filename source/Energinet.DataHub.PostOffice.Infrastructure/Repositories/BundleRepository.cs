@@ -46,20 +46,22 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             if (recipient is null)
                 throw new ArgumentNullException(nameof(recipient));
 
-            if (domains is not { Length: > 0 })
-                domains = Enum.GetValues<DomainOrigin>();
-
-            var selectedDomains = domains.Select(x => x.ToString());
-
             var asLinq = _repositoryContainer
                 .Container
                 .GetItemLinqQueryable<CosmosBundleDocument>();
 
+            IQueryable<CosmosBundleDocument> domainFiltered = asLinq;
+
+            if (domains is { Length: > 0 })
+            {
+                var selectedDomains = domains.Select(x => x.ToString());
+                domainFiltered = asLinq.Where(x => selectedDomains.Contains(x.Origin));
+            }
+
             var query =
-                from bundle in asLinq
+                from bundle in domainFiltered
                 where
                     bundle.Recipient == recipient.Gln.Value &&
-                    selectedDomains.Contains(bundle.Origin) &&
                     !bundle.Dequeued
                 orderby bundle.Timestamp
                 select bundle;

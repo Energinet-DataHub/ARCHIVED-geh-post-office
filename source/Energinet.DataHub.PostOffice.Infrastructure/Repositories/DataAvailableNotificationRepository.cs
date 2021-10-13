@@ -59,20 +59,22 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             if (recipient is null)
                 throw new ArgumentNullException(nameof(recipient));
 
-            if (domains is not { Length: > 0 })
-                domains = Enum.GetValues<DomainOrigin>();
-
-            var selectedDomains = domains.Select(x => x.ToString());
-
             var asLinq = _repositoryContainer
                 .Container
                 .GetItemLinqQueryable<CosmosDataAvailable>();
 
+            IQueryable<CosmosDataAvailable> domainFiltered = asLinq;
+
+            if (domains is { Length: > 0 })
+            {
+                var selectedDomains = domains.Select(x => x.ToString());
+                domainFiltered = asLinq.Where(x => selectedDomains.Contains(x.Origin));
+            }
+
             var query =
-                from dataAvailable in asLinq
+                from dataAvailable in domainFiltered
                 where
                     dataAvailable.Recipient == recipient.Gln.Value &&
-                    selectedDomains.Contains(dataAvailable.Origin) &&
                     !dataAvailable.Acknowledge
                 orderby dataAvailable.Timestamp
                 select dataAvailable;
@@ -116,8 +118,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 throw new ArgumentNullException(nameof(dataAvailableNotificationUuids));
 
             var stringIds = dataAvailableNotificationUuids
-                .Select(x => x.ToString())
-                .ToList();
+                .Select(x => x.ToString());
 
             var container = _repositoryContainer.Container;
             var asLinq = container
@@ -128,7 +129,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 where dataAvailable.Recipient == recipient.Gln.Value && stringIds.Contains(dataAvailable.Id)
                 select dataAvailable;
 
-            await foreach (var document in query.AsCosmosIteratorAsync())
+            await foreach (var document in query.AsCosmosIteratorAsync().ConfigureAwait(false))
             {
                 var updatedDocument = document with { Acknowledge = true };
                 await container
@@ -139,7 +140,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
         private static async IAsyncEnumerable<DataAvailableNotification> ExecuteQueryAsync(IQueryable<CosmosDataAvailable> query)
         {
-            await foreach (var document in query.AsCosmosIteratorAsync())
+            await foreach (var document in query.AsCosmosIteratorAsync().ConfigureAwait(false))
             {
                 yield return new DataAvailableNotification(
                     new Uuid(document.Id),
