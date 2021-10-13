@@ -55,7 +55,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
         {
             return HandleAsync(
                 request,
-                _marketOperatorDataDomainService.GetNextUnacknowledgedChargesAsync,
+                _marketOperatorDataDomainService.GetNextUnacknowledgedTimeSeriesAsync,
                 (processId, uuid) => new PeekChargesLog(processId, uuid));
         }
 
@@ -71,7 +71,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
         {
             return HandleAsync(
                 request,
-                _marketOperatorDataDomainService.GetNextUnacknowledgedAggregationsOrTimeSeriesAsync,
+                _marketOperatorDataDomainService.GetNextUnacknowledgedAggregationsAsync,
                 (processId, uuid) => new PeekAggregationsOrTimeSeriesLog(processId, uuid));
         }
 
