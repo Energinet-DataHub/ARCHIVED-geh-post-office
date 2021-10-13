@@ -28,9 +28,9 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
 {
     public class PeekHandler :
         IRequestHandler<PeekCommand, PeekResponse>,
-        IRequestHandler<PeekChargesCommand, PeekResponse>,
+        IRequestHandler<PeekTimeSeriesCommand, PeekResponse>,
         IRequestHandler<PeekMasterDataCommand, PeekResponse>,
-        IRequestHandler<PeekAggregationsOrTimeSeriesCommand, PeekResponse>
+        IRequestHandler<PeekAggregationsCommand, PeekResponse>
     {
         private readonly IMarketOperatorDataDomainService _marketOperatorDataDomainService;
         private ILogRepository _log;
@@ -51,7 +51,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
                 (processId, bundleContent) => new PeekLog(processId, bundleContent));
         }
 
-        public Task<PeekResponse> Handle(PeekChargesCommand request, CancellationToken cancellationToken)
+        public Task<PeekResponse> Handle(PeekTimeSeriesCommand request, CancellationToken cancellationToken)
         {
             return HandleAsync(
                 request,
@@ -67,7 +67,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
                 (processId, uuid) => new PeekMasterDataLog(processId, uuid));
         }
 
-        public Task<PeekResponse> Handle(PeekAggregationsOrTimeSeriesCommand request, CancellationToken cancellationToken)
+        public Task<PeekResponse> Handle(PeekAggregationsCommand request, CancellationToken cancellationToken)
         {
             return HandleAsync(
                 request,
