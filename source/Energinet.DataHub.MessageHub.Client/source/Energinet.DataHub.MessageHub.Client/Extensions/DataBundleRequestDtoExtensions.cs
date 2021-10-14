@@ -30,7 +30,7 @@ namespace Energinet.DataHub.MessageHub.Client.Extensions
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
 
-            return new DataBundleResponseDto(request, path);
+            return new DataBundleResponseDto(path, request.DataAvailableNotificationIds);
         }
     }
 }

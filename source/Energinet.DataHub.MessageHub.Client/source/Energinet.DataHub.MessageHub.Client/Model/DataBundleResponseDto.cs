@@ -39,10 +39,10 @@ namespace Energinet.DataHub.MessageHub.Client.Model
         /// Creates a successful response to the bundle contents request.
         /// </summary>
         /// <param name="contentUri">The location of the bundle in Azure Blob Storage.</param>
-        /// <param name="request">The request that is being replied to.</param>
-        internal DataBundleResponseDto(DataBundleRequestDto request, Uri contentUri)
+        /// <param name="dataAvailableNotificationIds">A collection of guids identifying which data has been requested.</param>
+        internal DataBundleResponseDto(Uri contentUri, IEnumerable<Guid> dataAvailableNotificationIds)
         {
-            DataAvailableNotificationIds = request.DataAvailableNotificationIds;
+            DataAvailableNotificationIds = dataAvailableNotificationIds;
             ContentUri = contentUri;
             IsErrorResponse = false;
         }
