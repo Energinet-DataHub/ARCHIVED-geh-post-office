@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Energinet.DataHub.MessageHub.Client.Extensions;
 
 namespace Energinet.DataHub.MessageHub.Client.Model
 {
@@ -25,6 +26,9 @@ namespace Energinet.DataHub.MessageHub.Client.Model
     {
         /// <summary>
         /// Creates a successful response to the bundle contents request.
+        ///
+        /// This method is for internal purposes and will eventually be removed from the public API.
+        /// It is recommended to use the <see cref="DataBundleRequestDtoExtensions.Create"/> extension method instead.
         /// </summary>
         /// <param name="contentUri">The location of the bundle in Azure Blob Storage.</param>
         /// <param name="dataAvailableNotificationIds">A collection of guids identifying which data has been requested.</param>
@@ -45,6 +49,18 @@ namespace Energinet.DataHub.MessageHub.Client.Model
             DataAvailableNotificationIds = dataAvailableNotificationIds;
             ResponseError = responseError;
             IsErrorResponse = true;
+        }
+
+        /// <summary>
+        /// Creates a successful response to the bundle contents request.
+        /// </summary>
+        /// <param name="contentUri">The location of the bundle in Azure Blob Storage.</param>
+        /// <param name="request">The request that is being replied to.</param>
+        internal DataBundleResponseDto(Uri contentUri, DataBundleRequestDto request)
+        {
+            DataAvailableNotificationIds = request.DataAvailableNotificationIds;
+            ContentUri = contentUri;
+            IsErrorResponse = false;
         }
 
         /// <summary>
