@@ -50,7 +50,7 @@ namespace Energinet.DataHub.MessageHub.Client.Extensions
         {
             return serviceBusMessage.AddIntegrationsEvents(
                 operationCorrelationId,
-                IntegrationEventsMessageType.DataBundleResponse,
+                IntegrationEventsMessageType.DataAvailable,
                 NewGuid().ToString());
         }
 
