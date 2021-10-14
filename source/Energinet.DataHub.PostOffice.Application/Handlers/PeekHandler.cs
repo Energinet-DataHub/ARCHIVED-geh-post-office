@@ -77,8 +77,8 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
                 _ => throw new ArgumentOutOfRangeException(nameof(request))
             };
 
-            var marketOperator = new MarketOperator(new GlobalLocationNumber(request.Recipient));
-            var bundleId = new Uuid(request.BundleId);
+            var marketOperator = new MarketOperator(new GlobalLocationNumber(request.MarketOperator));
+            var bundleId = new Uuid(request.BundleUuid);
             var bundle = await requestHandler(marketOperator, bundleId).ConfigureAwait(false);
             return await PrepareBundleAsync(bundle).ConfigureAwait(false);
         }

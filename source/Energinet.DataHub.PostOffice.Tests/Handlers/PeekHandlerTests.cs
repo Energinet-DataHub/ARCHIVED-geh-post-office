@@ -54,7 +54,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                 .ReturnsAsync(() => new MemoryStream(new byte[] { 1, 2, 3 }));
 
             var bundle = new Bundle(
-                new Uuid(request.BundleId),
+                new Uuid(request.BundleUuid),
                 DomainOrigin.TimeSeries,
                 new MarketOperator(new GlobalLocationNumber("fake_value")),
                 Array.Empty<Uuid>(),
@@ -65,7 +65,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                 .Setup(x =>
                     x.GetNextUnacknowledgedAsync(
                         It.Is<MarketOperator>(r =>
-                            string.Equals(r.Gln.Value, request.Recipient, StringComparison.OrdinalIgnoreCase)),
+                            string.Equals(r.Gln.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
                         It.Is<Uuid>(r => BundleIdCheck(r, request))))
                 .ReturnsAsync(bundle);
 
@@ -89,13 +89,13 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             var request = new PeekCommand("fake_value", Guid.NewGuid().ToString());
 
             var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
-            var bundleId = It.Is<Uuid>(r => string.Equals(r.ToString(), request.BundleId, StringComparison.OrdinalIgnoreCase));
+            var bundleId = It.Is<Uuid>(r => string.Equals(r.ToString(), request.BundleUuid, StringComparison.OrdinalIgnoreCase));
 
             warehouseDomainServiceMock
                 .Setup(x =>
                     x.GetNextUnacknowledgedAsync(
                         It.Is<MarketOperator>(r =>
-                            string.Equals(r.Gln.Value, request.Recipient, StringComparison.OrdinalIgnoreCase)),
+                            string.Equals(r.Gln.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
                         bundleId))
                 .ReturnsAsync((Bundle?)null);
 
@@ -146,8 +146,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                 .Setup(x =>
                     x.GetNextUnacknowledgedAggregationsAsync(
                         It.Is<MarketOperator>(r =>
-                            string.Equals(r.Gln.Value, request.Recipient, StringComparison.OrdinalIgnoreCase)),
-                        It.Is<Uuid>(r => r.ToString().Equals(request.BundleId, StringComparison.OrdinalIgnoreCase))))
+                            string.Equals(r.Gln.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
+                        It.Is<Uuid>(r => r.ToString().Equals(request.BundleUuid, StringComparison.OrdinalIgnoreCase))))
                 .ReturnsAsync(bundle);
 
             var target = new PeekHandler(warehouseDomainServiceMock.Object);
@@ -173,8 +173,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             warehouseDomainServiceMock
                 .Setup(x =>
                     x.GetNextUnacknowledgedAggregationsAsync(
-                        It.Is<MarketOperator>(r => string.Equals(r.Gln.Value, request.Recipient, StringComparison.OrdinalIgnoreCase)),
-                        It.Is<Uuid>(r => string.Equals(r.ToString(), request.BundleId, StringComparison.OrdinalIgnoreCase))))
+                        It.Is<MarketOperator>(r => string.Equals(r.Gln.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
+                        It.Is<Uuid>(r => string.Equals(r.ToString(), request.BundleUuid, StringComparison.OrdinalIgnoreCase))))
                 .ReturnsAsync((Bundle?)null);
 
             var target = new PeekHandler(warehouseDomainServiceMock.Object);
@@ -224,7 +224,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                 .Setup(x =>
                     x.GetNextUnacknowledgedTimeSeriesAsync(
                         It.Is<MarketOperator>(r =>
-                            string.Equals(r.Gln.Value, request.Recipient, StringComparison.OrdinalIgnoreCase)),
+                            string.Equals(r.Gln.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
                         It.Is<Uuid>(r => BundleIdCheck(r, request))))
                 .ReturnsAsync(bundle);
 
@@ -252,7 +252,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                 .Setup(x =>
                     x.GetNextUnacknowledgedTimeSeriesAsync(
                         It.Is<MarketOperator>(r =>
-                            string.Equals(r.Gln.Value, request.Recipient, StringComparison.OrdinalIgnoreCase)),
+                            string.Equals(r.Gln.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
                         It.Is<Uuid>(r => BundleIdCheck(r, request))))
                 .ReturnsAsync((Bundle?)null);
 
@@ -303,7 +303,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                 .Setup(x =>
                     x.GetNextUnacknowledgedMasterDataAsync(
                         It.Is<MarketOperator>(r =>
-                            string.Equals(r.Gln.Value, request.Recipient, StringComparison.OrdinalIgnoreCase)),
+                            string.Equals(r.Gln.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
                         It.Is<Uuid>(r => BundleIdCheck(r, request))))
                 .ReturnsAsync(bundle);
 
@@ -331,7 +331,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                 .Setup(x =>
                     x.GetNextUnacknowledgedMasterDataAsync(
                         It.Is<MarketOperator>(r =>
-                            string.Equals(r.Gln.Value, request.Recipient, StringComparison.OrdinalIgnoreCase)),
+                            string.Equals(r.Gln.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
                         It.Is<Uuid>(r => BundleIdCheck(r, request))))
                 .ReturnsAsync((Bundle?)null);
 
@@ -348,7 +348,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
 
         private static bool BundleIdCheck(Uuid r, PeekCommandBase request)
         {
-            return r.ToString().Equals(request.BundleId, StringComparison.OrdinalIgnoreCase);
+            return r.ToString().Equals(request.BundleUuid, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

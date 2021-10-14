@@ -22,11 +22,11 @@ namespace Energinet.DataHub.PostOffice.Application.Validation
     {
         public PeekAggregationsCommandRuleSet()
         {
-            RuleFor(command => command.Recipient)
+            RuleFor(command => command.MarketOperator)
                 .NotEmpty()
                 .SetValidator(new GlobalLocationNumberValidationRule());
 
-            RuleFor(command => command.BundleId)
+            RuleFor(command => command.BundleUuid)
                 .NotEmpty()
                 .SetValidator(new UuidValidationRule());
         }
