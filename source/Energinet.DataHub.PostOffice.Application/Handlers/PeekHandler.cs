@@ -78,7 +78,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
             };
 
             var marketOperator = new MarketOperator(new GlobalLocationNumber(request.MarketOperator));
-            var bundleId = new Uuid(request.BundleUuid);
+            var bundleId = new Uuid(request.BundleId);
             var bundle = await requestHandler(marketOperator, bundleId).ConfigureAwait(false);
             return await PrepareBundleAsync(bundle).ConfigureAwait(false);
         }

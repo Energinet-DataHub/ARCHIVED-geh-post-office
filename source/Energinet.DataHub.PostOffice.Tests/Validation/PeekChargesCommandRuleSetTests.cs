@@ -36,7 +36,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation
         public async Task Validate_BundleId_ValidatesProperty(string value, bool isValid)
         {
             // Arrange
-            const string propertyName = nameof(PeekTimeSeriesCommand.BundleUuid);
+            const string propertyName = nameof(PeekTimeSeriesCommand.BundleId);
 
             var target = new PeekTimeSeriesCommandRuleSet();
             var command = new PeekTimeSeriesCommand(

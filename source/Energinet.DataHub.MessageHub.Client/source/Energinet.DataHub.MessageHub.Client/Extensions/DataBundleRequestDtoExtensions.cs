@@ -25,7 +25,7 @@ namespace Energinet.DataHub.MessageHub.Client.Extensions
         /// <param name="request">The request to create a response from.</param>
         /// <param name="path">The path of the created bundle.</param>
         /// <returns>The response to the specified request.</returns>
-        public static DataBundleResponseDto Create(this DataBundleRequestDto request, Uri path)
+        public static DataBundleResponseDto CreateResponse(this DataBundleRequestDto request, Uri path)
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
