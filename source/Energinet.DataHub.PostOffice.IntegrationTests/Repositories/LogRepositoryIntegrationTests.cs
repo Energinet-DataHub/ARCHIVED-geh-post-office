@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Model.Logging;
@@ -31,10 +32,13 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
     public class LogRepositoryIntegrationTests
     {
         [Fact]
-        public async Task SaveLogOccurrenceAsync_PeekLogValidData_LogOccurrenceIsSavedToStorage()
+        public async Task SaveLogOccurrenceAsync_PeekLogValidData_LogOccurrenceIsSavedCorrectlyToStorage()
         {
             // Arrange
-            var container = await SetUpTestBasis().ConfigureAwait(true);
+            await using var host = await MarketOperatorIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
+            var scope = host.BeginScope();
+
+            var container = scope.GetInstance<ILogRepositoryContainer>();
 
             var target = new LogRepository(container);
 
@@ -58,13 +62,131 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
 
             // Assert
             Assert.Equal(logObject.Id.ToString(), cosmosItem.Resource.Id);
+            Assert.Equal(logObject.Timestamp.ToString(CultureInfo.InvariantCulture), cosmosItem.Resource.Timestamp.ToString(CultureInfo.InvariantCulture));
+            Assert.Equal(logObject.EndpointType, cosmosItem.Resource.EndpointType);
+            Assert.Equal(logObject.ProcessId.Recipient.Gln.Value, cosmosItem.Resource.MarketOperator);
+            Assert.Equal(logObject.ProcessId.ToString(), cosmosItem.Resource.ProcessId);
         }
 
         [Fact]
-        public async Task SaveLogOccurrenceAsync_DequeueLogValidData_LogOccurrenceIsSavedToStorage()
+        public async Task SaveLogOccurrenceAsync_PeekTimeSeriesLogValidData_LogOccurrenceIsSavedCorrectlyToStorage()
         {
             // Arrange
-            var container = await SetUpTestBasis().ConfigureAwait(false);
+            await using var host = await MarketOperatorIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
+            var scope = host.BeginScope();
+
+            var container = scope.GetInstance<ILogRepositoryContainer>();
+
+            var target = new LogRepository(container);
+
+            var fakeIBundleContent = new Mock<IBundleContent>();
+            fakeIBundleContent
+                .Setup(e => e.LogIdentifier).Returns("https://127.0.0.1");
+
+            var processId = GetFakeProcessId();
+
+            var logObject = new PeekTimeseriesLog(
+                processId,
+                fakeIBundleContent.Object);
+
+            // Act
+            await target.SavePeekLogOccurrenceAsync(logObject).ConfigureAwait(true);
+
+            var cosmosItem = await container.Container.ReadItemAsync<CosmosLog>(
+                    logObject.Id.ToString(),
+                    new PartitionKey(logObject.ProcessId.Recipient.Gln.Value))
+                .ConfigureAwait(true);
+
+            // Assert
+            Assert.Equal(logObject.Id.ToString(), cosmosItem.Resource.Id);
+            Assert.Equal(logObject.Timestamp.ToString(CultureInfo.InvariantCulture), cosmosItem.Resource.Timestamp.ToString(CultureInfo.InvariantCulture));
+            Assert.Equal(logObject.EndpointType, cosmosItem.Resource.EndpointType);
+            Assert.Equal(logObject.ProcessId.Recipient.Gln.Value, cosmosItem.Resource.MarketOperator);
+            Assert.Equal(logObject.ProcessId.ToString(), cosmosItem.Resource.ProcessId);
+        }
+
+        [Fact]
+        public async Task SaveLogOccurrenceAsync_PeekMasterDataLogValidData_LogOccurrenceIsSavedCorrectlyToStorage()
+        {
+            // Arrange
+            await using var host = await MarketOperatorIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
+            var scope = host.BeginScope();
+
+            var container = scope.GetInstance<ILogRepositoryContainer>();
+
+            var target = new LogRepository(container);
+
+            var fakeIBundleContent = new Mock<IBundleContent>();
+            fakeIBundleContent
+                .Setup(e => e.LogIdentifier).Returns("https://127.0.0.1");
+
+            var processId = GetFakeProcessId();
+
+            var logObject = new PeekMasterDataLog(
+                processId,
+                fakeIBundleContent.Object);
+
+            // Act
+            await target.SavePeekLogOccurrenceAsync(logObject).ConfigureAwait(true);
+
+            var cosmosItem = await container.Container.ReadItemAsync<CosmosLog>(
+                    logObject.Id.ToString(),
+                    new PartitionKey(logObject.ProcessId.Recipient.Gln.Value))
+                .ConfigureAwait(true);
+
+            // Assert
+            Assert.Equal(logObject.Id.ToString(), cosmosItem.Resource.Id);
+            Assert.Equal(logObject.Timestamp.ToString(CultureInfo.InvariantCulture), cosmosItem.Resource.Timestamp.ToString(CultureInfo.InvariantCulture));
+            Assert.Equal(logObject.EndpointType, cosmosItem.Resource.EndpointType);
+            Assert.Equal(logObject.ProcessId.Recipient.Gln.Value, cosmosItem.Resource.MarketOperator);
+            Assert.Equal(logObject.ProcessId.ToString(), cosmosItem.Resource.ProcessId);
+        }
+
+        [Fact]
+        public async Task SaveLogOccurrenceAsync_PeekAggregationsLogValidData_LogOccurrenceIsSavedCorrectlyToStorage()
+        {
+            // Arrange
+            await using var host = await MarketOperatorIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
+            var scope = host.BeginScope();
+
+            var container = scope.GetInstance<ILogRepositoryContainer>();
+
+            var target = new LogRepository(container);
+
+            var fakeIBundleContent = new Mock<IBundleContent>();
+            fakeIBundleContent
+                .Setup(e => e.LogIdentifier).Returns("https://127.0.0.1");
+
+            var processId = GetFakeProcessId();
+
+            var logObject = new PeekAggregationsLog(
+                processId,
+                fakeIBundleContent.Object);
+
+            // Act
+            await target.SavePeekLogOccurrenceAsync(logObject).ConfigureAwait(true);
+
+            var cosmosItem = await container.Container.ReadItemAsync<CosmosLog>(
+                    logObject.Id.ToString(),
+                    new PartitionKey(logObject.ProcessId.Recipient.Gln.Value))
+                .ConfigureAwait(true);
+
+            // Assert
+            Assert.Equal(logObject.Id.ToString(), cosmosItem.Resource.Id);
+            Assert.Equal(logObject.Timestamp.ToString(CultureInfo.InvariantCulture), cosmosItem.Resource.Timestamp.ToString(CultureInfo.InvariantCulture));
+            Assert.Equal(logObject.EndpointType, cosmosItem.Resource.EndpointType);
+            Assert.Equal(logObject.ProcessId.Recipient.Gln.Value, cosmosItem.Resource.MarketOperator);
+            Assert.Equal(logObject.ProcessId.ToString(), cosmosItem.Resource.ProcessId);
+        }
+
+        [Fact]
+        public async Task SaveLogOccurrenceAsync_DequeueLogValidData_LogOccurrenceIsSavedCorrectlyToStorage()
+        {
+            // Arrange
+            await using var host = await MarketOperatorIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
+            var scope = host.BeginScope();
+
+            var container = scope.GetInstance<ILogRepositoryContainer>();
 
             var target = new LogRepository(container);
 
@@ -75,15 +197,16 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             // Act
             await target.SaveDequeueLogOccurrenceAsync(logObject).ConfigureAwait(false);
 
+            var cosmosItem = await container.Container.ReadItemAsync<CosmosLog>(
+                logObject.Id.ToString(),
+                new PartitionKey(logObject.ProcessId.Recipient.Gln.Value)).ConfigureAwait(false);
+
             // Assert
-        }
-
-        private static async Task<ILogRepositoryContainer> SetUpTestBasis()
-        {
-            await using var host = await MarketOperatorIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
-            var scope = host.BeginScope();
-
-            return scope.GetInstance<ILogRepositoryContainer>();
+            Assert.Equal(logObject.Id.ToString(), cosmosItem.Resource.Id);
+            Assert.Equal(logObject.Timestamp.ToString(CultureInfo.InvariantCulture), cosmosItem.Resource.Timestamp.ToString(CultureInfo.InvariantCulture));
+            Assert.Equal(logObject.EndpointType, cosmosItem.Resource.EndpointType);
+            Assert.Equal(logObject.ProcessId.Recipient.Gln.Value, cosmosItem.Resource.MarketOperator);
+            Assert.Equal(logObject.ProcessId.ToString(), cosmosItem.Resource.ProcessId);
         }
 
         private static ProcessId GetFakeProcessId()

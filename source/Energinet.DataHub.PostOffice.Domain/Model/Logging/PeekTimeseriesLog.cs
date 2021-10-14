@@ -14,13 +14,13 @@
 
 namespace Energinet.DataHub.PostOffice.Domain.Model.Logging
 {
-    public class PeekChargesLog : PeekLog
+    public class PeekTimeseriesLog : PeekLog
     {
-        public PeekChargesLog(ProcessId processId, IBundleContent bundleReference)
+        public PeekTimeseriesLog(ProcessId processId, IBundleContent bundleReference)
             : base(processId, bundleReference)
         {
         }
 
-        public override string EndpointType => "PeekCharges";
+        public override string EndpointType => "PeekTimeseries";
     }
 }

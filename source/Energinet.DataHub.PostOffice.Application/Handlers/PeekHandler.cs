@@ -16,7 +16,6 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Energinet.DataHub.MessageHub.Client.Model;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Model.Logging;
@@ -56,7 +55,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
             return HandleAsync(
                 request,
                 _marketOperatorDataDomainService.GetNextUnacknowledgedTimeSeriesAsync,
-                (processId, uuid) => new PeekChargesLog(processId, uuid));
+                (processId, uuid) => new PeekTimeseriesLog(processId, uuid));
         }
 
         public Task<PeekResponse> Handle(PeekMasterDataCommand request, CancellationToken cancellationToken)
@@ -72,7 +71,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
             return HandleAsync(
                 request,
                 _marketOperatorDataDomainService.GetNextUnacknowledgedAggregationsAsync,
-                (processId, uuid) => new PeekAggregationsOrTimeSeriesLog(processId, uuid));
+                (processId, uuid) => new PeekAggregationsLog(processId, uuid));
         }
 
         private async Task<PeekResponse> HandleAsync(
