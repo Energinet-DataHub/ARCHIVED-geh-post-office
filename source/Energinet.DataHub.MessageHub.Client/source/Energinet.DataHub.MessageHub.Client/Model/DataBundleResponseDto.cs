@@ -28,7 +28,7 @@ namespace Energinet.DataHub.MessageHub.Client.Model
         /// Creates a successful response to the bundle contents request.
         ///
         /// This method is for internal purposes and will eventually be removed from the public API.
-        /// It is recommended to use the <see cref="DataBundleRequestDtoExtensions.Create"/> extension method instead.
+        /// It is recommended to use the <see cref="DataBundleRequestDtoExtensions.CreateResponse"/> extension method instead.
         /// </summary>
         /// <param name="contentUri">The location of the bundle in Azure Blob Storage.</param>
         /// <param name="dataAvailableNotificationIds">A collection of guids identifying which data has been requested.</param>
