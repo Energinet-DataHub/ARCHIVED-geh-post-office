@@ -12,22 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Energinet.DataHub.PostOffice.Application.Validation.Rules;
-using FluentValidation;
-
-namespace Energinet.DataHub.PostOffice.Application.Validation
+namespace Energinet.DataHub.MessageHub.Client
 {
-    public class DequeueCommandRuleSet : AbstractValidator<Commands.DequeueCommand>
-    {
-        public DequeueCommandRuleSet()
-        {
-            RuleFor(command => command.MarketOperator)
-                .NotEmpty()
-                .SetValidator(new GlobalLocationNumberValidationRule());
-
-            RuleFor(command => command.BundleId)
-                .NotEmpty()
-                .SetValidator(new UuidValidationRule());
-        }
-    }
+    public record StorageConfig(string AzureBlobStorageContainerName);
 }
