@@ -54,7 +54,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
                 .ConfigureAwait(true);
 
             await logDatabase
-                .CreateContainerIfNotExistsAsync("Peek", "/marketOperator")
+                .CreateContainerIfNotExistsAsync("Logs", "/marketOperator")
                 .ConfigureAwait(true);
 
             var singleBundleViolationTrigger = new TriggerProperties

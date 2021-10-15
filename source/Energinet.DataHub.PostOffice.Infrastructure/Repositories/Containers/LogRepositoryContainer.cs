@@ -27,6 +27,6 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers
             _cosmosConfig = cosmosConfig;
         }
 
-        public Container LogContainer => _client.GetContainer(_cosmosConfig.LogDatabaseId, "Peek");
+        public Container Container => _client.GetContainer(_cosmosConfig.LogDatabaseId, "Logs");
     }
 }

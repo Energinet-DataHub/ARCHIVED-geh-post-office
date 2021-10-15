@@ -55,7 +55,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             // Act
             await target.SavePeekLogOccurrenceAsync(logObject).ConfigureAwait(true);
 
-            var cosmosItem = await container.LogContainer.ReadItemAsync<CosmosLog>(
+            var cosmosItem = await container.Container.ReadItemAsync<CosmosLog>(
                 logObject.Id.ToString(),
                 new PartitionKey(logObject.ProcessId.Recipient.Gln.Value))
                 .ConfigureAwait(true);
@@ -92,7 +92,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             // Act
             await target.SavePeekLogOccurrenceAsync(logObject).ConfigureAwait(true);
 
-            var cosmosItem = await container.LogContainer.ReadItemAsync<CosmosLog>(
+            var cosmosItem = await container.Container.ReadItemAsync<CosmosLog>(
                     logObject.Id.ToString(),
                     new PartitionKey(logObject.ProcessId.Recipient.Gln.Value))
                 .ConfigureAwait(true);
@@ -129,7 +129,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             // Act
             await target.SavePeekLogOccurrenceAsync(logObject).ConfigureAwait(true);
 
-            var cosmosItem = await container.LogContainer.ReadItemAsync<CosmosLog>(
+            var cosmosItem = await container.Container.ReadItemAsync<CosmosLog>(
                     logObject.Id.ToString(),
                     new PartitionKey(logObject.ProcessId.Recipient.Gln.Value))
                 .ConfigureAwait(true);
@@ -166,7 +166,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             // Act
             await target.SavePeekLogOccurrenceAsync(logObject).ConfigureAwait(true);
 
-            var cosmosItem = await container.LogContainer.ReadItemAsync<CosmosLog>(
+            var cosmosItem = await container.Container.ReadItemAsync<CosmosLog>(
                     logObject.Id.ToString(),
                     new PartitionKey(logObject.ProcessId.Recipient.Gln.Value))
                 .ConfigureAwait(true);
@@ -197,7 +197,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             // Act
             await target.SaveDequeueLogOccurrenceAsync(logObject).ConfigureAwait(false);
 
-            var cosmosItem = await container.LogContainer.ReadItemAsync<CosmosLog>(
+            var cosmosItem = await container.Container.ReadItemAsync<CosmosLog>(
                 logObject.Id.ToString(),
                 new PartitionKey(logObject.ProcessId.Recipient.Gln.Value)).ConfigureAwait(false);
 
