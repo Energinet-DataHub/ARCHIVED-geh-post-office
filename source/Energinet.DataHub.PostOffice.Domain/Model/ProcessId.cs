@@ -22,9 +22,12 @@ namespace Energinet.DataHub.PostOffice.Domain.Model
 
         public ProcessId([NotNull] Uuid bundleId, [NotNull] MarketOperator recipient)
         {
+            BundleId = bundleId;
             Recipient = recipient;
             _processId = string.Join("_", bundleId.ToString(), recipient.Gln.Value);
         }
+
+        public Uuid BundleId { get; }
 
         public MarketOperator Recipient { get; }
 

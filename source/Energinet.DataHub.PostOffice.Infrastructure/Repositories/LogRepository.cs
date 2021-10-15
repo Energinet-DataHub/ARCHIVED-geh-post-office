@@ -43,7 +43,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 log.ProcessId.ToString(),
                 log.BundleReference.LogIdentifier);
 
-            await _logRepositoryContainer.Container.CreateItemAsync(instanceToLog).ConfigureAwait(false);
+            await _logRepositoryContainer.LogContainer.CreateItemAsync(instanceToLog).ConfigureAwait(false);
         }
 
         public async Task SaveDequeueLogOccurrenceAsync(DequeueLog log)
@@ -58,7 +58,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 log.ProcessId.Recipient.Gln.Value,
                 log.ProcessId.ToString());
 
-            await _logRepositoryContainer.Container.CreateItemAsync(instanceToLog).ConfigureAwait(false);
+            await _logRepositoryContainer.LogContainer.CreateItemAsync(instanceToLog).ConfigureAwait(false);
         }
     }
 }

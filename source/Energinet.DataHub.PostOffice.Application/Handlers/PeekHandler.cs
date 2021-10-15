@@ -32,7 +32,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
         IRequestHandler<PeekAggregationsCommand, PeekResponse>
     {
         private readonly IMarketOperatorDataDomainService _marketOperatorDataDomainService;
-        private ILogRepository _log;
+        private readonly ILogRepository _log;
 
         public PeekHandler(
             IMarketOperatorDataDomainService marketOperatorDataDomainService,
@@ -55,7 +55,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
             return HandleAsync(
                 request,
                 _marketOperatorDataDomainService.GetNextUnacknowledgedTimeSeriesAsync,
-                (processId, uuid) => new PeekTimeseriesLog(processId, uuid));
+                (processId, bundleContent) => new PeekTimeseriesLog(processId, bundleContent));
         }
 
         public Task<PeekResponse> Handle(PeekMasterDataCommand request, CancellationToken cancellationToken)
@@ -63,7 +63,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
             return HandleAsync(
                 request,
                 _marketOperatorDataDomainService.GetNextUnacknowledgedMasterDataAsync,
-                (processId, uuid) => new PeekMasterDataLog(processId, uuid));
+                (processId, bundleContent) => new PeekMasterDataLog(processId, bundleContent));
         }
 
         public Task<PeekResponse> Handle(PeekAggregationsCommand request, CancellationToken cancellationToken)
@@ -71,7 +71,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
             return HandleAsync(
                 request,
                 _marketOperatorDataDomainService.GetNextUnacknowledgedAggregationsAsync,
-                (processId, uuid) => new PeekAggregationsLog(processId, uuid));
+                (processId, bundleContent) => new PeekAggregationsLog(processId, bundleContent));
         }
 
         private async Task<PeekResponse> HandleAsync(
@@ -86,20 +86,14 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
             var uuid = new Uuid(request.BundleId);
             var bundle = await requestHandler(marketOperator, uuid).ConfigureAwait(false);
 
-            IBundleContent? bundleContent = null;
-
-            var bundleToReturn = bundle != null && bundle.TryGetContent(out bundleContent)
-                ? new PeekResponse(true, await bundleContent.OpenAsync().ConfigureAwait(false))
-                : new PeekResponse(false, Stream.Null);
-
-            if (bundleToReturn.HasContent)
+            if (bundle != null && bundle.TryGetContent(out var bundleContent))
             {
-                var processId = new ProcessId(uuid, marketOperator);
+                await _log.SavePeekLogOccurrenceAsync(logProvider(bundle.ProcessId, bundleContent!)).ConfigureAwait(false);
 
-                await _log.SavePeekLogOccurrenceAsync(logProvider(processId, bundleContent!)).ConfigureAwait(false);
+                return new PeekResponse(true, await bundleContent.OpenAsync().ConfigureAwait(false));
             }
 
-            return bundleToReturn;
+            return new PeekResponse(false, Stream.Null);
         }
     }
 }

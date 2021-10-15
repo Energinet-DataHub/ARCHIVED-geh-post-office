@@ -12,20 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Microsoft.Azure.Cosmos;
-
-namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers
+namespace Energinet.DataHub.PostOffice.Domain.Model.Logging
 {
     /// <summary>
-    /// Interface for the log repository container
+    /// Provides path to content within a bundle.
     /// </summary>
-    /// <returns>Log</returns>
-    public interface ILogRepositoryContainer
+    public interface IProviderLogIdentifier
     {
         /// <summary>
-        /// The actual container used in cosmos
+        /// Content path to the content contained within the bundle.
         /// </summary>
-        /// <returns>Log</returns>
-        public Container LogContainer { get; }
+        public string LogIdentifier { get; }
     }
 }
