@@ -28,12 +28,14 @@ module "azfun_marketoperator_peek" {
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = true
     FUNCTIONS_WORKER_RUNTIME            = "dotnet-isolated"
     # Endregion
-    MESSAGES_DB_CONNECTION_STRING       = local.message_db_connection_string
-    MESSAGES_DB_NAME                    = azurerm_cosmosdb_sql_database.db.name
-    BlobStorageConnectionString         = module.stor_marketoperator_response.primary_connection_string
-    BlobStorageContainerName            = module.container_postoffice_reply.name
-    ServiceBusConnectionString          = data.azurerm_key_vault_secret.shared_resources_integration_events_transceiver_connection_string.value
-    StorageAccountConnectionString      = module.stor_marketoperator_response.primary_connection_string
+    MESSAGES_DB_CONNECTION_STRING         = local.message_db_connection_string
+    MESSAGES_DB_NAME                      = azurerm_cosmosdb_sql_database.db.name
+    BlobStorageConnectionString           = module.stor_marketoperator_response.primary_connection_string
+    BlobStorageContainerName              = module.container_postoffice_reply.name
+    ServiceBusConnectionString            = data.azurerm_key_vault_secret.shared_resources_integration_events_transceiver_connection_string.value
+    StorageAccountConnectionString        = module.stor_marketoperator_response.primary_connection_string
+    DATAAVAILABLE_QUEUE_CONNECTION_STRING = data.azurerm_key_vault_secret.shared_resources_integration_events_transceiver_connection_string.value
+    DATAAVAILABLE_QUEUE_NAME              = var.shared_resources_sbq_data_available_name
   }
   dependencies                              = [
     module.azfun_marketoperator_peek_plan.dependent_on,
