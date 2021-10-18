@@ -18,6 +18,11 @@ namespace Energinet.DataHub.PostOffice.Application.Validation.Rules
 {
     public class UuidValidationRule : PropertyValidator<string>
     {
+        public UuidValidationRule()
+            : base("invalid_UUID")
+        {
+        }
+
         protected override string GetDefaultMessageTemplate()
         {
             return "'{PropertyName}' must have a valid guid.";

@@ -20,6 +20,11 @@ namespace Energinet.DataHub.PostOffice.Application.Validation.Rules
 {
     public class GlobalLocationNumberValidationRule : PropertyValidator<string>
     {
+        public GlobalLocationNumberValidationRule()
+            : base("invalid_GLN_number")
+        {
+        }
+
         protected override string GetDefaultMessageTemplate()
         {
             return "'{PropertyName}' must have a valid GLN.";

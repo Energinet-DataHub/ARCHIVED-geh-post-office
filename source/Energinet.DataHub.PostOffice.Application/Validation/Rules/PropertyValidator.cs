@@ -12,23 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Energinet.DataHub.PostOffice.Application.Commands;
-using Energinet.DataHub.PostOffice.Application.Validation.Rules;
-using FluentValidation;
+using System;
+using FluentValidation.Validators;
 
-namespace Energinet.DataHub.PostOffice.Application.Validation
+namespace Energinet.DataHub.PostOffice.Application.Validation.Rules
 {
-    public sealed class PeekMasterDataCommandRuleSet : AbstractValidatorBase<PeekMasterDataCommand>
+    public abstract class PropertyValidator<T> : PropertyValidator
     {
-        protected override void Setup()
+        protected PropertyValidator(string errorCode)
         {
-            RuleFor(command => command.MarketOperator)
-                .NotEmpty()
-                .SetValidator(new GlobalLocationNumberValidationRule());
-
-            RuleFor(command => command.BundleId)
-                .NotEmpty()
-                .SetValidator(new UuidValidationRule());
+            ErrorCode = errorCode;
         }
+
+        protected override bool IsValid(PropertyValidatorContext context) =>
+            context == null
+                ? throw new ArgumentNullException(nameof(context))
+                : context.PropertyValue is T value && IsValid(value);
+
+        protected abstract bool IsValid(T value);
     }
 }

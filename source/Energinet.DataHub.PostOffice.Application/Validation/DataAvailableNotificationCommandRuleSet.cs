@@ -19,9 +19,9 @@ using FluentValidation;
 
 namespace Energinet.DataHub.PostOffice.Application.Validation
 {
-    public sealed class DataAvailableNotificationCommandRuleSet : AbstractValidator<DataAvailableNotificationCommand>
+    public sealed class DataAvailableNotificationCommandRuleSet : AbstractValidatorBase<DataAvailableNotificationCommand>
     {
-        public DataAvailableNotificationCommandRuleSet()
+        protected override void Setup()
         {
             RuleFor(command => command.Uuid)
                 .NotEmpty()
