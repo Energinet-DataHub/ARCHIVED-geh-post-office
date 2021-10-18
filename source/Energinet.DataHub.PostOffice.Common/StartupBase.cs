@@ -48,6 +48,11 @@ namespace Energinet.DataHub.PostOffice.Common
             services.AddLogging();
             services.AddSimpleInjector(Container, x => x.DisposeContainerWithServiceProvider = !true);
 
+            // Add Application insights telemetry
+            services.AddApplicationInsightsTelemetryWorkerService(
+                Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY")
+                ?? throw new InvalidOperationException("Missing APPINSIGHTS_INSTRUMENTATIONKEY"));
+
             // config
             var config = services.BuildServiceProvider().GetService<IConfiguration>()!;
             Container.RegisterSingleton(() => config);
