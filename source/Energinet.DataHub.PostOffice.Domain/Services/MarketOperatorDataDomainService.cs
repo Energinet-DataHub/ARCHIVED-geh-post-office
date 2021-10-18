@@ -50,6 +50,11 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
             return GetNextUnacknowledgedForDomainsAsync(recipient, bundleId, DomainOrigin.TimeSeries);
         }
 
+        public Task<Bundle?> GetNextUnacknowledgedAggregationsAsync(MarketOperator recipient, Uuid bundleId)
+        {
+            return GetNextUnacknowledgedForDomainsAsync(recipient, bundleId, DomainOrigin.Aggregations);
+        }
+
         public Task<Bundle?> GetNextUnacknowledgedMasterDataAsync(MarketOperator recipient, Uuid bundleId)
         {
             return GetNextUnacknowledgedForDomainsAsync(
@@ -58,11 +63,6 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
                 DomainOrigin.MarketRoles,
                 DomainOrigin.MeteringPoints,
                 DomainOrigin.Charges);
-        }
-
-        public Task<Bundle?> GetNextUnacknowledgedAggregationsAsync(MarketOperator recipient, Uuid bundleId)
-        {
-            return GetNextUnacknowledgedForDomainsAsync(recipient, bundleId, DomainOrigin.Aggregations);
         }
 
         public async Task<(bool IsAcknowledged, Bundle? AcknowledgedBundle)> TryAcknowledgeAsync(MarketOperator recipient, Uuid bundleId)
@@ -92,9 +92,8 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
             if (dataAvailableNotification == null)
                 return null;
 
-            var newBundle = await CreateNextBundleAsync(
-                bundleId,
-                dataAvailableNotification).ConfigureAwait(false);
+            var newBundle = await CreateNextBundleAsync(bundleId, dataAvailableNotification)
+                .ConfigureAwait(false);
 
             var bundleCreatedResponse = await _bundleRepository
                 .TryAddNextUnacknowledgedAsync(newBundle)
