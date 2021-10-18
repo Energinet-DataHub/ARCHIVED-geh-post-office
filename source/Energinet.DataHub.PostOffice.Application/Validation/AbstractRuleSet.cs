@@ -43,7 +43,7 @@ namespace Energinet.DataHub.PostOffice.Application.Validation
                     StringEnumValidator => "invalid_enum_value",
                     NotEqualValidator => "value_not_equal_to",
                     GreaterThanValidator => "value_not_greater_than",
-                    _ => null
+                    _ => "validation_error"
                 };
             }
         }
