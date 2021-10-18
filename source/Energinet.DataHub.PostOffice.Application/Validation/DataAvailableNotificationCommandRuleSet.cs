@@ -21,7 +21,7 @@ namespace Energinet.DataHub.PostOffice.Application.Validation
 {
     public sealed class DataAvailableNotificationCommandRuleSet : AbstractRuleSet<DataAvailableNotificationCommand>
     {
-        protected override void Setup()
+        public DataAvailableNotificationCommandRuleSet()
         {
             RuleFor(command => command.Uuid)
                 .NotEmpty()

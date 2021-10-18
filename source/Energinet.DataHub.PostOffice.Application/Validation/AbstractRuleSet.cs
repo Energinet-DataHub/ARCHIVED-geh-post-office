@@ -13,24 +13,26 @@
 // limitations under the License.
 
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using FluentValidation;
+using FluentValidation.Results;
 using FluentValidation.Validators;
 
 namespace Energinet.DataHub.PostOffice.Application.Validation
 {
     public abstract class AbstractRuleSet<T> : AbstractValidator<T>
     {
-        protected AbstractRuleSet()
+        public override ValidationResult Validate(ValidationContext<T> context)
         {
-            SetupValidation();
+            SetErrorCodes();
+            return base.Validate(context);
         }
 
-        protected abstract void Setup();
-
-        private void SetupValidation()
+        public override Task<ValidationResult> ValidateAsync(ValidationContext<T> context, CancellationToken cancellation = default)
         {
-            Setup();
             SetErrorCodes();
+            return base.ValidateAsync(context, cancellation);
         }
 
         private void SetErrorCodes()

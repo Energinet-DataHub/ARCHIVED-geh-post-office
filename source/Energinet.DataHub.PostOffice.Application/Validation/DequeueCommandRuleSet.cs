@@ -20,7 +20,7 @@ namespace Energinet.DataHub.PostOffice.Application.Validation
 {
     public class DequeueCommandRuleSet : AbstractRuleSet<DequeueCommand>
     {
-        protected override void Setup()
+        public DequeueCommandRuleSet()
         {
             RuleFor(command => command.MarketOperator)
                 .NotEmpty()

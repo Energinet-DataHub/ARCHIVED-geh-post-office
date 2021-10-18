@@ -20,7 +20,7 @@ namespace Energinet.DataHub.PostOffice.Application.Validation
 {
     public sealed class PeekTimeSeriesCommandRuleSet : AbstractRuleSet<PeekTimeSeriesCommand>
     {
-        protected override void Setup()
+        public PeekTimeSeriesCommandRuleSet()
         {
             RuleFor(command => command.MarketOperator)
                 .NotEmpty()

@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using Energinet.DataHub.PostOffice.Application.Validation.Rules;
-using FluentValidation.Internal;
 using FluentValidation.Validators;
 using Xunit;
 using Xunit.Categories;
@@ -33,7 +32,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation.Rules
             var rule = new GlobalLocationNumberValidationRuleTester();
 
             // Act
-            var result = rule.IsValid(value);
+            var result = rule.Validate(value);
 
             // Assert
             Assert.False(result);
@@ -48,7 +47,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation.Rules
             var rule = new GlobalLocationNumberValidationRuleTester();
 
             // Act
-            var result = rule.IsValid(value);
+            var result = rule.Validate(value);
 
             // Assert
             Assert.False(result);
@@ -62,7 +61,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation.Rules
             var rule = new GlobalLocationNumberValidationRuleTester();
 
             // Act
-            var result = rule.IsValid(value);
+            var result = rule.Validate(value);
 
             // Assert
             Assert.False(result);
@@ -76,7 +75,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation.Rules
             var rule = new GlobalLocationNumberValidationRuleTester();
 
             // Act
-            var result = rule.IsValid(value);
+            var result = rule.Validate(value);
 
             // Assert
             Assert.False(result);
@@ -91,7 +90,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation.Rules
             var rule = new GlobalLocationNumberValidationRuleTester();
 
             // Act
-            var result = rule.IsValid(value);
+            var result = rule.Validate(value);
 
             // Assert
             Assert.True(result);
@@ -99,7 +98,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation.Rules
 
         private sealed class GlobalLocationNumberValidationRuleTester : GlobalLocationNumberValidationRule
         {
-            public new bool IsValid(string value)
+            public bool Validate(string value)
             {
                 return IsValid(new PropertyValidatorContext(null, null, null, value));
             }
