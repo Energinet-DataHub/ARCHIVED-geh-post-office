@@ -111,7 +111,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 orderby dataAvailable.Timestamp
                 select dataAvailable;
 
-            const int batchSize = 1;
+            const int batchSize = 10000;
 
             var batchIndex = 0;
             var runningSum = 0;
@@ -126,7 +126,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
                 await foreach (var item in ExecuteQueryAsync(query.Skip(skip).Take(take)).ConfigureAwait(false))
                 {
-                    if (runningSum + item.Weight.Value < maxWeight.Value || !item.SupportsBundling.Value)
+                    if (runningSum + item.Weight.Value > maxWeight.Value || !item.SupportsBundling.Value)
                         break;
 
                     runningSum += item.Weight.Value;

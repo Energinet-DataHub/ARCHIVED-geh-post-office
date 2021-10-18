@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -93,19 +92,14 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
             if (dataAvailableNotification == null)
                 return null;
 
-            var newBundle = dataAvailableNotification.SupportsBundling.Value
-                ? await CreateNextBundleAsync(
-                    bundleId,
-                    dataAvailableNotification.Recipient,
-                    dataAvailableNotification.Origin,
-                    dataAvailableNotification.ContentType).ConfigureAwait(false)
-                : new Bundle(
-                    bundleId,
-                    dataAvailableNotification.Origin,
-                    dataAvailableNotification.Recipient,
-                    new List<Uuid> { dataAvailableNotification.NotificationId });
+            var newBundle = await CreateNextBundleAsync(
+                bundleId,
+                dataAvailableNotification).ConfigureAwait(false);
 
-            var bundleCreatedResponse = await _bundleRepository.TryAddNextUnacknowledgedAsync(newBundle).ConfigureAwait(false);
+            var bundleCreatedResponse = await _bundleRepository
+                .TryAddNextUnacknowledgedAsync(newBundle)
+                .ConfigureAwait(false);
+
             return bundleCreatedResponse switch
             {
                 BundleCreatedResponse.Success => await AskSubDomainForContentAsync(newBundle).ConfigureAwait(false),
@@ -132,12 +126,21 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
             return bundle;
         }
 
-        private async Task<Bundle> CreateNextBundleAsync(
-            Uuid bundleUuid,
-            MarketOperator recipient,
-            DomainOrigin domainOrigin,
-            ContentType contentType)
+        private async Task<Bundle> CreateNextBundleAsync(Uuid bundleUuid, DataAvailableNotification source)
         {
+            var recipient = source.Recipient;
+            var domainOrigin = source.Origin;
+            var contentType = source.ContentType;
+
+            if (!source.SupportsBundling.Value)
+            {
+                return new Bundle(
+                    bundleUuid,
+                    domainOrigin,
+                    recipient,
+                    new[] { source.NotificationId });
+            }
+
             var maxWeight = _weightCalculatorDomainService.CalculateMaxWeight(domainOrigin);
 
             var dataAvailableNotifications = await _dataAvailableNotificationRepository
