@@ -18,7 +18,7 @@ using FluentValidation;
 
 namespace Energinet.DataHub.PostOffice.Application.Validation
 {
-    public class DequeueCommandRuleSet : AbstractValidatorBase<DequeueCommand>
+    public class DequeueCommandRuleSet : AbstractRuleSet<DequeueCommand>
     {
         protected override void Setup()
         {

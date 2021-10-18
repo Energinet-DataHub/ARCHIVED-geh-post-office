@@ -18,9 +18,9 @@ using FluentValidation.Validators;
 
 namespace Energinet.DataHub.PostOffice.Application.Validation
 {
-    public abstract class AbstractValidatorBase<T> : AbstractValidator<T>
+    public abstract class AbstractRuleSet<T> : AbstractValidator<T>
     {
-        protected AbstractValidatorBase()
+        protected AbstractRuleSet()
         {
             SetupValidation();
         }
