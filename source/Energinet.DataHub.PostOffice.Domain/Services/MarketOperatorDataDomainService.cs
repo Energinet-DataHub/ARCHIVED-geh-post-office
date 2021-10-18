@@ -132,7 +132,9 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
             var domainOrigin = source.Origin;
             var contentType = source.ContentType;
 
-            if (!source.SupportsBundling.Value)
+            var maxWeight = _weightCalculatorDomainService.CalculateMaxWeight(domainOrigin);
+
+            if (!source.SupportsBundling.Value || source.Weight.Value >= maxWeight.Value)
             {
                 return new Bundle(
                     bundleUuid,
@@ -140,8 +142,6 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
                     recipient,
                     new[] { source.NotificationId });
             }
-
-            var maxWeight = _weightCalculatorDomainService.CalculateMaxWeight(domainOrigin);
 
             var dataAvailableNotifications = await _dataAvailableNotificationRepository
                 .GetNextUnacknowledgedAsync(recipient, domainOrigin, contentType, maxWeight)

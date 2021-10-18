@@ -111,6 +111,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 orderby dataAvailable.Timestamp
                 select dataAvailable;
 
+            // TODO: What follows is horrible. Look away.
             const int batchSize = 10000;
 
             var batchIndex = 0;
