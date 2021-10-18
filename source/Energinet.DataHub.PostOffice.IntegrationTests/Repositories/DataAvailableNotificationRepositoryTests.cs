@@ -173,7 +173,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
                 recipient,
                 new ContentType("fake_value"),
                 DomainOrigin.Aggregations,
-                new SupportsBundling(false),
+                new SupportsBundling(true),
                 new Weight(1));
 
             for (var i = 0; i < 5; i++)
@@ -215,7 +215,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
                 recipient,
                 new ContentType("target"),
                 DomainOrigin.Aggregations,
-                new SupportsBundling(false),
+                new SupportsBundling(true),
                 new Weight(1));
 
             for (var i = 0; i < 5; i++)

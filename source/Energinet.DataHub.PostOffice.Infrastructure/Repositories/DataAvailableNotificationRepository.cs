@@ -86,13 +86,16 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             MarketOperator recipient,
             DomainOrigin domainOrigin,
             ContentType contentType,
-            Weight weight)
+            Weight maxWeight)
         {
             if (recipient is null)
                 throw new ArgumentNullException(nameof(recipient));
 
             if (contentType is null)
                 throw new ArgumentNullException(nameof(contentType));
+
+            if (maxWeight is null)
+                throw new ArgumentNullException(nameof(maxWeight));
 
             var asLinq = _repositoryContainer
                 .Container
@@ -108,7 +111,36 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 orderby dataAvailable.Timestamp
                 select dataAvailable;
 
-            return await ExecuteQueryAsync(query).ToListAsync().ConfigureAwait(false);
+            const int batchSize = 1;
+
+            var batchIndex = 0;
+            var runningSum = 0;
+            var allUnacknowledged = new List<DataAvailableNotification>();
+
+            // BUG: If only 1 element, but it does not support bundling, returns empty list.
+            while (true)
+            {
+                var skip = batchIndex * batchSize;
+                var take = batchSize;
+                var empty = true;
+
+                await foreach (var item in ExecuteQueryAsync(query.Skip(skip).Take(take)).ConfigureAwait(false))
+                {
+                    if (runningSum + item.Weight.Value < maxWeight.Value || !item.SupportsBundling.Value)
+                        break;
+
+                    runningSum += item.Weight.Value;
+                    allUnacknowledged.Add(item);
+                    empty = false;
+                }
+
+                batchIndex++;
+
+                if (empty)
+                {
+                    return allUnacknowledged;
+                }
+            }
         }
 
         public async Task AcknowledgeAsync(MarketOperator recipient, IEnumerable<Uuid> dataAvailableNotificationUuids)

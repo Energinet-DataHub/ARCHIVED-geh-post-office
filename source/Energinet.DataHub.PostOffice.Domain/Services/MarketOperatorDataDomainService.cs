@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -92,11 +93,17 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
             if (dataAvailableNotification == null)
                 return null;
 
-            var newBundle = await CreateNextBundleAsync(
-                bundleId,
-                dataAvailableNotification.Recipient,
-                dataAvailableNotification.Origin,
-                dataAvailableNotification.ContentType).ConfigureAwait(false);
+            var newBundle = dataAvailableNotification.SupportsBundling.Value
+                ? await CreateNextBundleAsync(
+                    bundleId,
+                    dataAvailableNotification.Recipient,
+                    dataAvailableNotification.Origin,
+                    dataAvailableNotification.ContentType).ConfigureAwait(false)
+                : new Bundle(
+                    bundleId,
+                    dataAvailableNotification.Origin,
+                    dataAvailableNotification.Recipient,
+                    new List<Uuid> { dataAvailableNotification.NotificationId });
 
             var bundleCreatedResponse = await _bundleRepository.TryAddNextUnacknowledgedAsync(newBundle).ConfigureAwait(false);
             return bundleCreatedResponse switch
