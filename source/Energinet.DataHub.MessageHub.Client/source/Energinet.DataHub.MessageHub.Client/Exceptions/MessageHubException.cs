@@ -16,18 +16,18 @@ using System;
 
 namespace Energinet.DataHub.MessageHub.Client.Exceptions
 {
-    public class PostOfficeCommunicatorStorageException : Exception
+    public class MessageHubException : Exception
     {
-        public PostOfficeCommunicatorStorageException(string message)
+        public MessageHubException(string message)
             : base(message)
         {
         }
 
-        public PostOfficeCommunicatorStorageException()
+        public MessageHubException()
         {
         }
 
-        public PostOfficeCommunicatorStorageException(string message, Exception innerException)
+        public MessageHubException(string message, Exception innerException)
             : base(message, innerException)
         {
         }

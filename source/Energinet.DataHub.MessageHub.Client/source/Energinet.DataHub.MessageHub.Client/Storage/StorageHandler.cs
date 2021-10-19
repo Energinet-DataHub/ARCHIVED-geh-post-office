@@ -56,7 +56,7 @@ namespace Energinet.DataHub.MessageHub.Client.Storage
             }
             catch (RequestFailedException e)
             {
-                throw new PostOfficeCommunicatorStorageException("Error uploading file to storage", e);
+                throw new MessageHubStorageException("Error uploading file to storage", e);
             }
         }
 
@@ -75,7 +75,7 @@ namespace Energinet.DataHub.MessageHub.Client.Storage
             }
             catch (RequestFailedException e)
             {
-                throw new PostOfficeCommunicatorStorageException("Error uploading file to storage", e);
+                throw new MessageHubStorageException("Error uploading file to storage", e);
             }
         }
     }

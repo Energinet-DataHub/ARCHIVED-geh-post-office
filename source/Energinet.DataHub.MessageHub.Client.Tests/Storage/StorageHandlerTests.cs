@@ -113,7 +113,7 @@ namespace Energinet.DataHub.MessageHub.Client.Tests.Storage
 
             // act, assert
             await using var inputStream = new MemoryStream(new byte[] { 1, 2, 3 });
-            await Assert.ThrowsAsync<PostOfficeCommunicatorStorageException>(
+            await Assert.ThrowsAsync<MessageHubStorageException>(
                     () => target.AddStreamToStorageAsync(
                         inputStream,
                         mockedDataBundleRequestDto))
@@ -254,7 +254,7 @@ namespace Energinet.DataHub.MessageHub.Client.Tests.Storage
             var target = new StorageHandler(mockedStorageServiceClientFactory.Object, new StorageConfig("fake_value"));
 
             // act, assert
-            await Assert.ThrowsAsync<PostOfficeCommunicatorStorageException>(
+            await Assert.ThrowsAsync<MessageHubStorageException>(
                     () => target.GetStreamFromStorageAsync(testUri))
                 .ConfigureAwait(false);
         }

@@ -34,7 +34,7 @@ namespace Energinet.DataHub.MessageHub.Client.Dequeue
             }
             catch (InvalidProtocolBufferException e)
             {
-                throw new PostOfficeCommunicatorException("Error parsing bytes for dequeue", e);
+                throw new MessageHubException("Error parsing bytes for dequeue", e);
             }
         }
 
