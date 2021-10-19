@@ -133,7 +133,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
 
             var maxWeight = _weightCalculatorDomainService.CalculateMaxWeight(domainOrigin);
 
-            if (!source.SupportsBundling.Value || source.Weight.Value >= maxWeight.Value)
+            if (!source.SupportsBundling.Value || source.Weight >= maxWeight)
             {
                 return new Bundle(
                     bundleUuid,

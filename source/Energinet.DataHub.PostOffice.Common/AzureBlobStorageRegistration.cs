@@ -45,6 +45,12 @@ namespace Energinet.DataHub.PostOffice.Common
             {
                 var configuration = container.GetService<IConfiguration>();
                 var containerName = configuration.GetValue<string>("BlobStorageContainerName");
+
+                if (string.IsNullOrWhiteSpace(containerName))
+                {
+                    throw new InvalidOperationException("Please specify a valid BlobStorageContainerName in the appSettings.json file or your Azure Functions Settings.");
+                }
+
                 return new StorageConfig(containerName);
             });
         }
