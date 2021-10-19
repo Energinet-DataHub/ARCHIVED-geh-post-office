@@ -67,12 +67,12 @@ resource "azurerm_cosmosdb_sql_trigger" "triggers_ensuresingleunacknowledgedbund
 
     var filterQuery = `
     SELECT * FROM bundles b
-    WHERE b.recipient = '${createdItem.recipient}' AND
+    WHERE b.recipient = '$${createdItem.recipient}' AND
           b.dequeued = false AND (
-          b.origin = '${createdItem.origin}' OR
-         ((b.origin = 'MarketRoles' OR b.origin = 'Charges') AND '${createdItem.origin}' = 'MeteringPoints') OR
-         ((b.origin = 'Charges' OR b.origin = 'MeteringPoints') AND '${createdItem.origin}' = 'MarketRoles') OR
-         ((b.origin = 'MarketRoles' OR b.origin = 'MeteringPoints') AND '${createdItem.origin}' = 'Charges'))`;
+          b.origin = '$${createdItem.origin}' OR
+         ((b.origin = 'MarketRoles' OR b.origin = 'Charges') AND '$${createdItem.origin}' = 'MeteringPoints') OR
+         ((b.origin = 'Charges' OR b.origin = 'MeteringPoints') AND '$${createdItem.origin}' = 'MarketRoles') OR
+         ((b.origin = 'MarketRoles' OR b.origin = 'MeteringPoints') AND '$${createdItem.origin}' = 'Charges'))`;
 
     var accept = container.queryDocuments(container.getSelfLink(), filterQuery, function(err, items, options)
     {
