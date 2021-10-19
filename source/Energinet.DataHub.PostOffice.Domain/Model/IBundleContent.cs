@@ -14,13 +14,14 @@
 
 using System.IO;
 using System.Threading.Tasks;
+using Energinet.DataHub.PostOffice.Domain.Model.Logging;
 
 namespace Energinet.DataHub.PostOffice.Domain.Model
 {
     /// <summary>
     /// Represents data for a specific bundle.
     /// </summary>
-    public interface IBundleContent
+    public interface IBundleContent : IProviderLogIdentifier
     {
         /// <summary>
         /// Opens a stream to the content contained within the bundle.

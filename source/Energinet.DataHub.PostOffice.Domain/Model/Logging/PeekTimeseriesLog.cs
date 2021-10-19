@@ -12,17 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using GreenEnergyHub.Messaging.Validation;
-
-namespace Energinet.DataHub.PostOffice.Tests.Tooling
+namespace Energinet.DataHub.PostOffice.Domain.Model.Logging
 {
-    public static class RuleCollectionTester
+    public class PeekTimeseriesLog : PeekLog
     {
-        public static RuleCollectionTester<TCollection, T> Create<TCollection, T>()
-            where TCollection : RuleCollection<T>, new()
+        public PeekTimeseriesLog(ProcessId processId, IBundleContent bundleReference)
+            : base(processId, bundleReference)
         {
-            var collection = new TCollection();
-            return new RuleCollectionTester<TCollection, T>(collection);
         }
+
+        public override string EndpointType => "PeekTimeseries";
     }
 }
