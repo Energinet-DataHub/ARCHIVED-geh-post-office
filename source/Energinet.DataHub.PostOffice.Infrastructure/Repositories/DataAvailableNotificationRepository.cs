@@ -94,9 +94,6 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             if (contentType is null)
                 throw new ArgumentNullException(nameof(contentType));
 
-            if (maxWeight is null)
-                throw new ArgumentNullException(nameof(maxWeight));
-
             var asLinq = _repositoryContainer
                 .Container
                 .GetItemLinqQueryable<CosmosDataAvailable>();
@@ -111,37 +108,23 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 orderby dataAvailable.Timestamp
                 select dataAvailable;
 
-            // TODO: What follows is horrible. Look away.
-            const int batchSize = 10000;
-
-            var batchIndex = 0;
-            var runningSum = 0;
+            var currentWeight = new Weight(0);
             var allUnacknowledged = new List<DataAvailableNotification>();
 
-            // BUG: If only 1 element, but it does not support bundling, returns empty list.
-            while (true)
+            await foreach (var item in ExecuteBatchAsync(query).ConfigureAwait(false))
             {
-                var skip = batchIndex * batchSize;
-                var take = batchSize;
-                var empty = true;
-
-                await foreach (var item in ExecuteQueryAsync(query.Skip(skip).Take(take)).ConfigureAwait(false))
+                if (allUnacknowledged.Count == 0 || (currentWeight + item.Weight <= maxWeight && item.SupportsBundling.Value))
                 {
-                    if (runningSum + item.Weight.Value > maxWeight.Value || !item.SupportsBundling.Value)
-                        break;
-
-                    runningSum += item.Weight.Value;
+                    currentWeight += item.Weight;
                     allUnacknowledged.Add(item);
-                    empty = false;
                 }
-
-                batchIndex++;
-
-                if (empty)
+                else
                 {
-                    return allUnacknowledged;
+                    break;
                 }
             }
+
+            return allUnacknowledged;
         }
 
         public async Task AcknowledgeAsync(MarketOperator recipient, IEnumerable<Uuid> dataAvailableNotificationUuids)
@@ -171,6 +154,30 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                     .ReplaceItemAsync(updatedDocument, updatedDocument.Id)
                     .ConfigureAwait(false);
             }
+        }
+
+        private static async IAsyncEnumerable<DataAvailableNotification> ExecuteBatchAsync(IQueryable<CosmosDataAvailable> query)
+        {
+            const int batchSize = 10000;
+
+            var batchStart = 0;
+            bool canHaveMoreItems;
+
+            do
+            {
+                var nextBatchQuery = query.Skip(batchStart).Take(batchSize);
+                var returnedItems = 0;
+
+                await foreach (var item in ExecuteQueryAsync(nextBatchQuery).ConfigureAwait(false))
+                {
+                    yield return item;
+                    returnedItems++;
+                }
+
+                batchStart += batchSize;
+                canHaveMoreItems = returnedItems == batchSize;
+            }
+            while (canHaveMoreItems);
         }
 
         private static async IAsyncEnumerable<DataAvailableNotification> ExecuteQueryAsync(IQueryable<CosmosDataAvailable> query)

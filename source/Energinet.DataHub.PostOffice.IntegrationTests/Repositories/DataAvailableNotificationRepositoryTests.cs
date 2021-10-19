@@ -292,7 +292,6 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
         [Fact]
         public async Task GetNextUnacknowledgedAsync_LargeWeight_ReturnsAtLeastOneItem()
         {
-            // TODO: This test covers a case that never happens today. Either we remove test and change method name, or make method work with test.
             // Arrange
             await using var host = await SubDomainIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
             var scope = host.BeginScope();
@@ -323,7 +322,6 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
         [Fact]
         public async Task GetNextUnacknowledgedAsync_NoBundling_ReturnsAtLeastOneItem()
         {
-            // TODO: This test covers a case that never happens today. Either we remove test and change method name, or make method work with test.
             // Arrange
             await using var host = await SubDomainIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
             var scope = host.BeginScope();
