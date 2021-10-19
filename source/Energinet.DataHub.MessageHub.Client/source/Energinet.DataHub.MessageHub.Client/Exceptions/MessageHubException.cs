@@ -12,17 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using GreenEnergyHub.Messaging.Validation;
+using System;
 
-namespace Energinet.DataHub.PostOffice.Tests.Tooling
+namespace Energinet.DataHub.MessageHub.Client.Exceptions
 {
-    public static class RuleCollectionTester
+    public class MessageHubException : Exception
     {
-        public static RuleCollectionTester<TCollection, T> Create<TCollection, T>()
-            where TCollection : RuleCollection<T>, new()
+        public MessageHubException(string message)
+            : base(message)
         {
-            var collection = new TCollection();
-            return new RuleCollectionTester<TCollection, T>(collection);
+        }
+
+        public MessageHubException()
+        {
+        }
+
+        public MessageHubException(string message, Exception innerException)
+            : base(message, innerException)
+        {
         }
     }
 }
