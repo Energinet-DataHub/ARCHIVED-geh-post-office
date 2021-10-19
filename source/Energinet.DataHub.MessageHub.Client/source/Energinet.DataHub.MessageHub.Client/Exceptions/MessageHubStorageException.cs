@@ -12,23 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Energinet.DataHub.PostOffice.Application.Commands;
-using Energinet.DataHub.PostOffice.Application.Validation.Rules;
-using FluentValidation;
+using System;
 
-namespace Energinet.DataHub.PostOffice.Application.Validation
+namespace Energinet.DataHub.MessageHub.Client.Exceptions
 {
-    public sealed class PeekTimeSeriesCommandRuleSet : AbstractRuleSet<PeekTimeSeriesCommand>
+    public class MessageHubStorageException : Exception
     {
-        public PeekTimeSeriesCommandRuleSet()
+        public MessageHubStorageException(string message)
+            : base(message)
         {
-            RuleFor(command => command.MarketOperator)
-                .NotEmpty()
-                .SetValidator(new GlobalLocationNumberValidationRule());
+        }
 
-            RuleFor(command => command.BundleId)
-                .NotEmpty()
-                .SetValidator(new UuidValidationRule());
+        public MessageHubStorageException()
+        {
+        }
+
+        public MessageHubStorageException(string message, Exception innerException)
+            : base(message, innerException)
+        {
         }
     }
 }
