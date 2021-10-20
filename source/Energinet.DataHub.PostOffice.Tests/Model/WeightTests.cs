@@ -158,6 +158,26 @@ namespace Energinet.DataHub.PostOffice.Tests.Model
         }
 
         [Theory]
+        [InlineData(0, 0, false)]
+        [InlineData(1, 1, false)]
+        [InlineData(0, 1, true)]
+        [InlineData(1, 0, true)]
+        [InlineData(7, 5, true)]
+        [InlineData(5, 7, true)]
+        public void NotEqualsOperator_DoesComparison_ReturnsResult(int left, int right, bool result)
+        {
+            // Arrange
+            var leftWeight = new Weight(left);
+            var rightWeight = new Weight(right);
+
+            // Act
+            var actual = leftWeight != rightWeight;
+
+            // Assert
+            Assert.Equal(result, actual);
+        }
+
+        [Theory]
         [InlineData(0, 0, true)]
         [InlineData(1, 1, true)]
         [InlineData(0, 1, false)]
@@ -177,6 +197,19 @@ namespace Energinet.DataHub.PostOffice.Tests.Model
             // Assert
             Assert.Equal(result, actualA);
             Assert.Equal(result, actualB);
+        }
+
+        [Fact]
+        public void Equals_DoesNullComparison_ReturnsFalse()
+        {
+            // Arrange
+            var weight = new Weight(5);
+
+            // Act
+            var actual = weight.Equals(null);
+
+            // Assert
+            Assert.False(actual);
         }
 
         [Fact]
