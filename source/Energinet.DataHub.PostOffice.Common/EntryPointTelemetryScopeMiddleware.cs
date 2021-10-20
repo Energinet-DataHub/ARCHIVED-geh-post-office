@@ -35,8 +35,9 @@ namespace Energinet.DataHub.PostOffice.Common
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
 
-            if (context.BindingContext.BindingData.TryGetValue("bundleId", out var bundleIdParam)
-               && context.BindingContext.BindingData.TryGetValue("marketOperator", out var marketOperatorParam))
+            if (!string.IsNullOrWhiteSpace(_telemetryClient.TelemetryConfiguration.InstrumentationKey)
+                && context.BindingContext.BindingData.TryGetValue("bundleId", out var bundleIdParam)
+                && context.BindingContext.BindingData.TryGetValue("marketOperator", out var marketOperatorParam))
             {
                 var processId = string.Join("_", bundleIdParam, marketOperatorParam);
 

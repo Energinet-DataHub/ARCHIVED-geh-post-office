@@ -49,9 +49,8 @@ namespace Energinet.DataHub.PostOffice.Common
             services.AddSimpleInjector(Container, x => x.DisposeContainerWithServiceProvider = !true);
 
             // Add Application insights telemetry
-            services.AddApplicationInsightsTelemetryWorkerService(
-                Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY")
-                ?? throw new InvalidOperationException("Missing APPINSIGHTS_INSTRUMENTATIONKEY"));
+            var appInsightsInstrumentationKey = Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY") ?? string.Empty;
+            services.SetupApplicationInsightTelemetry(appInsightsInstrumentationKey);
 
             // config
             var config = services.BuildServiceProvider().GetService<IConfiguration>()!;
