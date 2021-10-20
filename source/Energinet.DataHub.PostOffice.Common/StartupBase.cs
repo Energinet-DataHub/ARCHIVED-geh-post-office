@@ -48,10 +48,6 @@ namespace Energinet.DataHub.PostOffice.Common
             services.AddLogging();
             services.AddSimpleInjector(Container, x => x.DisposeContainerWithServiceProvider = !true);
 
-            // Add Application insights telemetry
-            var appInsightsInstrumentationKey = Environment.GetEnvironmentVariable("APPINSIGHTS_INSTRUMENTATIONKEY") ?? string.Empty;
-            services.SetupApplicationInsightTelemetry(appInsightsInstrumentationKey);
-
             // config
             var config = services.BuildServiceProvider().GetService<IConfiguration>()!;
             Container.RegisterSingleton(() => config);
@@ -59,6 +55,9 @@ namespace Energinet.DataHub.PostOffice.Common
             Container.AddServiceBusConfig();
             Container.AddCosmosClientBuilder(false);
             Container.AddServiceBus();
+
+            // Add Application insights telemetry
+            services.SetupApplicationInsightTelemetry(config);
 
             // services
             Container.AddRepositories();

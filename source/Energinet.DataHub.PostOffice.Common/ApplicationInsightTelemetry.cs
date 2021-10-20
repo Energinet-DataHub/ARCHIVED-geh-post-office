@@ -12,14 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Energinet.DataHub.PostOffice.Common
 {
     internal static class ApplicationInsightTelemetry
     {
-        public static void SetupApplicationInsightTelemetry(this IServiceCollection services, string appInsightsInstrumentationKey = "")
+        public static void SetupApplicationInsightTelemetry(this IServiceCollection services, IConfiguration configuration)
         {
+            var appInsightsInstrumentationKey = configuration["APPINSIGHTS_INSTRUMENTATIONKEY"] ?? string.Empty;
+
             var appInsightsServiceOptions = new Microsoft.ApplicationInsights.WorkerService.ApplicationInsightsServiceOptions
             {
                 InstrumentationKey = appInsightsInstrumentationKey,
