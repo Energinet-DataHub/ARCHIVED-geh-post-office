@@ -12,15 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.MessageHub.Client.IntegrationEvents
+using Azure.Storage.Blobs;
+
+namespace Energinet.DataHub.MessageHub.Core.Factories
 {
-    // todo delete when package refed
-    internal enum IntegrationEventsMessageType
+    /// <summary>
+    /// Factory creating a new <see cref="BlobServiceClient"/>
+    /// </summary>
+    public interface IStorageServiceClientFactory
     {
-        None = 0,
-        Dequeue = 1,
-        RequestDataBundle = 2,
-        DataBundleResponse = 3,
-        DataAvailable = 4
+        /// <summary>
+        /// Create a new <see cref="BlobServiceClient"/>
+        /// </summary>
+        /// <returns><see cref="BlobServiceClient"/></returns>
+        public BlobServiceClient Create();
     }
 }

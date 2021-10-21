@@ -17,11 +17,10 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Azure;
-using Energinet.DataHub.MessageHub.Client.Exceptions;
-using Energinet.DataHub.MessageHub.Client.Factories;
-using Energinet.DataHub.MessageHub.Client.Model;
+using Energinet.DataHub.MessageHub.Core.Exceptions;
+using Energinet.DataHub.MessageHub.Core.Factories;
 
-namespace Energinet.DataHub.MessageHub.Client.Storage
+namespace Energinet.DataHub.MessageHub.Core.Storage
 {
     public class StorageHandler : IStorageHandler
     {
@@ -34,34 +33,6 @@ namespace Energinet.DataHub.MessageHub.Client.Storage
             _storageConfig = storageConfig;
         }
 
-        // subdomaener
-        public async Task<Uri> AddStreamToStorageAsync(Stream stream, DataBundleRequestDto requestDto)
-        {
-            if (requestDto is null)
-                throw new ArgumentNullException(nameof(requestDto));
-
-            if (stream is not { Length: > 0 })
-            {
-                throw new ArgumentException($"{nameof(stream)} must be not null and have content", nameof(stream));
-            }
-
-            try
-            {
-                var storageClient = _storageServiceClientFactory.Create();
-                var containerClient = storageClient.GetBlobContainerClient(_storageConfig.AzureBlobStorageContainerName);
-                var blobName = requestDto.IdempotencyId;
-                var blobClient = containerClient.GetBlobClient(blobName);
-                await blobClient.UploadAsync(stream, true).ConfigureAwait(false);
-                var blobUri = blobClient.Uri;
-                return blobUri;
-            }
-            catch (RequestFailedException e)
-            {
-                throw new MessageHubStorageException("Error uploading file to storage", e);
-            }
-        }
-
-        // core
         public async Task<Stream> GetStreamFromStorageAsync(Uri contentPath)
         {
             try

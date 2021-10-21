@@ -12,15 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.MessageHub.Client.IntegrationEvents
+namespace Energinet.DataHub.MessageHub.Model.Model
 {
-    // todo delete when package refed
-    internal enum IntegrationEventsMessageType
+    public enum DataBundleResponseErrorReason
     {
-        None = 0,
-        Dequeue = 1,
-        RequestDataBundle = 2,
-        DataBundleResponse = 3,
-        DataAvailable = 4
+        DatasetNotFound = 0, // Dataset was not found
+        DatasetNotAvailable = 1, // Data found, but not ready yet - try again later
+        InternalError = 15
     }
 }

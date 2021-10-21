@@ -12,15 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.MessageHub.Client.IntegrationEvents
+using System;
+
+namespace Energinet.DataHub.MessageHub.Core.Exceptions
 {
     // todo delete when package refed
-    internal enum IntegrationEventsMessageType
+    public class MessageHubException : Exception
     {
-        None = 0,
-        Dequeue = 1,
-        RequestDataBundle = 2,
-        DataBundleResponse = 3,
-        DataAvailable = 4
+        public MessageHubException(string message)
+            : base(message)
+        {
+        }
+
+        public MessageHubException()
+        {
+        }
+
+        public MessageHubException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
     }
 }

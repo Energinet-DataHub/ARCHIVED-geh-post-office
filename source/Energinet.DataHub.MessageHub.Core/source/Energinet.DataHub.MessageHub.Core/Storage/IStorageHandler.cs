@@ -12,15 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.MessageHub.Client.IntegrationEvents
+using System;
+using System.IO;
+using System.Threading.Tasks;
+
+namespace Energinet.DataHub.MessageHub.Core.Storage
 {
-    // todo delete when package refed
-    internal enum IntegrationEventsMessageType
+    /// <summary>
+    /// Handles storing file data from the SubDomains
+    /// </summary>
+    public interface IStorageHandler
     {
-        None = 0,
-        Dequeue = 1,
-        RequestDataBundle = 2,
-        DataBundleResponse = 3,
-        DataAvailable = 4
+        /// <summary>
+        /// Retrieves a stream from the storage
+        /// </summary>
+        /// <param name="contentPath">The uri to the content in storage</param>
+        /// <returns>A Stream to the contents in storage</returns>
+        Task<Stream> GetStreamFromStorageAsync(Uri contentPath);
     }
 }

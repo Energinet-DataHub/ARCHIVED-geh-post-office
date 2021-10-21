@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.MessageHub.Client.IntegrationEvents
+namespace Energinet.DataHub.MessageHub.Core.IntegrationEvents
 {
     // todo delete when package refed
     internal enum IntegrationEventsMessageType

@@ -15,7 +15,7 @@
 using System;
 
     // todo delete when package refed
-namespace Energinet.DataHub.MessageHub.Client.Model
+namespace Energinet.DataHub.MessageHub.Core.Model
 {
     /// <summary>
     /// Specifies which data is available for consumption by a market operator.

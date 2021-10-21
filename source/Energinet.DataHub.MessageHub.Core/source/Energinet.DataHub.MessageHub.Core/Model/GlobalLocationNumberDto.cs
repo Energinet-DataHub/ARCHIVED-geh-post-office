@@ -12,15 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.MessageHub.Client.IntegrationEvents
+namespace Energinet.DataHub.MessageHub.Core.Model
 {
-    // todo delete when package refed
-    internal enum IntegrationEventsMessageType
-    {
-        None = 0,
-        Dequeue = 1,
-        RequestDataBundle = 2,
-        DataBundleResponse = 3,
-        DataAvailable = 4
-    }
+    public record GlobalLocationNumberDto(string Value);
 }
