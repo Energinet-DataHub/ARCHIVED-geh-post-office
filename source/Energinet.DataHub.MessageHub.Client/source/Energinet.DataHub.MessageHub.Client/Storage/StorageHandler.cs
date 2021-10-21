@@ -17,9 +17,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Azure;
-using Energinet.DataHub.MessageHub.Client.Exceptions;
 using Energinet.DataHub.MessageHub.Client.Factories;
-using Energinet.DataHub.MessageHub.Client.Model;
+using Energinet.DataHub.MessageHub.Model.Exceptions;
+using Energinet.DataHub.MessageHub.Model.Model;
 
 namespace Energinet.DataHub.MessageHub.Client.Storage
 {

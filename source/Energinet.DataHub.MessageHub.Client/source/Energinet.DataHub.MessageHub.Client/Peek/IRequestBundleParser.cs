@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Energinet.DataHub.MessageHub.Client.Exceptions;
-using Energinet.DataHub.MessageHub.Client.Model;
+using Energinet.DataHub.MessageHub.Model.Exceptions;
+using Energinet.DataHub.MessageHub.Model.Model;
 
 namespace Energinet.DataHub.MessageHub.Client.Peek
 {

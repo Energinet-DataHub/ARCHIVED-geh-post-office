@@ -67,6 +67,7 @@ https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energine
   <ItemGroup>
     <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.3.0" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.10.0" />
+    <PackageReference Include="Energinet.DataHub.MessageHub.Model" Version="1.0.0-alpha-20211021T134923" GeneratePathProperty="true" />
     <PackageReference Include="Google.Protobuf" Version="3.18.0" />
     <PackageReference Include="Grpc.Tools" Version="2.41.0">
       <PrivateAssets>all</PrivateAssets>
@@ -76,43 +77,11 @@ https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energine
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Protobuf\DataAvailableNotificationContract.proto" />
+    <Protobuf Include="*.proto" AdditionalImportDirs="$(Energinet_DataHub_MessageHub_Model)\Protobuf" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Protobuf Include="Protobuf\DataAvailableNotificationContract.proto">
-      <GrpcServices>None</GrpcServices>
-      <Access>Internal</Access>
-      <ProtoCompile>True</ProtoCompile>
-      <CompileOutputs>True</CompileOutputs>
-      <OutputDir>obj\Debug\net5.0\</OutputDir>
-      <Generator>MSBuild:Compile</Generator>
-    </Protobuf>
-    <Protobuf Include="Protobuf\DataBundleRequestContract.proto">
-      <GrpcServices>None</GrpcServices>
-      <Access>Public</Access>
-      <ProtoCompile>True</ProtoCompile>
-      <CompileOutputs>True</CompileOutputs>
-      <OutputDir>obj\Debug\net5.0\</OutputDir>
-      <Generator>MSBuild:Compile</Generator>
-    </Protobuf>
-    <Protobuf Include="Protobuf\DataBundleResponseContract.proto">
-      <GrpcServices>None</GrpcServices>
-      <Access>Public</Access>
-      <ProtoCompile>True</ProtoCompile>
-      <CompileOutputs>True</CompileOutputs>
-      <OutputDir>obj\Debug\net5.0\</OutputDir>
-      <Generator>MSBuild:Compile</Generator>
-    </Protobuf>
-    <Protobuf Include="Protobuf\DequeueContract.proto">
-      <GrpcServices>None</GrpcServices>
-      <Access>Internal</Access>
-      <ProtoCompile>True</ProtoCompile>
-      <CompileOutputs>True</CompileOutputs>
-      <OutputDir>obj\Debug\net5.0\</OutputDir>
-      <Generator>MSBuild:Compile</Generator>
-    </Protobuf>
-  </ItemGroup>
-
+  
+<!--  <ItemGroup>-->
+<!--    <Protobuf Include="$(Energinet_DataHub_MessageHub_Model)/*.proto" />-->
+<!--  </ItemGroup>-->
 
 </Project>

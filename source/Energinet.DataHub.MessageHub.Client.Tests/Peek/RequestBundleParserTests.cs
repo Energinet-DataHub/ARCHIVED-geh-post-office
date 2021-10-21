@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Energinet.DataHub.MessageHub.Client.Exceptions;
 using Energinet.DataHub.MessageHub.Client.Peek;
-using Energinet.DataHub.MessageHub.Client.Protobuf;
+using Energinet.DataHub.MessageHub.Model.Exceptions;
+using Energinet.DataHub.MessageHub.Model.Protobuf;
 using Google.Protobuf;
 using Xunit;
 using Xunit.Categories;

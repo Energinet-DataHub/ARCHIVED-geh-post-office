@@ -16,10 +16,10 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
-using Energinet.DataHub.MessageHub.Client.Protobuf;
 using Energinet.DataHub.MessageHub.Core.Extensions;
 using Energinet.DataHub.MessageHub.Core.Factories;
-using Energinet.DataHub.MessageHub.Core.Model;
+using Energinet.DataHub.MessageHub.Model.Model;
+using Energinet.DataHub.MessageHub.Model.Protobuf;
 using Google.Protobuf;
 
 namespace Energinet.DataHub.MessageHub.Core.Dequeue

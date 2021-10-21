@@ -14,7 +14,7 @@
 
 using System;
 using Azure.Messaging.ServiceBus;
-using Energinet.DataHub.MessageHub.Client.IntegrationEvents;
+using Energinet.DataHub.MessageHub.Model.IntegrationEvents;
 using static System.DateTimeOffset;
 using static System.Guid;
 

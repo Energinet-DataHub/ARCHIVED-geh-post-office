@@ -13,10 +13,10 @@
 // limitations under the License.
 
 using System;
-using Energinet.DataHub.MessageHub.Client.Exceptions;
-using Energinet.DataHub.MessageHub.Client.Model;
 using Energinet.DataHub.MessageHub.Client.Peek;
-using Energinet.DataHub.MessageHub.Client.Protobuf;
+using Energinet.DataHub.MessageHub.Model.Exceptions;
+using Energinet.DataHub.MessageHub.Model.Model;
+using Energinet.DataHub.MessageHub.Model.Protobuf;
 using Google.Protobuf;
 using Xunit;
 using Xunit.Categories;

@@ -14,8 +14,8 @@
 
 using System;
 using System.Collections.Generic;
-using Energinet.DataHub.MessageHub.Client.Extensions;
-using Energinet.DataHub.MessageHub.Client.Model;
+using Energinet.DataHub.MessageHub.Model.Extensions;
+using Energinet.DataHub.MessageHub.Model.Model;
 using Xunit;
 using Xunit.Categories;
 

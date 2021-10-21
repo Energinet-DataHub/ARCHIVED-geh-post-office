@@ -14,7 +14,7 @@
 
 using System;
 using System.Linq;
-using Energinet.DataHub.MessageHub.Client.Exceptions;
+using Energinet.DataHub.MessageHub.Model.Exceptions;
 using Xunit;
 using Xunit.Categories;
 
