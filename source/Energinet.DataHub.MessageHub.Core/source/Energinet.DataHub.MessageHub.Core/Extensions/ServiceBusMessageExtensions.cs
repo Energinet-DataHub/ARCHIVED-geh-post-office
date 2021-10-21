@@ -14,7 +14,7 @@
 
 using System;
 using Azure.Messaging.ServiceBus;
-using Energinet.DataHub.MessageHub.Core.IntegrationEvents;
+using Energinet.DataHub.MessageHub.Model.IntegrationEvents;
 using static System.DateTimeOffset;
 using static System.Guid;
 
@@ -35,22 +35,6 @@ namespace Energinet.DataHub.MessageHub.Core.Extensions
             return serviceBusMessage.AddIntegrationsEvents(
                 operationCorrelationId,
                 IntegrationEventsMessageType.RequestDataBundle,
-                NewGuid().ToString());
-        }
-
-        public static ServiceBusMessage AddDataBundleResponseIntegrationEvents(this ServiceBusMessage serviceBusMessage, string operationCorrelationId)
-        {
-            return serviceBusMessage.AddIntegrationsEvents(
-                operationCorrelationId,
-                IntegrationEventsMessageType.DataBundleResponse,
-                NewGuid().ToString());
-        }
-
-        public static ServiceBusMessage AddDataAvailableIntegrationEvents(this ServiceBusMessage serviceBusMessage, string operationCorrelationId)
-        {
-            return serviceBusMessage.AddIntegrationsEvents(
-                operationCorrelationId,
-                IntegrationEventsMessageType.DataAvailable,
                 NewGuid().ToString());
         }
 

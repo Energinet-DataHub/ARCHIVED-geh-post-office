@@ -18,6 +18,7 @@ using Azure.Messaging.ServiceBus;
 using Energinet.DataHub.MessageHub.Client.Extensions;
 using Energinet.DataHub.MessageHub.Client.Factories;
 using Energinet.DataHub.MessageHub.Model.Model;
+using Energinet.DataHub.MessageHub.Model.Peek;
 
 namespace Energinet.DataHub.MessageHub.Client.Peek
 {

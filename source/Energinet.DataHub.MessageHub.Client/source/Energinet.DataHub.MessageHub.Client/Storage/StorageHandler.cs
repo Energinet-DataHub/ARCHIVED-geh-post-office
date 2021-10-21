@@ -34,7 +34,6 @@ namespace Energinet.DataHub.MessageHub.Client.Storage
             _storageConfig = storageConfig;
         }
 
-        // subdomaener
         public async Task<Uri> AddStreamToStorageAsync(Stream stream, DataBundleRequestDto requestDto)
         {
             if (requestDto is null)
@@ -61,7 +60,7 @@ namespace Energinet.DataHub.MessageHub.Client.Storage
             }
         }
 
-        // core
+        // todo remove this when tests rewritten
         public async Task<Stream> GetStreamFromStorageAsync(Uri contentPath)
         {
             try

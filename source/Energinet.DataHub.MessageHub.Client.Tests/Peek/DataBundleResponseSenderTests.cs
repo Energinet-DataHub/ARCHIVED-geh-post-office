@@ -18,6 +18,7 @@ using Azure.Messaging.ServiceBus;
 using Energinet.DataHub.MessageHub.Client.Factories;
 using Energinet.DataHub.MessageHub.Client.Peek;
 using Energinet.DataHub.MessageHub.Model.Model;
+using Energinet.DataHub.MessageHub.Model.Peek;
 using Moq;
 using Xunit;
 using Xunit.Categories;
