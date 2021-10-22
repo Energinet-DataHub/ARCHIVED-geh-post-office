@@ -12,12 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Runtime.CompilerServices;
+using System;
 
-[assembly: InternalsVisibleTo("Energinet.DataHub.PostOffice.IntegrationTests")]
-[assembly: InternalsVisibleTo("Energinet.DataHub.PostOffice.Tests")]
-[assembly: InternalsVisibleTo("Energinet.DataHub.MessageHub.Core")]
-[assembly: InternalsVisibleTo("Energinet.DataHub.MessageHub.Core.Tests")]
-[assembly: InternalsVisibleTo("Energinet.DataHub.MessageHub.Client")]
-[assembly: InternalsVisibleTo("Energinet.DataHub.MessageHub.Client.Tests")]
-[assembly: InternalsVisibleTo("Energinet.DataHub.MessageHub.Model.Tests")]
+[assembly:CLSCompliant(false)]

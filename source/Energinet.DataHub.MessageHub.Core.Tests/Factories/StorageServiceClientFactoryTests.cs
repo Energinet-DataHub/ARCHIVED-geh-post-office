@@ -12,12 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Runtime.CompilerServices;
+using Energinet.DataHub.MessageHub.Core.Factories;
+using Xunit;
 
-[assembly: InternalsVisibleTo("Energinet.DataHub.PostOffice.IntegrationTests")]
-[assembly: InternalsVisibleTo("Energinet.DataHub.PostOffice.Tests")]
-[assembly: InternalsVisibleTo("Energinet.DataHub.MessageHub.Core")]
-[assembly: InternalsVisibleTo("Energinet.DataHub.MessageHub.Core.Tests")]
-[assembly: InternalsVisibleTo("Energinet.DataHub.MessageHub.Client")]
-[assembly: InternalsVisibleTo("Energinet.DataHub.MessageHub.Client.Tests")]
-[assembly: InternalsVisibleTo("Energinet.DataHub.MessageHub.Model.Tests")]
+namespace Energinet.DataHub.MessageHub.Core.Tests.Factories
+{
+    public sealed class StorageServiceClientFactoryTests
+    {
+        [Fact]
+        public void Create_ReturnsBlobServiceClient()
+        {
+            // arrange
+            var target = new StorageServiceClientFactory("DefaultEndpointsProtocol=https;AccountName=test;AccountKey=test;EndpointSuffix=core.windows.net");
+
+            // act
+            var actual = target.Create();
+
+            // assert
+            Assert.NotNull(actual);
+        }
+    }
+}

@@ -21,7 +21,7 @@ using Google.Protobuf;
 using Xunit;
 using Xunit.Categories;
 
-namespace Energinet.DataHub.MessageHub.Client.Tests.Peek
+namespace Energinet.DataHub.MessageHub.Model.Tests.Peek
 {
     [UnitTest]
     public class ResponseBundleParserTests

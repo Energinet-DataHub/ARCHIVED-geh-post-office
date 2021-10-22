@@ -12,16 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using Energinet.DataHub.MessageHub.Model.Dequeue;
 using Energinet.DataHub.MessageHub.Model.Exceptions;
-using Energinet.DataHub.MessageHub.Model.Model;
+using Energinet.DataHub.MessageHub.Model.Peek;
 using Energinet.DataHub.MessageHub.Model.Protobuf;
 using Google.Protobuf;
 using Xunit;
 using Xunit.Categories;
 
-namespace Energinet.DataHub.MessageHub.Client.Tests.Dequeue
+namespace Energinet.DataHub.MessageHub.Model.Tests.Peek
 {
     [UnitTest]
     public class RequestBundleParserTests
@@ -30,10 +28,10 @@ namespace Energinet.DataHub.MessageHub.Client.Tests.Dequeue
         public void Parse_BytesValid_Returns_Valid_Object()
         {
             // arrange
-            var target = new DequeueNotificationParser();
-            var validBytes = new DequeueContract
+            var target = new RequestBundleParser();
+            var validBytes = new DataBundleRequestContract
             {
-                MarketOperator = "06FD1AB3-D650-45BC-860E-EE598A3623CA",
+                IdempotencyId = "06FD1AB3-D650-45BC-860E-EE598A3623CA",
                 DataAvailableNotificationIds = { "1360036D-2AFB-4021-846E-2C3FF5AD8DBD" }
             }.ToByteArray();
 
@@ -42,34 +40,18 @@ namespace Energinet.DataHub.MessageHub.Client.Tests.Dequeue
 
             // assert
             Assert.NotNull(actual);
-            Assert.Equal("06FD1AB3-D650-45BC-860E-EE598A3623CA", actual.MarketOperator.Value);
+            Assert.Equal("06FD1AB3-D650-45BC-860E-EE598A3623CA", actual.IdempotencyId);
         }
 
         [Fact]
         public void Parse_BytesInvalid_Throws_Exception()
         {
             // arrange
-            var target = new DequeueNotificationParser();
+            var target = new RequestBundleParser();
             var corruptBytes = new byte[] { 1, 2, 3 };
 
             // act, assert
             Assert.Throws<MessageHubException>(() => target.Parse(corruptBytes));
-        }
-
-        [Fact]
-        public void Parse_ValidObject_Returns_Bytes()
-        {
-            // arrange
-            var target = new DequeueNotificationParser();
-            var valid = new DequeueNotificationDto(
-                new[] { Guid.NewGuid(), Guid.NewGuid() },
-                new GlobalLocationNumberDto("test"));
-
-            // act
-            var actual = target.Parse(valid);
-
-            // assert
-            Assert.NotNull(actual);
         }
     }
 }

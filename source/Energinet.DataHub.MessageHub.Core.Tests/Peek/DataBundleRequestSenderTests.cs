@@ -15,8 +15,8 @@
 using System;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
-using Energinet.DataHub.MessageHub.Client.Factories;
-using Energinet.DataHub.MessageHub.Client.Peek;
+using Energinet.DataHub.MessageHub.Core.Factories;
+using Energinet.DataHub.MessageHub.Core.Peek;
 using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.MessageHub.Model.Peek;
 using Energinet.DataHub.MessageHub.Model.Protobuf;
@@ -25,7 +25,7 @@ using Moq;
 using Xunit;
 using Xunit.Categories;
 
-namespace Energinet.DataHub.MessageHub.Client.Tests.Peek
+namespace Energinet.DataHub.MessageHub.Core.Tests.Peek
 {
     [UnitTest]
     public class DataBundleRequestSenderTests

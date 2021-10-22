@@ -32,12 +32,5 @@ namespace Energinet.DataHub.MessageHub.Client.Storage
         /// <param name="requestDto">THe domain that is sending the data</param>
         /// <returns>A string containing the path of the stored file</returns>
         Task<Uri> AddStreamToStorageAsync(Stream stream, DataBundleRequestDto requestDto);
-
-        /// <summary>
-        /// Retrieves a stream from the storage
-        /// </summary>
-        /// <param name="contentPath">The uri to the content in storage</param>
-        /// <returns>A Stream to the contents in storage</returns>
-        Task<Stream> GetStreamFromStorageAsync(Uri contentPath);
     }
 }

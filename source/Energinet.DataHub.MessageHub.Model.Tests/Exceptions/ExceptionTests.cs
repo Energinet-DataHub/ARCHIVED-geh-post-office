@@ -18,7 +18,7 @@ using Energinet.DataHub.MessageHub.Model.Exceptions;
 using Xunit;
 using Xunit.Categories;
 
-namespace Energinet.DataHub.MessageHub.Client.Tests.Exceptions
+namespace Energinet.DataHub.MessageHub.Model.Tests.Exceptions
 {
     [UnitTest]
     public class ExceptionTests

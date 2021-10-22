@@ -19,7 +19,7 @@ using Energinet.DataHub.MessageHub.Model.Model;
 using Xunit;
 using Xunit.Categories;
 
-namespace Energinet.DataHub.MessageHub.Client.Tests.Model
+namespace Energinet.DataHub.MessageHub.Model.Tests.Model
 {
     [UnitTest]
     public class DataBundleRequestDtoExtensionsTests

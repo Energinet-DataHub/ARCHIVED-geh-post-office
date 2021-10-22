@@ -22,22 +22,6 @@ namespace Energinet.DataHub.MessageHub.Client.Extensions
 {
     internal static class ServiceBusMessageExtensions
     {
-        public static ServiceBusMessage AddDequeueIntegrationEvents(this ServiceBusMessage serviceBusMessage)
-        {
-            return serviceBusMessage.AddIntegrationsEvents(
-                NewGuid().ToString(),
-                IntegrationEventsMessageType.Dequeue,
-                NewGuid().ToString());
-        }
-
-        public static ServiceBusMessage AddRequestDataBundleIntegrationEvents(this ServiceBusMessage serviceBusMessage, string operationCorrelationId)
-        {
-            return serviceBusMessage.AddIntegrationsEvents(
-                operationCorrelationId,
-                IntegrationEventsMessageType.RequestDataBundle,
-                NewGuid().ToString());
-        }
-
         public static ServiceBusMessage AddDataBundleResponseIntegrationEvents(this ServiceBusMessage serviceBusMessage, string operationCorrelationId)
         {
             return serviceBusMessage.AddIntegrationsEvents(

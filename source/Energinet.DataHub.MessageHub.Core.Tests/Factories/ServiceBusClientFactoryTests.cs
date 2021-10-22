@@ -12,17 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.MessageHub.Client
+using Energinet.DataHub.MessageHub.Core.Factories;
+using Xunit;
+
+namespace Energinet.DataHub.MessageHub.Core.Tests.Factories
 {
-    public record PeekRequestConfig(
-        string TimeSeriesQueue,
-        string TimeSeriesReplyQueue,
-        string ChargesQueue,
-        string ChargesReplyQueue,
-        string MarketRolesQueue,
-        string MarketRolesReplyQueue,
-        string MeteringPointsQueue,
-        string MeteringPointsReplyQueue,
-        string AggregationsQueue,
-        string AggregationsReplyQueue);
+    public sealed class ServiceBusClientFactoryTests
+    {
+        [Fact]
+        public void Create_ReturnsServiceBusClient()
+        {
+            // arrange
+            var target = new ServiceBusClientFactory("Endpoint=sb://sbn-postoffice.servicebus.windows.net/;SharedAccessKeyName=Hello;SharedAccessKey=there");
+
+            // act
+            var actual = target.Create();
+
+            // assert
+            Assert.NotNull(actual);
+        }
+    }
 }

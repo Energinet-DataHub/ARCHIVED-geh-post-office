@@ -15,14 +15,14 @@
 using System;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
-using Energinet.DataHub.MessageHub.Client.Dequeue;
-using Energinet.DataHub.MessageHub.Client.Factories;
+using Energinet.DataHub.MessageHub.Core.Dequeue;
+using Energinet.DataHub.MessageHub.Core.Factories;
 using Energinet.DataHub.MessageHub.Model.Model;
 using Moq;
 using Xunit;
 using Xunit.Categories;
 
-namespace Energinet.DataHub.MessageHub.Client.Tests.Dequeue
+namespace Energinet.DataHub.MessageHub.Core.Tests.Dequeue
 {
     [UnitTest]
     public class DequeueNotificationSenderTests
