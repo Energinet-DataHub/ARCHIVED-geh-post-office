@@ -21,6 +21,7 @@ using Energinet.DataHub.PostOffice.Domain.Repositories;
 using Energinet.DataHub.PostOffice.Infrastructure.Common;
 using Energinet.DataHub.PostOffice.Infrastructure.Documents;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
+using Microsoft.Azure.Cosmos;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 {
@@ -115,6 +116,11 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             {
                 if (allUnacknowledged.Count == 0 || (currentWeight + item.Weight <= maxWeight && item.SupportsBundling.Value))
                 {
+                    // TODO: Bundles are limited to 800 * 296 guids ~ 231,25 KB until
+                    // issue with ServiceBus message size is resolved.
+                    if (allUnacknowledged.Count == 800)
+                        break;
+
                     currentWeight += item.Weight;
                     allUnacknowledged.Add(item);
                 }
@@ -147,12 +153,44 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 where dataAvailable.Recipient == recipient.Gln.Value && stringIds.Contains(dataAvailable.Id)
                 select dataAvailable;
 
+            TransactionalBatch? batch = null;
+            var partitionKey = new PartitionKey(recipient.Gln.Value);
+            var batchSize = 0;
+
             await foreach (var document in query.AsCosmosIteratorAsync().ConfigureAwait(false))
             {
                 var updatedDocument = document with { Acknowledge = true };
-                await container
-                    .ReplaceItemAsync(updatedDocument, updatedDocument.Id)
-                    .ConfigureAwait(false);
+
+                batch ??= container.CreateTransactionalBatch(partitionKey);
+                batch.ReplaceItem(updatedDocument.Id, updatedDocument);
+
+                batchSize++;
+
+                // Microsoft decided on an arbitrary batch limit of 100.
+                if (batchSize == 100)
+                {
+                    using var innerResult = await batch.ExecuteAsync().ConfigureAwait(false);
+
+                    // As written in docs, _this_ API does not throw exceptions and has to be checked.
+                    if (!innerResult.IsSuccessStatusCode)
+                    {
+                        throw new InvalidOperationException(innerResult.ErrorMessage);
+                    }
+
+                    batch = null;
+                    batchSize = 0;
+                }
+            }
+
+            if (batch != null)
+            {
+                using var outerResult = await batch.ExecuteAsync().ConfigureAwait(false);
+
+                // As written in docs, _this_ API does not throw exceptions and has to be checked.
+                if (!outerResult.IsSuccessStatusCode)
+                {
+                    throw new InvalidOperationException(outerResult.ErrorMessage);
+                }
             }
         }
 
