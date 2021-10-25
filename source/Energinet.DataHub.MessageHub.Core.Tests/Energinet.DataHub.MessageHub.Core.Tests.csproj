@@ -37,7 +37,6 @@ limitations under the License.
 
   <ItemGroup>
     <ProjectReference Include="..\Energinet.DataHub.MessageHub.Core\source\Energinet.DataHub.MessageHub.Core\Energinet.DataHub.MessageHub.Core.csproj" />
-    <ProjectReference Include="..\Energinet.DataHub.MessageHub.Model\source\Energinet.DataHub.MessageHub.Model\Energinet.DataHub.MessageHub.Model.csproj" />
   </ItemGroup>
 
 </Project>
