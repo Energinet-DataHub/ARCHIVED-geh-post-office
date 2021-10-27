@@ -24,10 +24,9 @@ using Google.Protobuf;
 
 namespace Energinet.DataHub.MessageHub.Core.Dequeue
 {
-    public sealed class DequeueNotificationSender : IDequeueNotificationSender, IAsyncDisposable
+    public sealed class DequeueNotificationSender : IDequeueNotificationSender
     {
         private readonly IServiceBusClientFactory _serviceBusClientFactory;
-        private ServiceBusClient? _serviceBusClient;
 
         public DequeueNotificationSender(IServiceBusClientFactory serviceBusClientFactory)
         {
@@ -39,8 +38,7 @@ namespace Energinet.DataHub.MessageHub.Core.Dequeue
             if (dequeueNotificationDto is null)
                 throw new ArgumentNullException(nameof(dequeueNotificationDto));
 
-            _serviceBusClient ??= _serviceBusClientFactory.Create();
-            await using var sender = _serviceBusClient.CreateSender($"sbq-{domainOrigin}-dequeue");
+            var serviceBusSender = _serviceBusClientFactory.CreateSender($"sbq-{domainOrigin}-dequeue");
 
             var contract = new DequeueContract
             {
@@ -49,16 +47,7 @@ namespace Energinet.DataHub.MessageHub.Core.Dequeue
             };
 
             var dequeueMessage = new ServiceBusMessage(new BinaryData(contract.ToByteArray())).AddDequeueIntegrationEvents();
-            await sender.SendMessageAsync(dequeueMessage).ConfigureAwait(false);
-        }
-
-        public async ValueTask DisposeAsync()
-        {
-            if (_serviceBusClient != null)
-            {
-                await _serviceBusClient.DisposeAsync().ConfigureAwait(false);
-                _serviceBusClient = null;
-            }
+            await serviceBusSender.PublishMessageAsync<ServiceBusMessage>(dequeueMessage).ConfigureAwait(false);
         }
     }
 }

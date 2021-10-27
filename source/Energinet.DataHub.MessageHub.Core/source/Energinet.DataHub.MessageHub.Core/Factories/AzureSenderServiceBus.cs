@@ -17,25 +17,23 @@ using Azure.Messaging.ServiceBus;
 
 namespace Energinet.DataHub.MessageHub.Core.Factories
 {
-    public sealed class ServiceBusClientFactory : IServiceBusClientFactory
+    public sealed class AzureSenderServiceBus : ISenderMessageBus
     {
-        private readonly string _connectionString;
-        private readonly IMessageBusFactory _messageBusFactory;
+        private readonly ServiceBusSender _serviceBusSender;
 
-        public ServiceBusClientFactory(string connectionString, IMessageBusFactory messageBusFactory)
+        internal AzureSenderServiceBus(ServiceBusSender serviceBusSender)
         {
-            _connectionString = connectionString;
-            _messageBusFactory = messageBusFactory;
+            _serviceBusSender = serviceBusSender;
         }
 
-        public ISenderMessageBus CreateSender(string queueOrTopicName)
+        public async Task PublishMessageAsync<T>(ServiceBusMessage serviceBusMessage)
         {
-            return _messageBusFactory.GetSenderClient(_connectionString, queueOrTopicName);
+            await _serviceBusSender.SendMessageAsync(serviceBusMessage).ConfigureAwait(false);
         }
 
-        public Task<AzureSessionReceiverServiceBus> CreateSessionReceiverAsync(string queueOrTopicName, string sessionId)
+        internal static ISenderMessageBus Create(ServiceBusSender sender)
         {
-            return _messageBusFactory.GetSessionReceiverClientAsync(_connectionString, queueOrTopicName, sessionId);
+            return new AzureSenderServiceBus(sender);
         }
     }
 }

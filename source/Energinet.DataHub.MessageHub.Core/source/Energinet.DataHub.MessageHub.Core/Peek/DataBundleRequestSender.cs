@@ -29,7 +29,7 @@ namespace Energinet.DataHub.MessageHub.Core.Peek
         private readonly IServiceBusClientFactory _serviceBusClientFactory;
         private readonly PeekRequestConfig _peekRequestConfig;
         private readonly TimeSpan _defaultTimeout = TimeSpan.FromSeconds(30);
-        private ServiceBusClient? _serviceBusClient;
+        private AzureSessionReceiverServiceBus? _receiverMessageBus;
 
         public DataBundleRequestSender(
             IRequestBundleParser requestBundleParser,
@@ -45,10 +45,10 @@ namespace Energinet.DataHub.MessageHub.Core.Peek
 
         public async ValueTask DisposeAsync()
         {
-            if (_serviceBusClient != null)
+            if (_receiverMessageBus != null)
             {
-                await _serviceBusClient.DisposeAsync().ConfigureAwait(false);
-                _serviceBusClient = null;
+                await _receiverMessageBus.DisposeAsync().ConfigureAwait(false);
+                _receiverMessageBus = null;
             }
         }
 
@@ -72,16 +72,17 @@ namespace Energinet.DataHub.MessageHub.Core.Peek
                 ReplyTo = replyQueue
             }.AddRequestDataBundleIntegrationEvents(dataBundleRequestDto.IdempotencyId);
 
-            _serviceBusClient ??= _serviceBusClientFactory.Create();
+            var serviceBusClient = _serviceBusClientFactory.CreateSender(targetQueue);
 
-            await using var sender = _serviceBusClient.CreateSender(targetQueue);
-            await sender.SendMessageAsync(serviceBusMessage).ConfigureAwait(false);
-
-            await using var receiver = await _serviceBusClient
-                .AcceptSessionAsync(replyQueue, sessionId)
+            await serviceBusClient.PublishMessageAsync<ServiceBusMessage>(serviceBusMessage)
                 .ConfigureAwait(false);
 
-            var response = await receiver.ReceiveMessageAsync(_defaultTimeout).ConfigureAwait(false);
+            _receiverMessageBus = await _serviceBusClientFactory.CreateSessionReceiverAsync(replyQueue, sessionId)
+                .ConfigureAwait(false);
+
+            var response = await _receiverMessageBus.ReceiveMessageAsync<ServiceBusMessage>(_defaultTimeout)
+                .ConfigureAwait(false);
+
             if (response == null)
                 return null;
 

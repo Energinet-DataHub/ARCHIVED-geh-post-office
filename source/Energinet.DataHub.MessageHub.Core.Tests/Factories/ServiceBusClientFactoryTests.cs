@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using Energinet.DataHub.MessageHub.Core.Factories;
+using Moq;
 using Xunit;
 
 namespace Energinet.DataHub.MessageHub.Core.Tests.Factories
@@ -20,13 +21,17 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Factories
     public sealed class ServiceBusClientFactoryTests
     {
         [Fact]
-        public void Create_ReturnsServiceBusClient()
+        public void Create_ReturnsServiceBusClientSender()
         {
             // arrange
-            var target = new ServiceBusClientFactory("Endpoint=sb://sbn-postoffice.servicebus.windows.net/;SharedAccessKeyName=Hello;SharedAccessKey=there");
+            var connectionString = "Endpoint=sb://sbn-postoffice.servicebus.windows.net/;SharedAccessKeyName=Hello;SharedAccessKey=there";
+            var queueName = "test";
+
+            var messageBusFactory = new AzureServiceBusFactory();
+            var target = new ServiceBusClientFactory(connectionString, messageBusFactory);
 
             // act
-            var actual = target.Create();
+            var actual = target.CreateSender(queueName);
 
             // assert
             Assert.NotNull(actual);

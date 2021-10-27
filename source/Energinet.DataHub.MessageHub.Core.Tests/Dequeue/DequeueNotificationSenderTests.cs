@@ -32,7 +32,7 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Dequeue
         {
             // Arrange
             var serviceBusClientFactory = new Mock<IServiceBusClientFactory>();
-            await using var target = new DequeueNotificationSender(serviceBusClientFactory.Object);
+            var target = new DequeueNotificationSender(serviceBusClientFactory.Object);
 
             // Act + Assert
             await Assert
@@ -59,9 +59,11 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Dequeue
                 serviceBusSessionReceiverMock.Object);
 
             var serviceBusClientFactory = new Mock<IServiceBusClientFactory>();
-            serviceBusClientFactory.Setup(x => x.Create()).Returns(mockedServiceBusClient);
+            serviceBusClientFactory
+                .Setup(x => x.CreateSender(queueName))
+                .Returns(AzureSenderServiceBus.Create(mockedServiceBusClient.CreateSender(queueName)));
 
-            await using var target = new DequeueNotificationSender(serviceBusClientFactory.Object);
+            var target = new DequeueNotificationSender(serviceBusClientFactory.Object);
 
             var dataAvailable = new DequeueNotificationDto(
                 new[] { Guid.NewGuid(), Guid.NewGuid() },
@@ -80,17 +82,20 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Dequeue
             // Arrange
             var serviceBusSenderMock = new Mock<ServiceBusSender>();
             var serviceBusSessionReceiverMock = new Mock<ServiceBusSessionReceiver>();
+            var queueName = "sbq-TimeSeries-dequeue";
 
             await using var mockedServiceBusClient = new MockedServiceBusClient(
-                "sbq-TimeSeries-dequeue",
+                queueName,
                 string.Empty,
                 serviceBusSenderMock.Object,
                 serviceBusSessionReceiverMock.Object);
 
             var serviceBusClientFactory = new Mock<IServiceBusClientFactory>();
-            serviceBusClientFactory.Setup(x => x.Create()).Returns(mockedServiceBusClient);
+            serviceBusClientFactory
+                .Setup(x => x.CreateSender(queueName))
+                .Returns(AzureSenderServiceBus.Create(mockedServiceBusClient.CreateSender(queueName)));
 
-            await using var target = new DequeueNotificationSender(serviceBusClientFactory.Object);
+            var target = new DequeueNotificationSender(serviceBusClientFactory.Object);
 
             var dataAvailable = new DequeueNotificationDto(
                 new[] { Guid.NewGuid(), Guid.NewGuid() },

@@ -18,21 +18,21 @@ using Azure.Messaging.ServiceBus;
 namespace Energinet.DataHub.MessageHub.Core.Factories
 {
     /// <summary>
-    /// Factory creating a new <see cref="ServiceBusSender"/> and <see cref="ServiceBusSessionReceiver"/>
+    /// Abstraction for messagebus factory
     /// </summary>
-    public interface IServiceBusClientFactory
+    public interface IMessageBusFactory
     {
         /// <summary>
-        /// Create a new <see cref="ServiceBusSender"/>
+        /// Creates sender reference
         /// </summary>
-        /// <returns><see cref="ServiceBusSender"/></returns>
-        public ISenderMessageBus CreateSender(string queueOrTopicName);
+        /// <param name="connectionString"></param>
+        /// <param name="queueOrTopicName"></param>
+        ISenderMessageBus GetSenderClient(string connectionString, string queueOrTopicName);
 
         /// <summary>
-        /// Creates a new ServiceBusSessionReceiver
+        /// Creates session receiver reference
         /// </summary>
-        /// <param name="queueOrTopicName"></param>
-        /// <param name="sessionId"></param>
-        public Task<AzureSessionReceiverServiceBus> CreateSessionReceiverAsync(string queueOrTopicName, string sessionId);
+        /// <returns><see cref="ServiceBusSessionReceiver"/></returns>
+        public Task<AzureSessionReceiverServiceBus> GetSessionReceiverClientAsync(string connectionString, string queueOrTopicName, string sessionId);
     }
 }

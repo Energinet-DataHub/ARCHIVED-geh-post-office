@@ -12,27 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 
 namespace Energinet.DataHub.MessageHub.Core.Factories
 {
     /// <summary>
-    /// Factory creating a new <see cref="ServiceBusSender"/> and <see cref="ServiceBusSessionReceiver"/>
+    /// Abstraction for receiver
     /// </summary>
-    public interface IServiceBusClientFactory
+    public interface IReceiverMessageBus
     {
         /// <summary>
-        /// Create a new <see cref="ServiceBusSender"/>
+        /// Abstraction for receiving messages
         /// </summary>
-        /// <returns><see cref="ServiceBusSender"/></returns>
-        public ISenderMessageBus CreateSender(string queueOrTopicName);
-
-        /// <summary>
-        /// Creates a new ServiceBusSessionReceiver
-        /// </summary>
-        /// <param name="queueOrTopicName"></param>
-        /// <param name="sessionId"></param>
-        public Task<AzureSessionReceiverServiceBus> CreateSessionReceiverAsync(string queueOrTopicName, string sessionId);
+        Task<ServiceBusReceivedMessage?> ReceiveMessageAsync<T>(TimeSpan timeout);
     }
 }
