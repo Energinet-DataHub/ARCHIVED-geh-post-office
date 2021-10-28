@@ -49,7 +49,7 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Peek
             var requestBundleParserMock = new Mock<IRequestBundleParser>();
             var responseBundleParserMock = new Mock<IResponseBundleParser>();
             var serviceBusClientFactoryMock = new Mock<IServiceBusClientFactory>();
-            await using var target = new DataBundleRequestSender(
+            var target = new DataBundleRequestSender(
                 requestBundleParserMock.Object,
                 responseBundleParserMock.Object,
                 serviceBusClientFactoryMock.Object,
@@ -91,12 +91,13 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Peek
                 .Setup(x => x.CreateSender(queue))
                 .Returns(AzureSenderServiceBus.Create(serviceBusClient.CreateSender(queue)));
 
-            var sessionReceiver = await serviceBusClient.AcceptSessionAsync(replyQueue, It.IsAny<string>()).ConfigureAwait(false);
+            await using var sessionReceiver = await serviceBusClient.AcceptSessionAsync(replyQueue, It.IsAny<string>()).ConfigureAwait(false);
+            await using var azureSessionReceiver = AzureSessionReceiverServiceBus.Create(sessionReceiver);
             serviceBusClientFactoryMock
                 .Setup(x => x.CreateSessionReceiverAsync(replyQueue, It.IsAny<string>()))
-                .ReturnsAsync(AzureSessionReceiverServiceBus.Create(sessionReceiver));
+                .ReturnsAsync(azureSessionReceiver);
 
-            await using var target = new DataBundleRequestSender(
+            var target = new DataBundleRequestSender(
                 new RequestBundleParser(),
                 new ResponseBundleParser(),
                 serviceBusClientFactoryMock.Object,
@@ -140,12 +141,13 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Peek
                 .Setup(x => x.CreateSender(queue))
                 .Returns(AzureSenderServiceBus.Create(serviceBusClient.CreateSender(queue)));
 
-            var sessionReceiver = await serviceBusClient.AcceptSessionAsync(replyQueue, It.IsAny<string>()).ConfigureAwait(false);
+            await using var sessionReceiver = await serviceBusClient.AcceptSessionAsync(replyQueue, It.IsAny<string>()).ConfigureAwait(false);
+            await using var azureSessionReceiver = AzureSessionReceiverServiceBus.Create(sessionReceiver);
             serviceBusClientFactoryMock
                 .Setup(x => x.CreateSessionReceiverAsync(replyQueue, It.IsAny<string>()))
-                .ReturnsAsync(AzureSessionReceiverServiceBus.Create(sessionReceiver));
+                .ReturnsAsync(azureSessionReceiver);
 
-            await using var target = new DataBundleRequestSender(
+            var target = new DataBundleRequestSender(
                 new RequestBundleParser(),
                 new ResponseBundleParser(),
                 serviceBusClientFactoryMock.Object,
@@ -201,12 +203,13 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Peek
                 .Setup(x => x.CreateSender(queue))
                 .Returns(AzureSenderServiceBus.Create(serviceBusClient.CreateSender(queue)));
 
-            var sessionReceiver = await serviceBusClient.AcceptSessionAsync(replyQueue, It.IsAny<string>()).ConfigureAwait(false);
+            await using var sessionReceiver = await serviceBusClient.AcceptSessionAsync(replyQueue, It.IsAny<string>()).ConfigureAwait(false);
+            await using var azureSessionReceiver = AzureSessionReceiverServiceBus.Create(sessionReceiver);
             serviceBusClientFactoryMock
                 .Setup(x => x.CreateSessionReceiverAsync(replyQueue, It.IsAny<string>()))
-                .ReturnsAsync(AzureSessionReceiverServiceBus.Create(sessionReceiver));
+                .ReturnsAsync(azureSessionReceiver);
 
-            await using var target = new DataBundleRequestSender(
+            var target = new DataBundleRequestSender(
                 new RequestBundleParser(),
                 new ResponseBundleParser(),
                 serviceBusClientFactoryMock.Object,

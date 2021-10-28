@@ -15,13 +15,12 @@
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
+using Energinet.DataHub.MessageHub.Model.Exceptions;
 
 namespace Energinet.DataHub.MessageHub.Core.Factories
 {
-    public class AzureServiceBusFactory : IMessageBusFactory
+    public sealed class AzureServiceBusFactory : IMessageBusFactory
     {
-        private readonly object _lockObject = new object();
-
         private readonly ConcurrentDictionary<string, ServiceBusClient> _clients = new();
 
         private readonly ConcurrentDictionary<string, ServiceBusSender> _senders = new();
@@ -30,34 +29,28 @@ namespace Energinet.DataHub.MessageHub.Core.Factories
         {
             var key = $"{connectionString}-{queueOrTopicName}";
 
-            if (_senders.ContainsKey(key) && !_senders[key].IsClosed)
+            if (_senders.TryGetValue(key, out var senderInDict) && senderInDict.IsClosed)
             {
                 return AzureSenderServiceBus.Create(_senders[key]);
             }
 
             var client = GetServiceBusClient(connectionString);
 
-            lock (_lockObject)
+            if (_senders.ContainsKey(key))
             {
-                if (_senders.ContainsKey(key) && _senders[key].IsClosed)
-                {
-                    if (_senders[key].IsClosed)
-                    {
-                        if (_senders.TryRemove(key, out var removedSender))
-                        {
-                            var disposedSender = removedSender.DisposeAsync().ConfigureAwait(false);
-                        }
-                    }
+                if (_senders.TryGetValue(key, out var sender))
+                    return AzureSenderServiceBus.Create(sender);
 
-                    return AzureSenderServiceBus.Create(_senders[key]);
-                }
-
-                var sender = client.CreateSender(queueOrTopicName);
-
-                _senders[key] = sender;
+                throw new MessageHubException("sender not found");
             }
+            else
+            {
+                if (_senders.TryAdd(key, client.CreateSender(queueOrTopicName))
+                    && _senders.TryGetValue(key, out var sender))
+                    return AzureSenderServiceBus.Create(sender);
 
-            return AzureSenderServiceBus.Create(_senders[key]);
+                throw new MessageHubException("sender not found");
+            }
         }
 
         public async Task<AzureSessionReceiverServiceBus> GetSessionReceiverClientAsync(string connectionString, string queueOrTopicName, string sessionId)
@@ -69,29 +62,28 @@ namespace Energinet.DataHub.MessageHub.Core.Factories
             return AzureSessionReceiverServiceBus.Create(receiver);
         }
 
-        protected virtual ServiceBusClient GetServiceBusClient(string connectionString)
+        private ServiceBusClient GetServiceBusClient(string connectionString)
         {
             var key = $"{connectionString}";
 
-            lock (_lockObject)
+            if (ClientDoesntExistOrIsClosed(connectionString))
             {
-                if (ClientDoesntExistOrIsClosed(connectionString))
+                var client = new ServiceBusClient(connectionString, new ServiceBusClientOptions
                 {
-                    var client = new ServiceBusClient(connectionString, new ServiceBusClientOptions
-                    {
-                        TransportType = ServiceBusTransportType.AmqpTcp
-                    });
+                    TransportType = ServiceBusTransportType.AmqpTcp
+                });
 
-                    _clients[key] = client;
-                }
-
-                return _clients[key];
+                _clients.TryAdd(key, client);
             }
+
+            _clients.TryGetValue(key, out var dictServiceBusClient);
+
+            return dictServiceBusClient ?? throw new MessageHubException("ServiceBusClient not found in dictionary");
         }
 
         private bool ClientDoesntExistOrIsClosed(string connectionString)
         {
-            return !_clients.ContainsKey(connectionString) || _clients[connectionString].IsClosed;
+            return !_clients.TryGetValue(connectionString, out var client) || client.IsClosed;
         }
     }
 }
