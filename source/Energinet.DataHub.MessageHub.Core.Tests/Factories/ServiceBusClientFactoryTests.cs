@@ -36,5 +36,23 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Factories
             // assert
             Assert.NotNull(actual);
         }
+
+        [Fact]
+        public void Create_ReturnsServiceBusClientSessionReceiver()
+        {
+            // arrange
+            var connectionString = "Endpoint=sb://sbn-postoffice.servicebus.windows.net/;SharedAccessKeyName=Hello;SharedAccessKey=there";
+            var queueName = "test";
+            var sessionId = It.IsAny<string>();
+
+            var messageBusFactory = new AzureServiceBusFactory();
+            var target = new ServiceBusClientFactory(connectionString, messageBusFactory);
+
+            // act
+            var actual = target.CreateSessionReceiverAsync(queueName, sessionId);
+
+            // assert
+            Assert.NotNull(actual);
+        }
     }
 }

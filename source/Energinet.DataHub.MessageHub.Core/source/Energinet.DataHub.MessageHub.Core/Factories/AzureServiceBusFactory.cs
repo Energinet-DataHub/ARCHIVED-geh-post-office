@@ -19,7 +19,7 @@ using Energinet.DataHub.MessageHub.Model.Exceptions;
 
 namespace Energinet.DataHub.MessageHub.Core.Factories
 {
-    public sealed class AzureServiceBusFactory : IMessageBusFactory
+    public class AzureServiceBusFactory : IMessageBusFactory
     {
         private readonly ConcurrentDictionary<string, ServiceBusClient> _clients = new();
 
@@ -28,13 +28,6 @@ namespace Energinet.DataHub.MessageHub.Core.Factories
         public ISenderMessageBus GetSenderClient(string connectionString, string queueOrTopicName)
         {
             var key = $"{connectionString}-{queueOrTopicName}";
-
-            if (_senders.TryGetValue(key, out var senderInDict) && senderInDict.IsClosed)
-            {
-                return AzureSenderServiceBus.Create(_senders[key]);
-            }
-
-            var client = GetServiceBusClient(connectionString);
 
             if (_senders.ContainsKey(key))
             {
@@ -45,6 +38,8 @@ namespace Energinet.DataHub.MessageHub.Core.Factories
             }
             else
             {
+                var client = GetServiceBusClient(connectionString);
+
                 if (_senders.TryAdd(key, client.CreateSender(queueOrTopicName))
                     && _senders.TryGetValue(key, out var sender))
                     return AzureSenderServiceBus.Create(sender);
@@ -62,7 +57,7 @@ namespace Energinet.DataHub.MessageHub.Core.Factories
             return AzureSessionReceiverServiceBus.Create(receiver);
         }
 
-        private ServiceBusClient GetServiceBusClient(string connectionString)
+        public virtual ServiceBusClient GetServiceBusClient(string connectionString)
         {
             var key = $"{connectionString}";
 
