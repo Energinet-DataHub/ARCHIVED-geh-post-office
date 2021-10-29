@@ -21,11 +21,11 @@ namespace Energinet.DataHub.MessageHub.Core.Factories
     /// <summary>
     /// Abstraction for receiver
     /// </summary>
-    public interface IReceiverMessageBus
+    public interface IReceiverMessageBus : IAsyncDisposable
     {
         /// <summary>
         /// Abstraction for receiving messages
         /// </summary>
-        Task<ServiceBusReceivedMessage?> ReceiveMessageAsync<T>(TimeSpan timeout);
+        Task<ServiceBusReceivedMessage> ReceiveMessageAsync<T>(TimeSpan timeout);
     }
 }

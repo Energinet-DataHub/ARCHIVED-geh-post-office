@@ -12,73 +12,52 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
-using Energinet.DataHub.MessageHub.Model.Exceptions;
 
 namespace Energinet.DataHub.MessageHub.Core.Factories
 {
-    public class AzureServiceBusFactory : IMessageBusFactory
+    public sealed class AzureServiceBusFactory : IMessageBusFactory, IAsyncDisposable
     {
-        private readonly ConcurrentDictionary<string, ServiceBusClient> _clients = new();
+        private readonly ServiceBusClient _client;
 
         private readonly ConcurrentDictionary<string, ServiceBusSender> _senders = new();
 
-        public ISenderMessageBus GetSenderClient(string connectionString, string queueOrTopicName)
+        public AzureServiceBusFactory(IServiceBusClientFactory serviceBusClientFactory)
         {
-            var key = $"{connectionString}-{queueOrTopicName}";
+            if (serviceBusClientFactory == null) throw new ArgumentNullException(nameof(serviceBusClientFactory));
 
-            if (_senders.ContainsKey(key))
-            {
-                if (_senders.TryGetValue(key, out var sender))
-                    return AzureSenderServiceBus.Create(sender);
-
-                throw new MessageHubException("sender not found");
-            }
-            else
-            {
-                var client = GetServiceBusClient(connectionString);
-
-                if (_senders.TryAdd(key, client.CreateSender(queueOrTopicName))
-                    && _senders.TryGetValue(key, out var sender))
-                    return AzureSenderServiceBus.Create(sender);
-
-                throw new MessageHubException("sender not found");
-            }
+            _client = serviceBusClientFactory.Create();
         }
 
-        public async Task<AzureSessionReceiverServiceBus> GetSessionReceiverClientAsync(string connectionString, string queueOrTopicName, string sessionId)
+        public ISenderMessageBus GetSenderClient(string queueOrTopicName)
         {
-            var client = GetServiceBusClient(connectionString);
+            var key = $"{queueOrTopicName}";
 
-            var receiver = await client.AcceptSessionAsync(queueOrTopicName, sessionId).ConfigureAwait(false);
+            var sender = _senders.GetOrAdd(key, k => _client.CreateSender(queueOrTopicName));
 
-            return AzureSessionReceiverServiceBus.Create(receiver);
+            return AzureSenderServiceBus.Wrap(sender);
         }
 
-        public virtual ServiceBusClient GetServiceBusClient(string connectionString)
+        public async Task<IReceiverMessageBus> GetSessionReceiverClientAsync(string queueOrTopicName, string sessionId)
         {
-            var key = $"{connectionString}";
+            var receiver = await _client.AcceptSessionAsync(queueOrTopicName, sessionId).ConfigureAwait(false);
 
-            if (ClientDoesntExistOrIsClosed(connectionString))
+            return AzureSessionReceiverServiceBus.Wrap(receiver);
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            foreach (var senderKeyValuePair in _senders)
             {
-                var client = new ServiceBusClient(connectionString, new ServiceBusClientOptions
-                {
-                    TransportType = ServiceBusTransportType.AmqpTcp
-                });
-
-                _clients.TryAdd(key, client);
+                await senderKeyValuePair.Value.DisposeAsync().ConfigureAwait(false);
             }
 
-            _clients.TryGetValue(key, out var dictServiceBusClient);
+            await _client.DisposeAsync().ConfigureAwait(false);
 
-            return dictServiceBusClient ?? throw new MessageHubException("ServiceBusClient not found in dictionary");
-        }
-
-        private bool ClientDoesntExistOrIsClosed(string connectionString)
-        {
-            return !_clients.TryGetValue(connectionString, out var client) || client.IsClosed;
+            _senders.Clear();
         }
     }
 }

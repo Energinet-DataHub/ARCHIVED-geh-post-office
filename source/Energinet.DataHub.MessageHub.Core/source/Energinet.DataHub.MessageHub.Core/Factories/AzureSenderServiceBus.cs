@@ -26,12 +26,12 @@ namespace Energinet.DataHub.MessageHub.Core.Factories
             _serviceBusSender = serviceBusSender;
         }
 
-        public async Task PublishMessageAsync<T>(ServiceBusMessage message)
+        public Task PublishMessageAsync<T>(ServiceBusMessage message)
         {
-            await _serviceBusSender.SendMessageAsync(message).ConfigureAwait(false);
+            return _serviceBusSender.SendMessageAsync(message);
         }
 
-        internal static ISenderMessageBus Create(ServiceBusSender sender)
+        internal static ISenderMessageBus Wrap(ServiceBusSender sender)
         {
             return new AzureSenderServiceBus(sender);
         }

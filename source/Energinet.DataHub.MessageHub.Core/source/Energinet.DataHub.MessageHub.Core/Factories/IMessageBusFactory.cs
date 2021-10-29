@@ -25,14 +25,13 @@ namespace Energinet.DataHub.MessageHub.Core.Factories
         /// <summary>
         /// Creates sender reference
         /// </summary>
-        /// <param name="connectionString"></param>
         /// <param name="queueOrTopicName"></param>
-        ISenderMessageBus GetSenderClient(string connectionString, string queueOrTopicName);
+        ISenderMessageBus GetSenderClient(string queueOrTopicName);
 
         /// <summary>
         /// Creates session receiver reference
         /// </summary>
         /// <returns><see cref="ServiceBusSessionReceiver"/></returns>
-        public Task<AzureSessionReceiverServiceBus> GetSessionReceiverClientAsync(string connectionString, string queueOrTopicName, string sessionId);
+        public Task<IReceiverMessageBus> GetSessionReceiverClientAsync(string queueOrTopicName, string sessionId);
     }
 }

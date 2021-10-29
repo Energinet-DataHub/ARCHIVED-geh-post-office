@@ -32,7 +32,8 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Dequeue
         {
             // Arrange
             var serviceBusClientFactory = new Mock<IServiceBusClientFactory>();
-            var target = new DequeueNotificationSender(serviceBusClientFactory.Object);
+            var messageBusFactory = new AzureServiceBusFactory(serviceBusClientFactory.Object);
+            var target = new DequeueNotificationSender(messageBusFactory);
 
             // Act + Assert
             await Assert
@@ -60,10 +61,11 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Dequeue
 
             var serviceBusClientFactory = new Mock<IServiceBusClientFactory>();
             serviceBusClientFactory
-                .Setup(x => x.CreateSender(queueName))
-                .Returns(AzureSenderServiceBus.Create(mockedServiceBusClient.CreateSender(queueName)));
+                .Setup(x => x.Create())
+                .Returns(mockedServiceBusClient);
+            var messageBusFactory = new AzureServiceBusFactory(serviceBusClientFactory.Object);
 
-            var target = new DequeueNotificationSender(serviceBusClientFactory.Object);
+            var target = new DequeueNotificationSender(messageBusFactory);
 
             var dataAvailable = new DequeueNotificationDto(
                 new[] { Guid.NewGuid(), Guid.NewGuid() },
@@ -92,10 +94,12 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Dequeue
 
             var serviceBusClientFactory = new Mock<IServiceBusClientFactory>();
             serviceBusClientFactory
-                .Setup(x => x.CreateSender(queueName))
-                .Returns(AzureSenderServiceBus.Create(mockedServiceBusClient.CreateSender(queueName)));
+                .Setup(x => x.Create())
+                .Returns(mockedServiceBusClient);
 
-            var target = new DequeueNotificationSender(serviceBusClientFactory.Object);
+            var messageBusFactory = new AzureServiceBusFactory(serviceBusClientFactory.Object);
+
+            var target = new DequeueNotificationSender(messageBusFactory);
 
             var dataAvailable = new DequeueNotificationDto(
                 new[] { Guid.NewGuid(), Guid.NewGuid() },

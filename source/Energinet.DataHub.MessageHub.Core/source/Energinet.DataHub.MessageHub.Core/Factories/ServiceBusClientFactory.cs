@@ -20,22 +20,15 @@ namespace Energinet.DataHub.MessageHub.Core.Factories
     public sealed class ServiceBusClientFactory : IServiceBusClientFactory
     {
         private readonly string _connectionString;
-        private readonly IMessageBusFactory _messageBusFactory;
 
-        public ServiceBusClientFactory(string connectionString, IMessageBusFactory messageBusFactory)
+        public ServiceBusClientFactory(string connectionString)
         {
             _connectionString = connectionString;
-            _messageBusFactory = messageBusFactory;
         }
 
-        public ISenderMessageBus CreateSender(string queueOrTopicName)
+        public ServiceBusClient Create()
         {
-            return _messageBusFactory.GetSenderClient(_connectionString, queueOrTopicName);
-        }
-
-        public Task<AzureSessionReceiverServiceBus> CreateSessionReceiverAsync(string queueOrTopicName, string sessionId)
-        {
-            return _messageBusFactory.GetSessionReceiverClientAsync(_connectionString, queueOrTopicName, sessionId);
+            return new(_connectionString, new ServiceBusClientOptions { TransportType = ServiceBusTransportType.AmqpTcp });
         }
     }
 }

@@ -13,15 +13,14 @@
 // limitations under the License.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 
 namespace Energinet.DataHub.MessageHub.Core.Factories
 {
-    public sealed class AzureSessionReceiverServiceBus : IReceiverMessageBus, IAsyncDisposable
+    public sealed class AzureSessionReceiverServiceBus : IReceiverMessageBus
     {
-        private ServiceBusSessionReceiver? _serviceBusSessionReceiver;
+        private readonly ServiceBusSessionReceiver _serviceBusSessionReceiver;
 
         internal AzureSessionReceiverServiceBus(ServiceBusSessionReceiver serviceBusSessionReceiver)
         {
@@ -30,21 +29,15 @@ namespace Energinet.DataHub.MessageHub.Core.Factories
 
         public async ValueTask DisposeAsync()
         {
-            if (_serviceBusSessionReceiver != null)
-            {
-                await _serviceBusSessionReceiver.DisposeAsync().ConfigureAwait(false);
-                _serviceBusSessionReceiver = null;
-            }
+            await _serviceBusSessionReceiver.DisposeAsync().ConfigureAwait(false);
         }
 
-        public async Task<ServiceBusReceivedMessage?> ReceiveMessageAsync<T>(TimeSpan timeout)
+        public async Task<ServiceBusReceivedMessage> ReceiveMessageAsync<T>(TimeSpan timeout)
         {
-            if (_serviceBusSessionReceiver != null)
-                return await _serviceBusSessionReceiver.ReceiveMessageAsync(timeout).ConfigureAwait(false);
-            return null;
+            return await _serviceBusSessionReceiver.ReceiveMessageAsync(timeout).ConfigureAwait(false);
         }
 
-        internal static AzureSessionReceiverServiceBus Create(ServiceBusSessionReceiver sessionReceiver)
+        internal static AzureSessionReceiverServiceBus Wrap(ServiceBusSessionReceiver sessionReceiver)
         {
             return new(sessionReceiver);
         }

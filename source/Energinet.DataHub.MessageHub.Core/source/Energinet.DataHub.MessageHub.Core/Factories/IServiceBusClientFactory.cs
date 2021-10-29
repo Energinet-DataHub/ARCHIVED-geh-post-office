@@ -23,16 +23,9 @@ namespace Energinet.DataHub.MessageHub.Core.Factories
     public interface IServiceBusClientFactory
     {
         /// <summary>
-        /// Create a new <see cref="ServiceBusSender"/>
+        /// Create a new <see cref="ServiceBusClient"/>
         /// </summary>
-        /// <returns><see cref="ServiceBusSender"/></returns>
-        public ISenderMessageBus CreateSender(string queueOrTopicName);
-
-        /// <summary>
-        /// Creates a new ServiceBusSessionReceiver
-        /// </summary>
-        /// <param name="queueOrTopicName"></param>
-        /// <param name="sessionId"></param>
-        public Task<AzureSessionReceiverServiceBus> CreateSessionReceiverAsync(string queueOrTopicName, string sessionId);
+        /// <returns><see cref="ServiceBusClient"/></returns>
+        public ServiceBusClient Create();
     }
 }

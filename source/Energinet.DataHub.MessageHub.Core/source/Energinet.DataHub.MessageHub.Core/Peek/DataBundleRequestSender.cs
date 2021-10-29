@@ -26,19 +26,19 @@ namespace Energinet.DataHub.MessageHub.Core.Peek
     {
         private readonly IRequestBundleParser _requestBundleParser;
         private readonly IResponseBundleParser _responseBundleParser;
-        private readonly IServiceBusClientFactory _serviceBusClientFactory;
+        private readonly IMessageBusFactory _messageBusFactory;
         private readonly PeekRequestConfig _peekRequestConfig;
         private readonly TimeSpan _defaultTimeout = TimeSpan.FromSeconds(30);
 
         public DataBundleRequestSender(
             IRequestBundleParser requestBundleParser,
             IResponseBundleParser responseBundleParser,
-            IServiceBusClientFactory serviceBusClientFactory,
+            IMessageBusFactory serviceBusClientFactory,
             PeekRequestConfig peekRequestConfig)
         {
             _requestBundleParser = requestBundleParser;
             _responseBundleParser = responseBundleParser;
-            _serviceBusClientFactory = serviceBusClientFactory;
+            _messageBusFactory = serviceBusClientFactory;
             _peekRequestConfig = peekRequestConfig;
         }
 
@@ -62,12 +62,12 @@ namespace Energinet.DataHub.MessageHub.Core.Peek
                 ReplyTo = replyQueue
             }.AddRequestDataBundleIntegrationEvents(dataBundleRequestDto.IdempotencyId);
 
-            var serviceBusClient = _serviceBusClientFactory.CreateSender(targetQueue);
+            var serviceBusClient = _messageBusFactory.GetSenderClient(targetQueue);
 
             await serviceBusClient.PublishMessageAsync<ServiceBusMessage>(serviceBusMessage)
                 .ConfigureAwait(false);
 
-            await using var receiverMessageBus = await _serviceBusClientFactory.CreateSessionReceiverAsync(replyQueue, sessionId).ConfigureAwait(false);
+            await using var receiverMessageBus = await _messageBusFactory.GetSessionReceiverClientAsync(replyQueue, sessionId).ConfigureAwait(false);
 
             var response = await receiverMessageBus.ReceiveMessageAsync<ServiceBusMessage>(_defaultTimeout).ConfigureAwait(false);
 

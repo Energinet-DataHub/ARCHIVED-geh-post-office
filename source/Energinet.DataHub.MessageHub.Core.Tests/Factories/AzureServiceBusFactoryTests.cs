@@ -27,19 +27,19 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Factories
     public sealed class AzureServiceBusFactoryTests
     {
         [Fact]
-        public void Create_ReturnsServiceBusClientSender_FromExisting()
+        public async Task Create_ReturnsServiceBusClientSender_FromExisting()
         {
             // arrange
             var connectionString = "Endpoint=sb://sbn-postoffice.servicebus.windows.net/;SharedAccessKeyName=Hello;SharedAccessKey=there";
             var queueName = "test";
 
-            var messageBusFactory = new AzureServiceBusFactory();
-            var target = new ServiceBusClientFactory(connectionString, messageBusFactory);
+            var serviceBusClientFactory = new ServiceBusClientFactory(connectionString);
+            await using var messageBusFactory = new AzureServiceBusFactory(serviceBusClientFactory);
 
             // act
-            var actualAdd = target.CreateSender(queueName);
+            var actualAdd = messageBusFactory.GetSenderClient(queueName);
 
-            var actualGet = target.CreateSender(queueName);
+            var actualGet = messageBusFactory.GetSenderClient(queueName);
 
             // assert
             Assert.NotNull(actualAdd);
@@ -50,7 +50,6 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Factories
         public async Task Create_ReturnsServiceBusClientSessionReceiver_FromExisting()
         {
             // arrange
-            var connectionString = "Endpoint=sb://sbn-postoffice.servicebus.windows.net/;SharedAccessKeyName=Hello;SharedAccessKey=there";
             var queueName = $"sbq-test";
             var replyQueue = $"sbq-test-reply";
             var serviceBusSenderMock = new Mock<ServiceBusSender>();
@@ -69,18 +68,24 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Factories
                 serviceBusSenderMock.Object,
                 serviceBusSessionReceiverMock.Object);
 
-            var messageBusFactory = new Mock<AzureServiceBusFactory>();
-            messageBusFactory
-                .Setup(x => x.GetServiceBusClient(connectionString))
+            var serviceBusClientFactory = new Mock<IServiceBusClientFactory>();
+            serviceBusClientFactory
+                .Setup(x => x.Create())
                 .Returns(serviceBusClient);
 
-            var target = new ServiceBusClientFactory(connectionString, messageBusFactory.Object);
+            await using var messageBusFactory = new AzureServiceBusFactory(serviceBusClientFactory.Object);
 
             // act
-            var actualAdd = await target.CreateSessionReceiverAsync(replyQueue, It.IsAny<string>()).ConfigureAwait(false);
+            var actualAdd = await messageBusFactory.GetSessionReceiverClientAsync(replyQueue, It.IsAny<string>()).ConfigureAwait(false);
 
             // assert
             Assert.NotNull(actualAdd);
+        }
+
+        [Fact]
+        public async Task Returns_SessionClientArgumentNullException()
+        {
+            Assert.Throws<ArgumentNullException>(() => new AzureServiceBusFactory(null));
         }
     }
 }

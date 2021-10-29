@@ -26,11 +26,11 @@ namespace Energinet.DataHub.MessageHub.Core.Dequeue
 {
     public sealed class DequeueNotificationSender : IDequeueNotificationSender
     {
-        private readonly IServiceBusClientFactory _serviceBusClientFactory;
+        private readonly IMessageBusFactory _messageBusFactory;
 
-        public DequeueNotificationSender(IServiceBusClientFactory serviceBusClientFactory)
+        public DequeueNotificationSender(IMessageBusFactory messageBusFactory)
         {
-            _serviceBusClientFactory = serviceBusClientFactory;
+            _messageBusFactory = messageBusFactory;
         }
 
         public async Task SendAsync(DequeueNotificationDto dequeueNotificationDto, DomainOrigin domainOrigin)
@@ -38,7 +38,7 @@ namespace Energinet.DataHub.MessageHub.Core.Dequeue
             if (dequeueNotificationDto is null)
                 throw new ArgumentNullException(nameof(dequeueNotificationDto));
 
-            var serviceBusSender = _serviceBusClientFactory.CreateSender($"sbq-{domainOrigin}-dequeue");
+            var serviceBusSender = _messageBusFactory.GetSenderClient($"sbq-{domainOrigin}-dequeue");
 
             var contract = new DequeueContract
             {

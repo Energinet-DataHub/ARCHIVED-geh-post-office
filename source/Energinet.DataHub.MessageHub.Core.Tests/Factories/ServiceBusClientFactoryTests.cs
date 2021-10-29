@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using Energinet.DataHub.MessageHub.Core.Factories;
-using Moq;
 using Xunit;
 
 namespace Energinet.DataHub.MessageHub.Core.Tests.Factories
@@ -21,35 +20,15 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Factories
     public sealed class ServiceBusClientFactoryTests
     {
         [Fact]
-        public void Create_ReturnsServiceBusClientSender()
+        public void Create_ReturnsServiceBusClient()
         {
             // arrange
             var connectionString = "Endpoint=sb://sbn-postoffice.servicebus.windows.net/;SharedAccessKeyName=Hello;SharedAccessKey=there";
-            var queueName = "test";
 
-            var messageBusFactory = new AzureServiceBusFactory();
-            var target = new ServiceBusClientFactory(connectionString, messageBusFactory);
+            var serviceBusClientFactory = new ServiceBusClientFactory(connectionString);
 
             // act
-            var actual = target.CreateSender(queueName);
-
-            // assert
-            Assert.NotNull(actual);
-        }
-
-        [Fact]
-        public void Create_ReturnsServiceBusClientSessionReceiver()
-        {
-            // arrange
-            var connectionString = "Endpoint=sb://sbn-postoffice.servicebus.windows.net/;SharedAccessKeyName=Hello;SharedAccessKey=there";
-            var queueName = "test";
-            var sessionId = It.IsAny<string>();
-
-            var messageBusFactory = new AzureServiceBusFactory();
-            var target = new ServiceBusClientFactory(connectionString, messageBusFactory);
-
-            // act
-            var actual = target.CreateSessionReceiverAsync(queueName, sessionId);
+            var actual = serviceBusClientFactory.Create();
 
             // assert
             Assert.NotNull(actual);
