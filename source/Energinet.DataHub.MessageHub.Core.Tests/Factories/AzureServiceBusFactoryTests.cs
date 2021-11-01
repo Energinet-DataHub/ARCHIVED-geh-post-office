@@ -21,9 +21,11 @@ using Energinet.DataHub.MessageHub.Model.Protobuf;
 using Google.Protobuf;
 using Moq;
 using Xunit;
+using Xunit.Categories;
 
 namespace Energinet.DataHub.MessageHub.Core.Tests.Factories
 {
+    [UnitTest]
     public sealed class AzureServiceBusFactoryTests
     {
         [Fact]
