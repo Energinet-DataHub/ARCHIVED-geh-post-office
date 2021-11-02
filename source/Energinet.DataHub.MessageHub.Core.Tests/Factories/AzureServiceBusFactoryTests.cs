@@ -85,9 +85,9 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Factories
         }
 
         [Fact]
-        public async Task Returns_SessionClientArgumentNullException()
+        public void Returns_SessionClientArgumentNullException()
         {
-            Assert.Throws<ArgumentNullException>(() => new AzureServiceBusFactory(null));
+            Assert.Throws<ArgumentNullException>(() => new AzureServiceBusFactory(null!));
         }
     }
 }

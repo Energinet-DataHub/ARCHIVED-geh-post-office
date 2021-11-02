@@ -14,7 +14,7 @@
 
 using System.Threading.Tasks;
 
-namespace Energinet.DataHub.MessageHub.Core.Factories
+namespace Energinet.DataHub.MessageHub.Client.Factories
 {
     /// <summary>
     /// Abstraction for messagebus factory

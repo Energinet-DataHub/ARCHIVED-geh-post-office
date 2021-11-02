@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Azure.Messaging.ServiceBus;
 using Energinet.DataHub.MessageHub.Core.Factories;
 using Xunit;
 using Xunit.Categories;
@@ -33,6 +34,7 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Factories
             var actual = serviceBusClientFactory.Create();
 
             // assert
+            Assert.IsType<ServiceBusClient>(actual);
             Assert.NotNull(actual);
         }
     }

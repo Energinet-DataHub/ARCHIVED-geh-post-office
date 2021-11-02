@@ -12,26 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
-using Energinet.DataHub.MessageHub.Client.Factories;
-using Xunit;
 
-namespace Energinet.DataHub.MessageHub.Client.Tests.Factories
+namespace Energinet.DataHub.MessageHub.Client.Factories
 {
-    public sealed class ServiceBusClientFactoryTests
+    public sealed class AzureSenderServiceBus : ISenderMessageBus
     {
-        [Fact]
-        public void Create_ReturnsServiceBusClient()
+        private readonly ServiceBusSender _serviceBusSender;
+
+        internal AzureSenderServiceBus(ServiceBusSender serviceBusSender)
         {
-            // arrange
-            var target = new ServiceBusClientFactory("Endpoint=sb://sbn-postoffice.servicebus.windows.net/;SharedAccessKeyName=Hello;SharedAccessKey=there");
+            _serviceBusSender = serviceBusSender;
+        }
 
-            // act
-            var actual = target.Create();
+        public Task PublishMessageAsync<T>(ServiceBusMessage message)
+        {
+            return _serviceBusSender.SendMessageAsync(message);
+        }
 
-            // assert
-            Assert.IsType<ServiceBusClient>(actual);
-            Assert.NotNull(actual);
+        internal static ISenderMessageBus Wrap(ServiceBusSender sender)
+        {
+            return new AzureSenderServiceBus(sender);
         }
     }
 }
