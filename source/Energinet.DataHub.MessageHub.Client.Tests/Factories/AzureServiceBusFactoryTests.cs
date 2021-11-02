@@ -49,7 +49,7 @@ namespace Energinet.DataHub.MessageHub.Client.Tests.Factories
         }
 
         [Fact]
-        public async Task Create_ReturnsServiceBusClientSessionReceiver_FromExisting()
+        public async Task Create_ReturnsServiceBusClientSessionReceiver()
         {
             // arrange
             var queueName = $"sbq-test";
@@ -79,8 +79,11 @@ namespace Energinet.DataHub.MessageHub.Client.Tests.Factories
 
             // act
             var actualAdd = await messageBusFactory.GetSessionReceiverClientAsync(replyQueue, It.IsAny<string>()).ConfigureAwait(false);
+            var returnMessage = await actualAdd.ReceiveMessageAsync<ServiceBusMessage>(It.IsAny<TimeSpan>());
+            await actualAdd.DisposeAsync();
 
             // assert
+            Assert.NotNull(returnMessage);
             Assert.NotNull(actualAdd);
         }
 

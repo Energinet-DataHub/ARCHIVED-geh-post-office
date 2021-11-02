@@ -49,7 +49,7 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Factories
         }
 
         [Fact]
-        public async Task Create_ReturnsServiceBusClientSessionReceiver_FromExisting()
+        public async Task Create_ReturnsServiceBusClientSessionReceiver()
         {
             // arrange
             var queueName = $"sbq-test";
