@@ -33,7 +33,7 @@ namespace Energinet.DataHub.MessageHub.Core.Dequeue
             _messageBusFactory = messageBusFactory;
         }
 
-        public async Task SendAsync(DequeueNotificationDto dequeueNotificationDto, DomainOrigin domainOrigin)
+        public Task SendAsync(DequeueNotificationDto dequeueNotificationDto, DomainOrigin domainOrigin)
         {
             if (dequeueNotificationDto is null)
                 throw new ArgumentNullException(nameof(dequeueNotificationDto));
@@ -47,7 +47,7 @@ namespace Energinet.DataHub.MessageHub.Core.Dequeue
             };
 
             var dequeueMessage = new ServiceBusMessage(new BinaryData(contract.ToByteArray())).AddDequeueIntegrationEvents();
-            await serviceBusSender.PublishMessageAsync<ServiceBusMessage>(dequeueMessage).ConfigureAwait(false);
+            return serviceBusSender.PublishMessageAsync<ServiceBusMessage>(dequeueMessage);
         }
     }
 }

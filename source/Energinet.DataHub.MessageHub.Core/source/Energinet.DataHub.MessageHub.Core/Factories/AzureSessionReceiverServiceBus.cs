@@ -22,7 +22,7 @@ namespace Energinet.DataHub.MessageHub.Core.Factories
     {
         private readonly ServiceBusSessionReceiver _serviceBusSessionReceiver;
 
-        internal AzureSessionReceiverServiceBus(ServiceBusSessionReceiver serviceBusSessionReceiver)
+        private AzureSessionReceiverServiceBus(ServiceBusSessionReceiver serviceBusSessionReceiver)
         {
             _serviceBusSessionReceiver = serviceBusSessionReceiver;
         }

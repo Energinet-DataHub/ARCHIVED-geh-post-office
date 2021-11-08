@@ -36,7 +36,7 @@ namespace Energinet.DataHub.MessageHub.Client.Factories
         {
             var key = $"{queueOrTopicName}";
 
-            var sender = _senders.GetOrAdd(key, k => _client.CreateSender(queueOrTopicName));
+            var sender = _senders.GetOrAdd(key, _ => _client.CreateSender(queueOrTopicName));
 
             return AzureSenderServiceBus.Wrap(sender);
         }

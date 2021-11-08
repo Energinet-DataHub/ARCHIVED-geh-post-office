@@ -21,7 +21,7 @@ namespace Energinet.DataHub.MessageHub.Client.Factories
     {
         private readonly ServiceBusSender _serviceBusSender;
 
-        internal AzureSenderServiceBus(ServiceBusSender serviceBusSender)
+        private AzureSenderServiceBus(ServiceBusSender serviceBusSender)
         {
             _serviceBusSender = serviceBusSender;
         }
