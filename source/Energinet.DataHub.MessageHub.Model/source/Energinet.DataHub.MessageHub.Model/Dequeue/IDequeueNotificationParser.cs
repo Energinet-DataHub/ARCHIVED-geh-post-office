@@ -36,7 +36,7 @@ namespace Energinet.DataHub.MessageHub.Model.Dequeue
         /// Converts the specified response into a protobuf contract.
         /// </summary>
         /// <param name="dequeueNotificationDto">The dequeue notification to convert.</param>
-        /// <returns>A byte array with the parsed DequeueNotificationDto</returns>
+        /// <returns>A byte array with the parsed DequeueNotificationDto.</returns>
         byte[] Parse(DequeueNotificationDto dequeueNotificationDto);
     }
 }
