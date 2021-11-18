@@ -44,6 +44,7 @@ namespace Energinet.DataHub.MessageHub.Model.Peek
                 var bundleResponse = DataBundleRequestContract.Parser.ParseFrom(dataBundleRequestContract);
                 return new DataBundleRequestDto(
                     Guid.Parse(bundleResponse.RequestId),
+                    bundleResponse.DataAvailableNotificationReferenceId,
                     bundleResponse.IdempotencyId,
                     bundleResponse.MessageType);
             }

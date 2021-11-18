@@ -47,6 +47,7 @@ namespace Energinet.DataHub.MessageHub.Model.Tests.Model
             var uri = new Uri("http://localhost");
             var request = new DataBundleRequestDto(
                 requestId,
+                "91C0F463-4E8D-4DDB-A957-F76A98CD10D7",
                 "D5D400AD-CC11-409A-B757-75EB9AA8B0EA",
                 "message_type");
 
@@ -63,10 +64,10 @@ namespace Energinet.DataHub.MessageHub.Model.Tests.Model
         public void CreateErrorResponse_ReturnsResponse()
         {
             // arrage
-            var dataAvailableNotificationIds = new List<Guid> { Guid.NewGuid() };
             var requestId = Guid.Parse("BCDFAF35-B914-488E-A8FB-C41FC377097D");
             var request = new DataBundleRequestDto(
                 requestId,
+                "19D14C0A-7AD3-441A-87D8-C69297031C42",
                 "D5D400AD-CC11-409A-B757-75EB9AA8B0EA",
                 "message_type");
 
