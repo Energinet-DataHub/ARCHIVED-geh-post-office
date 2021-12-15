@@ -16,11 +16,29 @@ using System;
 using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Application;
 using Energinet.DataHub.PostOffice.Application.Commands;
+using Energinet.DataHub.PostOffice.Domain.Model;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Mappers
 {
     public sealed class DataAvailableMapper : IMapper<DataAvailableNotificationDto, DataAvailableNotificationCommand>
     {
+        public static DataAvailablesForRecipientCommand Map(DataAvailable obj)
+        {
+            if (obj is null)
+                throw new ArgumentNullException(nameof(obj));
+
+            var dataAvailableCommand = new DataAvailablesForRecipientCommand(
+                obj.Uuid.ToString(),
+                obj.Recipient.Value,
+                obj.MessageType.Value,
+                obj.Origin.ToString(),
+                obj.SupportsBundling,
+                obj.RelativeWeight,
+                obj.SequenceNumber);
+
+            return dataAvailableCommand;
+        }
+
         public DataAvailableNotificationCommand Map(DataAvailableNotificationDto obj)
         {
             if (obj is null)

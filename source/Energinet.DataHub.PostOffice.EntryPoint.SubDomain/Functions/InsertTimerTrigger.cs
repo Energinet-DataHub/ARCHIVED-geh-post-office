@@ -17,14 +17,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Energinet.DataHub.MessageHub.Model.DataAvailable;
-using Energinet.DataHub.MessageHub.Model.Exceptions;
 using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Application;
 using Energinet.DataHub.PostOffice.Application.Commands;
-using FluentValidation;
 using MediatR;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Logging;
 
 namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
@@ -34,13 +31,13 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
         private readonly IMediator _mediator;
         private readonly IDataAvailableMessageReceiver _messageReceiver;
         private readonly IDataAvailableNotificationParser _dataAvailableNotificationParser;
-        private readonly IMapper<DataAvailableNotificationDto, DataAvailableNotificationCommand> _dataAvailableNotificationMapper;
+        private readonly IMapper<DataAvailableDto, DataAvailablesForRecipientCommand> _dataAvailableNotificationMapper;
 
         public InsertTimerTrigger(
             IMediator mediator,
             IDataAvailableMessageReceiver messageReceiver,
             IDataAvailableNotificationParser dataAvailableNotificationParser,
-            IMapper<DataAvailableNotificationDto, DataAvailableNotificationCommand> dataAvailableNotificationMapper)
+            IMapper<DataAvailableDto, DataAvailablesForRecipientCommand> dataAvailableNotificationMapper)
         {
             _mediator = mediator;
             _messageReceiver = messageReceiver;
@@ -52,62 +49,45 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
         public async Task RunAsync([TimerTrigger("0 */1 * * * *")] FunctionContext context)
         {
             var logger = context.GetLogger("InsertTimerTrigger");
-            logger.LogInformation("Begins processing DataAvailableNotifications in timer.");
-
-            var messages = await _messageReceiver.ReceiveAsync().ConfigureAwait(false);
-            logger.LogInformation("Received a DataAvailableNotification batch of size {0}.", messages.Count);
-
-            // var notifications = messages.Select(x => _dataAvailableNotificationParser.TryParse(x, x.MessageId, out var dataAvailables));
-            //
-            // var notificationsPrRecipient = notifications
-            //     .Select(x => x.CouldParse)
-            //     .GroupBy(x => x.Recipient);
-            if (messages.Count > 0)
-                await ProcessMessagesAsync(messages).ConfigureAwait(false);
-        }
-
-        private static bool ExceptionFilter(Exception exception)
-        {
-            return exception is MessageHubException or ValidationException or System.ComponentModel.DataAnnotations.ValidationException;
-        }
-
-        private async Task ProcessMessagesAsync(IEnumerable<Message> messages)
-        {
-            var list = messages
-                .Select(m => new { Message = m, Task = ProcessMessageAsync(m) })
-                .ToList();
+            logger.LogInformation("Begins processing InsertTimerTrigger.");
 
             try
             {
-                await Task.WhenAll(list.Select(x => x.Task)).ConfigureAwait(false);
+                var messages = await _messageReceiver.ReceiveAsync().ConfigureAwait(false);
+
+                var notifications = messages.Select(x => _dataAvailableNotificationParser.TryParse(x, x.MessageId));
+
+                var notificationsPrRecipient = notifications
+                    .Where(x => x.CouldParse)
+                    .GroupBy(x => x.Recipient);
+
+                var results = new List<DataAvailableNotificationResponse>();
+                var parsedDataAvailableList = new List<DataAvailableDto>();
+
+                Parallel.ForEach(notificationsPrRecipient, x =>
+                {
+                    foreach (var da in x)
+                    {
+                        var dataAvailableCommand = _dataAvailableNotificationMapper.Map(da);
+                        var response = _mediator.Send(dataAvailableCommand);
+                        results.Add(response.Result);
+                        parsedDataAvailableList.Add(da);
+                    }
+                });
+
+                // Error handling here before completing and deadlettering
+                var completeMessages = messages.Where(x => parsedDataAvailableList.Any(y => y.Uuid.ToString() == x.MessageId)).ToList();
+                var deadletterMessages = messages.Except(completeMessages).ToList();
+
+                await _messageReceiver.CompleteAsync(completeMessages).ConfigureAwait(false);
+                await _messageReceiver.DeadLetterAsync(deadletterMessages).ConfigureAwait(false);
+
+                await _mediator.Send(new UpdateMaximumSequenceNumberCommand(0000)).ConfigureAwait(false);
             }
-            catch (Exception ex) when (ExceptionFilter(ex))
+            catch (Exception e)
             {
-                var allFaultedMessages = list
-                    .Where(x => !x.Task.IsCompletedSuccessfully)
-                    .Select(x => x.Message);
-
-                await _messageReceiver.DeadLetterAsync(allFaultedMessages).ConfigureAwait(false);
-            }
-
-            var allCompletedMessages = list
-                .Where(x => x.Task.IsCompletedSuccessfully)
-                .Select(x => x.Message);
-
-            await _messageReceiver.CompleteAsync(allCompletedMessages).ConfigureAwait(false);
-        }
-
-        private Task ProcessMessageAsync(Message message)
-        {
-            try
-            {
-                var dataAvailableNotification = _dataAvailableNotificationParser.Parse(message.Body);
-                var dataAvailableCommand = _dataAvailableNotificationMapper.Map(dataAvailableNotification);
-                return _mediator.Send(dataAvailableCommand);
-            }
-            catch (Exception ex) when (ExceptionFilter(ex))
-            {
-                return Task.FromException(ex);
+                Console.WriteLine(e);
+                throw;
             }
         }
     }
