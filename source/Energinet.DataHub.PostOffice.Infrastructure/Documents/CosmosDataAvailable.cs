@@ -35,6 +35,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Documents
         public bool SupportsBundling { get; init; }
         public int RelativeWeight { get; init; }
         public bool Acknowledge { get; init; }
+        public int SequenceNumber { get; init; }
         public string PartitionKey { get; init; }
 
         [JsonProperty(PropertyName = "_ts")]

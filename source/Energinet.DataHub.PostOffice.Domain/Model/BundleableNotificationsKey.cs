@@ -12,37 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.Diagnostics.CodeAnalysis;
+
 namespace Energinet.DataHub.PostOffice.Domain.Model
 {
-    public sealed class DataAvailableNotification
+    public sealed record BundleableNotificationsKey
     {
-        public DataAvailableNotification(
-            Uuid notificationId,
+        public BundleableNotificationsKey(
             MarketOperator recipient,
-            ContentType contentType,
             DomainOrigin origin,
-            SupportsBundling supportsBundling,
-            Weight weight,
-            SequenceNumber sequenceNumber,
-            string partitionKey)
+            ContentType messageType)
         {
-            NotificationId = notificationId;
             Recipient = recipient;
-            ContentType = contentType;
             Origin = origin;
-            SupportsBundling = supportsBundling;
-            Weight = weight;
-            SequenceNumber = sequenceNumber;
-            PartitionKey = partitionKey;
+            MessageType = messageType;
+            PartitionKey = recipient?.Gln.Value + origin + messageType;
         }
 
-        public Uuid NotificationId { get; }
         public MarketOperator Recipient { get; }
-        public ContentType ContentType { get; }
         public DomainOrigin Origin { get; }
-        public SupportsBundling SupportsBundling { get; }
-        public Weight Weight { get; }
-        public SequenceNumber SequenceNumber { get; }
+        public ContentType MessageType { get; }
         public string PartitionKey { get; set; }
     }
 }

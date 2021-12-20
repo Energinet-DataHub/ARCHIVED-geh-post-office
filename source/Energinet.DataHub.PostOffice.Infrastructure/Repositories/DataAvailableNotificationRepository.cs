@@ -24,7 +24,9 @@ using Energinet.DataHub.PostOffice.Infrastructure.Common;
 using Energinet.DataHub.PostOffice.Infrastructure.Correlation;
 using Energinet.DataHub.PostOffice.Infrastructure.Documents;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
+using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers.CosmosClients;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Linq;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 {
@@ -33,10 +35,95 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
         private readonly IDataAvailableNotificationRepositoryContainer _repositoryContainer;
         private readonly ILogCallback _logCallback;
 
-        public DataAvailableNotificationRepository(IDataAvailableNotificationRepositoryContainer repositoryContainer, ILogCallback logCallback)
+        public DataAvailableNotificationRepository(
+            IDataAvailableNotificationRepositoryContainer repositoryContainer,
+            ILogCallback logCallback)
         {
             _repositoryContainer = repositoryContainer;
             _logCallback = logCallback;
+        }
+
+        public async Task SaveAsync(IBundleableNotifications bundleableNotifications)
+        {
+            if (bundleableNotifications is null)
+                throw new ArgumentNullException(nameof(bundleableNotifications));
+
+            var notifications = bundleableNotifications.GetNotifications();
+
+            var nextPartition = await FindNextAvailablePartitionAsync(bundleableNotifications.PartitionKey).ConfigureAwait(false);
+
+            var nextPartitionSize = nextPartition is null ? 0 : await GetPartitionSizeAsync(nextPartition.QueueKey).ConfigureAwait(false);
+
+            foreach (var notification in notifications)
+            {
+                var domainMessageType = new CosmosDomainMessageType(
+                    notification.Recipient.Gln.Value,
+                    notification.Origin.ToString(),
+                    notification.ContentType.Value,
+                    notification.SequenceNumber.Value);
+
+                if (nextPartition is null)
+                {
+                    nextPartition = CreateNewSubPartition(bundleableNotifications.PartitionKey);
+                    nextPartitionSize = 0;
+
+                    await _repositoryContainer.Container.CreateItemAsync(nextPartition).ConfigureAwait(false);
+
+                    await _repositoryContainer.Container.CreateItemAsync(domainMessageType).ConfigureAwait(false);
+                }
+
+                if (nextPartition.PartitionIndex == nextPartitionSize)
+                {
+                    await _repositoryContainer.Container.CreateItemAsync(domainMessageType).ConfigureAwait(false);
+                }
+
+                notification.PartitionKey = nextPartition.PartitionKey;
+                await _repositoryContainer.Container.CreateItemAsync(notification).ConfigureAwait(false);
+                nextPartitionSize++;
+
+                if (nextPartitionSize.Equals(10000))
+                {
+                    nextPartitionSize = 0;
+                }
+            }
+        }
+
+        public static CosmosPartitionDescriptor CreateNewSubPartition(BundleableNotificationsKey key)
+        {
+
+        }
+
+        public async Task<CosmosPartitionDescriptor?> FindNextAvailablePartitionAsync(BundleableNotificationsKey bundleableNotificationsKey)
+        {
+            var asLinq = _repositoryContainer
+                .Container
+                .GetItemLinqQueryable<CosmosPartitionDescriptor>();
+
+            var query =
+                from dataAvailable in asLinq
+                where
+                    dataAvailable.PartitionKey == bundleableNotificationsKey.PartitionKey && dataAvailable.PartitionIndex < 10000
+                orderby dataAvailable.InitialSequenceNumber descending
+                select dataAvailable;
+
+            return await ExecuteQueryAsync(query)
+                .FirstOrDefaultAsync()
+                .ConfigureAwait(false);
+        }
+
+        public async Task<int> GetPartitionSizeAsync(Guid queueKey)
+        {
+            var asLinq = _repositoryContainer
+                .Container
+                .GetItemLinqQueryable<CosmosDataAvailable>();
+
+            var query =
+                from dataAvailable in asLinq
+                where
+                    dataAvailable.PartitionKey == queueKey.ToString()
+                select dataAvailable;
+
+            return await query.CountAsync().ConfigureAwait(false);
         }
 
         public Task SaveAsync(DataAvailableNotification dataAvailableNotification)
@@ -305,7 +392,17 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                     new ContentType(document.ContentType),
                     Enum.Parse<DomainOrigin>(document.Origin, true),
                     new SupportsBundling(document.SupportsBundling),
-                    new Weight(document.RelativeWeight));
+                    new Weight(document.RelativeWeight),
+                    new SequenceNumber(document.SequenceNumber),
+                    document.PartitionKey);
+            }
+        }
+
+        private static async IAsyncEnumerable<T> ExecuteQueryAsync<T>(IQueryable<T> query)
+        {
+            await foreach (var document in query.AsCosmosIteratorAsync().ConfigureAwait(false))
+            {
+                yield return document;
             }
         }
 
