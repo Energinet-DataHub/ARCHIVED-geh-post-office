@@ -48,7 +48,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation
                 ValidContentType,
                 ValidOrigin,
                 false,
-                ValidWeight);
+                ValidWeight,
+                10, // random number, must be changed once tests are done
+                string.Empty); // Should not be empty, must be changed once tests are don
 
             // Act
             var result = await target.ValidateAsync(command).ConfigureAwait(false);
@@ -83,7 +85,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation
                 ValidContentType,
                 ValidOrigin,
                 false,
-                ValidWeight);
+                ValidWeight,
+                10, // random number, must be changed once tests are done
+                string.Empty); // Should not be empty, must be changed once tests are don
 
             // Act
             var result = await target.ValidateAsync(command).ConfigureAwait(false);
@@ -120,7 +124,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation
                 value,
                 ValidOrigin,
                 false,
-                ValidWeight);
+                ValidWeight,
+                10, // random number, must be changed once tests are done
+                string.Empty); // Should not be empty, must be changed once tests are don
 
             // Act
             var result = await target.ValidateAsync(command).ConfigureAwait(false);
@@ -158,7 +164,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation
                 ValidContentType,
                 value,
                 false,
-                ValidWeight);
+                ValidWeight,
+                10, // random number, must be changed once tests are done
+                string.Empty); // Should not be empty, must be changed once tests are don
 
             // Act
             var result = await target.ValidateAsync(command).ConfigureAwait(false);
@@ -196,7 +204,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation
                 ValidContentType,
                 ValidOrigin,
                 false,
-                value);
+                value,
+                10, // random number, must be changed once tests are done
+                string.Empty); // Should not be empty, must be changed once tests are don
 
             // Act
             var result = await target.ValidateAsync(command).ConfigureAwait(false);

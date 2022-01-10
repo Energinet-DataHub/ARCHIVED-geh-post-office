@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using Newtonsoft.Json;
+
 namespace Energinet.DataHub.PostOffice.Infrastructure.Documents
 {
     public sealed record CosmosDomainMessageType
@@ -28,6 +31,8 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Documents
             SequenceNumber = sequenceNumber;
         }
 
+        [JsonProperty("id")]
+        public static Guid Id => Guid.NewGuid();
         public string Recipient { get; set; }
         public string Origin { get; set; }
         public string ContentType { get; set; }

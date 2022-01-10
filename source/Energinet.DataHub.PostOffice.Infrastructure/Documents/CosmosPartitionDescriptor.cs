@@ -13,14 +13,30 @@
 // limitations under the License.
 
 using System;
+using Energinet.DataHub.PostOffice.Domain.Model;
+using Newtonsoft.Json;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Documents
 {
-    public class CosmosPartitionDescriptor
+    public sealed record CosmosPartitionDescriptor
     {
-        public Guid QueueKey { get; set; }
-        public string PartitionKey { get; set; } = null!;
-        public long InitialSequenceNumber { get; set; }
-        public long PartitionIndex { get; set; }
+        public CosmosPartitionDescriptor(
+            string dataAvailablePartitionKey,
+            string partitionKey,
+            long initialSequenceNumber,
+            long partitionIndex)
+        {
+            DataAvailablePartitionKey = dataAvailablePartitionKey;
+            PartitionKey = partitionKey;
+            InitialSequenceNumber = initialSequenceNumber;
+            PartitionIndex = partitionIndex;
+        }
+
+        [JsonProperty("id")]
+        public Guid Id { get; } = Guid.NewGuid();
+        public string DataAvailablePartitionKey { get; }
+        public string PartitionKey { get; }
+        public long InitialSequenceNumber { get; }
+        public long PartitionIndex { get; }
     }
 }

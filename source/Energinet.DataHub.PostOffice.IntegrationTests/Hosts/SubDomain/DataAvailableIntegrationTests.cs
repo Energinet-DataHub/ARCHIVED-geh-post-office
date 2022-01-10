@@ -46,7 +46,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.SubDomain
                 blankValue,
                 blankValue,
                 false,
-                1);
+                1,
+                10, // random number, must be changed once tests are done
+                string.Empty); // Should not be empty, must be changed once tests are done
 
             // Act + Assert
             await Assert
@@ -74,7 +76,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.SubDomain
                 "timeseries",
                 "timeseries",
                 false,
-                1);
+                1,
+                10, // random number, must be changed once tests are done
+                string.Empty); // Should not be empty, must be changed once tests are done
 
             // Act
             var response = await mediator.Send(dataAvailableNotificationCommand).ConfigureAwait(false);

@@ -18,6 +18,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
+using Energinet.DataHub.PostOffice.Infrastructure.Model;
 using Energinet.DataHub.PostOffice.IntegrationTests.Common;
 using FluentAssertions;
 using Xunit;
@@ -64,7 +65,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
                 new ContentType("fake_value"),
                 DomainOrigin.Aggregations,
                 new SupportsBundling(false),
-                new Weight(1));
+                new Weight(1),
+                new SequenceNumber(10)); // random number, must be changed once tests are done
 
             await dataAvailableNotificationRepository.SaveAsync(expected).ConfigureAwait(false);
 
@@ -99,7 +101,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
                 new ContentType("fake_value"),
                 DomainOrigin.Aggregations,
                 new SupportsBundling(false),
-                new Weight(1));
+                new Weight(1),
+                new SequenceNumber(10)); // random number, must be changed once tests are done
 
             await dataAvailableNotificationRepository.SaveAsync(expected).ConfigureAwait(false);
 
@@ -128,7 +131,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
                 new ContentType("fake_value"),
                 DomainOrigin.Aggregations,
                 new SupportsBundling(false),
-                new Weight(1));
+                new Weight(1),
+                new SequenceNumber(10)); // random number, must be changed once tests are done
 
             await dataAvailableNotificationRepository.SaveAsync(expected).ConfigureAwait(false);
 
@@ -140,7 +144,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
                     expected.ContentType,
                     expected.Origin,
                     expected.SupportsBundling,
-                    expected.Weight);
+                    expected.Weight,
+                    new SequenceNumber(10)); // random number, must be changed once tests are done
 
                 await dataAvailableNotificationRepository.SaveAsync(other).ConfigureAwait(false);
             }
@@ -176,7 +181,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
                 new ContentType("fake_value"),
                 DomainOrigin.Aggregations,
                 new SupportsBundling(true),
-                new Weight(1));
+                new Weight(1),
+                new SequenceNumber(10)); // random number, must be changed once tests are done
 
             for (var i = 0; i < 5; i++)
             {
@@ -186,7 +192,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
                     new ContentType("target"),
                     expected.Origin,
                     expected.SupportsBundling,
-                    expected.Weight);
+                    expected.Weight,
+                    new SequenceNumber(10)); // random number, must be changed once tests are done
 
                 await dataAvailableNotificationRepository.SaveAsync(other).ConfigureAwait(false);
             }
@@ -218,7 +225,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
                 new ContentType("target"),
                 DomainOrigin.Aggregations,
                 new SupportsBundling(true),
-                new Weight(1));
+                new Weight(1),
+                new SequenceNumber(10)); // random number, must be changed once tests are done
 
             for (var i = 0; i < 5; i++)
             {
@@ -228,7 +236,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
                     new ContentType("fake_value"),
                     expected.Origin,
                     expected.SupportsBundling,
-                    expected.Weight);
+                    expected.Weight,
+                    new SequenceNumber(10)); // random number, must be changed once tests are done
 
                 await dataAvailableNotificationRepository.SaveAsync(other).ConfigureAwait(false);
             }
@@ -265,7 +274,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
                 new ContentType("target"),
                 DomainOrigin.Aggregations,
                 new SupportsBundling(true),
-                new Weight(1));
+                new Weight(1),
+                new SequenceNumber(10)); // random number, must be changed once tests are done
 
             for (var i = 0; i < 5; i++)
             {
@@ -275,7 +285,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
                     expected.ContentType,
                     expected.Origin,
                     expected.SupportsBundling,
-                    expected.Weight);
+                    expected.Weight,
+                    new SequenceNumber(10)); // random number, must be changed once tests are done
 
                 await dataAvailableNotificationRepository.SaveAsync(other).ConfigureAwait(false);
             }
@@ -308,7 +319,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
                 new ContentType("target"),
                 DomainOrigin.Aggregations,
                 new SupportsBundling(true),
-                new Weight(10));
+                new Weight(10),
+                new SequenceNumber(10)); // random number, must be changed once tests are done
 
             await dataAvailableNotificationRepository.SaveAsync(expected).ConfigureAwait(false);
 
@@ -338,7 +350,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
                 new ContentType("target"),
                 DomainOrigin.Aggregations,
                 new SupportsBundling(false),
-                new Weight(0));
+                new Weight(0),
+                new SequenceNumber(10)); // random number, must be changed once tests are done
 
             await dataAvailableNotificationRepository.SaveAsync(expected).ConfigureAwait(false);
 
@@ -367,7 +380,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
                 new ContentType("target"),
                 DomainOrigin.Aggregations,
                 new SupportsBundling(false),
-                new Weight(1));
+                new Weight(1),
+                new SequenceNumber(10)); // random number, must be changed once tests are done
 
             await dataAvailableNotificationRepository.SaveAsync(expected).ConfigureAwait(false);
 
@@ -410,7 +424,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
                 new ContentType("target"),
                 DomainOrigin.Aggregations,
                 new SupportsBundling(false),
-                new Weight(1));
+                new Weight(1),
+                new SequenceNumber(10)); // random number, must be changed once tests are done
 
             // Everything should match to detect change of partition key.
             var notificationB = new DataAvailableNotification(
@@ -419,7 +434,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
                 notificationA.ContentType,
                 notificationA.Origin,
                 notificationA.SupportsBundling,
-                notificationA.Weight);
+                notificationA.Weight,
+                new SequenceNumber(10)); // random number, must be changed once tests are done
 
             await dataAvailableNotificationRepository.SaveAsync(notificationA).ConfigureAwait(false);
             await dataAvailableNotificationRepository.SaveAsync(notificationB).ConfigureAwait(false);
@@ -461,7 +477,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
                     new ContentType("target"),
                     DomainOrigin.Aggregations,
                     new SupportsBundling(true),
-                    new Weight(1));
+                    new Weight(1),
+                    new SequenceNumber(10)); // random number, must be changed once tests are done
 
                 await dataAvailableNotificationRepository.SaveAsync(expected).ConfigureAwait(false);
             }
@@ -495,7 +512,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
                 new ContentType("target"),
                 DomainOrigin.Aggregations,
                 new SupportsBundling(false),
-                new Weight(1));
+                new Weight(1),
+                new SequenceNumber(10)); // random number, must be changed once tests are done
 
             // Act
             await dataAvailableNotificationRepository
@@ -530,13 +548,15 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var gln = new MockedGln();
             for (int i = 0; i < 5; i++)
             {
-                dataAvailableNotifications.Add(new DataAvailableNotification(
-                    new Uuid(Guid.NewGuid()),
-                    new MarketOperator(gln),
-                    new ContentType("fake_value"),
-                    DomainOrigin.TimeSeries,
-                    new SupportsBundling(true),
-                    new Weight(1)));
+                dataAvailableNotifications.Add(
+                    new DataAvailableNotification(
+                        new Uuid(Guid.NewGuid()),
+                        new MarketOperator(gln),
+                        new ContentType("fake_value"),
+                        DomainOrigin.TimeSeries,
+                        new SupportsBundling(true),
+                        new Weight(1),
+                        new SequenceNumber(10))); // random number, must be changed once tests are done
             }
 
             var expected = dataAvailableNotifications.OrderBy(x => x.NotificationId.AsGuid()).ToList();
@@ -555,6 +575,58 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
 
             // Assert
             result.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public async Task SaveAsync_InsertingDataAvailableInPartition_Success()
+        {
+            // Arrange
+            await using var host = await SubDomainIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
+            var scope = host.BeginScope();
+
+            var dataAvailableNotificationRepository = scope.GetInstance<IDataAvailableNotificationRepository>();
+
+            var bundleableNotifications = CreateBundleableNotificationsObject();
+
+            PopulateBundleableNotificationsWithData(bundleableNotifications);
+
+            // Act
+            await dataAvailableNotificationRepository.SaveAsync(bundleableNotifications).ConfigureAwait(false);
+
+            var actual = await dataAvailableNotificationRepository.
+                GetNextUnacknowledgedAsync(bundleableNotifications.Notifications.First().Recipient).ConfigureAwait(false);
+
+            // Assert
+            var expected = bundleableNotifications.Notifications.First();
+            Assert.NotNull(actual);
+            Assert.Equal(expected.NotificationId, actual!.NotificationId);
+            Assert.Equal(expected.ContentType, actual.ContentType);
+            Assert.Equal(expected.Recipient, actual.Recipient);
+            Assert.Equal(expected.Origin, actual.Origin);
+            Assert.Equal(expected.SupportsBundling, actual.SupportsBundling);
+            Assert.Equal(expected.Weight, actual.Weight);
+        }
+
+        private static BundleableNotifications CreateBundleableNotificationsObject()
+        {
+            return new BundleableNotifications(
+                new BundleableNotificationsKey(
+                    new MarketOperator(new GlobalLocationNumber("fake_value")),
+                    DomainOrigin.Unknown,
+                    new ContentType("fake_value")));
+        }
+
+        private static void PopulateBundleableNotificationsWithData(IBundleableNotifications notifications)
+        {
+            var recipient = new MarketOperator(new MockedGln());
+            notifications.AddNotification(new DataAvailableNotification(
+                new Uuid(Guid.NewGuid()),
+                recipient,
+                new ContentType("fake_value"),
+                DomainOrigin.Unknown,
+                new SupportsBundling(false),
+                new Weight(0),
+                new SequenceNumber(1)));
         }
     }
 }

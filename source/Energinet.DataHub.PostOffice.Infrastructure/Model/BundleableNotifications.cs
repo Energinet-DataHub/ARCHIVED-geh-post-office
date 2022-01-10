@@ -19,23 +19,21 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Model
 {
     public class BundleableNotifications : IBundleableNotifications
     {
-        private List<DataAvailableNotification> _dataAvailableNotifications = null!;
+        private List<DataAvailableNotification> _dataAvailableNotifications;
 
         public BundleableNotifications(BundleableNotificationsKey key)
         {
             PartitionKey = key;
+            _dataAvailableNotifications = new List<DataAvailableNotification>();
         }
+
+        public IEnumerable<DataAvailableNotification> Notifications => _dataAvailableNotifications;
 
         public BundleableNotificationsKey PartitionKey { get; set; }
 
         public void AddNotification(DataAvailableNotification notification)
         {
             _dataAvailableNotifications.Add(notification);
-        }
-
-        public IEnumerable<DataAvailableNotification> GetNotifications()
-        {
-            return _dataAvailableNotifications;
         }
     }
 }

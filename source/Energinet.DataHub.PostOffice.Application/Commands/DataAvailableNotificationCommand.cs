@@ -24,7 +24,9 @@ namespace Energinet.DataHub.PostOffice.Application.Commands
             string contentType,
             string origin,
             bool supportsBundling,
-            int weight)
+            int weight,
+            int sequenceNumber,
+            string partitionKey)
         {
             Uuid = uuid;
             Recipient = recipient;
@@ -32,6 +34,8 @@ namespace Energinet.DataHub.PostOffice.Application.Commands
             Origin = origin;
             SupportsBundling = supportsBundling;
             Weight = weight;
+            SequenceNumber = sequenceNumber;
+            PartitionKey = partitionKey;
         }
 
         public string Uuid { get; }
@@ -40,5 +44,7 @@ namespace Energinet.DataHub.PostOffice.Application.Commands
         public string Origin { get; }
         public bool SupportsBundling { get; }
         public int Weight { get; }
+        public int SequenceNumber { get; }
+        public string PartitionKey { get; }
     }
 }

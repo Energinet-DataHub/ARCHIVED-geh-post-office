@@ -65,7 +65,8 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
                 new ContentType(request.ContentType),
                 Enum.Parse<DomainOrigin>(request.Origin, true),
                 new SupportsBundling(request.SupportsBundling),
-                new Weight(request.Weight));
+                new Weight(request.Weight),
+                new SequenceNumber(10));
         }
     }
 }

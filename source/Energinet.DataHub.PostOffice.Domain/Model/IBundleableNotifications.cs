@@ -22,6 +22,11 @@ namespace Energinet.DataHub.PostOffice.Domain.Model
     public interface IBundleableNotifications
     {
         /// <summary>
+        /// Contains all notifications
+        /// </summary>
+        IEnumerable<DataAvailableNotification> Notifications { get; }
+
+        /// <summary>
         /// Key to identify similar type of messages to bundle.
         /// </summary>
         BundleableNotificationsKey PartitionKey { get; set; }
@@ -31,11 +36,5 @@ namespace Energinet.DataHub.PostOffice.Domain.Model
         /// </summary>
         /// <param name="notification">Data available-notification to be enqueued.</param>
         void AddNotification(DataAvailableNotification notification);
-
-        /// <summary>
-        /// Get all data available-notifications in the current scope
-        /// </summary>
-        /// <returns>A collection of data available-notifications</returns>
-        IEnumerable<DataAvailableNotification> GetNotifications();
     }
 }

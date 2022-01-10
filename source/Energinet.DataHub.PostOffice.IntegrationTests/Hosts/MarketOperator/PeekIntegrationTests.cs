@@ -810,7 +810,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
                 "timeseries",
                 "TimeSeries",
                 false,
-                1);
+                1,
+                10, // random number, must be changed once tests are done
+                string.Empty); // Should not be empty, must be changed once tests are done
 
             await AddNotificationAsync(dataAvailableCommand).ConfigureAwait(false);
         }
@@ -824,7 +826,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
                 "aggregations",
                 "Aggregations",
                 false,
-                1);
+                1,
+                10, // random number, must be changed once tests are done
+                string.Empty); // Should not be empty, must be changed once tests are done
 
             await AddNotificationAsync(dataAvailableCommand).ConfigureAwait(false);
         }
@@ -838,7 +842,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
                 "marketroles",
                 "MarketRoles",
                 false,
-                1);
+                1,
+                10, // random number, must be changed once tests are done
+                string.Empty); // Should not be empty, must be changed once tests are done
 
             await AddNotificationAsync(dataAvailableCommand).ConfigureAwait(false);
             return dataAvailableUuid;
@@ -853,7 +859,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
                 "meteringpoints",
                 "MeteringPoints",
                 false,
-                1);
+                1,
+                10, // random number, must be changed once tests are done
+                string.Empty); // Should not be empty, must be changed once tests are done
 
             await AddNotificationAsync(dataAvailableCommand).ConfigureAwait(false);
             return dataAvailableUuid;
@@ -868,7 +876,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
                 "charges",
                 "Charges",
                 false,
-                1);
+                1,
+                10, // random number, must be changed once tests are done
+                string.Empty); // Should not be empty, must be changed once tests are done
 
             await AddNotificationAsync(dataAvailableCommand).ConfigureAwait(false);
             return dataAvailableUuid;
@@ -883,7 +893,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
                 "content_type",
                 origin,
                 supportsBundling,
-                1);
+                1,
+                10, // random number, must be changed once tests are done
+                string.Empty); // Should not be empty, must be changed once tests are done
 
             await AddNotificationAsync(dataAvailableCommand).ConfigureAwait(false);
             return dataAvailableUuid;

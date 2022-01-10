@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Documents
 {
-    internal sealed record CosmosDataAvailable
+    public sealed record CosmosDataAvailable
     {
         public CosmosDataAvailable()
         {

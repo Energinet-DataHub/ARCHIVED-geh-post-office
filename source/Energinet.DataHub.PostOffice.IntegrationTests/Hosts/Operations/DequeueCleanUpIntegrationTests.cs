@@ -99,7 +99,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.Operations
                 new ContentType("fake_value"),
                 domain,
                 new SupportsBundling(false),
-                new Weight(1));
+                new Weight(1),
+                new SequenceNumber(10)); // random number, must be changed once tests are done
         }
     }
 }

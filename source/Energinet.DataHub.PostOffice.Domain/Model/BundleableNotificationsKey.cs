@@ -27,7 +27,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Model
             Recipient = recipient;
             Origin = origin;
             MessageType = messageType;
-            PartitionKey = recipient?.Gln.Value + origin + messageType;
+            PartitionKey = recipient?.Gln.Value + origin + messageType?.Value;
         }
 
         public MarketOperator Recipient { get; }
