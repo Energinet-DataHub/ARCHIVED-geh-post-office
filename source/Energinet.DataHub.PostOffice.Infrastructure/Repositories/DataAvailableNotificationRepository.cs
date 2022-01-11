@@ -87,6 +87,49 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 }
             }
         }
+
+        public Task SaveAsync(DataAvailableNotification dataAvailableNotification)
+        {
+            if (bundleableNotifications is null)
+                throw new ArgumentNullException(nameof(bundleableNotifications));
+
+            var notifications = bundleableNotifications.Notifications;
+
+            var nextPartition = await FindNextAvailablePartitionAsync(bundleableNotifications.PartitionKey).ConfigureAwait(false);
+
+            var nextPartitionSize = nextPartition is null ? 0 : await GetPartitionSizeAsync(nextPartition.DataAvailablePartitionKey).ConfigureAwait(false);
+
+            foreach (var notification in notifications)
+            {
+                var cosmosDataAvailable = CosmosDataAvailableMapper.Map(notification);
+
+                var domainMessageType = CosmosDomainMessageTypeMapper.Map(notification);
+
+                if (nextPartition is null)
+                {
+                    nextPartition = CreateNewSubPartition(bundleableNotifications.PartitionKey, notification);
+                    nextPartitionSize = 0;
+
+                    await _repositoryContainer.Container.CreateItemAsync(nextPartition).ConfigureAwait(false);
+
+                    await _repositoryContainer.Container.CreateItemAsync(domainMessageType).ConfigureAwait(false);
+                }
+
+                if (nextPartition.PartitionIndex == nextPartitionSize)
+                {
+                    await _repositoryContainer.Container.CreateItemAsync(domainMessageType).ConfigureAwait(false);
+                }
+
+                notification.PartitionKey = nextPartition.PartitionKey;
+                await _repositoryContainer.Container.CreateItemAsync(cosmosDataAvailable).ConfigureAwait(false);
+                nextPartitionSize++;
+
+                if (nextPartitionSize.Equals(10000))
+                {
+                    nextPartition = null;
+                }
+            }
+        }
         public async Task SaveAsync(DataAvailableNotification dataAvailableNotification)
         {
             Guard.ThrowIfNull(dataAvailableNotification, nameof(dataAvailableNotification));
@@ -303,6 +346,16 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                     _repositoryContainer.Container.DeleteItemStreamAsync(dataAvailableNotification.ToString(), documentPartitionKey)).ToList();
 
             return Task.WhenAll(deleteTasks);
+        }
+
+        public async Task AdvanceSequenceNumberAsync(SequenceNumber sequenceNumber)
+        {
+            if (sequenceNumber is null)
+                throw new ArgumentNullException(nameof(sequenceNumber));
+
+            var s = new CosmosSequenceNumber(sequenceNumber.Value);
+
+            await _repositoryContainer.Container.UpsertItemAsync(s).ConfigureAwait(false);
         }
 
         private static CosmosPartitionDescriptor CreateNewSubPartition(BundleableNotificationsKey key, DataAvailableNotification notification)

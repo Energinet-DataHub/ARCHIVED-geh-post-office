@@ -37,6 +37,12 @@ namespace Energinet.DataHub.PostOffice.Domain.Repositories
         Task SaveAsync(DataAvailableNotification dataAvailableNotification);
 
         /// <summary>
+        /// Saves the given notification as unacknowledged.
+        /// </summary>
+        /// <param name="dataAvailableNotification">The notification to save.</param>
+        Task SaveAsync(DataAvailableNotification dataAvailableNotification);
+
+        /// <summary>
         /// Gets the next unacknowledged notification for the given market operator and domains.
         /// Returns null if there are no unacknowledged notifications.
         /// </summary>
@@ -82,5 +88,12 @@ namespace Energinet.DataHub.PostOffice.Domain.Repositories
         /// <param name="dataAvailableNotifications">ids to delete</param>
         /// <param name="partitionKey"></param>
         Task DeleteAsync(IEnumerable<Uuid> dataAvailableNotifications, string partitionKey);
+
+        /// <summary>
+        /// Store max available sequence number representing a data available notification
+        /// </summary>
+        /// <param name="sequenceNumber"></param>
+        /// <returns>A boolean to tell if the save operation was a success</returns>
+        Task AdvanceSequenceNumberAsync(SequenceNumber sequenceNumber);
     }
 }

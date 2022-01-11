@@ -12,18 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Energinet.DataHub.PostOffice.Domain.Model;
-using MediatR;
+using Newtonsoft.Json;
 
-namespace Energinet.DataHub.PostOffice.Application.Commands
+namespace Energinet.DataHub.PostOffice.Infrastructure.Documents
 {
-    public record UpdateMaximumSequenceNumberCommand : IRequest
+    public record CosmosSequenceNumber
     {
-        public UpdateMaximumSequenceNumberCommand(SequenceNumber sequenceNumber)
+        public CosmosSequenceNumber(int sequenceNumber)
         {
             SequenceNumber = sequenceNumber;
         }
 
-        public SequenceNumber SequenceNumber { get; }
+        [JsonProperty("id")]
+        public string Id { get; } = "1";
+        public int SequenceNumber { get; set; }
+        public string PartitionKey { get; } = "SequenceNumber";
     }
 }

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
@@ -29,6 +30,7 @@ namespace Energinet.DataHub.PostOffice.Common
             container.Register<IDataAvailableNotificationRepositoryContainer, DataAvailableNotificationRepositoryContainer>(Lifestyle.Scoped);
             container.Register<IBundleRepository, BundleRepository>(Lifestyle.Scoped);
             container.Register<IBundleRepositoryContainer, BundleRepositoryContainer>(Lifestyle.Scoped);
+            container.Register<ISequenceNumberRepository, SequenceNumberRepository>(Lifestyle.Scoped);
         }
     }
 }

@@ -12,18 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Energinet.DataHub.PostOffice.Domain.Model;
-using MediatR;
+using System.Threading.Tasks;
 
-namespace Energinet.DataHub.PostOffice.Application.Commands
+namespace Energinet.DataHub.PostOffice.Domain.Model
 {
-    public record UpdateMaximumSequenceNumberCommand : IRequest
+    /// <summary>
+    /// Accesses sequence number in a partition in data storage
+    /// </summary>
+    public interface ISequenceNumberRepository
     {
-        public UpdateMaximumSequenceNumberCommand(SequenceNumber sequenceNumber)
-        {
-            SequenceNumber = sequenceNumber;
-        }
-
-        public SequenceNumber SequenceNumber { get; }
+        /// <summary>
+        /// Gets the current maximum sequence number in the partition
+        /// </summary>
+        /// <returns>The current maximum sequence number</returns>
+        Task<SequenceNumber> GetCurrentAsync();
     }
 }
