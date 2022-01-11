@@ -17,7 +17,7 @@ using System.Globalization;
 
 namespace Energinet.DataHub.PostOffice.Domain.Model
 {
-    public record DomainMessageType
+    public sealed record DomainMessageType
     {
         public DomainMessageType(
             MarketOperator recipient,

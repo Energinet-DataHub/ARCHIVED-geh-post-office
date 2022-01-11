@@ -14,23 +14,15 @@
 
 using System;
 
-namespace Energinet.DataHub.PostOffice.Infrastructure.Correlation
+namespace Energinet.DataHub.MessageHub.Model.Model
 {
-    /// <summary>
-    /// Temporary code to test performance of solution.
-    /// </summary>
-    public interface ILogCallback
-    {
-        /// <summary>
-        /// n/a
-        /// </summary>
-        /// <param name="callback"></param>
-        void SetCallback(Action<string> callback);
-
-        /// <summary>
-        /// n/a
-        /// </summary>
-        /// <param name="message"></param>
-        void Log(string message);
-    }
+    public sealed record DataAvailableDto(
+        Guid Uuid,
+        GlobalLocationNumberDto Recipient,
+        MessageTypeDto MessageType,
+        DomainOrigin Origin,
+        bool SupportsBundling,
+        int RelativeWeight,
+        string SequenceNumber,
+        bool CouldParse);
 }

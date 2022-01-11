@@ -533,7 +533,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             Assert.Equal(expected.SupportsBundling, actual.SupportsBundling);
             Assert.Equal(expected.Weight, actual.Weight);
         }
-
+      
         [Fact]
         public async Task SaveAsync_InsertingBatchOfDataAvailables_Success()
         {

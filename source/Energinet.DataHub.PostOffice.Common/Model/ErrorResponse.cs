@@ -12,30 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
+using System.Threading.Tasks;
+using System.Xml;
+using Energinet.DataHub.PostOffice.Utilities;
 
-namespace Energinet.DataHub.PostOffice.Infrastructure.Correlation
+namespace Energinet.DataHub.PostOffice.Common.Model
 {
-    public class LogCallback : ILogCallback
+    public sealed record ErrorResponse
     {
-        private Action<string>? _callback;
-
-        /// <summary>
-        /// n/a
-        /// </summary>
-        /// <param name="callback"></param>
-        public void SetCallback(Action<string> callback)
+        public ErrorResponse(ErrorDescriptor error)
         {
-            _callback = callback;
+            Error = error;
         }
 
-        /// <summary>
-        /// n/a
-        /// </summary>
-        /// <param name="message"></param>
-        public void Log(string message)
+        public ErrorDescriptor Error { get; }
+
+        public async Task WriteXmlContentsAsync(XmlWriter writer)
         {
-            _callback?.Invoke(message);
+            Guard.ThrowIfNull(writer, nameof(writer));
+
+            await Error.WriteXmlContentsAsync(writer).ConfigureAwait(false);
         }
     }
 }

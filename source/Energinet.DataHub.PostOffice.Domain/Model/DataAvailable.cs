@@ -12,19 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Diagnostics;
-using Xunit;
+using System;
 
-namespace Energinet.DataHub.PostOffice.Tests.Tooling
+namespace Energinet.DataHub.PostOffice.Domain.Model
 {
-    public sealed class RunnableInDebugOnlyAttribute : FactAttribute
-    {
-        public RunnableInDebugOnlyAttribute()
-        {
-            if (!Debugger.IsAttached)
-            {
-                Skip = "Only running in interactive mode.";
-            }
-        }
-    }
+    public sealed record DataAvailable(
+        Guid Uuid,
+        GlobalLocationNumber Recipient,
+        ContentType MessageType,
+        DomainOrigin Origin,
+        bool SupportsBundling,
+        int RelativeWeight,
+        string SequenceNumber,
+        bool CouldParse);
 }

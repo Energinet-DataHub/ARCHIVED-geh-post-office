@@ -12,15 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Microsoft.Azure.WebJobs;
-
-namespace Energinet.DataHub.PostOffice.ServiceContracts
+namespace Energinet.DataHub.PostOffice.Domain.Model
 {
-    public static class ProtoContractServiceFactory
+    /// <summary>
+    /// Send bundled data to queue
+    /// </summary>
+    public interface IBundleableNotificationsEnqueuer
     {
-        public static ProtoContractService Create(ExecutionContext context)
-        {
-            return new ProtoContractService(context);
-        }
+        /// <summary>
+        /// Has key
+        /// </summary>
+        BundleableNotificationsKey Key { get; set; }
+
+        /// <summary>
+        /// Send to queue
+        /// </summary>
+        void Enqueue();
     }
 }

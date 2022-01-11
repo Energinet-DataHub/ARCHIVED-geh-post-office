@@ -36,11 +36,8 @@ namespace Energinet.DataHub.MessageHub.Client.DataAvailable
 
         public Task SendAsync(string correlationId, DataAvailableNotificationDto dataAvailableNotificationDto)
         {
-            if (correlationId is null)
-                throw new ArgumentNullException(nameof(correlationId));
-
-            if (dataAvailableNotificationDto == null)
-                throw new ArgumentNullException(nameof(dataAvailableNotificationDto));
+            Guard.ThrowIfNull(correlationId, nameof(correlationId));
+            Guard.ThrowIfNull(dataAvailableNotificationDto, nameof(dataAvailableNotificationDto));
 
             var sender = _messageBusFactory.GetSenderClient(_messageHubConfig.DataAvailableQueue);
 
@@ -54,7 +51,9 @@ namespace Energinet.DataHub.MessageHub.Client.DataAvailable
                 RelativeWeight = dataAvailableNotificationDto.RelativeWeight
             };
 
-            var message = new ServiceBusMessage(new BinaryData(contract.ToByteArray()))
+            var messageId = Guid.NewGuid().ToString();
+
+            var message = new ServiceBusMessage(new BinaryData(contract.ToByteArray())) { MessageId = messageId }
                 .AddDataAvailableIntegrationEvents(correlationId);
 
             return sender.PublishMessageAsync<ServiceBusMessage>(message);

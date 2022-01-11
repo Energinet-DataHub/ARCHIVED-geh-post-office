@@ -13,17 +13,26 @@
 // limitations under the License.
 
 using System.Collections.Generic;
-using MediatR;
+using System.Linq;
 
-namespace Energinet.DataHub.PostOffice.Application.Commands
+namespace Energinet.DataHub.PostOffice.Domain.Model
 {
-    public class DataAvailableNotificationListCommand : IRequest<DataAvailableNotificationResponse>
+    public sealed class DomainMessageTypes
     {
-        public DataAvailableNotificationListCommand(IEnumerable<DataAvailableNotificationCommand> dataAvailableNotifications)
+        public DomainMessageTypes(
+            MarketOperator recipient,
+            DomainOrigin[] domainMessageType)
         {
-            DataAvailableNotifications = dataAvailableNotifications;
+            Recipient = recipient;
+            DomainMessageType = domainMessageType;
         }
 
-        public IEnumerable<DataAvailableNotificationCommand> DataAvailableNotifications { get; }
+        public MarketOperator Recipient { get; set; }
+        public IEnumerable<DomainOrigin> DomainMessageType { get; set; }
+
+        public BundleableNotificationsKey SelectNextKey()
+        {
+            return new BundleableNotificationsKey(Recipient, DomainMessageType.First(), new ContentType("Value"));
+        }
     }
 }
