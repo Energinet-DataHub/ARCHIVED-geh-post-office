@@ -88,5 +88,12 @@ namespace Energinet.DataHub.PostOffice.Domain.Repositories
         /// <param name="dataAvailableNotifications">ids to delete</param>
         /// <param name="partitionKey"></param>
         Task DeleteAsync(IEnumerable<Uuid> dataAvailableNotifications, string partitionKey);
+
+        /// <summary>
+        /// Store max available sequence number representing a data available notification
+        /// </summary>
+        /// <param name="sequenceNumber"></param>
+        /// <returns>A boolean to tell if the save operation was a success</returns>
+        Task AdvanceSequenceNumberAsync(SequenceNumber sequenceNumber);
     }
 }

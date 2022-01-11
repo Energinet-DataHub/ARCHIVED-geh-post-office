@@ -319,6 +319,16 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             return Task.WhenAll(deleteTasks);
         }
 
+        public async Task AdvanceSequenceNumberAsync(SequenceNumber sequenceNumber)
+        {
+            if (sequenceNumber is null)
+                throw new ArgumentNullException(nameof(sequenceNumber));
+
+            var s = new CosmosSequenceNumber(sequenceNumber.Value);
+
+            await _repositoryContainer.Container.UpsertItemAsync(s).ConfigureAwait(false);
+        }
+
         private static CosmosPartitionDescriptor CreateNewSubPartition(BundleableNotificationsKey key, DataAvailableNotification notification)
         {
             if (key is null)
