@@ -166,7 +166,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
                 "timeseries",
                 "timeseries",
                 false,
-                1);
+                1,
+                10, // random number, must be changed once tests are done
+                string.Empty); // Should not be empty, must be changed once tests are done
 
             await using var host = await SubDomainIntegrationTestHost
                 .InitializeAsync()

@@ -22,7 +22,8 @@ namespace Energinet.DataHub.PostOffice.Domain.Model
             ContentType contentType,
             DomainOrigin origin,
             SupportsBundling supportsBundling,
-            Weight weight)
+            Weight weight,
+            SequenceNumber sequenceNumber)
         {
             NotificationId = notificationId;
             Recipient = recipient;
@@ -30,6 +31,8 @@ namespace Energinet.DataHub.PostOffice.Domain.Model
             Origin = origin;
             SupportsBundling = supportsBundling;
             Weight = weight;
+            SequenceNumber = sequenceNumber;
+            PartitionKey = Recipient.Gln.Value + Origin + ContentType.Value;
         }
 
         public Uuid NotificationId { get; }
@@ -38,5 +41,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Model
         public DomainOrigin Origin { get; }
         public SupportsBundling SupportsBundling { get; }
         public Weight Weight { get; }
+        public SequenceNumber SequenceNumber { get; }
+        public string PartitionKey { get; set; }
     }
 }

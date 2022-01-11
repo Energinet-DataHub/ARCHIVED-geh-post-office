@@ -12,7 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.PostOffice.Domain.Model
+using Energinet.DataHub.PostOffice.Domain.Model;
+using Energinet.DataHub.PostOffice.Infrastructure.Documents;
+
+namespace Energinet.DataHub.PostOffice.Infrastructure.Mappers
 {
-    public record SequenceNumber(int Value);
+    internal static class CosmosDomainMessageTypeMapper
+    {
+        public static CosmosDomainMessageType Map(DataAvailableNotification notification)
+        {
+            return new CosmosDomainMessageType(
+                notification.Recipient.Gln.Value,
+                notification.Origin.ToString(),
+                notification.ContentType.Value,
+                notification.SequenceNumber.Value);
+        }
+    }
 }

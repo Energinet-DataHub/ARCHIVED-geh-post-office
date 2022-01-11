@@ -12,11 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.Globalization;
+
 namespace Energinet.DataHub.PostOffice.Domain.Model
 {
-    public sealed record DomainMessageType(
-        MarketOperator Recipient,
-        DomainOrigin Origin,
-        ContentType MessageType,
-        SequenceNumber NextSequenceNumber);
+    public sealed record DomainMessageType
+    {
+        public DomainMessageType(
+            MarketOperator recipient,
+            DomainOrigin origin,
+            ContentType messageType,
+            SequenceNumber nextSequenceNumber)
+        {
+            Recipient = recipient;
+            Origin = origin;
+            MessageType = messageType;
+            NextSequenceNumber = nextSequenceNumber;
+            PartitionKey = Recipient.Gln.Value + Origin + MessageType.Value;
+        }
+
+        public MarketOperator? Recipient { get; set; }
+        public DomainOrigin? Origin { get; set; }
+        public ContentType? MessageType { get; set; }
+        public SequenceNumber NextSequenceNumber { get; set; }
+        public string PartitionKey { get; set; }
+    }
 }

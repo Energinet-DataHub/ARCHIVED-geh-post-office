@@ -25,9 +25,12 @@ using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
 using Energinet.DataHub.PostOffice.Infrastructure.Common;
 using Energinet.DataHub.PostOffice.Infrastructure.Documents;
+using Energinet.DataHub.PostOffice.Infrastructure.Mappers;
+using Energinet.DataHub.PostOffice.Infrastructure.Model;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
 using Energinet.DataHub.PostOffice.Utilities;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Linq;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 {
@@ -35,11 +38,55 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
     {
         private readonly IDataAvailableNotificationRepositoryContainer _repositoryContainer;
 
-        public DataAvailableNotificationRepository(IDataAvailableNotificationRepositoryContainer repositoryContainer)
+        public DataAvailableNotificationRepository(
+            IDataAvailableNotificationRepositoryContainer repositoryContainer,
+            ILogCallback logCallback)
         {
             _repositoryContainer = repositoryContainer;
         }
 
+        public async Task SaveAsync(IBundleableNotifications bundleableNotifications)
+        {
+            if (bundleableNotifications is null)
+                throw new ArgumentNullException(nameof(bundleableNotifications));
+
+            var notifications = bundleableNotifications.Notifications;
+
+            var nextPartition = await FindNextAvailablePartitionAsync(bundleableNotifications.PartitionKey).ConfigureAwait(false);
+
+            var nextPartitionSize = nextPartition is null ? 0 : await GetPartitionSizeAsync(nextPartition.DataAvailablePartitionKey).ConfigureAwait(false);
+
+            foreach (var notification in notifications)
+            {
+                var cosmosDataAvailable = CosmosDataAvailableMapper.Map(notification);
+
+                var domainMessageType = CosmosDomainMessageTypeMapper.Map(notification);
+
+                if (nextPartition is null)
+                {
+                    nextPartition = CreateNewSubPartition(bundleableNotifications.PartitionKey, notification);
+                    nextPartitionSize = 0;
+
+                    await _repositoryContainer.Container.CreateItemAsync(nextPartition).ConfigureAwait(false);
+
+                    await _repositoryContainer.Container.CreateItemAsync(domainMessageType).ConfigureAwait(false);
+                }
+
+                if (nextPartition.PartitionIndex == nextPartitionSize)
+                {
+                    await _repositoryContainer.Container.CreateItemAsync(domainMessageType).ConfigureAwait(false);
+                }
+
+                notification.PartitionKey = nextPartition.PartitionKey;
+                await _repositoryContainer.Container.CreateItemAsync(cosmosDataAvailable).ConfigureAwait(false);
+                nextPartitionSize++;
+
+                if (nextPartitionSize.Equals(10000))
+                {
+                    nextPartition = null;
+                }
+            }
+        }
         public async Task SaveAsync(DataAvailableNotification dataAvailableNotification)
         {
             Guard.ThrowIfNull(dataAvailableNotification, nameof(dataAvailableNotification));
@@ -258,6 +305,20 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             return Task.WhenAll(deleteTasks);
         }
 
+        private static CosmosPartitionDescriptor CreateNewSubPartition(BundleableNotificationsKey key, DataAvailableNotification notification)
+        {
+            if (key is null)
+                throw new ArgumentNullException(nameof(key));
+            if (notification is null)
+                throw new ArgumentNullException(nameof(notification));
+
+            return new(
+                Guid.NewGuid().ToString(),
+                key.PartitionKey,
+                notification.SequenceNumber.Value,
+                0);
+        }
+
         private static async IAsyncEnumerable<DataAvailableNotification> ExecuteBatchAsync(IQueryable<CosmosDataAvailable> query)
         {
             const int batchSize = 10000;
@@ -292,8 +353,50 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                     new ContentType(document.ContentType),
                     Enum.Parse<DomainOrigin>(document.Origin, true),
                     new SupportsBundling(document.SupportsBundling),
-                    new Weight(document.RelativeWeight));
+                    new Weight(document.RelativeWeight),
+                    new SequenceNumber(document.SequenceNumber));
             }
+        }
+
+        private static async IAsyncEnumerable<T> ExecuteQueryAsync<T>(IQueryable<T> query)
+        {
+            await foreach (var document in query.AsCosmosIteratorAsync().ConfigureAwait(false))
+            {
+                yield return document;
+            }
+        }
+
+        private async Task<CosmosPartitionDescriptor?> FindNextAvailablePartitionAsync(BundleableNotificationsKey bundleableNotificationsKey)
+        {
+            var asLinq = _repositoryContainer
+                .Container
+                .GetItemLinqQueryable<CosmosPartitionDescriptor>();
+
+            var query =
+                from partitionDescriptor in asLinq
+                where
+                    partitionDescriptor.PartitionKey == bundleableNotificationsKey.PartitionKey && partitionDescriptor.PartitionIndex < 10000
+                orderby partitionDescriptor.InitialSequenceNumber descending
+                select partitionDescriptor;
+
+            return await ExecuteQueryAsync(query)
+                .FirstOrDefaultAsync()
+                .ConfigureAwait(false);
+        }
+
+        private async Task<int> GetPartitionSizeAsync(string partitionKey)
+        {
+            var asLinq = _repositoryContainer
+                .Container
+                .GetItemLinqQueryable<CosmosDataAvailable>();
+
+            var query =
+                from dataAvailable in asLinq
+                where
+                    dataAvailable.PartitionKey == partitionKey
+                select dataAvailable;
+
+            return await query.CountAsync().ConfigureAwait(false);
         }
 
         private Task ArchiveDocumentAsync(CosmosDataAvailable documentToWrite)

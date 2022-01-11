@@ -26,6 +26,13 @@ namespace Energinet.DataHub.PostOffice.Domain.Repositories
         /// <summary>
         /// Saves the given notification as unacknowledged.
         /// </summary>
+        /// <param name="bundleableNotifications"></param>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
+        Task SaveAsync(IBundleableNotifications bundleableNotifications);
+
+        /// <summary>
+        /// Saves the given notification as unacknowledged.
+        /// </summary>
         /// <param name="dataAvailableNotification">The notification to save.</param>
         Task SaveAsync(DataAvailableNotification dataAvailableNotification);
 

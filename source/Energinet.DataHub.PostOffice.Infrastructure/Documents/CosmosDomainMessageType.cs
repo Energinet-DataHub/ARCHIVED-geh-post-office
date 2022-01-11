@@ -13,26 +13,29 @@
 // limitations under the License.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
+using Newtonsoft.Json;
 
-namespace Energinet.DataHub.PostOffice.Domain.Model
+namespace Energinet.DataHub.PostOffice.Infrastructure.Documents
 {
-    public sealed record BundleableNotificationsKey
+    public sealed record CosmosDomainMessageType
     {
-        public BundleableNotificationsKey(
-            MarketOperator recipient,
-            DomainOrigin origin,
-            ContentType messageType)
+        public CosmosDomainMessageType(
+            string recipient,
+            string origin,
+            string contentType,
+            int sequenceNumber)
         {
             Recipient = recipient;
             Origin = origin;
-            MessageType = messageType;
-            PartitionKey = recipient?.Gln.Value + origin + messageType?.Value;
+            ContentType = contentType;
+            SequenceNumber = sequenceNumber;
         }
 
-        public MarketOperator Recipient { get; }
-        public DomainOrigin Origin { get; }
-        public ContentType MessageType { get; }
-        public string PartitionKey { get; set; }
+        [JsonProperty("id")]
+        public static Guid Id => Guid.NewGuid();
+        public string Recipient { get; set; }
+        public string Origin { get; set; }
+        public string ContentType { get; set; }
+        public int SequenceNumber { get; set; }
     }
 }

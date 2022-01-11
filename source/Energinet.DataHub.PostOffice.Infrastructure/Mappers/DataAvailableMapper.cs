@@ -49,7 +49,9 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Mappers
                 obj.MessageType.Value,
                 obj.Origin.ToString(),
                 obj.SupportsBundling,
-                obj.RelativeWeight);
+                obj.RelativeWeight,
+                int.MinValue,
+                string.Empty);
 
             return dataAvailableCommand;
         }
