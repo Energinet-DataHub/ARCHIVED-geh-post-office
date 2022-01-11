@@ -12,19 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Energinet.DataHub.PostOffice.ServiceContracts;
-using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using System;
 
-[assembly: FunctionsStartup(typeof(Startup))]
-
-namespace Energinet.DataHub.PostOffice.ServiceContracts
+namespace Energinet.DataHub.MessageHub.Client.SimpleInjector
 {
-    #pragma warning disable CA1812
-    internal class Startup : FunctionsStartup
+    internal static class Guard
     {
-        public override void Configure(IFunctionsHostBuilder builder)
+        internal static void ThrowIfNull(object element, string name)
         {
+            if (element is null)
+            {
+                throw new ArgumentNullException(name);
+            }
+        }
+
+        internal static void ThrowIfNullOrWhiteSpace(string? element, string name)
+        {
+            if (string.IsNullOrWhiteSpace(element))
+            {
+                throw new ArgumentNullException(name);
+            }
         }
     }
-    #pragma warning restore CA1812
 }

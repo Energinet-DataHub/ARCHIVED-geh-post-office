@@ -12,15 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Microsoft.Azure.WebJobs;
-
-namespace Energinet.DataHub.PostOffice.ServiceContracts
+namespace Energinet.DataHub.PostOffice.Utilities
 {
-    public static class ProtoContractServiceFactory
+    public static class Guard
     {
-        public static ProtoContractService Create(ExecutionContext context)
+        public static void ThrowIfNull(object element, string name)
         {
-            return new ProtoContractService(context);
+            if (element is null)
+            {
+                throw new System.ArgumentNullException(name);
+            }
         }
     }
 }

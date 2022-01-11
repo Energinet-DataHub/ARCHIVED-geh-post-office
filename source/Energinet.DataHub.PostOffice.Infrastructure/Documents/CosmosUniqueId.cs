@@ -12,19 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Diagnostics;
-using Xunit;
-
-namespace Energinet.DataHub.PostOffice.Tests.Tooling
+namespace Energinet.DataHub.PostOffice.Infrastructure.Documents
 {
-    public sealed class RunnableInDebugOnlyAttribute : FactAttribute
+    internal sealed record CosmosUniqueId
     {
-        public RunnableInDebugOnlyAttribute()
-        {
-            if (!Debugger.IsAttached)
-            {
-                Skip = "Only running in interactive mode.";
-            }
-        }
+        public string Id { get; init; } = default!;
+        public string PartitionKey { get; init; } = default!;
+        public string Content { get; init; } = default!;
     }
 }

@@ -14,23 +14,16 @@
 
 using System;
 
-namespace Energinet.DataHub.PostOffice.Infrastructure.Correlation
+namespace Energinet.DataHub.MessageHub.Client
 {
-    /// <summary>
-    /// Temporary code to test performance of solution.
-    /// </summary>
-    public interface ILogCallback
+    internal static class Guard
     {
-        /// <summary>
-        /// n/a
-        /// </summary>
-        /// <param name="callback"></param>
-        void SetCallback(Action<string> callback);
-
-        /// <summary>
-        /// n/a
-        /// </summary>
-        /// <param name="message"></param>
-        void Log(string message);
+        internal static void ThrowIfNull(object element, string name)
+        {
+            if (element is null)
+            {
+                throw new ArgumentNullException(name);
+            }
+        }
     }
 }
