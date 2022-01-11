@@ -12,30 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
+using MediatR;
 
-namespace Energinet.DataHub.PostOffice.Infrastructure.Correlation
+namespace Energinet.DataHub.PostOffice.Application.Commands
 {
-    public class LogCallback : ILogCallback
+    public record UpdateMaximumSequenceNumberCommand : IRequest
     {
-        private Action<string>? _callback;
-
-        /// <summary>
-        /// n/a
-        /// </summary>
-        /// <param name="callback"></param>
-        public void SetCallback(Action<string> callback)
+        public UpdateMaximumSequenceNumberCommand(long sequenceNumber)
         {
-            _callback = callback;
+            SequenceNumber = sequenceNumber;
         }
 
-        /// <summary>
-        /// n/a
-        /// </summary>
-        /// <param name="message"></param>
-        public void Log(string message)
-        {
-            _callback?.Invoke(message);
-        }
+        public long SequenceNumber { get; set; }
     }
 }

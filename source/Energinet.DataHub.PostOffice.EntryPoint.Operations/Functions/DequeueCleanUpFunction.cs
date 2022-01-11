@@ -13,11 +13,11 @@
 // limitations under the License.
 
 using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Application.Commands;
-using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Infrastructure;
-using Energinet.DataHub.PostOffice.Infrastructure.Correlation;
+using Energinet.DataHub.PostOffice.Utilities;
 using MediatR;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
@@ -29,12 +29,10 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.Operations.Functions
         private const string FunctionName = "DequeueCleanUp";
 
         private readonly IMediator _mediator;
-        private readonly ILogCallback _logCallback;
 
-        public DequeueCleanUpFunction(IMediator mediator, ILogCallback logCallback)
+        public DequeueCleanUpFunction(IMediator mediator)
         {
             _mediator = mediator;
-            _logCallback = logCallback;
         }
 
         [Function(FunctionName)]
@@ -45,25 +43,22 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.Operations.Functions
             string message,
             FunctionContext context)
         {
-            if (message is null)
-                throw new ArgumentNullException(nameof(message));
+            Guard.ThrowIfNull(message, nameof(message));
 
             var logger = context.GetLogger<DequeueCleanUpFunction>();
             logger.LogInformation($"C# ServiceBus queue trigger function processed message in {FunctionName}");
 
-            _logCallback.SetCallback(x => logger.LogWarning(x));
-
             try
             {
-                var command = new DequeueCleanUpCommand(message);
-                var operationResponse = await _mediator.Send(command).ConfigureAwait(false);
+                var command = JsonSerializer.Deserialize<DequeueCleanUpCommand>(message);
+                var operationResponse = await _mediator.Send(command!).ConfigureAwait(false);
 
                 if (!operationResponse.Completed)
                     logger.LogError("Dequeue cleanup operation dit not complete successfully");
             }
             catch (Exception exception)
             {
-                logger.LogError(exception, "Error in {FunctionName}", FunctionName);
+                logger.LogError(exception, "Error in {FunctionName}, message: {message}", FunctionName, message);
                 throw;
             }
         }

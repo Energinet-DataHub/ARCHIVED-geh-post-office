@@ -12,19 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Energinet.DataHub.PostOffice.ServiceContracts;
-using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using System;
 
-[assembly: FunctionsStartup(typeof(Startup))]
-
-namespace Energinet.DataHub.PostOffice.ServiceContracts
+namespace Energinet.DataHub.MessageHub.Model.Model
 {
-    #pragma warning disable CA1812
-    internal class Startup : FunctionsStartup
-    {
-        public override void Configure(IFunctionsHostBuilder builder)
-        {
-        }
-    }
-    #pragma warning restore CA1812
+    public sealed record DataAvailableDto(
+        Guid Uuid,
+        GlobalLocationNumberDto Recipient,
+        MessageTypeDto MessageType,
+        DomainOrigin Origin,
+        bool SupportsBundling,
+        int RelativeWeight,
+        string SequenceNumber,
+        bool CouldParse);
 }

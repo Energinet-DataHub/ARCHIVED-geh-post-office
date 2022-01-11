@@ -12,18 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Diagnostics;
-using Xunit;
-
-namespace Energinet.DataHub.PostOffice.Tests.Tooling
+namespace Energinet.DataHub.PostOffice.Utilities
 {
-    public sealed class RunnableInDebugOnlyAttribute : FactAttribute
+    public static class Guard
     {
-        public RunnableInDebugOnlyAttribute()
+        public static void ThrowIfNull(object element, string name)
         {
-            if (!Debugger.IsAttached)
+            if (element is null)
             {
-                Skip = "Only running in interactive mode.";
+                throw new System.ArgumentNullException(name);
             }
         }
     }

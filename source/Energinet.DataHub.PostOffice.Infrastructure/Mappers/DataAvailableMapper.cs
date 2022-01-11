@@ -12,19 +12,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Application;
 using Energinet.DataHub.PostOffice.Application.Commands;
+using Energinet.DataHub.PostOffice.Domain.Model;
+using Energinet.DataHub.PostOffice.Utilities;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Mappers
 {
     public sealed class DataAvailableMapper : IMapper<DataAvailableNotificationDto, DataAvailableNotificationCommand>
     {
-        public DataAvailableNotificationCommand Map(DataAvailableNotificationDto obj)
+        public static DataAvailablesForRecipientCommand Map(DataAvailable obj)
         {
             if (obj is null)
                 throw new ArgumentNullException(nameof(obj));
+
+            var dataAvailableCommand = new DataAvailablesForRecipientCommand(
+                obj.Uuid.ToString(),
+                obj.Recipient.Value,
+                obj.MessageType.Value,
+                obj.Origin.ToString(),
+                obj.SupportsBundling,
+                obj.RelativeWeight,
+                obj.SequenceNumber);
+
+            return dataAvailableCommand;
+        }
+
+        public DataAvailableNotificationCommand Map(DataAvailableNotificationDto obj)
+        {
+            Guard.ThrowIfNull(obj, nameof(obj));
 
             var dataAvailableCommand = new DataAvailableNotificationCommand(
                 obj.Uuid.ToString(),

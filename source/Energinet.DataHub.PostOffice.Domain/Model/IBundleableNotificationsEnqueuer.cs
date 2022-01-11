@@ -12,25 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-
-namespace Energinet.DataHub.PostOffice.Infrastructure.Correlation
+namespace Energinet.DataHub.PostOffice.Domain.Model
 {
     /// <summary>
-    /// Temporary code to test performance of solution.
+    /// Send bundled data to queue
     /// </summary>
-    public interface ILogCallback
+    public interface IBundleableNotificationsEnqueuer
     {
         /// <summary>
-        /// n/a
+        /// Has key
         /// </summary>
-        /// <param name="callback"></param>
-        void SetCallback(Action<string> callback);
+        BundleableNotificationsKey Key { get; set; }
 
         /// <summary>
-        /// n/a
+        /// Send to queue
         /// </summary>
-        /// <param name="message"></param>
-        void Log(string message);
+        void Enqueue();
     }
 }
