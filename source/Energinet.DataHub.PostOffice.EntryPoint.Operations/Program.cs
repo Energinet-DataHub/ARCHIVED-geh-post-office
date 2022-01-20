@@ -42,6 +42,8 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.Operations
 
                 await host.RunAsync().ConfigureAwait(false);
             }
+
+            System.Console.WriteLine("DONE");
         }
     }
 }
