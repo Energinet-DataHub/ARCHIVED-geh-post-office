@@ -67,7 +67,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
             {
                 _logger.LogProcess("Peek", "DomainErrorResponse", _correlationIdProvider.CorrelationId, bundle.Recipient.ToString(), bundle.BundleId.ToString(), bundle.Origin.ToString());
                 _logger.LogError(
-                    "Domain returned an error {0}. Correlation ID: {1}.\nDescription: {2}",
+                    "Domain returned an error {Reason}. Correlation ID: {CorrelationId}.\nDescription: {FailureDescription}",
                     response.ResponseError.Reason,
                     _correlationIdProvider.CorrelationId,
                     response.ResponseError.FailureDescription);
