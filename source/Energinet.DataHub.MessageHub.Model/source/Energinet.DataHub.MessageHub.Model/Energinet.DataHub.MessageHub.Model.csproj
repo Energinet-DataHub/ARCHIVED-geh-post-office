@@ -16,7 +16,7 @@ limitations under the License.
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <LangVersion>9</LangVersion>
     <Nullable>enable</Nullable>
     <ProjectGuid>{D2990931-F927-4950-ADC9-9EF6505372EC}</ProjectGuid>
@@ -28,7 +28,7 @@ limitations under the License.
 
   <PropertyGroup>
     <PackageId>Energinet.DataHub.MessageHub.Model</PackageId>
-    <PackageVersion>1.3.0$(VersionSuffix)</PackageVersion>
+    <PackageVersion>2.0.0$(VersionSuffix)</PackageVersion>
     <Title>Energinet.DataHub.MessageHub.Model library</Title>
     <Company>Energinet-DataHub</Company>
     <Authors>Energinet-DataHub</Authors>

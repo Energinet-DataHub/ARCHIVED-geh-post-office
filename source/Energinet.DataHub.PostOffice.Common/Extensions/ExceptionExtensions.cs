@@ -48,6 +48,7 @@ namespace Energinet.DataHub.PostOffice.Common.Extensions
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "Issue: https://github.com/dotnet/roslyn-analyzers/issues/5712")]
         public static async Task<HttpResponseData> AsHttpResponseDataAsync(this Exception source, HttpRequestData request)
         {
             static async Task<HttpResponseData> CreateHttpResponseData(HttpRequestData request, HttpStatusCode httpStatusCode, ErrorDescriptor error)

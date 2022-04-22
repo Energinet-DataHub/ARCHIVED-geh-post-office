@@ -15,6 +15,7 @@
 using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Threading.Tasks;
 using Energinet.DataHub.Core.App.Common.Abstractions.Actor;
@@ -30,6 +31,7 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
             _actorDbConfig = actorDbConfig;
         }
 
+        [SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "Issue: https://github.com/dotnet/roslyn-analyzers/issues/5712")]
         public async Task<Actor> GetActorAsync(Guid actorId)
         {
             const string param = "ACTOR_ID";

@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.Cosmos.Linq;
@@ -47,6 +48,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Common
         }
 
         // This method exists, because we have to put ConfigureAwait(false) on IAsyncEnumerable.
+        [SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "Issue: https://github.com/dotnet/roslyn-analyzers/issues/5712")]
         public static async Task<T> SingleAsync<T>(this IAsyncEnumerable<T> enumerable)
         {
             await using var enumerator = enumerable.ConfigureAwait(false).GetAsyncEnumerator();
@@ -67,6 +69,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Common
         }
 
         // This method exists, because we have to put ConfigureAwait(false) on IAsyncEnumerable.
+        [SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "Issue: https://github.com/dotnet/roslyn-analyzers/issues/5712")]
         public static async Task<T?> SingleOrDefaultAsync<T>(this IAsyncEnumerable<T> enumerable)
         {
             await using var enumerator = enumerable.ConfigureAwait(false).GetAsyncEnumerator();
