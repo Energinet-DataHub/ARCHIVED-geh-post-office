@@ -20,4 +20,5 @@
 # .NET Analyzers              #
 ###############################
 
+# Set as suggestion at the moment, because of issue: https://github.com/dotnet/roslyn-analyzers/issues/5712
 dotnet_diagnostic.CA2007.severity = suggestion
