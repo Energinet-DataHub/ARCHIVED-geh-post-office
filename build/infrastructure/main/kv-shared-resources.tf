@@ -31,7 +31,7 @@ data "azurerm_key_vault_secret" "st_market_operator_response_postofficereply_con
   key_vault_id = data.azurerm_key_vault.kv_shared_resources.id
 }
 
-data "azurerm_key_vault_secret" "appi_instrumentation_key" {
+data "azurerm_key_vault_secret" "appi_shared_instrumentation_key" {
   name         = "appi-shared-instrumentation-key"
   key_vault_id = data.azurerm_key_vault.kv_shared_resources.id
 }
@@ -88,5 +88,10 @@ data "azurerm_key_vault_secret" "mssql_data_admin_password" {
 
 data "azurerm_key_vault_secret" "plan_shared_id" {
   name         = "plan-shared-id"
+  key_vault_id = data.azurerm_key_vault.kv_shared_resources.id
+}
+
+data "azurerm_key_vault_secret" "log_shared_id" {
+  name         = "log-shared-id"
   key_vault_id = data.azurerm_key_vault.kv_shared_resources.id
 }

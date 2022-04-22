@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -54,6 +55,7 @@ namespace Energinet.DataHub.MessageHub.Core.Storage
             }
         }
 
+        [SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "Issue: https://github.com/dotnet/roslyn-analyzers/issues/5712")]
         public async Task AddDataAvailableNotificationIdsToStorageAsync(
             string dataAvailableNotificationReferenceId,
             IEnumerable<Guid> dataAvailableNotificationIds)

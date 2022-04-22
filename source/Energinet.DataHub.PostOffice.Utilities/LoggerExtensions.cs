@@ -21,22 +21,22 @@ namespace Energinet.DataHub.PostOffice.Utilities
     {
         public static void LogProcess(this ILogger source, string entryPoint, string correlationId, string gln)
         {
-            source.LogInformation("EntryPoint={0};CorrelationId={1};Gln={2}", entryPoint, correlationId, gln);
+            source.LogInformation("EntryPoint={EntryPoint};CorrelationId={CorrelationId};Gln={Gln}", entryPoint, correlationId, gln);
         }
 
         public static void LogProcess(this ILogger source, string entryPoint, string status, string correlationId, string gln, string bundleId)
         {
-            source.LogInformation("EntryPoint={0};Status={1};CorrelationId={2};Gln={3};BundleId={4}", entryPoint, status, correlationId, gln, bundleId);
+            source.LogInformation("EntryPoint={EntryPoint};Status={Status};CorrelationId={CorrelationId};Gln={Gln};BundleId={BundleId}", entryPoint, status, correlationId, gln, bundleId);
         }
 
         public static void LogProcess(this ILogger source, string entryPoint, string status, string correlationId, string gln, string bundleId, string domain)
         {
-            source.LogInformation("EntryPoint={0};Status={1};CorrelationId={2};Gln={3};BundleId={4};Domain={5}", entryPoint, status, correlationId, gln, bundleId, domain);
+            source.LogInformation("EntryPoint={EntryPoint};Status={Status};CorrelationId={CorrelationId};Gln={Gln};BundleId={BundleId};Domain={Domain}", entryPoint, status, correlationId, gln, bundleId, domain);
         }
 
         public static void LogProcess(this ILogger source, string entryPoint, string status, string correlationId, string gln, string bundleId, IEnumerable<string> dataAvailables)
         {
-            source.LogInformation("EntryPoint={0};Status={1};CorrelationId={2};Gln={3};BundleId={4};DataAvailables={5}", entryPoint, status, correlationId, gln, bundleId, string.Join(",", dataAvailables));
+            source.LogInformation("EntryPoint={EntryPoint};Status={Status};CorrelationId={CorrelationId};Gln={Gln};BundleId={BundleId};DataAvailables={DataAvailables}", entryPoint, status, correlationId, gln, bundleId, string.Join(",", dataAvailables));
         }
     }
 }
