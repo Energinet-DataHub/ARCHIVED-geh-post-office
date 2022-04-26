@@ -25,7 +25,6 @@ using Energinet.DataHub.PostOffice.Infrastructure.Documents;
 using Energinet.DataHub.PostOffice.Infrastructure.Mappers;
 using Energinet.DataHub.PostOffice.Infrastructure.Model;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
-using Energinet.DataHub.PostOffice.Utilities;
 using Microsoft.Azure.Cosmos;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
@@ -48,8 +47,8 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
         public Task<Bundle?> GetNextUnacknowledgedAsync(MarketOperator recipient, params DomainOrigin[] domains)
         {
-            Guard.ThrowIfNull(recipient, nameof(recipient));
-            Guard.ThrowIfNull(domains, nameof(domains));
+            ArgumentNullException.ThrowIfNull(recipient, nameof(recipient));
+            ArgumentNullException.ThrowIfNull(domains, nameof(domains));
 
             var asLinq = _repositoryContainer
                 .Container
@@ -74,8 +73,8 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
         public async Task<BundleCreatedResponse> TryAddNextUnacknowledgedAsync(Bundle bundle, ICabinetReader cabinetReader)
         {
-            Guard.ThrowIfNull(bundle, nameof(bundle));
-            Guard.ThrowIfNull(cabinetReader, nameof(cabinetReader));
+            ArgumentNullException.ThrowIfNull(bundle, nameof(bundle));
+            ArgumentNullException.ThrowIfNull(cabinetReader, nameof(cabinetReader));
 
             await _storageHandler
                 .AddDataAvailableNotificationIdsToStorageAsync(bundle.ProcessId.ToString(), bundle.NotificationIds.Select(x => x.AsGuid()))
@@ -109,8 +108,8 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
         public async Task AcknowledgeAsync(MarketOperator recipient, Uuid bundleId)
         {
-            Guard.ThrowIfNull(recipient, nameof(recipient));
-            Guard.ThrowIfNull(bundleId, nameof(bundleId));
+            ArgumentNullException.ThrowIfNull(recipient, nameof(recipient));
+            ArgumentNullException.ThrowIfNull(bundleId, nameof(bundleId));
 
             var asLinq = _repositoryContainer
                 .Container
@@ -134,7 +133,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
         public async Task SaveAsync(Bundle bundle)
         {
-            Guard.ThrowIfNull(bundle, nameof(bundle));
+            ArgumentNullException.ThrowIfNull(bundle, nameof(bundle));
 
             var asLinq = _repositoryContainer
                 .Container

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Energinet.DataHub.MessageHub.Core.Dequeue;
@@ -47,7 +48,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
 
         public async Task<DequeueResponse> Handle(DequeueCommand request, CancellationToken cancellationToken)
         {
-            Guard.ThrowIfNull(request, nameof(request));
+            ArgumentNullException.ThrowIfNull(request, nameof(request));
 
             _logger.LogProcess("Dequeue", _correlationIdProvider.CorrelationId, request.MarketOperator);
 

@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Threading.Tasks;
 using Energinet.DataHub.Core.App.Common.Abstractions.Actor;
-using Energinet.DataHub.PostOffice.Utilities;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Middleware;
 
@@ -33,8 +33,8 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
 
         public Task Invoke(FunctionContext context, FunctionExecutionDelegate next)
         {
-            Guard.ThrowIfNull(context, nameof(context));
-            Guard.ThrowIfNull(next, nameof(next));
+            ArgumentNullException.ThrowIfNull(context, nameof(context));
+            ArgumentNullException.ThrowIfNull(next, nameof(next));
 
             if (!_identity.HasIdentity && !string.IsNullOrWhiteSpace(_actorContext.CurrentActor?.Identifier))
             {

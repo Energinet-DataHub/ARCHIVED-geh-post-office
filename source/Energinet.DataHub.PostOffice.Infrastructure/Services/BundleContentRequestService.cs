@@ -46,7 +46,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
 
         public async Task<IBundleContent?> WaitForBundleContentFromSubDomainAsync(Bundle bundle)
         {
-            Guard.ThrowIfNull(bundle, nameof(bundle));
+            ArgumentNullException.ThrowIfNull(bundle, nameof(bundle));
 
             var request = new DataBundleRequestDto(
                 Guid.NewGuid(),

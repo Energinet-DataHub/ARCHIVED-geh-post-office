@@ -68,7 +68,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
 
         private async Task<PeekResponse> HandleAsync(PeekCommandBase request, Func<MarketOperator, Uuid?, Task<Bundle?>> requestHandler)
         {
-            Guard.ThrowIfNull(request, nameof(request));
+            ArgumentNullException.ThrowIfNull(request, nameof(request));
 
             _logger.LogProcess("Peek", _correlationIdProvider.CorrelationId, request.MarketOperator);
 

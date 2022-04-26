@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
-using Energinet.DataHub.PostOffice.Utilities;
 using MediatR;
 
 namespace Energinet.DataHub.PostOffice.Application.Handlers
@@ -44,7 +44,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
 
         public async Task<Unit> Handle(UpdateMaximumSequenceNumberCommand request, CancellationToken cancellationToken)
         {
-            Guard.ThrowIfNull(request, nameof(request));
+            ArgumentNullException.ThrowIfNull(request, nameof(request));
 
             await _sequenceNumberRepository
                 .AdvanceSequenceNumberAsync(new SequenceNumber(request.SequenceNumber))
