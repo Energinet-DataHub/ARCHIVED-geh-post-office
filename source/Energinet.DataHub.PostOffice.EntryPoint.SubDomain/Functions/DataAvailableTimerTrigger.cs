@@ -20,7 +20,6 @@ using System.Net;
 using System.Threading.Tasks;
 using Energinet.DataHub.MessageHub.Model.DataAvailable;
 using Energinet.DataHub.PostOffice.Application.Commands;
-using Energinet.DataHub.PostOffice.Utilities;
 using MediatR;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Functions.Worker;
@@ -94,7 +93,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
 
         protected virtual long GetSequenceNumber(Message message)
         {
-            Guard.ThrowIfNull(message, nameof(message));
+            ArgumentNullException.ThrowIfNull(message, nameof(message));
             return message.SystemProperties.SequenceNumber;
         }
 
@@ -123,7 +122,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
 #pragma warning restore CA1031 // Do not catch general exception types
                     {
                         _logger.LogWarning(
-                            "{0} will be deadletted ({1} messages).\nReason:\n{2}",
+                            "{0} will be deadlettered ({1} messages).\nReason:\n{2}",
                             grouping.Key,
                             grouping.Count(),
                             ex);

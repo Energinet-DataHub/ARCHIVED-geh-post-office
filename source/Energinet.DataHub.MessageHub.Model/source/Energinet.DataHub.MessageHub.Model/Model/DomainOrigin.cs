@@ -15,7 +15,7 @@
 namespace Energinet.DataHub.MessageHub.Model.Model
 {
     /// <summary>
-    /// Indentifies the sub-domain used in a given context.
+    /// Identifies the sub-domain used in a given context.
     /// </summary>
     public enum DomainOrigin
     {

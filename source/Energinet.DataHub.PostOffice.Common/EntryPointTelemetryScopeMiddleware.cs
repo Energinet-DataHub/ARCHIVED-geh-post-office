@@ -15,7 +15,6 @@
 using System;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Infrastructure.Correlation;
-using Energinet.DataHub.PostOffice.Utilities;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.Azure.Functions.Worker;
@@ -38,8 +37,8 @@ namespace Energinet.DataHub.PostOffice.Common
 
         public async Task Invoke(FunctionContext context, FunctionExecutionDelegate next)
         {
-            Guard.ThrowIfNull(context, nameof(context));
-            Guard.ThrowIfNull(next, nameof(next));
+            ArgumentNullException.ThrowIfNull(context, nameof(context));
+            ArgumentNullException.ThrowIfNull(next, nameof(next));
 
             if (!string.IsNullOrWhiteSpace(_telemetryClient.TelemetryConfiguration.InstrumentationKey))
             {
