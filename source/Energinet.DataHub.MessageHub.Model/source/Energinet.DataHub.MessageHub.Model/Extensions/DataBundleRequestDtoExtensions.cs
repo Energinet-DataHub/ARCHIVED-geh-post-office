@@ -27,8 +27,7 @@ namespace Energinet.DataHub.MessageHub.Model.Extensions
         /// <returns>The response to the specified request.</returns>
         public static DataBundleResponseDto CreateResponse(this DataBundleRequestDto request, Uri path)
         {
-            if (request == null)
-                throw new ArgumentNullException(nameof(request));
+            ArgumentNullException.ThrowIfNull(request, nameof(request));
 
             return new DataBundleResponseDto(
                 request.RequestId,
@@ -44,8 +43,7 @@ namespace Energinet.DataHub.MessageHub.Model.Extensions
         /// <returns>The response to the specified request.</returns>
         public static DataBundleResponseDto CreateErrorResponse(this DataBundleRequestDto request, DataBundleResponseErrorDto errorResponse)
         {
-            if (request == null)
-                throw new ArgumentNullException(nameof(request));
+            ArgumentNullException.ThrowIfNull(request, nameof(request));
 
             return new DataBundleResponseDto(
                 request.RequestId,

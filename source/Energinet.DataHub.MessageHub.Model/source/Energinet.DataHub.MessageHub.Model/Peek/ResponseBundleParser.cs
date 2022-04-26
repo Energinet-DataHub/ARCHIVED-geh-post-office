@@ -24,8 +24,7 @@ namespace Energinet.DataHub.MessageHub.Model.Peek
     {
         public byte[] Parse(DataBundleResponseDto dataBundleResponseDto)
         {
-            if (dataBundleResponseDto == null)
-                throw new ArgumentNullException(nameof(dataBundleResponseDto));
+            ArgumentNullException.ThrowIfNull(dataBundleResponseDto, nameof(dataBundleResponseDto));
 
             var contract = new DataBundleResponseContract
             {
