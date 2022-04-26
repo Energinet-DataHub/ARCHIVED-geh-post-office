@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using Energinet.DataHub.PostOffice.Utilities;
 using Microsoft.Azure.Functions.Worker;
 using SimpleInjector;
 
@@ -30,7 +29,7 @@ namespace Energinet.DataHub.PostOffice.Common.SimpleInjector
 
         public object CreateInstance(Type instanceType, FunctionContext context)
         {
-            Guard.ThrowIfNull(instanceType, nameof(instanceType));
+            ArgumentNullException.ThrowIfNull(instanceType, nameof(instanceType));
 
             return _container.GetInstance(instanceType);
         }

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Energinet.DataHub.PostOffice.Utilities;
+using System;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure
 {
@@ -20,8 +20,8 @@ namespace Energinet.DataHub.PostOffice.Infrastructure
     {
         public CosmosDatabaseConfig(string connectionsString, string messageHubDatabaseId)
         {
-            Guard.ThrowIfNull(connectionsString, nameof(connectionsString));
-            Guard.ThrowIfNull(messageHubDatabaseId, nameof(messageHubDatabaseId));
+            ArgumentNullException.ThrowIfNull(connectionsString, nameof(connectionsString));
+            ArgumentNullException.ThrowIfNull(messageHubDatabaseId, nameof(messageHubDatabaseId));
 
             ConnectionsString = connectionsString;
             MessageHubDatabaseId = messageHubDatabaseId;

@@ -19,7 +19,6 @@ using Energinet.DataHub.Core.App.Common.Identity;
 using Energinet.DataHub.Core.App.Common.Security;
 using Energinet.DataHub.Core.App.FunctionApp.Middleware;
 using Energinet.DataHub.Core.App.FunctionApp.SimpleInjector;
-using Energinet.DataHub.PostOffice.Utilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
@@ -30,7 +29,7 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
     {
         public static void AddHttpAuthentication(this Container container)
         {
-            Guard.ThrowIfNull(container, nameof(container));
+            ArgumentNullException.ThrowIfNull(container, nameof(container));
 
             container.Register<IMarketOperatorIdentity, MarketOperatorIdentity>(Lifestyle.Scoped);
             container.Register<JwtAuthenticationMiddleware>(Lifestyle.Scoped);
@@ -43,7 +42,7 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
 
         public static void AddMarketParticipantConfig(this Container container)
         {
-            Guard.ThrowIfNull(container, nameof(container));
+            ArgumentNullException.ThrowIfNull(container, nameof(container));
 
             container.Register(() =>
             {

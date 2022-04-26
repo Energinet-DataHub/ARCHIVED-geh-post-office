@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Energinet.DataHub.PostOffice.Utilities;
+using System;
 
 namespace Energinet.DataHub.PostOffice.Common.Auth
 {
@@ -20,7 +20,7 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
     {
         public ActorDbConfig(string connectionString)
         {
-            Guard.ThrowIfNull(connectionString, nameof(connectionString));
+            ArgumentNullException.ThrowIfNull(connectionString, nameof(connectionString));
             ConnectionString = connectionString;
         }
 

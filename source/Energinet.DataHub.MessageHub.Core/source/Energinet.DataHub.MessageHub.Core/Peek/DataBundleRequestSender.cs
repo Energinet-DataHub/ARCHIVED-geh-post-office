@@ -48,7 +48,7 @@ namespace Energinet.DataHub.MessageHub.Core.Peek
             DataBundleRequestDto dataBundleRequestDto,
             DomainOrigin domainOrigin)
         {
-            Guard.ThrowIfNull(dataBundleRequestDto, nameof(dataBundleRequestDto));
+            ArgumentNullException.ThrowIfNull(dataBundleRequestDto, nameof(dataBundleRequestDto));
 
             var bytes = _requestBundleParser.Parse(dataBundleRequestDto);
 
