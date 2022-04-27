@@ -27,6 +27,8 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
 {
     public static class HttpAuthenticationRegistrations
     {
+        private static readonly string[] _functionNamesToExclude = { "HealthCheck", };
+
         public static void AddHttpAuthentication(this Container container)
         {
             ArgumentNullException.ThrowIfNull(container, nameof(container));
@@ -54,10 +56,15 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
 
         private static void RegisterJwt(Container container)
         {
-            container.Register<JwtTokenMiddleware>(Lifestyle.Scoped);
             container.Register<IJwtTokenValidator, JwtTokenValidator>(Lifestyle.Scoped);
             container.Register<IClaimsPrincipalAccessor, ClaimsPrincipalAccessor>(Lifestyle.Scoped);
             container.Register<ClaimsPrincipalContext>(Lifestyle.Scoped);
+
+            container.RegisterSingleton(() => new JwtTokenMiddleware(
+                container.GetRequiredService<ClaimsPrincipalContext>(),
+                container.GetRequiredService<IJwtTokenValidator>(),
+                _functionNamesToExclude));
+
             container.Register(() =>
             {
                 var configuration = container.GetService<IConfiguration>();
