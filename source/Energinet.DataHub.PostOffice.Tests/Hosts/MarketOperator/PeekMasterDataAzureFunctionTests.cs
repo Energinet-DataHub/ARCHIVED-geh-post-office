@@ -19,7 +19,6 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Application.Commands;
-using Energinet.DataHub.PostOffice.Domain.Services;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions;
 using Energinet.DataHub.PostOffice.Tests.Common.Auth;
@@ -56,7 +55,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             var target = new PeekMasterDataFunction(
                 mockedMediator.Object,
                 mockedIdentity,
-                new Mock<ICorrelationIdProvider>().Object,
                 new Mock<IFeatureFlags>().Object,
                 new ExternalBundleIdProvider());
 
@@ -86,7 +84,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             var target = new PeekMasterDataFunction(
                 mockedMediator.Object,
                 mockedIdentity,
-                new Mock<ICorrelationIdProvider>().Object,
                 new Mock<IFeatureFlags>().Object,
                 new ExternalBundleIdProvider());
 
@@ -113,7 +110,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             var target = new PeekMasterDataFunction(
                 mockedMediator.Object,
                 mockedIdentity,
-                new Mock<ICorrelationIdProvider>().Object,
                 new Mock<IFeatureFlags>().Object,
                 new ExternalBundleIdProvider());
 
@@ -140,7 +136,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             var target = new PeekMasterDataFunction(
                 mockedMediator.Object,
                 mockedIdentity,
-                new Mock<ICorrelationIdProvider>().Object,
                 new Mock<IFeatureFlags>().Object,
                 new ExternalBundleIdProvider());
 

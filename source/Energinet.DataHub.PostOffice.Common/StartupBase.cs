@@ -14,13 +14,12 @@
 
 using System;
 using System.Threading.Tasks;
+using Energinet.DataHub.Core.App.FunctionApp.Middleware;
+using Energinet.DataHub.Core.App.FunctionApp.Middleware.CorrelationId;
 using Energinet.DataHub.Core.Logging.RequestResponseMiddleware;
 using Energinet.DataHub.PostOffice.Application;
 using Energinet.DataHub.PostOffice.Common.MediatR;
 using Energinet.DataHub.PostOffice.Common.SimpleInjector;
-using Energinet.DataHub.PostOffice.Domain.Services;
-using Energinet.DataHub.PostOffice.Infrastructure.Correlation;
-using Energinet.DataHub.PostOffice.Infrastructure.Services;
 using Energinet.DataHub.PostOffice.Utilities;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
@@ -79,10 +78,8 @@ namespace Energinet.DataHub.PostOffice.Common
             Container.AddApplicationServices();
             Container.AddInfrastructureServices();
 
-            Container.Register<ICorrelationContext, CorrelationContext>(Lifestyle.Scoped);
-            Container.Register<ICorrelationIdProvider, CorrelationIdProvider>();
             Container.Register<CorrelationIdMiddleware>(Lifestyle.Scoped);
-            Container.Register<EntryPointTelemetryScopeMiddleware>(Lifestyle.Scoped);
+            Container.Register<FunctionTelemetryScopeMiddleware>(Lifestyle.Scoped);
 
             // Add middleware logging
             Container.AddRequestResponseLoggingStorage();

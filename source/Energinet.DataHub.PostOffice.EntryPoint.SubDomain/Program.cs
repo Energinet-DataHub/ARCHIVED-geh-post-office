@@ -13,7 +13,8 @@
 // limitations under the License.
 
 using System.Threading.Tasks;
-using Energinet.DataHub.PostOffice.Common;
+using Energinet.DataHub.Core.App.FunctionApp.Middleware;
+using Energinet.DataHub.Core.App.FunctionApp.Middleware.CorrelationId;
 using Energinet.DataHub.PostOffice.Common.SimpleInjector;
 using Microsoft.Extensions.Hosting;
 using SimpleInjector;
@@ -34,7 +35,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain
                     {
                         options.UseMiddleware<SimpleInjectorScopedRequest>();
                         options.UseMiddleware<CorrelationIdMiddleware>();
-                        options.UseMiddleware<EntryPointTelemetryScopeMiddleware>();
+                        options.UseMiddleware<FunctionTelemetryScopeMiddleware>();
                     })
                     .ConfigureServices(startup.ConfigureServices)
                     .Build()

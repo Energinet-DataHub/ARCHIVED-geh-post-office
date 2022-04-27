@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using System;
-using Energinet.DataHub.PostOffice.Infrastructure.Correlation;
+using Energinet.DataHub.Core.App.FunctionApp.Middleware.CorrelationId;
 
 namespace Energinet.DataHub.PostOffice.IntegrationTests.Common
 {
