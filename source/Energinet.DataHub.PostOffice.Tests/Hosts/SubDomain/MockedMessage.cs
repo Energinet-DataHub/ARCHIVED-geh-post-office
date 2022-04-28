@@ -21,11 +21,10 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.SubDomain
     {
         private static int _sequence;
 
-        public static ServiceBusReceivedMessage Create(byte[] bytes, Guid lockToken)
+        public static ServiceBusReceivedMessage Create(byte[] bytes)
         {
             return ServiceBusModelFactory.ServiceBusReceivedMessage(
                 new BinaryData(bytes),
-                lockTokenGuid: lockToken,
                 lockedUntil: DateTimeOffset.UtcNow.AddDays(1),
                 sequenceNumber: ++_sequence);
         }

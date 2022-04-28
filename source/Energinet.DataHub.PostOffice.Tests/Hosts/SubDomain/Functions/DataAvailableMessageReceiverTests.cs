@@ -67,7 +67,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.SubDomain.Functions
         public async Task DeadLetterAsync_DelegatesToInternalDeadLetterAsync()
         {
             // arrange
-            var message = MockedMessage.Create(Array.Empty<byte>(), Guid.NewGuid());
+            var message = MockedMessage.Create(Array.Empty<byte>());
 
             var messageReceiverMock = new Mock<ServiceBusReceiver>();
             messageReceiverMock.Setup(x =>
@@ -91,7 +91,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.SubDomain.Functions
         public async Task CompleteAsync_DelegatesToInternalCompleteAsync()
         {
             // arrange
-            var messages = new List<ServiceBusReceivedMessage> { MockedMessage.Create(Array.Empty<byte>(), Guid.NewGuid()) };
+            var messages = new List<ServiceBusReceivedMessage> { MockedMessage.Create(Array.Empty<byte>()) };
 
             var messageReceiverMock = new Mock<ServiceBusReceiver>();
             messageReceiverMock.Setup(x =>

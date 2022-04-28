@@ -246,7 +246,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.SubDomain
                 SupportsBundling = dto.SupportsBundling
             };
 
-            return MockedMessage.Create(protobuf.ToByteArray(), Guid.NewGuid());
+            return MockedMessage.Create(protobuf.ToByteArray());
         }
 
         private sealed class MockedDataAvailableTimerTrigger : DataAvailableTimerTrigger
