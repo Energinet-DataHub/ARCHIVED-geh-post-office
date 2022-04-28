@@ -78,6 +78,7 @@ namespace Energinet.DataHub.PostOffice.Common
             Container.AddApplicationServices();
             Container.AddInfrastructureServices();
 
+            Container.Register<ICorrelationContext, CorrelationContext>(Lifestyle.Scoped);
             Container.Register<CorrelationIdMiddleware>(Lifestyle.Scoped);
             Container.Register<FunctionTelemetryScopeMiddleware>(Lifestyle.Scoped);
 
