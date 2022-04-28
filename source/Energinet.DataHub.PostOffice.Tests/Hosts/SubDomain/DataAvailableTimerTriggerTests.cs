@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Azure.Messaging.ServiceBus;
 using Energinet.DataHub.MessageHub.Model.DataAvailable;
 using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.MessageHub.Model.Protobuf;
@@ -25,7 +26,6 @@ using Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions;
 using Energinet.DataHub.PostOffice.Tests.Common;
 using Google.Protobuf;
 using MediatR;
-using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -44,7 +44,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.SubDomain
             var mediator = new Mock<IMediator>();
             var messageReceiver = new Mock<IDataAvailableMessageReceiver>();
 
-            var emptyMessage = new Message();
+            var emptyMessage = new Mock<ServiceBusReceivedMessage>().Object;
 
             messageReceiver
                 .Setup(x => x.ReceiveAsync())
@@ -61,7 +61,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.SubDomain
             // Assert
             messageReceiver.Verify(
                 x => x.DeadLetterAsync(
-                    It.Is<IEnumerable<Message>>(m => m.Single() == emptyMessage)),
+                    It.Is<IEnumerable<ServiceBusReceivedMessage>>(m => m.Single() == emptyMessage)),
                 Times.Once);
         }
 
@@ -93,7 +93,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.SubDomain
             // Assert
             messageReceiver.Verify(
                 x => x.CompleteAsync(
-                    It.Is<IEnumerable<Message>>(m => m.Single() == goodMessage)),
+                    It.Is<IEnumerable<ServiceBusReceivedMessage>>(m => m.Single() == goodMessage)),
                 Times.Once);
         }
 
@@ -169,7 +169,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.SubDomain
             // Assert
             messageReceiver.Verify(
                 x => x.DeadLetterAsync(
-                    It.Is<IEnumerable<Message>>(m => m.Single() == badMessage)),
+                    It.Is<IEnumerable<ServiceBusReceivedMessage>>(m => m.Single() == badMessage)),
                 Times.Once);
         }
 
@@ -208,12 +208,12 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.SubDomain
             // Assert
             messageReceiver.Verify(
                 x => x.DeadLetterAsync(
-                    It.Is<IEnumerable<Message>>(m => m.Single() == badMessage)),
+                    It.Is<IEnumerable<ServiceBusReceivedMessage>>(m => m.Single() == badMessage)),
                 Times.Once);
 
             messageReceiver.Verify(
                 x => x.CompleteAsync(
-                    It.Is<IEnumerable<Message>>(m => m.Single() == goodMessage)),
+                    It.Is<IEnumerable<ServiceBusReceivedMessage>>(m => m.Single() == goodMessage)),
                 Times.Once);
         }
 
@@ -234,7 +234,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.SubDomain
             return command => command.Notifications.Single().Uuid == badDto.Uuid.ToString();
         }
 
-        private static Message CreateMessages(DataAvailableNotificationDto dto)
+        private static ServiceBusReceivedMessage CreateMessages(DataAvailableNotificationDto dto)
         {
             var protobuf = new DataAvailableNotificationContract
             {
@@ -246,7 +246,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.SubDomain
                 SupportsBundling = dto.SupportsBundling
             };
 
-            return new Message(protobuf.ToByteArray());
+            return MockedMessage.Create(protobuf.ToByteArray());
         }
 
         private sealed class MockedDataAvailableTimerTrigger : DataAvailableTimerTrigger
@@ -263,9 +263,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.SubDomain
             {
             }
 
-            public Func<Message, long>? GetSequenceNumberCallback { get; set; }
+            public Func<ServiceBusReceivedMessage, long>? GetSequenceNumberCallback { get; set; }
 
-            protected override long GetSequenceNumber(Message message)
+            protected override long GetSequenceNumber(ServiceBusReceivedMessage message)
             {
                 return GetSequenceNumberCallback?.Invoke(message) ?? 0;
             }
