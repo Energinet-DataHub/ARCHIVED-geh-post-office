@@ -15,9 +15,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Azure.Messaging.ServiceBus;
 using Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions;
-using Microsoft.Azure.ServiceBus;
-using Microsoft.Azure.ServiceBus.Core;
 using Moq;
 using Xunit;
 using Xunit.Categories;
@@ -33,10 +32,10 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.SubDomain.Functions
             // arrange
             const int batchSize = 11;
             var timeout = TimeSpan.FromSeconds(10);
-            var expectedMessages = new List<Message>();
+            var expectedMessages = new List<ServiceBusReceivedMessage>();
 
-            var messageReceiverMock = new Mock<IMessageReceiver>();
-            messageReceiverMock.Setup(x => x.ReceiveAsync(batchSize, timeout)).Returns(Task.FromResult<IList<Message>>(expectedMessages));
+            var messageReceiverMock = new Mock<ServiceBusReceiver>();
+            messageReceiverMock.Setup(x => x.ReceiveMessagesAsync(batchSize, timeout, default)).Returns(Task.FromResult<IReadOnlyList<ServiceBusReceivedMessage>>(expectedMessages));
 
             var target = new DataAvailableMessageReceiver(messageReceiverMock.Object, batchSize, timeout);
 
@@ -51,8 +50,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.SubDomain.Functions
         public async Task ReceiveAsync_InternalReceiverReturnsNull_ReturnsEmptyList()
         {
             // arrange
-            var messageReceiverMock = new Mock<IMessageReceiver>();
-            messageReceiverMock.Setup(x => x.ReceiveAsync(It.IsAny<int>(), It.IsAny<TimeSpan>())).Returns(Task.FromResult<IList<Message>>(null!));
+            var messageReceiverMock = new Mock<ServiceBusReceiver>();
+            messageReceiverMock.Setup(x => x.ReceiveMessagesAsync(It.IsAny<int>(), It.IsAny<TimeSpan>(), default)).Returns(Task.FromResult<IReadOnlyList<ServiceBusReceivedMessage>>(null!));
 
             var target = new DataAvailableMessageReceiver(messageReceiverMock.Object, 1, TimeSpan.Zero);
 
@@ -70,13 +69,14 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.SubDomain.Functions
             // arrange
             var message = MockedMessage.Create(Array.Empty<byte>(), Guid.NewGuid());
 
-            var messageReceiverMock = new Mock<IMessageReceiver>();
+            var messageReceiverMock = new Mock<ServiceBusReceiver>();
             messageReceiverMock.Setup(x =>
-                    x.ReceiveAsync(
+                    x.ReceiveMessagesAsync(
                         It.IsAny<int>(),
-                        It.IsAny<TimeSpan>()))
+                        It.IsAny<TimeSpan>(),
+                        default))
                 .Returns(
-                    Task.FromResult<IList<Message>>(new List<Message> { message }));
+                    Task.FromResult<IReadOnlyList<ServiceBusReceivedMessage>>(new List<ServiceBusReceivedMessage> { message }));
 
             var target = new DataAvailableMessageReceiver(messageReceiverMock.Object, 1, TimeSpan.Zero);
 
@@ -84,22 +84,23 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.SubDomain.Functions
             await target.DeadLetterAsync(new[] { message }).ConfigureAwait(false);
 
             // assert
-            messageReceiverMock.Verify(x => x.DeadLetterAsync(message.SystemProperties.LockToken, null));
+            messageReceiverMock.Verify(x => x.DeadLetterMessageAsync(message, null, default));
         }
 
         [Fact]
         public async Task CompleteAsync_DelegatesToInternalCompleteAsync()
         {
             // arrange
-            var messages = new List<Message> { MockedMessage.Create(Array.Empty<byte>(), Guid.NewGuid()), };
+            var messages = new List<ServiceBusReceivedMessage> { MockedMessage.Create(Array.Empty<byte>(), Guid.NewGuid()) };
 
-            var messageReceiverMock = new Mock<IMessageReceiver>();
+            var messageReceiverMock = new Mock<ServiceBusReceiver>();
             messageReceiverMock.Setup(x =>
-                    x.ReceiveAsync(
+                    x.ReceiveMessagesAsync(
                         It.IsAny<int>(),
-                        It.IsAny<TimeSpan>()))
+                        It.IsAny<TimeSpan>(),
+                        default))
                 .Returns(
-                    Task.FromResult<IList<Message>>(messages));
+                    Task.FromResult<IReadOnlyList<ServiceBusReceivedMessage>>(messages));
 
             var target = new DataAvailableMessageReceiver(messageReceiverMock.Object, 1, TimeSpan.Zero);
 
@@ -107,7 +108,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.SubDomain.Functions
             await target.CompleteAsync(messages).ConfigureAwait(false);
 
             // assert
-            messageReceiverMock.Verify(x => x.CompleteAsync(It.IsAny<IEnumerable<string>>()));
+            messageReceiverMock.Verify(x => x.CompleteMessageAsync(It.IsAny<ServiceBusReceivedMessage>(), default));
         }
     }
 }

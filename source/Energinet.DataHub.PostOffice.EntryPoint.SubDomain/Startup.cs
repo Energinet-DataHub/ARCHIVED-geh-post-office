@@ -13,10 +13,10 @@
 // limitations under the License.
 
 using System;
+using Azure.Messaging.ServiceBus;
 using Energinet.DataHub.PostOffice.Common;
 using Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions;
 using Energinet.DataHub.PostOffice.Infrastructure;
-using Microsoft.Azure.ServiceBus.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
@@ -34,12 +34,12 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain
                 var timeoutInMs = configuration.GetValue("DATAAVAILABLE_TIMEOUT_IN_MS", 1000);
 
                 var serviceBusConfig = container.GetInstance<ServiceBusConfig>();
-                var messageReceiver = new MessageReceiver(
-                    serviceBusConfig.DataAvailableQueueConnectionString,
+                var serviceBusClient = new ServiceBusClient(serviceBusConfig.DataAvailableQueueConnectionString);
+                var receiver = serviceBusClient.CreateReceiver(
                     serviceBusConfig.DataAvailableQueueName,
-                    prefetchCount: batchSize);
+                    new ServiceBusReceiverOptions() { PrefetchCount = batchSize });
 
-                return new DataAvailableMessageReceiver(messageReceiver, batchSize, TimeSpan.FromMilliseconds(timeoutInMs));
+                return new DataAvailableMessageReceiver(receiver, batchSize, TimeSpan.FromMilliseconds(timeoutInMs));
             });
 
             container.Register<DataAvailableTimerTrigger>(Lifestyle.Scoped);

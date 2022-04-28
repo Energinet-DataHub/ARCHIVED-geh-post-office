@@ -18,12 +18,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Azure.Messaging.ServiceBus;
 using Energinet.DataHub.MessageHub.Model.DataAvailable;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using MediatR;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Logging;
 
 namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
@@ -71,8 +71,8 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
                 .Send(new GetMaximumSequenceNumberCommand())
                 .ConfigureAwait(false);
 
-            var complete = new List<Message>();
-            var deadletter = new List<Message>();
+            var complete = new List<ServiceBusReceivedMessage>();
+            var deadletter = new List<ServiceBusReceivedMessage>();
 
             await ProcessMessagesAsync(
                 messages,
@@ -91,17 +91,17 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
             await _messageReceiver.DeadLetterAsync(deadletter).ConfigureAwait(false);
         }
 
-        protected virtual long GetSequenceNumber(Message message)
+        protected virtual long GetSequenceNumber(ServiceBusReceivedMessage message)
         {
             ArgumentNullException.ThrowIfNull(message, nameof(message));
-            return message.SystemProperties.SequenceNumber;
+            return message.SequenceNumber;
         }
 
         private async Task ProcessMessagesAsync(
-            IEnumerable<Message> messages,
+            IEnumerable<ServiceBusReceivedMessage> messages,
             long sequenceNumberOffset,
-            List<Message> complete,
-            List<Message> deadletter)
+            List<ServiceBusReceivedMessage> complete,
+            List<ServiceBusReceivedMessage> deadletter)
         {
             var notifications = messages
                 .Select((m, i) => TryParse(m, sequenceNumberOffset, i))
@@ -149,7 +149,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
 
             deadletter.AddRange(notifications.Where(x => !x.CouldBeParsed).Select(x => x.Message));
 
-            void Log(bool error, IEnumerable<(Message Message, DataAvailableNotificationDto? Da)> das)
+            void Log(bool error, IEnumerable<(ServiceBusReceivedMessage Message, DataAvailableNotificationDto? Da)> das)
             {
                 foreach (var (message, da) in das)
                 {
@@ -190,14 +190,14 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
             }
         }
 
-        private (Message Message, bool CouldBeParsed, DataAvailableNotificationDto? Value) TryParse(
-            Message message,
+        private (ServiceBusReceivedMessage Message, bool CouldBeParsed, DataAvailableNotificationDto? Value) TryParse(
+            ServiceBusReceivedMessage message,
             long initialSequenceNumber,
             long sequenceNumberOffset)
         {
             try
             {
-                var parsedValue = _dataAvailableNotificationParser.Parse(message.Body);
+                var parsedValue = _dataAvailableNotificationParser.Parse(message.Body.ToArray());
                 return (message, true, new DataAvailableNotificationDto(
                     parsedValue.Uuid.ToString(),
                     parsedValue.Recipient.Value,
