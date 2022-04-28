@@ -17,7 +17,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Application.Commands;
-using Energinet.DataHub.PostOffice.Domain.Services;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions;
 using Energinet.DataHub.PostOffice.Tests.Common.Auth;
@@ -48,7 +47,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             var sut = new PeekAggregationsFunction(
                 mediator.Object,
                 identifier,
-                new Mock<ICorrelationIdProvider>().Object,
                 new Mock<IFeatureFlags>().Object,
                 new ExternalBundleIdProvider());
 
@@ -77,7 +75,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             var sut = new PeekFunction(
                 mediator.Object,
                 identifier,
-                new Mock<ICorrelationIdProvider>().Object,
                 new Mock<IFeatureFlags>().Object,
                 new ExternalBundleIdProvider());
 
@@ -106,7 +103,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             var sut = new PeekMasterDataFunction(
                 mediator.Object,
                 identifier,
-                new Mock<ICorrelationIdProvider>().Object,
                 new Mock<IFeatureFlags>().Object,
                 new ExternalBundleIdProvider());
 
@@ -135,7 +131,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             var sut = new PeekTimeSeriesFunction(
                 mediator.Object,
                 identifier,
-                new Mock<ICorrelationIdProvider>().Object,
                 new Mock<IFeatureFlags>().Object,
                 new ExternalBundleIdProvider());
             var response = await sut.RunAsync(request).ConfigureAwait(false);

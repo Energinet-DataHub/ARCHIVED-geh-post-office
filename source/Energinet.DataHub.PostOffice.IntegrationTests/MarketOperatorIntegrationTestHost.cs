@@ -15,10 +15,10 @@
 using System;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
+using Energinet.DataHub.Core.App.FunctionApp.Middleware.CorrelationId;
 using Energinet.DataHub.MessageHub.Core.Factories;
 using Energinet.DataHub.PostOffice.Domain.Services;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator;
-using Energinet.DataHub.PostOffice.Infrastructure.Correlation;
 using Energinet.DataHub.PostOffice.IntegrationTests.Common;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

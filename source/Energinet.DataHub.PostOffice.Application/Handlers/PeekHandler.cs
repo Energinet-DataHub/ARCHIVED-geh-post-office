@@ -17,6 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Energinet.DataHub.Core.App.FunctionApp.Middleware.CorrelationId;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Services;
@@ -34,16 +35,16 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
     {
         private readonly IMarketOperatorDataDomainService _marketOperatorDataDomainService;
         private readonly ILogger _logger;
-        private readonly ICorrelationIdProvider _correlationIdProvider;
+        private readonly ICorrelationContext _correlationContext;
 
         public PeekHandler(
             IMarketOperatorDataDomainService marketOperatorDataDomainService,
             ILogger logger,
-            ICorrelationIdProvider correlationIdProvider)
+            ICorrelationContext correlationContext)
         {
             _marketOperatorDataDomainService = marketOperatorDataDomainService;
             _logger = logger;
-            _correlationIdProvider = correlationIdProvider;
+            _correlationContext = correlationContext;
         }
 
         public Task<PeekResponse> Handle(PeekCommand request, CancellationToken cancellationToken)
@@ -70,7 +71,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
         {
             ArgumentNullException.ThrowIfNull(request, nameof(request));
 
-            _logger.LogProcess("Peek", _correlationIdProvider.CorrelationId, request.MarketOperator);
+            _logger.LogProcess("Peek", _correlationContext.Id, request.MarketOperator);
 
             var marketOperator = new MarketOperator(new GlobalLocationNumber(request.MarketOperator));
 
@@ -84,7 +85,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
             {
                 if (bundle.TryGetContent(out var bundleContent))
                 {
-                    _logger.LogProcess("Peek", "HasContent", _correlationIdProvider.CorrelationId, request.MarketOperator, bundle.BundleId.ToString(), bundle.NotificationIds.Select(x => x.ToString()));
+                    _logger.LogProcess("Peek", "HasContent", _correlationContext.Id, request.MarketOperator, bundle.BundleId.ToString(), bundle.NotificationIds.Select(x => x.ToString()));
 
                     return new PeekResponse(
                         true,
@@ -93,10 +94,10 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
                         bundle.DocumentTypes);
                 }
 
-                _logger.LogProcess("Peek", "TimeoutOrError", _correlationIdProvider.CorrelationId, request.MarketOperator, bundle.BundleId.ToString(), bundle.NotificationIds.Select(x => x.ToString()));
+                _logger.LogProcess("Peek", "TimeoutOrError", _correlationContext.Id, request.MarketOperator, bundle.BundleId.ToString(), bundle.NotificationIds.Select(x => x.ToString()));
             }
 
-            _logger.LogProcess("Peek", "NoContent", _correlationIdProvider.CorrelationId, request.MarketOperator, string.Empty);
+            _logger.LogProcess("Peek", "NoContent", _correlationContext.Id, request.MarketOperator, string.Empty);
 
             return new PeekResponse(
                 false,

@@ -16,6 +16,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Energinet.DataHub.Core.App.FunctionApp.Middleware.CorrelationId;
 using Energinet.DataHub.MessageHub.Core.Dequeue;
 using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Application.Commands;
@@ -43,7 +44,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                 warehouseDomainServiceMock.Object,
                 dequeueNotificationSenderMock.Object,
                 new Mock<ILogger>().Object,
-                new Mock<ICorrelationIdProvider>().Object);
+                new Mock<ICorrelationContext>().Object);
 
             // Act + Assert
             await Assert
@@ -82,7 +83,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                 warehouseDomainServiceMock.Object,
                 dequeueNotificationSenderMock.Object,
                 new Mock<ILogger>().Object,
-                new Mock<ICorrelationIdProvider>().Object);
+                new Mock<ICorrelationContext>().Object);
 
             // Act
             var response = await target.Handle(request, CancellationToken.None).ConfigureAwait(false);
@@ -114,7 +115,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                 warehouseDomainServiceMock.Object,
                 dequeueNotificationSenderMock.Object,
                 new Mock<ILogger>().Object,
-                new Mock<ICorrelationIdProvider>().Object);
+                new Mock<ICorrelationContext>().Object);
 
             // Act
             var response = await target.Handle(request, CancellationToken.None).ConfigureAwait(false);
