@@ -14,8 +14,8 @@
 
 using System.Threading.Tasks;
 using Energinet.DataHub.Core.App.FunctionApp.Middleware;
+using Energinet.DataHub.Core.App.FunctionApp.Middleware.CorrelationId;
 using Energinet.DataHub.Core.Logging.RequestResponseMiddleware;
-using Energinet.DataHub.PostOffice.Common;
 using Energinet.DataHub.PostOffice.Common.Auth;
 using Energinet.DataHub.PostOffice.Common.SimpleInjector;
 using Microsoft.Extensions.Hosting;
@@ -36,10 +36,10 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
                     .ConfigureFunctionsWorkerDefaults(options =>
                     {
                         options.UseMiddleware<SimpleInjectorScopedRequest>();
+                        options.UseMiddleware<CorrelationIdMiddleware>();
+                        options.UseMiddleware<FunctionTelemetryScopeMiddleware>();
                         options.UseMiddleware<JwtTokenMiddleware>();
                         options.UseMiddleware<ActorMiddleware>();
-                        options.UseMiddleware<CorrelationIdMiddleware>();
-                        options.UseMiddleware<EntryPointTelemetryScopeMiddleware>();
                         options.UseMiddleware<JwtAuthenticationMiddleware>();
                         options.UseMiddleware<QueryAuthenticationMiddleware>();
                         options.UseMiddleware<RequestResponseLoggingMiddleware>();

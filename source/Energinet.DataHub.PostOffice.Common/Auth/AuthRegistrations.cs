@@ -13,12 +13,13 @@
 // limitations under the License.
 
 using System;
+using Energinet.DataHub.Core.App.Common;
+using Energinet.DataHub.Core.App.Common.Abstractions.Actor;
 using Energinet.DataHub.Core.App.Common.Abstractions.Identity;
 using Energinet.DataHub.Core.App.Common.Abstractions.Security;
 using Energinet.DataHub.Core.App.Common.Identity;
 using Energinet.DataHub.Core.App.Common.Security;
 using Energinet.DataHub.Core.App.FunctionApp.Middleware;
-using Energinet.DataHub.Core.App.FunctionApp.SimpleInjector;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
@@ -27,6 +28,8 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
 {
     public static class HttpAuthenticationRegistrations
     {
+        private static readonly string[] _functionNamesToExclude = { "HealthCheck", };
+
         public static void AddHttpAuthentication(this Container container)
         {
             ArgumentNullException.ThrowIfNull(container, nameof(container));
@@ -35,9 +38,9 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
             container.Register<JwtAuthenticationMiddleware>(Lifestyle.Scoped);
             container.Register<QueryAuthenticationMiddleware>(Lifestyle.Scoped);
             RegisterJwt(container);
+            RegisterActor(container);
 
             container.AddMarketParticipantConfig();
-            container.AddActorContext<ActorProvider>();
         }
 
         public static void AddMarketParticipantConfig(this Container container)
@@ -54,10 +57,16 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
 
         private static void RegisterJwt(Container container)
         {
-            container.Register<JwtTokenMiddleware>(Lifestyle.Scoped);
             container.Register<IJwtTokenValidator, JwtTokenValidator>(Lifestyle.Scoped);
             container.Register<IClaimsPrincipalAccessor, ClaimsPrincipalAccessor>(Lifestyle.Scoped);
             container.Register<ClaimsPrincipalContext>(Lifestyle.Scoped);
+            container.Register(
+                () => new JwtTokenMiddleware(
+                    container.GetRequiredService<ClaimsPrincipalContext>(),
+                    container.GetRequiredService<IJwtTokenValidator>(),
+                    _functionNamesToExclude),
+                Lifestyle.Scoped);
+
             container.Register(() =>
             {
                 var configuration = container.GetService<IConfiguration>();
@@ -65,6 +74,19 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
                 var audience = configuration.GetValue<string>("BACKEND_SERVICE_APP_ID") ?? throw new InvalidOperationException("Backend service app id not found.");
                 return new OpenIdSettings($"https://login.microsoftonline.com/{tenantId}/v2.0/.well-known/openid-configuration", audience);
             });
+        }
+
+        private static void RegisterActor(Container container)
+        {
+            container.Register<IActorContext, ActorContext>(Lifestyle.Scoped);
+            container.Register<IActorProvider, ActorProvider>(Lifestyle.Scoped);
+            container.Register(
+                () => new ActorMiddleware(
+                    container.GetRequiredService<IClaimsPrincipalAccessor>(),
+                    container.GetRequiredService<IActorProvider>(),
+                    container.GetRequiredService<IActorContext>(),
+                    _functionNamesToExclude),
+                Lifestyle.Scoped);
         }
     }
 }
