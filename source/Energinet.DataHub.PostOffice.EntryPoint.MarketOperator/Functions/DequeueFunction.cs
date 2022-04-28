@@ -17,7 +17,6 @@ using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Common.Auth;
 using Energinet.DataHub.PostOffice.Common.Extensions;
-using Energinet.DataHub.PostOffice.Domain.Services;
 using MediatR;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -28,16 +27,13 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions
     {
         private readonly IMediator _mediator;
         private readonly IMarketOperatorIdentity _operatorIdentity;
-        private readonly ICorrelationIdProvider _correlationIdProvider;
 
         public DequeueFunction(
             IMediator mediator,
-            IMarketOperatorIdentity operatorIdentity,
-            ICorrelationIdProvider correlationIdProvider)
+            IMarketOperatorIdentity operatorIdentity)
         {
             _mediator = mediator;
             _operatorIdentity = operatorIdentity;
-            _correlationIdProvider = correlationIdProvider;
         }
 
         [Function("Dequeue")]
@@ -53,8 +49,6 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions
                 var httpResponse = response.IsDequeued
                     ? request.CreateResponse(HttpStatusCode.OK)
                     : request.CreateResponse(HttpStatusCode.NotFound);
-
-                httpResponse.Headers.Add(Constants.CorrelationIdHeaderName, _correlationIdProvider.CorrelationId);
 
                 return httpResponse;
             });
