@@ -16,7 +16,13 @@ namespace Energinet.DataHub.MessageHub.Model.Model
 {
     public sealed class DataBundleResponseErrorDto
     {
+        public DataBundleResponseErrorDto(DataBundleResponseErrorReason reason, string failureDescription)
+        {
+            Reason = reason;
+            FailureDescription = failureDescription;
+        }
+
         public DataBundleResponseErrorReason Reason { get; set; }
-        public string? FailureDescription { get; set; }
+        public string FailureDescription { get; set; }
     }
 }

@@ -34,7 +34,7 @@ namespace Energinet.DataHub.MessageHub.Model.Tests.Model
         public void CreateErrorResponse_RequestNull_Throws()
         {
             // arrange, act, assert
-            Assert.Throws<ArgumentNullException>(() => ((DataBundleRequestDto)null)!.CreateErrorResponse(new DataBundleResponseErrorDto()));
+            Assert.Throws<ArgumentNullException>(() => ((DataBundleRequestDto)null)!.CreateErrorResponse(new DataBundleResponseErrorDto(DataBundleResponseErrorReason.DatasetNotAvailable, "description")));
         }
 
         [Fact]
@@ -68,7 +68,9 @@ namespace Energinet.DataHub.MessageHub.Model.Tests.Model
                 "D5D400AD-CC11-409A-B757-75EB9AA8B0EA",
                 "message_type");
 
-            var dataBundleResponseErrorDto = new DataBundleResponseErrorDto();
+            var dataBundleResponseErrorDto = new DataBundleResponseErrorDto(
+                DataBundleResponseErrorReason.DatasetNotFound,
+                "fake_description");
 
             // act
             var actual = request.CreateErrorResponse(dataBundleResponseErrorDto);
@@ -76,6 +78,8 @@ namespace Energinet.DataHub.MessageHub.Model.Tests.Model
             // assert
             Assert.Equal(requestId, actual.RequestId);
             Assert.Equal(dataBundleResponseErrorDto, actual.ResponseError);
+            Assert.Equal(dataBundleResponseErrorDto.Reason, actual.ResponseError!.Reason);
+            Assert.Equal(dataBundleResponseErrorDto.FailureDescription, actual.ResponseError.FailureDescription);
         }
     }
 }
