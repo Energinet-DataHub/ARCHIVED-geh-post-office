@@ -21,7 +21,6 @@ using Energinet.DataHub.PostOffice.Application;
 using Energinet.DataHub.PostOffice.Common.MediatR;
 using Energinet.DataHub.PostOffice.Common.SimpleInjector;
 using Energinet.DataHub.PostOffice.Utilities;
-using FluentValidation;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,7 +33,7 @@ namespace Energinet.DataHub.PostOffice.Common
     {
         static StartupBase()
         {
-            SetupFluentValidationErrorCodeResolver();
+            FluentValidationHelper.SetupErrorCodeResolver();
         }
 
         protected StartupBase()
@@ -116,19 +115,6 @@ namespace Energinet.DataHub.PostOffice.Common
                 ServiceLifetime.Singleton);
 
             services.Replace(descriptor);
-        }
-
-        private static void SetupFluentValidationErrorCodeResolver()
-        {
-            ValidatorOptions.Global.ErrorCodeResolver = (propertyValidator) =>
-                propertyValidator.Name switch
-                {
-                    "NotEmptyValidator" => "value_not_specified",
-                    "StringEnumValidator" => "invalid_enum_value",
-                    "NotEqualValidator" => "value_not_equal_to",
-                    "GreaterThanValidator" => "value_not_greater_than",
-                    _ => propertyValidator.Name
-                };
         }
     }
 }
