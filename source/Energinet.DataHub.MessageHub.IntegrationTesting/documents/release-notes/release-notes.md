@@ -1,5 +1,9 @@
 # Energinet.DataHub.MessageHub.IntegrationTesting Release Notes
 
+## Version 2.1.0
+
+- Model package upgrade.
+
 ## Version 2.0.0
 
 - .NET 6 upgrade.
