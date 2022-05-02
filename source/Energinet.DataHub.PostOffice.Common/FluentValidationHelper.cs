@@ -12,24 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using FluentValidation;
-using FluentValidation.Validators;
 
-namespace Energinet.DataHub.PostOffice.Application.Validation.Rules
+namespace Energinet.DataHub.PostOffice.Common
 {
-    public class UuidValidationRule<T> : PropertyValidator<T, string?>
+    internal static class FluentValidationHelper
     {
-        public override string Name => "invalid_UUID";
-
-        public override bool IsValid(ValidationContext<T> context, string? value)
+        public static void SetupErrorCodeResolver()
         {
-            return Guid.TryParse(value, out _);
-        }
-
-        protected override string GetDefaultMessageTemplate(string errorCode)
-        {
-            return "'{PropertyName}' must have a valid guid.";
+            ValidatorOptions.Global.ErrorCodeResolver = (propertyValidator) =>
+                propertyValidator.Name switch
+                {
+                    "NotEmptyValidator" => "value_not_specified",
+                    "StringEnumValidator" => "invalid_enum_value",
+                    "NotEqualValidator" => "value_not_equal_to",
+                    "GreaterThanValidator" => "value_not_greater_than",
+                    _ => propertyValidator.Name
+                };
         }
     }
 }

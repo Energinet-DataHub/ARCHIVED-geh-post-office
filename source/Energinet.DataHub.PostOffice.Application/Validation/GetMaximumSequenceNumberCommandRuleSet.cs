@@ -13,10 +13,11 @@
 // limitations under the License.
 
 using Energinet.DataHub.PostOffice.Application.Commands;
+using FluentValidation;
 
 namespace Energinet.DataHub.PostOffice.Application.Validation
 {
-    public sealed class GetMaximumSequenceNumberCommandRuleSet : AbstractRuleSet<GetMaximumSequenceNumberCommand>
+    public sealed class GetMaximumSequenceNumberCommandRuleSet : AbstractValidator<GetMaximumSequenceNumberCommand>
     {
     }
 }
