@@ -17,7 +17,7 @@ using FluentValidation;
 
 namespace Energinet.DataHub.PostOffice.Application.Validation
 {
-    public sealed class UpdateMaximumSequenceNumberCommandRuleSet : AbstractRuleSet<UpdateMaximumSequenceNumberCommand>
+    public sealed class UpdateMaximumSequenceNumberCommandRuleSet : AbstractValidator<UpdateMaximumSequenceNumberCommand>
     {
         public UpdateMaximumSequenceNumberCommandRuleSet()
         {

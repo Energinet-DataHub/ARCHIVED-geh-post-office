@@ -13,24 +13,23 @@
 // limitations under the License.
 
 using System;
+using FluentValidation;
+using FluentValidation.Validators;
 
 namespace Energinet.DataHub.PostOffice.Application.Validation.Rules
 {
-    public class UuidValidationRule : PropertyValidator<string>
+    public class UuidValidationRule<T> : PropertyValidator<T, string?>
     {
-        public UuidValidationRule()
-            : base("invalid_UUID")
-        {
-        }
+        public override string Name => "invalid_UUID";
 
-        protected override string GetDefaultMessageTemplate()
-        {
-            return "'{PropertyName}' must have a valid guid.";
-        }
-
-        protected override bool IsValid(string value)
+        public override bool IsValid(ValidationContext<T> context, string? value)
         {
             return Guid.TryParse(value, out _);
+        }
+
+        protected override string GetDefaultMessageTemplate(string errorCode)
+        {
+            return "'{PropertyName}' must have a valid guid.";
         }
     }
 }
