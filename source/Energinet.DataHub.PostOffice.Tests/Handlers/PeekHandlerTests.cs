@@ -17,12 +17,12 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Energinet.DataHub.Core.App.FunctionApp.Middleware.CorrelationId;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Application.Handlers;
 using Energinet.DataHub.PostOffice.Domain.Model;
-using Energinet.DataHub.PostOffice.Domain.Model.Logging;
-using Energinet.DataHub.PostOffice.Domain.Repositories;
 using Energinet.DataHub.PostOffice.Domain.Services;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 using Xunit.Categories;
@@ -37,8 +37,10 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         {
             // Arrange
             var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
-            var logRepositoryMock = new Mock<ILogRepository>();
-            var target = new PeekHandler(warehouseDomainServiceMock.Object, logRepositoryMock.Object);
+            var target = new PeekHandler(
+                warehouseDomainServiceMock.Object,
+                new Mock<ILogger>().Object,
+                new Mock<ICorrelationContext>().Object);
 
             // Act + Assert
             await Assert
@@ -52,8 +54,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             // Arrange
             var bundleId = Guid.NewGuid().ToString();
             var request = new PeekCommand("fake_value", bundleId, BundleReturnType.Xml);
-
-            var logRepositoryMock = new Mock<ILogRepository>();
 
             var bundleContentMock = new Mock<IBundleContent>();
             bundleContentMock
@@ -80,7 +80,10 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                         BundleReturnType.Xml))
                 .ReturnsAsync(bundle);
 
-            var target = new PeekHandler(warehouseDomainServiceMock.Object, logRepositoryMock.Object);
+            var target = new PeekHandler(
+                warehouseDomainServiceMock.Object,
+                new Mock<ILogger>().Object,
+                new Mock<ICorrelationContext>().Object);
 
             // Act
             var (hasContent, bid, stream, _) = await target.Handle(request, CancellationToken.None).ConfigureAwait(false);
@@ -100,8 +103,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             // Arrange
             var request = new PeekCommand("fake_value", Guid.NewGuid().ToString(), BundleReturnType.Xml);
 
-            var logRepositoryMock = new Mock<ILogRepository>();
-
             var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
             var bundleId = It.Is<Uuid>(r => string.Equals(r.ToString(), request.BundleId, StringComparison.OrdinalIgnoreCase));
 
@@ -114,7 +115,10 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                         BundleReturnType.Xml))
                 .ReturnsAsync((Bundle?)null);
 
-            var target = new PeekHandler(warehouseDomainServiceMock.Object, logRepositoryMock.Object);
+            var target = new PeekHandler(
+                warehouseDomainServiceMock.Object,
+                new Mock<ILogger>().Object,
+                new Mock<ICorrelationContext>().Object);
 
             // Act
             var (hasContent, _, stream, _) = await target.Handle(request, CancellationToken.None).ConfigureAwait(false);
@@ -130,8 +134,10 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         {
             // Arrange
             var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
-            var logRepositoryMock = new Mock<ILogRepository>();
-            var target = new PeekHandler(warehouseDomainServiceMock.Object, logRepositoryMock.Object);
+            var target = new PeekHandler(
+                warehouseDomainServiceMock.Object,
+                new Mock<ILogger>().Object,
+                new Mock<ICorrelationContext>().Object);
 
             // Act + Assert
             await Assert
@@ -145,8 +151,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             // Arrange
             var bundleId = Guid.NewGuid().ToString();
             var request = new PeekAggregationsCommand("fake_value", bundleId, BundleReturnType.Xml);
-
-            var logRepositoryMock = new Mock<ILogRepository>();
 
             var bundleContentMock = new Mock<IBundleContent>();
             bundleContentMock
@@ -173,7 +177,10 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                         BundleReturnType.Xml))
                 .ReturnsAsync(bundle);
 
-            var target = new PeekHandler(warehouseDomainServiceMock.Object, logRepositoryMock.Object);
+            var target = new PeekHandler(
+                warehouseDomainServiceMock.Object,
+                new Mock<ILogger>().Object,
+                new Mock<ICorrelationContext>().Object);
 
             // Act
             var (hasContent, bid, stream, _) = await target.Handle(request, CancellationToken.None).ConfigureAwait(false);
@@ -191,7 +198,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         public async Task PeekAggregationsCommandHandle_WithoutData_ReturnsNullStream()
         {
             // Arrange
-            var logRepositoryMock = new Mock<ILogRepository>();
             var request = new PeekAggregationsCommand("fake_value", Guid.NewGuid().ToString(), BundleReturnType.Xml);
 
             var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
@@ -203,7 +209,10 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                         BundleReturnType.Xml))
                 .ReturnsAsync((Bundle?)null);
 
-            var target = new PeekHandler(warehouseDomainServiceMock.Object, logRepositoryMock.Object);
+            var target = new PeekHandler(
+                warehouseDomainServiceMock.Object,
+                new Mock<ILogger>().Object,
+                new Mock<ICorrelationContext>().Object);
 
             // Act
             var (hasContent, _, stream, _) = await target.Handle(request, CancellationToken.None).ConfigureAwait(false);
@@ -219,8 +228,10 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         {
             // Arrange
             var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
-            var logMock = new Mock<ILogRepository>();
-            var target = new PeekHandler(warehouseDomainServiceMock.Object, logMock.Object);
+            var target = new PeekHandler(
+                warehouseDomainServiceMock.Object,
+                new Mock<ILogger>().Object,
+                new Mock<ICorrelationContext>().Object);
 
             // Act + Assert
             await Assert
@@ -232,7 +243,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         public async Task PeekTimeSeriesCommandHandle_WithData_ReturnsDataStream()
         {
             // Arrange
-            var logMock = new Mock<ILogRepository>();
             var bundleId = Guid.NewGuid().ToString();
             var request = new PeekTimeSeriesCommand("fake_value", bundleId, BundleReturnType.Xml);
 
@@ -261,7 +271,10 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                         BundleReturnType.Xml))
                 .ReturnsAsync(bundle);
 
-            var target = new PeekHandler(warehouseDomainServiceMock.Object, logMock.Object);
+            var target = new PeekHandler(
+                warehouseDomainServiceMock.Object,
+                new Mock<ILogger>().Object,
+                new Mock<ICorrelationContext>().Object);
 
             // Act
             var (hasContent, bid, stream, _) = await target.Handle(request, CancellationToken.None).ConfigureAwait(false);
@@ -279,7 +292,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         public async Task PeekTimeSeriesCommandHandle_WithoutData_ReturnsNullStream()
         {
             // Arrange
-            var logMock = new Mock<ILogRepository>();
             var request = new PeekTimeSeriesCommand("fake_value", Guid.NewGuid().ToString(), BundleReturnType.Xml);
 
             var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
@@ -292,7 +304,10 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                         BundleReturnType.Xml))
                 .ReturnsAsync((Bundle?)null);
 
-            var target = new PeekHandler(warehouseDomainServiceMock.Object, logMock.Object);
+            var target = new PeekHandler(
+                warehouseDomainServiceMock.Object,
+                new Mock<ILogger>().Object,
+                new Mock<ICorrelationContext>().Object);
 
             // Act
             var (hasContent, _, stream, _) = await target.Handle(request, CancellationToken.None).ConfigureAwait(false);
@@ -307,9 +322,11 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         public async Task PeekMasterDataCommandHandle_NullArgument_ThrowsException()
         {
             // Arrange
-            var logMock = new Mock<ILogRepository>();
             var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
-            var target = new PeekHandler(warehouseDomainServiceMock.Object, logMock.Object);
+            var target = new PeekHandler(
+                warehouseDomainServiceMock.Object,
+                new Mock<ILogger>().Object,
+                new Mock<ICorrelationContext>().Object);
 
             // Act + Assert
             await Assert
@@ -321,7 +338,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         public async Task PeekMasterDataCommandHandle_WithData_ReturnsDataStream()
         {
             // Arrange
-            var logMock = new Mock<ILogRepository>();
             var bundleId = Guid.NewGuid().ToString();
             var request = new PeekMasterDataCommand("fake_value", bundleId, BundleReturnType.Xml);
 
@@ -350,7 +366,10 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                         BundleReturnType.Xml))
                 .ReturnsAsync(bundle);
 
-            var target = new PeekHandler(warehouseDomainServiceMock.Object, logMock.Object);
+            var target = new PeekHandler(
+                warehouseDomainServiceMock.Object,
+                new Mock<ILogger>().Object,
+                new Mock<ICorrelationContext>().Object);
 
             // Act
             var (hasContent, bid, stream, _) = await target.Handle(request, CancellationToken.None).ConfigureAwait(false);
@@ -368,7 +387,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         public async Task PeekMasterDataCommandHandle_WithoutData_ReturnsNullStream()
         {
             // Arrange
-            var logMock = new Mock<ILogRepository>();
             var request = new PeekMasterDataCommand("fake_value", Guid.NewGuid().ToString(), BundleReturnType.Xml);
 
             var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
@@ -381,7 +399,10 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                         BundleReturnType.Xml))
                 .ReturnsAsync((Bundle?)null);
 
-            var target = new PeekHandler(warehouseDomainServiceMock.Object, logMock.Object);
+            var target = new PeekHandler(
+                warehouseDomainServiceMock.Object,
+                new Mock<ILogger>().Object,
+                new Mock<ICorrelationContext>().Object);
 
             // Act
             var (hasContent, _, stream, _) = await target.Handle(request, CancellationToken.None).ConfigureAwait(false);
@@ -390,65 +411,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             Assert.False(hasContent);
             Assert.Equal(0, stream.Length);
             await stream.DisposeAsync().ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task SavePeekLogOccurrenceAsync_IsMethodCalled_IsCalled()
-        {
-            // Arrange
-            var dataDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
-            var target = new Mock<ILogRepository>();
-            var peekCommand = new PeekCommand("fake_value", Guid.NewGuid().ToString(), BundleReturnType.Xml);
-
-            var bundleContentMock = new Mock<IBundleContent>();
-            bundleContentMock
-                .Setup(x => x.OpenAsync())
-                .ReturnsAsync(() => new MemoryStream(new byte[] { 1, 2, 3 }));
-
-            var bundle = new Bundle(
-                new Uuid(Guid.NewGuid()),
-                new MarketOperator(new GlobalLocationNumber("fake_value")),
-                DomainOrigin.MarketRoles,
-                new ContentType("fake_value"),
-                Array.Empty<Uuid>(),
-                bundleContentMock.Object,
-                Enumerable.Empty<string>(),
-                BundleReturnType.Xml);
-
-            dataDomainServiceMock.Setup(x => x.GetNextUnacknowledgedAsync(
-                        It.IsAny<MarketOperator>(), It.IsAny<Uuid>(), BundleReturnType.Xml))
-                .ReturnsAsync(bundle);
-
-            var handler = new PeekHandler(dataDomainServiceMock.Object, target.Object);
-
-            // Act
-            await handler.Handle(peekCommand, CancellationToken.None).ConfigureAwait(false);
-
-            // Assert
-            target.Verify(m => m.SavePeekLogOccurrenceAsync(It.IsAny<PeekLog>()), Times.Once);
-        }
-
-        [Fact]
-        public async Task SavePeekLogOccurrenceAsync_IsMethodCalled_NotCalled()
-        {
-            // Arrange
-            var dataDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
-            var target = new Mock<ILogRepository>();
-            var peekCommand = new PeekCommand("fake_value", Guid.NewGuid().ToString(), BundleReturnType.Xml);
-
-            Bundle bundle = null!;
-
-            dataDomainServiceMock.Setup(m => m.GetNextUnacknowledgedAsync(
-                    It.IsAny<MarketOperator>(), It.IsAny<Uuid>(), BundleReturnType.Xml))
-                .ReturnsAsync(bundle);
-
-            var handler = new PeekHandler(dataDomainServiceMock.Object, target.Object);
-
-            // Act
-            await handler.Handle(peekCommand, CancellationToken.None).ConfigureAwait(false);
-
-            // Assert
-            target.Verify(m => m.SavePeekLogOccurrenceAsync(It.IsAny<PeekLog>()), Times.Never);
         }
 
         private static bool BundleIdCheck(Uuid r, PeekCommandBase request)

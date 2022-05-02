@@ -24,8 +24,7 @@ namespace Energinet.DataHub.MessageHub.Model.Peek
     {
         public byte[] Parse(DataBundleRequestDto request)
         {
-            if (request == null)
-                throw new ArgumentNullException(nameof(request));
+            ArgumentNullException.ThrowIfNull(request, nameof(request));
 
             var message = new DataBundleRequestContract
             {

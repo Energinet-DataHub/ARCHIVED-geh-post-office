@@ -19,7 +19,6 @@ using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
-using Energinet.DataHub.PostOffice.Utilities;
 using MediatR;
 
 namespace Energinet.DataHub.PostOffice.Application.Handlers
@@ -35,7 +34,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
 
         public async Task<Unit> Handle(InsertDataAvailableNotificationsCommand request, CancellationToken cancellationToken)
         {
-            Guard.ThrowIfNull(request, nameof(request));
+            ArgumentNullException.ThrowIfNull(request, nameof(request));
 
             var groupedByKey = request
                 .Notifications

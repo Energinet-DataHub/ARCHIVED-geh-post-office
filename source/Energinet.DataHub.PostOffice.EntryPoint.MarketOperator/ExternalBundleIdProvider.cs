@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using Energinet.DataHub.PostOffice.Common.Extensions;
-using Energinet.DataHub.PostOffice.Utilities;
 using Microsoft.Azure.Functions.Worker.Http;
 
 namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
@@ -29,7 +29,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
         public string? TryGetBundleId(HttpRequestData request)
 #pragma warning restore CA1822 // Mark members as static
         {
-            Guard.ThrowIfNull(request, nameof(request));
+            ArgumentNullException.ThrowIfNull(request, nameof(request));
 
             var maybeBundleId = request.Url.GetQueryValue(Constants.BundleIdQueryName);
             return !string.IsNullOrWhiteSpace(maybeBundleId) ? maybeBundleId : null;

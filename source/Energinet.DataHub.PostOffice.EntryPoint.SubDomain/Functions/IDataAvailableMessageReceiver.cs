@@ -14,7 +14,7 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Azure.ServiceBus;
+using Azure.Messaging.ServiceBus;
 
 namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
 {
@@ -27,18 +27,18 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
         /// Retrieves a batch of messages.
         /// </summary>
         /// <returns>A list containing the messages</returns>
-        Task<IReadOnlyList<Message>> ReceiveAsync();
+        Task<IReadOnlyList<ServiceBusReceivedMessage>> ReceiveAsync();
 
         /// <summary>
         /// Sends the messages contained in the list to the dead letter queue
         /// </summary>
         /// <param name="messages">The list of messages</param>
-        Task DeadLetterAsync(IEnumerable<Message> messages);
+        Task DeadLetterAsync(IEnumerable<ServiceBusReceivedMessage> messages);
 
         /// <summary>
         /// Marks the messages completed
         /// </summary>
         /// <param name="messages">The list of messages</param>
-        Task CompleteAsync(IEnumerable<Message> messages);
+        Task CompleteAsync(IEnumerable<ServiceBusReceivedMessage> messages);
     }
 }

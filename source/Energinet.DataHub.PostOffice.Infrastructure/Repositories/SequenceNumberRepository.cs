@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
 using Energinet.DataHub.PostOffice.Infrastructure.Documents;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
-using Energinet.DataHub.PostOffice.Utilities;
 using Microsoft.Azure.Cosmos;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
@@ -59,7 +59,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
         public Task AdvanceSequenceNumberAsync(SequenceNumber sequenceNumber)
         {
-            Guard.ThrowIfNull(sequenceNumber, nameof(sequenceNumber));
+            ArgumentNullException.ThrowIfNull(sequenceNumber, nameof(sequenceNumber));
 
             _sequenceNumberInScope = sequenceNumber;
 

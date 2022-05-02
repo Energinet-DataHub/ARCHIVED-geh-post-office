@@ -12,15 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.PostOffice.Domain.Model.Logging
-{
-    public class PeekTimeseriesLog : PeekLog
-    {
-        public PeekTimeseriesLog(ProcessId processId, IBundleContent bundleReference)
-            : base(processId, bundleReference)
-        {
-        }
+using System;
+using Azure.Messaging.ServiceBus;
 
-        public override string EndpointType => "PeekTimeseries";
+namespace Energinet.DataHub.PostOffice.Tests.Hosts.SubDomain
+{
+    public static class MockedMessage
+    {
+        private static int _sequence;
+
+        public static ServiceBusReceivedMessage Create(byte[] bytes)
+        {
+            return ServiceBusModelFactory.ServiceBusReceivedMessage(
+                new BinaryData(bytes),
+                lockedUntil: DateTimeOffset.UtcNow.AddDays(1),
+                sequenceNumber: ++_sequence);
+        }
     }
 }

@@ -32,7 +32,7 @@ on:
   workflow_dispatch: {}
 
 env:
-  DOTNET_VERSION: '5.0'
+  DOTNET_VERSION: '6.0.201'
   CSPROJ_FILE_PATH: 'source/Energinet.DataHub.MessageHub.Model/source/Energinet.DataHub.MessageHub.Model/Energinet.DataHub.MessageHub.Model.csproj'
   BINARY_PATH: 'source/Energinet.DataHub.MessageHub.Model/source/Energinet.DataHub.MessageHub.Model/bin/Release/*.nupkg'
 

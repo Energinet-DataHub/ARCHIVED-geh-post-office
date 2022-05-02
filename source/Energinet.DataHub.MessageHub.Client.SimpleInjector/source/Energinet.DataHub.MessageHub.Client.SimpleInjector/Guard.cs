@@ -18,14 +18,6 @@ namespace Energinet.DataHub.MessageHub.Client.SimpleInjector
 {
     internal static class Guard
     {
-        internal static void ThrowIfNull(object element, string name)
-        {
-            if (element is null)
-            {
-                throw new ArgumentNullException(name);
-            }
-        }
-
         internal static void ThrowIfNullOrWhiteSpace(string? element, string name)
         {
             if (string.IsNullOrWhiteSpace(element))

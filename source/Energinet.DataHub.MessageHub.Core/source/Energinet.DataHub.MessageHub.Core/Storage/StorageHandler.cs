@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -37,7 +38,7 @@ namespace Energinet.DataHub.MessageHub.Core.Storage
 
         public async Task<Stream> GetStreamFromStorageAsync(Uri contentPath)
         {
-            Guard.ThrowIfNull(contentPath, nameof(contentPath));
+            ArgumentNullException.ThrowIfNull(contentPath, nameof(contentPath));
 
             try
             {
@@ -54,12 +55,13 @@ namespace Energinet.DataHub.MessageHub.Core.Storage
             }
         }
 
+        [SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "Issue: https://github.com/dotnet/roslyn-analyzers/issues/5712")]
         public async Task AddDataAvailableNotificationIdsToStorageAsync(
             string dataAvailableNotificationReferenceId,
             IEnumerable<Guid> dataAvailableNotificationIds)
         {
-            Guard.ThrowIfNull(dataAvailableNotificationReferenceId, nameof(dataAvailableNotificationReferenceId));
-            Guard.ThrowIfNull(dataAvailableNotificationIds, nameof(dataAvailableNotificationIds));
+            ArgumentNullException.ThrowIfNull(dataAvailableNotificationReferenceId, nameof(dataAvailableNotificationReferenceId));
+            ArgumentNullException.ThrowIfNull(dataAvailableNotificationIds, nameof(dataAvailableNotificationIds));
 
             try
             {

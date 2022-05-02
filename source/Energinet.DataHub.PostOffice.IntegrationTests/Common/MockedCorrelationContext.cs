@@ -13,37 +13,34 @@
 // limitations under the License.
 
 using System;
+using Energinet.DataHub.Core.App.FunctionApp.Middleware.CorrelationId;
 
-namespace Energinet.DataHub.PostOffice.Infrastructure.Correlation
+namespace Energinet.DataHub.PostOffice.IntegrationTests.Common
 {
-    public sealed class CorrelationContext : ICorrelationContext
+    internal sealed class MockedCorrelationContext : ICorrelationContext
     {
-        private string? _id;
+        public string Id { get; private set; } = Guid.NewGuid().ToString();
 
-        private string? _parentId;
-
-        public string Id => _id ?? throw new InvalidOperationException("Correlation id not set");
-
-        public string? ParentId => _parentId;
+        public string? ParentId { get; private set; } = Guid.NewGuid().ToString();
 
         public void SetId(string id)
         {
-            _id = id;
+            Id = id;
         }
 
         public void SetParentId(string parentId)
         {
-            _parentId = parentId;
+            ParentId = parentId;
         }
 
         public string AsTraceContext()
         {
-            if (string.IsNullOrEmpty(_id) || string.IsNullOrEmpty(_parentId))
+            if (string.IsNullOrEmpty(Id) || string.IsNullOrEmpty(ParentId))
             {
                 return string.Empty;
             }
 
-            return $"00-{_id}-{_parentId}-00";
+            return $"00-{Id}-{ParentId}-00";
         }
     }
 }

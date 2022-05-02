@@ -15,6 +15,7 @@
 using System;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
+using Energinet.DataHub.Core.App.FunctionApp.Middleware.CorrelationId;
 using Energinet.DataHub.MessageHub.Core.Factories;
 using Energinet.DataHub.PostOffice.Domain.Services;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator;
@@ -46,6 +47,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
             host._startup.Container.Options.AllowOverridingRegistrations = true;
             await InitTestBlobStorageAsync(host._startup.Container).ConfigureAwait(false);
             InitTestServiceBus(host._startup.Container);
+            InitTestCorrelationContext(host._startup.Container);
 
             return host;
         }
@@ -85,6 +87,11 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
         private static void InitTestServiceBus(Container container)
         {
             container.Register<IServiceBusClientFactory, MockedServiceBusClientFactory>(Lifestyle.Singleton);
+        }
+
+        private static void InitTestCorrelationContext(Container container)
+        {
+            container.Register<ICorrelationContext, MockedCorrelationContext>(Lifestyle.Singleton);
         }
     }
 }

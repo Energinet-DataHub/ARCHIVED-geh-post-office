@@ -23,7 +23,6 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Xml;
 using Energinet.DataHub.PostOffice.Common.Model;
-using Energinet.DataHub.PostOffice.Utilities;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
@@ -37,7 +36,7 @@ namespace Energinet.DataHub.PostOffice.Common.Extensions
     {
         public static void Log(this Exception source, ILogger logger)
         {
-            Guard.ThrowIfNull(source, nameof(source));
+            ArgumentNullException.ThrowIfNull(source, nameof(source));
 
             if (source is not FluentValidationException)
             {
@@ -48,6 +47,7 @@ namespace Energinet.DataHub.PostOffice.Common.Extensions
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "Issue: https://github.com/dotnet/roslyn-analyzers/issues/5712")]
         public static async Task<HttpResponseData> AsHttpResponseDataAsync(this Exception source, HttpRequestData request)
         {
             static async Task<HttpResponseData> CreateHttpResponseData(HttpRequestData request, HttpStatusCode httpStatusCode, ErrorDescriptor error)
@@ -93,8 +93,8 @@ namespace Energinet.DataHub.PostOffice.Common.Extensions
                     httpStatusCode);
             }
 
-            Guard.ThrowIfNull(source, nameof(source));
-            Guard.ThrowIfNull(request, nameof(request));
+            ArgumentNullException.ThrowIfNull(source, nameof(source));
+            ArgumentNullException.ThrowIfNull(request, nameof(request));
 
             return source switch
             {

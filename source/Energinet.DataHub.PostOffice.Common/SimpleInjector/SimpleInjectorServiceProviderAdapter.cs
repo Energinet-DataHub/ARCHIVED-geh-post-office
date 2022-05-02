@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using Energinet.DataHub.PostOffice.Utilities;
 using SimpleInjector;
 
 namespace Energinet.DataHub.PostOffice.Common.SimpleInjector
@@ -29,7 +28,7 @@ namespace Energinet.DataHub.PostOffice.Common.SimpleInjector
 
         public object GetService(Type serviceType)
         {
-            Guard.ThrowIfNull(serviceType, nameof(serviceType));
+            ArgumentNullException.ThrowIfNull(serviceType, nameof(serviceType));
 
             return _container.GetInstance(serviceType);
         }

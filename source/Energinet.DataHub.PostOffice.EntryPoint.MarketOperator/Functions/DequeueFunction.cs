@@ -25,12 +25,12 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions
 {
     public sealed class DequeueFunction
     {
-        private const string BundleIdQueryName = "bundleId";
-
         private readonly IMediator _mediator;
         private readonly IMarketOperatorIdentity _operatorIdentity;
 
-        public DequeueFunction(IMediator mediator, IMarketOperatorIdentity operatorIdentity)
+        public DequeueFunction(
+            IMediator mediator,
+            IMarketOperatorIdentity operatorIdentity)
         {
             _mediator = mediator;
             _operatorIdentity = operatorIdentity;
@@ -43,11 +43,14 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions
         {
             return request.ProcessAsync(async () =>
             {
-                var command = new DequeueCommand(_operatorIdentity.Gln, request.Url.GetQueryValue(BundleIdQueryName));
+                var command = new DequeueCommand(_operatorIdentity.Gln, request.Url.GetQueryValue(Constants.BundleIdQueryName));
                 var response = await _mediator.Send(command).ConfigureAwait(false);
-                return response.IsDequeued
+
+                var httpResponse = response.IsDequeued
                     ? request.CreateResponse(HttpStatusCode.OK)
                     : request.CreateResponse(HttpStatusCode.NotFound);
+
+                return httpResponse;
             });
         }
     }
