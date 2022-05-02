@@ -54,11 +54,11 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation.Rules
             Assert.True(result);
         }
 
-        private sealed class UuidValidationRuleTester : UuidValidationRule
+        private sealed class UuidValidationRuleTester : UuidValidationRule<string>
         {
             public bool Validate(string value)
             {
-                return IsValid(new PropertyValidatorContext(null, null, null, value));
+                return IsValid(null!, value);
             }
         }
     }

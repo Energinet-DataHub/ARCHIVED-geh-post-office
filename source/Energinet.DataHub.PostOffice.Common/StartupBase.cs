@@ -31,6 +31,11 @@ namespace Energinet.DataHub.PostOffice.Common
 {
     public abstract class StartupBase : IAsyncDisposable
     {
+        static StartupBase()
+        {
+            FluentValidationHelper.SetupErrorCodeResolver();
+        }
+
         protected StartupBase()
         {
             Container = new Container();
