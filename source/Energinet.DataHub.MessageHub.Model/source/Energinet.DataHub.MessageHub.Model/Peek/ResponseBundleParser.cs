@@ -69,11 +69,9 @@ namespace Energinet.DataHub.MessageHub.Model.Peek
                 }
 
                 var failureReply = bundleResponse.Failure;
-                var errorResponse = new DataBundleResponseErrorDto
-                {
-                    FailureDescription = failureReply.FailureDescription,
-                    Reason = MapToFailureReason(failureReply.Reason)
-                };
+                var errorResponse = new DataBundleResponseErrorDto(
+                    MapToFailureReason(failureReply.Reason),
+                    failureReply.FailureDescription);
 
                 return new DataBundleResponseDto(
                     requestId,
