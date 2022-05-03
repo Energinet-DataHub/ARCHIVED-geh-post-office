@@ -51,7 +51,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
 
         [Function(FunctionName)]
 #pragma warning disable CA1801
-        public async Task RunAsync([TimerTrigger("*/5 * * * * *")] FunctionContext context)
+        public async Task RunAsync([TimerTrigger("*/5 * * * * *", UseMonitor = true)] FunctionContext context)
 #pragma warning restore CA1801
         {
             _logger.LogInformation("Begins processing DataAvailableTimerTrigger.");
