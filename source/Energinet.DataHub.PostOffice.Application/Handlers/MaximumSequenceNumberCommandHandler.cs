@@ -39,6 +39,10 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
                 .GetMaximumSequenceNumberAsync()
                 .ConfigureAwait(false);
 
+            await _sequenceNumberRepository
+                .LogMaximumSequenceNumberAsync(number)
+                .ConfigureAwait(false);
+
             return number.Value;
         }
 
