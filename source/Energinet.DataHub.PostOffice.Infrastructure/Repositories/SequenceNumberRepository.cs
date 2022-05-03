@@ -20,17 +20,23 @@ using Energinet.DataHub.PostOffice.Domain.Repositories;
 using Energinet.DataHub.PostOffice.Infrastructure.Documents;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Logging;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 {
     public sealed class SequenceNumberRepository : ISequenceNumberRepository
     {
         private readonly IDataAvailableNotificationRepositoryContainer _repositoryContainer;
+        private readonly ILogger<SequenceNumberRepository> _logger;
+
         private SequenceNumber? _sequenceNumberInScope;
 
-        public SequenceNumberRepository(IDataAvailableNotificationRepositoryContainer repositoryContainer)
+        public SequenceNumberRepository(
+            IDataAvailableNotificationRepositoryContainer repositoryContainer,
+            ILogger<SequenceNumberRepository> logger)
         {
             _repositoryContainer = repositoryContainer;
+            _logger = logger;
         }
 
         public async Task<SequenceNumber> GetMaximumSequenceNumberAsync()
@@ -48,6 +54,18 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                         CosmosSequenceNumber.CosmosSequenceNumberIdentifier,
                         new PartitionKey(CosmosSequenceNumber.CosmosSequenceNumberPartitionKey))
                     .ConfigureAwait(false);
+
+                try
+                {
+                    await _repositoryContainer
+                        .Cabinet
+                        .CreateItemAsync(new CosmosLockOverlap(response.Resource.SequenceNumber))
+                        .ConfigureAwait(false);
+                }
+                catch (CosmosException ex)
+                {
+                    _logger.LogError(ex, "Sequence Number {SequenceNumber} requested twice.", response.Resource.SequenceNumber);
+                }
 
                 return _sequenceNumberInScope = new SequenceNumber(response.Resource.SequenceNumber);
             }
