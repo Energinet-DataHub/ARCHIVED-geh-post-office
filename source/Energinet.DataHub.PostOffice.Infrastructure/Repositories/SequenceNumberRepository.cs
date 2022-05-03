@@ -55,23 +55,28 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                         new PartitionKey(CosmosSequenceNumber.CosmosSequenceNumberPartitionKey))
                     .ConfigureAwait(false);
 
-                try
-                {
-                    await _repositoryContainer
-                        .Cabinet
-                        .CreateItemAsync(new CosmosLockOverlap(response.Resource.SequenceNumber))
-                        .ConfigureAwait(false);
-                }
-                catch (CosmosException ex)
-                {
-                    _logger.LogError(ex, "Sequence Number {SequenceNumber} requested twice.", response.Resource.SequenceNumber);
-                }
-
                 return _sequenceNumberInScope = new SequenceNumber(response.Resource.SequenceNumber);
             }
             catch (CosmosException e) when (e.StatusCode == HttpStatusCode.NotFound)
             {
                 return new SequenceNumber(0);
+            }
+        }
+
+        public async Task LogMaximumSequenceNumberAsync(SequenceNumber number)
+        {
+            ArgumentNullException.ThrowIfNull(number, nameof(number));
+
+            try
+            {
+                await _repositoryContainer
+                    .Cabinet
+                    .CreateItemAsync(new CosmosLockOverlap(number.Value))
+                    .ConfigureAwait(false);
+            }
+            catch (CosmosException ex)
+            {
+                _logger.LogError(ex, "V2 Sequence Number {SequenceNumber} requested twice.", number.Value);
             }
         }
 
