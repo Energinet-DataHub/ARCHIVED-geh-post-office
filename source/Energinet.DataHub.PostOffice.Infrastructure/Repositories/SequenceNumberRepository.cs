@@ -76,7 +76,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             }
             catch (CosmosException ex)
             {
-                _logger.LogError(ex, "V2 Sequence Number {SequenceNumber} requested twice.", number.Value);
+                _logger.LogError(ex, "V3 Sequence Number {SequenceNumber} requested twice.", number.Value);
             }
         }
 
