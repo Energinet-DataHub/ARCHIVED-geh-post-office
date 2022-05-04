@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 using Energinet.DataHub.MessageHub.Model.DataAvailable;
@@ -31,6 +32,8 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
     public class DataAvailableTimerTrigger
     {
         private const string FunctionName = nameof(DataAvailableTimerTrigger);
+
+        private static long _lock;
 
         private readonly ILogger<DataAvailableTimerTrigger> _logger;
         private readonly IMediator _mediator;
@@ -65,30 +68,43 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
             if (messages.Count == 0)
                 return;
 
-            var sw = Stopwatch.StartNew();
+            var res = Interlocked.Increment(ref _lock);
+            if (res > 1)
+            {
+                _logger.LogError("Multiple RunAsync running: {instances}", res);
+            }
 
-            var internalSequenceNumber = await _mediator
-                .Send(new GetMaximumSequenceNumberCommand())
-                .ConfigureAwait(false);
+            try
+            {
+                var sw = Stopwatch.StartNew();
 
-            var complete = new List<ServiceBusReceivedMessage>();
-            var deadletter = new List<ServiceBusReceivedMessage>();
+                var internalSequenceNumber = await _mediator
+                    .Send(new GetMaximumSequenceNumberCommand())
+                    .ConfigureAwait(false);
 
-            await ProcessMessagesAsync(
-                messages,
-                internalSequenceNumber + 1,
-                complete,
-                deadletter).ConfigureAwait(false);
+                var complete = new List<ServiceBusReceivedMessage>();
+                var deadletter = new List<ServiceBusReceivedMessage>();
 
-            var newMaximumSequenceNumber = internalSequenceNumber + messages.Count;
-            await _mediator
-                .Send(new UpdateMaximumSequenceNumberCommand(newMaximumSequenceNumber))
-                .ConfigureAwait(false);
+                await ProcessMessagesAsync(
+                    messages,
+                    internalSequenceNumber + 1,
+                    complete,
+                    deadletter).ConfigureAwait(false);
 
-            _logger.LogInformation("Ready to complete messages after {0} ms.", sw.ElapsedMilliseconds);
+                var newMaximumSequenceNumber = internalSequenceNumber + messages.Count;
+                await _mediator
+                    .Send(new UpdateMaximumSequenceNumberCommand(newMaximumSequenceNumber))
+                    .ConfigureAwait(false);
 
-            await _messageReceiver.CompleteAsync(complete).ConfigureAwait(false);
-            await _messageReceiver.DeadLetterAsync(deadletter).ConfigureAwait(false);
+                _logger.LogInformation("Ready to complete messages after {0} ms.", sw.ElapsedMilliseconds);
+
+                await _messageReceiver.CompleteAsync(complete).ConfigureAwait(false);
+                await _messageReceiver.DeadLetterAsync(deadletter).ConfigureAwait(false);
+            }
+            finally
+            {
+                Interlocked.Decrement(ref _lock);
+            }
         }
 
         protected virtual long GetSequenceNumber(ServiceBusReceivedMessage message)
