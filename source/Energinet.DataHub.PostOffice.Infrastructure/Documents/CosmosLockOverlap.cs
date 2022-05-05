@@ -12,16 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.PostOffice.Utilities
+using System.Globalization;
+
+namespace Energinet.DataHub.PostOffice.Infrastructure.Documents;
+
+internal sealed record CosmosLockOverlap
 {
-    public static class Guard
+    public CosmosLockOverlap(long sequenceNumber)
     {
-        public static void ThrowIfNull(object element, string name)
-        {
-            if (element is null)
-            {
-                throw new System.ArgumentNullException(name);
-            }
-        }
+        Id = sequenceNumber.ToString(CultureInfo.InvariantCulture);
+        PartitionKey = "LOCK";
     }
+
+    public string Id { get; set; }
+    public string PartitionKey { get; set; }
 }

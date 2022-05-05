@@ -39,8 +39,7 @@ namespace Energinet.DataHub.MessageHub.Model.Dequeue
 
         public byte[] Parse(DequeueNotificationDto dequeueNotificationDto)
         {
-            if (dequeueNotificationDto == null)
-                throw new ArgumentNullException(nameof(dequeueNotificationDto));
+            ArgumentNullException.ThrowIfNull(dequeueNotificationDto, nameof(dequeueNotificationDto));
 
             var message = new DequeueContract
             {

@@ -72,11 +72,9 @@ namespace GetMessage.Functions
             DataBundleRequestDto requestDto,
             DataBundleResponseErrorReason failedReason)
         {
-            return requestDto.CreateErrorResponse(new DataBundleResponseErrorDto
-            {
-                Reason = failedReason,
-                FailureDescription = failedReason.ToString()
-            });
+            return requestDto.CreateErrorResponse(new DataBundleResponseErrorDto(
+                failedReason,
+                failedReason.ToString()));
         }
 
         private async Task<DataBundleResponseDto> CreateResponseAsync(DataBundleRequestDto requestDto)

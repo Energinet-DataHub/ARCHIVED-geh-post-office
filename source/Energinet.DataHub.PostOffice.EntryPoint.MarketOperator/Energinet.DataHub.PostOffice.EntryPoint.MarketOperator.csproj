@@ -15,15 +15,15 @@ limitations under the License.
 -->
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <LangVersion>9</LangVersion>
-    <AzureFunctionsVersion>v3</AzureFunctionsVersion>
+    <AzureFunctionsVersion>v4</AzureFunctionsVersion>
     <_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>
     <OutputType>Exe</OutputType>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Energinet.DataHub.Core.Logging" Version="1.1.0" />
+    <PackageReference Include="Energinet.DataHub.Core.Logging" Version="1.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.6.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.0.13" />

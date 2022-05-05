@@ -29,7 +29,6 @@ using Energinet.DataHub.PostOffice.Infrastructure.Documents;
 using Energinet.DataHub.PostOffice.Infrastructure.Mappers;
 using Energinet.DataHub.PostOffice.Infrastructure.Model;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
-using Energinet.DataHub.PostOffice.Utilities;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 
@@ -56,8 +55,8 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
         public async Task SaveAsync(CabinetKey key, IReadOnlyList<DataAvailableNotification> notifications)
         {
-            Guard.ThrowIfNull(key, nameof(key));
-            Guard.ThrowIfNull(notifications, nameof(notifications));
+            ArgumentNullException.ThrowIfNull(key, nameof(key));
+            ArgumentNullException.ThrowIfNull(notifications, nameof(notifications));
 
             var nextDrawer = await FindExistingDrawerWithFreeSpaceAsync(key).ConfigureAwait(false);
             var nextDrawerItemCount = nextDrawer != null
@@ -122,8 +121,8 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
         public async Task<ICabinetReader?> GetNextUnacknowledgedAsync(MarketOperator recipient, params DomainOrigin[] domains)
         {
-            Guard.ThrowIfNull(recipient, nameof(recipient));
-            Guard.ThrowIfNull(domains, nameof(domains));
+            ArgumentNullException.ThrowIfNull(recipient, nameof(recipient));
+            ArgumentNullException.ThrowIfNull(domains, nameof(domains));
 
             if (domains.Length == 0)
                 domains = Enum.GetValues<DomainOrigin>();
@@ -196,7 +195,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
         public async Task AcknowledgeAsync(Bundle bundle)
         {
-            Guard.ThrowIfNull(bundle, nameof(bundle));
+            ArgumentNullException.ThrowIfNull(bundle, nameof(bundle));
 
             var asLinq = _bundleRepositoryContainer
                 .Container

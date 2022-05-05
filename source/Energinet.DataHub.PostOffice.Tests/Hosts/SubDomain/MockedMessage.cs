@@ -13,26 +13,20 @@
 // limitations under the License.
 
 using System;
-using Energinet.DataHub.PostOffice.Utilities;
-using Xunit;
-using Xunit.Categories;
+using Azure.Messaging.ServiceBus;
 
-namespace Energinet.DataHub.PostOffice.Tests.Utilities
+namespace Energinet.DataHub.PostOffice.Tests.Hosts.SubDomain
 {
-    [UnitTest]
-    public class GuardTests
+    public static class MockedMessage
     {
-        [Fact]
-        public void ThrowIfNull_UsesCorrectParameterName()
-        {
-            var exception = Assert.Throws<ArgumentNullException>(() => TestMethod(null!));
+        private static int _sequence;
 
-            Assert.Equal("str", exception.ParamName);
-        }
-
-        private static void TestMethod(string str)
+        public static ServiceBusReceivedMessage Create(byte[] bytes)
         {
-            Guard.ThrowIfNull(str, nameof(str));
+            return ServiceBusModelFactory.ServiceBusReceivedMessage(
+                new BinaryData(bytes),
+                lockedUntil: DateTimeOffset.UtcNow.AddDays(1),
+                sequenceNumber: ++_sequence);
         }
     }
 }

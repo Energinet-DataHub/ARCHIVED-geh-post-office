@@ -12,25 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
 using Energinet.DataHub.PostOffice.Infrastructure.Documents;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
-using Energinet.DataHub.PostOffice.Utilities;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Logging;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 {
     public sealed class SequenceNumberRepository : ISequenceNumberRepository
     {
         private readonly IDataAvailableNotificationRepositoryContainer _repositoryContainer;
+        private readonly ILogger<SequenceNumberRepository> _logger;
+
         private SequenceNumber? _sequenceNumberInScope;
 
-        public SequenceNumberRepository(IDataAvailableNotificationRepositoryContainer repositoryContainer)
+        public SequenceNumberRepository(
+            IDataAvailableNotificationRepositoryContainer repositoryContainer,
+            ILogger<SequenceNumberRepository> logger)
         {
             _repositoryContainer = repositoryContainer;
+            _logger = logger;
         }
 
         public async Task<SequenceNumber> GetMaximumSequenceNumberAsync()
@@ -57,9 +63,26 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             }
         }
 
+        public async Task LogMaximumSequenceNumberAsync(SequenceNumber number)
+        {
+            ArgumentNullException.ThrowIfNull(number, nameof(number));
+
+            try
+            {
+                await _repositoryContainer
+                    .Cabinet
+                    .CreateItemAsync(new CosmosLockOverlap(number.Value))
+                    .ConfigureAwait(false);
+            }
+            catch (CosmosException ex)
+            {
+                _logger.LogError(ex, "V3 Sequence Number {SequenceNumber} requested twice.", number.Value);
+            }
+        }
+
         public Task AdvanceSequenceNumberAsync(SequenceNumber sequenceNumber)
         {
-            Guard.ThrowIfNull(sequenceNumber, nameof(sequenceNumber));
+            ArgumentNullException.ThrowIfNull(sequenceNumber, nameof(sequenceNumber));
 
             _sequenceNumberInScope = sequenceNumber;
 

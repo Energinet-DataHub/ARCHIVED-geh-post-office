@@ -16,7 +16,7 @@ limitations under the License.
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
@@ -29,8 +29,9 @@ limitations under the License.
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Energinet.DataHub.MessageHub.Core" Version="1.4.*" />
-      <PackageReference Include="FluentValidation" Version="9.5.1" />
+      <PackageReference Include="Energinet.DataHub.Core.App.FunctionApp" Version="2.3.3" />
+      <PackageReference Include="FluentValidation" Version="10.4.0" />
+      <PackageReference Include="Energinet.DataHub.MessageHub.Core" Version="2.1.*" />
       <PackageReference Include="MediatR" Version="10.0.1" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
     </ItemGroup>

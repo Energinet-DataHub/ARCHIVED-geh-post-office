@@ -18,7 +18,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
-using Energinet.DataHub.PostOffice.Utilities;
 
 namespace Energinet.DataHub.PostOffice.Domain.Services
 {
@@ -76,7 +75,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
 
         public async Task AcknowledgeAsync(Bundle bundle)
         {
-            Guard.ThrowIfNull(bundle, nameof(bundle));
+            ArgumentNullException.ThrowIfNull(bundle, nameof(bundle));
 
             await _dataAvailableNotificationRepository
                 .AcknowledgeAsync(bundle)

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -21,7 +22,6 @@ using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Common.Auth;
 using Energinet.DataHub.PostOffice.EntryPoint.Operations.HealthCheck;
 using Energinet.DataHub.PostOffice.Infrastructure;
-using Energinet.DataHub.PostOffice.Utilities;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 
@@ -47,7 +47,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.Operations.Functions
         [Function(FunctionName)]
         public async Task<HttpResponseData> RunAsync([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData request)
         {
-            Guard.ThrowIfNull(request, nameof(request));
+            ArgumentNullException.ThrowIfNull(request, nameof(request));
 
             var cosmosConnectionString = _cosmosDatabaseConfig.ConnectionsString;
             var serviceBusConnectionString = _serviceBusConfig.DataAvailableQueueConnectionString;

@@ -14,6 +14,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Energinet.DataHub.Core.App.FunctionApp.Middleware.CorrelationId;
 using Energinet.DataHub.MessageHub.Core.Peek;
 using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Domain.Model;
@@ -30,23 +31,23 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
         private readonly ILogger _logger;
         private readonly IMarketOperatorDataStorageService _marketOperatorDataStorageService;
         private readonly IDataBundleRequestSender _dataBundleRequestSender;
-        private readonly ICorrelationIdProvider _correlationIdProvider;
+        private readonly ICorrelationContext _correlationContext;
 
         public BundleContentRequestService(
             ILogger logger,
             IMarketOperatorDataStorageService marketOperatorDataStorageService,
             IDataBundleRequestSender dataBundleRequestSender,
-            ICorrelationIdProvider correlationIdProvider)
+            ICorrelationContext correlationContext)
         {
             _logger = logger;
             _marketOperatorDataStorageService = marketOperatorDataStorageService;
             _dataBundleRequestSender = dataBundleRequestSender;
-            _correlationIdProvider = correlationIdProvider;
+            _correlationContext = correlationContext;
         }
 
         public async Task<IBundleContent?> WaitForBundleContentFromSubDomainAsync(Bundle bundle)
         {
-            Guard.ThrowIfNull(bundle, nameof(bundle));
+            ArgumentNullException.ThrowIfNull(bundle, nameof(bundle));
 
             var request = new DataBundleRequestDto(
                 Guid.NewGuid(),
@@ -54,27 +55,27 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
                 bundle.ProcessId.ToString(),
                 bundle.ContentType.Value);
 
-            _logger.LogProcess("Peek", "WaitForContent", _correlationIdProvider.CorrelationId, bundle.Recipient.ToString(), bundle.BundleId.ToString(), bundle.Origin.ToString());
+            _logger.LogProcess("Peek", "WaitForContent", _correlationContext.Id, bundle.Recipient.ToString(), bundle.BundleId.ToString(), bundle.Origin.ToString());
 
             var response = await _dataBundleRequestSender.SendAsync(request, (DomainOrigin)bundle.Origin).ConfigureAwait(false);
             if (response == null)
             {
-                _logger.LogProcess("Peek", "NoDomainResponse", _correlationIdProvider.CorrelationId, bundle.Recipient.ToString(), bundle.BundleId.ToString(), bundle.Origin.ToString());
+                _logger.LogProcess("Peek", "NoDomainResponse", _correlationContext.Id, bundle.Recipient.ToString(), bundle.BundleId.ToString(), bundle.Origin.ToString());
                 return null;
             }
 
             if (response.IsErrorResponse)
             {
-                _logger.LogProcess("Peek", "DomainErrorResponse", _correlationIdProvider.CorrelationId, bundle.Recipient.ToString(), bundle.BundleId.ToString(), bundle.Origin.ToString());
+                _logger.LogProcess("Peek", "DomainErrorResponse", _correlationContext.Id, bundle.Recipient.ToString(), bundle.BundleId.ToString(), bundle.Origin.ToString());
                 _logger.LogError(
-                    "Domain returned an error {0}. Correlation ID: {1}.\nDescription: {2}",
+                    "Domain returned an error {Reason}. Correlation ID: {CorrelationId}.\nDescription: {FailureDescription}",
                     response.ResponseError.Reason,
-                    _correlationIdProvider.CorrelationId,
+                    _correlationContext.Id,
                     response.ResponseError.FailureDescription);
                 return null;
             }
 
-            _logger.LogProcess("Peek", "DomainResponse", _correlationIdProvider.CorrelationId, bundle.Recipient.ToString(), bundle.BundleId.ToString(), bundle.Origin.ToString());
+            _logger.LogProcess("Peek", "DomainResponse", _correlationContext.Id, bundle.Recipient.ToString(), bundle.BundleId.ToString(), bundle.Origin.ToString());
 
             return new AzureBlobBundleContent(_marketOperatorDataStorageService, response.ContentUri);
         }

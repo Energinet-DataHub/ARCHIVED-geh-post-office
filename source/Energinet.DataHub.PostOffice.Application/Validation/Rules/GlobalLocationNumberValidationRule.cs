@@ -15,24 +15,23 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using FluentValidation;
+using FluentValidation.Validators;
 
 namespace Energinet.DataHub.PostOffice.Application.Validation.Rules
 {
-    public class GlobalLocationNumberValidationRule : PropertyValidator<string>
+    public class GlobalLocationNumberValidationRule<T> : PropertyValidator<T, string?>
     {
-        public GlobalLocationNumberValidationRule()
-            : base("invalid_GLN_number")
+        public override string Name => "invalid_GLN_number";
+
+        public override bool IsValid(ValidationContext<T> context, string? value)
         {
+            return value != null && IsValidGlnNumber(value);
         }
 
-        protected override string GetDefaultMessageTemplate()
+        protected override string GetDefaultMessageTemplate(string errorCode)
         {
             return "'{PropertyName}' must have a valid GLN.";
-        }
-
-        protected override bool IsValid(string value)
-        {
-            return IsValidGlnNumber(value);
         }
 
         private static bool IsValidGlnNumber(string glnNumber)

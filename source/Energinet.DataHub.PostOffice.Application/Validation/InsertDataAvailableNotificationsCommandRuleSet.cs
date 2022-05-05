@@ -20,7 +20,7 @@ using FluentValidation;
 
 namespace Energinet.DataHub.PostOffice.Application.Validation
 {
-    public sealed class InsertDataAvailableNotificationsCommandRuleSet : AbstractRuleSet<InsertDataAvailableNotificationsCommand>
+    public sealed class InsertDataAvailableNotificationsCommandRuleSet : AbstractValidator<InsertDataAvailableNotificationsCommand>
     {
         public InsertDataAvailableNotificationsCommandRuleSet()
         {
@@ -34,11 +34,11 @@ namespace Energinet.DataHub.PostOffice.Application.Validation
                 {
                     dto.RuleFor(x => x.Uuid)
                         .NotEmpty()
-                        .SetValidator(new UuidValidationRule());
+                        .SetValidator(new UuidValidationRule<DataAvailableNotificationDto>());
 
                     dto.RuleFor(x => x.Recipient)
                         .NotEmpty()
-                        .SetValidator(new GlobalLocationNumberValidationRule());
+                        .SetValidator(new GlobalLocationNumberValidationRule<DataAvailableNotificationDto>());
 
                     dto.RuleFor(x => x.ContentType)
                         .NotEmpty();

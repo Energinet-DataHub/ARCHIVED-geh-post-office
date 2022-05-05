@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Energinet.DataHub.Core.App.FunctionApp.Middleware.CorrelationId;
 using Energinet.DataHub.MessageHub.Core.Dequeue;
 using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Application.Commands;
@@ -31,25 +33,25 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
         private readonly IMarketOperatorDataDomainService _marketOperatorDataDomainService;
         private readonly IDequeueNotificationSender _dequeueNotificationSender;
         private readonly ILogger _logger;
-        private readonly ICorrelationIdProvider _correlationIdProvider;
+        private readonly ICorrelationContext _correlationContext;
 
         public DequeueHandler(
             IMarketOperatorDataDomainService marketOperatorDataDomainService,
             IDequeueNotificationSender dequeueNotificationSender,
             ILogger logger,
-            ICorrelationIdProvider correlationIdProvider)
+            ICorrelationContext correlationContext)
         {
             _marketOperatorDataDomainService = marketOperatorDataDomainService;
             _dequeueNotificationSender = dequeueNotificationSender;
             _logger = logger;
-            _correlationIdProvider = correlationIdProvider;
+            _correlationContext = correlationContext;
         }
 
         public async Task<DequeueResponse> Handle(DequeueCommand request, CancellationToken cancellationToken)
         {
-            Guard.ThrowIfNull(request, nameof(request));
+            ArgumentNullException.ThrowIfNull(request, nameof(request));
 
-            _logger.LogProcess("Dequeue", _correlationIdProvider.CorrelationId, request.MarketOperator);
+            _logger.LogProcess("Dequeue", _correlationContext.Id, request.MarketOperator);
 
             var recipient = new MarketOperator(new GlobalLocationNumber(request.MarketOperator));
             var bundleId = new Uuid(request.BundleId);
@@ -60,7 +62,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
 
             if (!canAcknowledge)
             {
-                _logger.LogProcess("Dequeue", "Unacknowledged", _correlationIdProvider.CorrelationId, request.MarketOperator, request.BundleId);
+                _logger.LogProcess("Dequeue", "Unacknowledged", _correlationContext.Id, request.MarketOperator, request.BundleId);
                 return new DequeueResponse(false);
             }
 
@@ -76,7 +78,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
                 .AcknowledgeAsync(bundle)
                 .ConfigureAwait(false);
 
-            _logger.LogProcess("Dequeue", "Acknowledged", _correlationIdProvider.CorrelationId, request.MarketOperator, request.BundleId);
+            _logger.LogProcess("Dequeue", "Acknowledged", _correlationContext.Id, request.MarketOperator, request.BundleId);
             return new DequeueResponse(true);
         }
     }

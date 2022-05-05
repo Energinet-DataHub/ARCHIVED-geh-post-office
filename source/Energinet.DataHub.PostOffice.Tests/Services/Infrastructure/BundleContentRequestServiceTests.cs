@@ -15,6 +15,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Energinet.DataHub.Core.App.FunctionApp.Middleware.CorrelationId;
 using Energinet.DataHub.MessageHub.Core.Peek;
 using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Domain.Model;
@@ -42,7 +43,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
                 new Mock<ILogger>().Object,
                 marketOperatorDataStorageServiceMock.Object,
                 dataBundleRequestSenderMock.Object,
-                new Mock<ICorrelationIdProvider>().Object);
+                new Mock<ICorrelationContext>().Object);
 
             var bundle = new Bundle(
                 new Uuid(Guid.NewGuid()),
@@ -73,7 +74,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
                 new Mock<ILogger>().Object,
                 marketOperatorDataStorageServiceMock.Object,
                 dataBundleRequestSenderMock.Object,
-                new Mock<ICorrelationIdProvider>().Object);
+                new Mock<ICorrelationContext>().Object);
 
             var bundle = new Bundle(
                 new Uuid(Guid.NewGuid()),

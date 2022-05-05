@@ -16,48 +16,45 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Azure.ServiceBus;
-using Microsoft.Azure.ServiceBus.Core;
+using Azure.Messaging.ServiceBus;
 
 namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
 {
     public class DataAvailableMessageReceiver : IDataAvailableMessageReceiver
     {
-        private readonly IMessageReceiver _messageReceiver;
+        private readonly ServiceBusReceiver _messageReceiver;
         private readonly int _batchSize;
         private readonly TimeSpan _timeout;
 
-        public DataAvailableMessageReceiver(IMessageReceiver messageReceiver, int batchSize, TimeSpan timeout)
+        public DataAvailableMessageReceiver(ServiceBusReceiver messageReceiver, int batchSize, TimeSpan timeout)
         {
             _messageReceiver = messageReceiver;
             _batchSize = batchSize;
             _timeout = timeout;
         }
 
-        public async Task<IReadOnlyList<Message>> ReceiveAsync()
+        public async Task<IReadOnlyList<ServiceBusReceivedMessage>> ReceiveAsync()
         {
-            var messages = await _messageReceiver.ReceiveAsync(_batchSize, _timeout).ConfigureAwait(false);
+            var messages = await _messageReceiver.ReceiveMessagesAsync(_batchSize, _timeout).ConfigureAwait(false);
             return messages != null
                 ? messages.ToList()
-                : Array.Empty<Message>();
+                : Array.Empty<ServiceBusReceivedMessage>();
         }
 
-        public Task DeadLetterAsync(IEnumerable<Message> messages)
+        public Task DeadLetterAsync(IEnumerable<ServiceBusReceivedMessage> messages)
         {
             var tasks = messages
-                .Where(x => x.SystemProperties.LockedUntilUtc > DateTime.UtcNow)
-                .Select(x => _messageReceiver.DeadLetterAsync(x.SystemProperties.LockToken));
+                .Where(x => x.LockedUntil > DateTime.UtcNow)
+                .Select(x => _messageReceiver.DeadLetterMessageAsync(x));
             return Task.WhenAll(tasks);
         }
 
-        public Task CompleteAsync(IEnumerable<Message> messages)
+        public Task CompleteAsync(IEnumerable<ServiceBusReceivedMessage> messages)
         {
             var lockTokens = messages
-                .Where(x => x.SystemProperties.LockedUntilUtc > DateTime.UtcNow)
-                .Select(x => x.SystemProperties.LockToken).ToList();
-            return lockTokens.Any()
-                ? _messageReceiver.CompleteAsync(lockTokens)
-                : Task.CompletedTask;
+                .Where(x => x.LockedUntil > DateTime.UtcNow)
+                .Select(x => _messageReceiver.CompleteMessageAsync(x));
+            return Task.WhenAll(lockTokens);
         }
     }
 }

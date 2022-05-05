@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 using Energinet.DataHub.MessageHub.Core.Extensions;
@@ -42,11 +43,12 @@ namespace Energinet.DataHub.MessageHub.Core.Peek
             _peekRequestConfig = peekRequestConfig;
         }
 
+        [SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "Issue: https://github.com/dotnet/roslyn-analyzers/issues/5712")]
         public async Task<DataBundleResponseDto?> SendAsync(
             DataBundleRequestDto dataBundleRequestDto,
             DomainOrigin domainOrigin)
         {
-            Guard.ThrowIfNull(dataBundleRequestDto, nameof(dataBundleRequestDto));
+            ArgumentNullException.ThrowIfNull(dataBundleRequestDto, nameof(dataBundleRequestDto));
 
             var bytes = _requestBundleParser.Parse(dataBundleRequestDto);
 

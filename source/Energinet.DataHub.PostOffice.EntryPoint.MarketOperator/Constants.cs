@@ -27,11 +27,6 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
         public const string BundleIdHeaderName = "MessageId";
 
         /// <summary>
-        /// Name of HttpHeader that contains the response correlation-id
-        /// </summary>
-        public const string CorrelationIdHeaderName = "CorrelationId";
-
-        /// <summary>
         /// Name of HttpHeader that contains the message types found in a given bundle
         /// </summary>
         public const string MessageTypeName = "MessageType";
