@@ -40,7 +40,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
 
             _logger.LogInformation($"OverlapTestTimerTrigger started {guid}");
 
-            await Task.Delay(20000).ConfigureAwait(false);
+            await Task.Delay(7000).ConfigureAwait(false);
 
             await _container.Cabinet.CreateItemAsync(new OverlapTest
             {
