@@ -43,6 +43,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain
             });
 
             container.Register<DataAvailableTimerTrigger>(Lifestyle.Scoped);
+            container.Register<OverlapTestTimerTrigger>(Lifestyle.Scoped);
         }
     }
 }
