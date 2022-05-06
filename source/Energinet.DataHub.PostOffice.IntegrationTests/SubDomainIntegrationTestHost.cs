@@ -38,7 +38,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
         {
             var host = new SubDomainIntegrationTestHost();
 
-            var serviceCollection = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+            var serviceCollection = new ServiceCollection();
             serviceCollection.AddSingleton<IConfiguration>(BuildConfig());
             host._startup.ConfigureServices(serviceCollection);
             serviceCollection.BuildServiceProvider().UseSimpleInjector(host._startup.Container, o => o.Container.Options.EnableAutoVerification = false);
