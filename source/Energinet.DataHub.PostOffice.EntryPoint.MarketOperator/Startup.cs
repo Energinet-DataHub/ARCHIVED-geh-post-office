@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Energinet.DataHub.Core.App.FunctionApp.Diagnostics.HealthChecks;
 using Energinet.DataHub.PostOffice.Common;
 using Energinet.DataHub.PostOffice.Common.Auth;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions;
+using Energinet.DataHub.PostOffice.EntryPoint.Operations.Monitor;
 using SimpleInjector;
 
 namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
@@ -30,6 +32,10 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
             container.Register<PeekAggregationsFunction>(Lifestyle.Scoped);
             container.Register<DequeueFunction>(Lifestyle.Scoped);
             container.Register(() => new ExternalBundleIdProvider(), Lifestyle.Singleton);
+
+            // Health check
+            container.Register<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>(Lifestyle.Scoped);
+            container.Register<HealthCheckEndpoint>(Lifestyle.Scoped);
         }
     }
 }

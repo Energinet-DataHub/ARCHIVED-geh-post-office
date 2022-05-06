@@ -14,6 +14,8 @@
 
 using System;
 using System.Threading.Tasks;
+using Energinet.DataHub.Core.App.Common.Diagnostics.HealthChecks;
+using Energinet.DataHub.Core.App.FunctionApp.Diagnostics.HealthChecks;
 using Energinet.DataHub.Core.App.FunctionApp.Middleware;
 using Energinet.DataHub.Core.App.FunctionApp.Middleware.CorrelationId;
 using Energinet.DataHub.Core.Logging.RequestResponseMiddleware;
@@ -53,6 +55,34 @@ namespace Energinet.DataHub.PostOffice.Common
         {
             SwitchToSimpleInjector(services);
 
+            var config = services.BuildServiceProvider().GetService<IConfiguration>()!;
+
+            // Health check
+            services.AddScoped<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>();
+            services
+                .AddHealthChecks()
+                .AddLiveCheck()
+                .AddCosmosDb(config["MESSAGES_DB_CONNECTION_STRING"])
+                .AddAzureBlobStorage(config["BlobStorageConnectionString"])
+                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["DATAAVAILABLE_QUEUE_NAME"])
+                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["DEQUEUE_CLEANUP_QUEUE_NAME"])
+                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["TIMESERIES_QUEUE_NAME"])
+                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["TIMESERIES_REPLY_QUEUE_NAME"])
+                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["CHARGES_QUEUE_NAME"])
+                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["CHARGES_REPLY_QUEUE_NAME"])
+                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["MARKETROLES_QUEUE_NAME"])
+                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["MARKETROLES_REPLY_QUEUE_NAME"])
+                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["METERINGPOINTS_QUEUE_NAME"])
+                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["METERINGPOINTS_REPLY_QUEUE_NAME"])
+                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["AGGREGATIONS_QUEUE_NAME"])
+                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["AGGREGATIONS_REPLY_QUEUE_NAME"])
+                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["TIMESERIES_DEQUEUE_QUEUE_NAME"])
+                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["CHARGES_DEQUEUE_QUEUE_NAME"])
+                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["MARKETROLES_DEQUEUE_QUEUE_NAME"])
+                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["METERINGPOINTS_DEQUEUE_QUEUE_NAME"])
+                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["AGGREGATIONS_DEQUEUE_QUEUE_NAME"])
+                .AddSqlServer(config["SQL_ACTOR_DB_CONNECTION_STRING"]);
+
             services.AddLogging();
             services.AddSimpleInjector(Container, x =>
             {
@@ -61,7 +91,6 @@ namespace Energinet.DataHub.PostOffice.Common
             });
 
             // config
-            var config = services.BuildServiceProvider().GetService<IConfiguration>()!;
             Container.RegisterSingleton(() => config);
             Container.AddDatabaseCosmosConfig();
             Container.AddCosmosClientBuilder();

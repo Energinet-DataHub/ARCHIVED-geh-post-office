@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Energinet.DataHub.Core.App.FunctionApp.Diagnostics.HealthChecks;
 using Energinet.DataHub.PostOffice.Common;
 using Energinet.DataHub.PostOffice.Common.Auth;
 using Energinet.DataHub.PostOffice.EntryPoint.Operations.Functions;
 using Energinet.DataHub.PostOffice.EntryPoint.Operations.HealthCheck;
+using Energinet.DataHub.PostOffice.EntryPoint.Operations.Monitor;
 using SimpleInjector;
 
 namespace Energinet.DataHub.PostOffice.EntryPoint.Operations
@@ -28,6 +30,8 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.Operations
             container.AddMarketParticipantConfig();
 
             // health check
+            container.Register<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>(Lifestyle.Scoped);
+            container.Register<HealthCheckEndpoint>(Lifestyle.Scoped);
             container.Register<ICosmosDatabaseVerifier, CosmosDatabaseVerifier>(Lifestyle.Scoped);
             container.Register<ISqlDatabaseVerifier, SqlDatabaseVerifier>(Lifestyle.Scoped);
             container.Register<IServiceBusQueueVerifier, ServiceBusQueueVerifier>(Lifestyle.Scoped);
