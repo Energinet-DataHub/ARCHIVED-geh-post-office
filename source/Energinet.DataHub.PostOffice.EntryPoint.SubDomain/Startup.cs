@@ -14,8 +14,10 @@
 
 using System;
 using Azure.Messaging.ServiceBus;
+using Energinet.DataHub.Core.App.FunctionApp.Diagnostics.HealthChecks;
 using Energinet.DataHub.PostOffice.Common;
 using Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions;
+using Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Monitor;
 using Energinet.DataHub.PostOffice.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,6 +46,10 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain
 
             container.Register<DataAvailableTimerTrigger>(Lifestyle.Scoped);
             container.Register<OverlapTestTimerTrigger>(Lifestyle.Scoped);
+
+            // health check
+            container.Register<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>(Lifestyle.Scoped);
+            container.Register<HealthCheckEndpoint>(Lifestyle.Scoped);
         }
     }
 }
