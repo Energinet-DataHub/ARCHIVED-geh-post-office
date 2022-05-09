@@ -31,13 +31,14 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain
         protected override void Configure(IServiceCollection services)
         {
             var config = services.BuildServiceProvider().GetService<IConfiguration>() ?? throw new InvalidOperationException("IConfiguration not found");
+            var serviceBusConnectionString = config["SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING"] ?? throw new InvalidOperationException("Health check connection string not found");
 
             // Health check
             services
                 .AddHealthChecks()
                 .AddLiveCheck()
                 .AddCosmosDb(config["MESSAGES_DB_CONNECTION_STRING"])
-                .AddAzureServiceBusQueue(config["SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING"], config["DATAAVAILABLE_QUEUE_NAME"]);
+                .AddAzureServiceBusQueue(serviceBusConnectionString, config["DATAAVAILABLE_QUEUE_NAME"]);
         }
 
         protected override void Configure(Container container)
