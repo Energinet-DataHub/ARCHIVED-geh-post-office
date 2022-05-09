@@ -63,23 +63,6 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             }
         }
 
-        public async Task LogMaximumSequenceNumberAsync(SequenceNumber number)
-        {
-            ArgumentNullException.ThrowIfNull(number, nameof(number));
-
-            try
-            {
-                await _repositoryContainer
-                    .Cabinet
-                    .CreateItemAsync(new CosmosLockOverlap(number.Value))
-                    .ConfigureAwait(false);
-            }
-            catch (CosmosException ex)
-            {
-                _logger.LogError(ex, "V3 Sequence Number {SequenceNumber} requested twice.", number.Value);
-            }
-        }
-
         public Task AdvanceSequenceNumberAsync(SequenceNumber sequenceNumber)
         {
             ArgumentNullException.ThrowIfNull(sequenceNumber, nameof(sequenceNumber));
