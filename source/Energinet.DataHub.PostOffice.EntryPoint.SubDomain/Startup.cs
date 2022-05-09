@@ -59,7 +59,6 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain
             });
 
             container.Register<DataAvailableTimerTrigger>(Lifestyle.Scoped);
-            container.Register<OverlapTestTimerTrigger>(Lifestyle.Scoped);
 
             // health check
             container.Register<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>(Lifestyle.Scoped);
