@@ -41,7 +41,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
             var query =
                 from actor in _repositoryContainer.Container.GetItemLinqQueryable<CosmosActor>()
-                where actor.PartitionKey == externalActorId.Value.ToString()
+                where actor.ExternalId == externalActorId.Value.ToString()
                 select actor;
 
             var actorDocument = await query
@@ -52,14 +52,14 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             return actorDocument != null ? ActorMapper.Map(actorDocument) : null;
         }
 
-        public Task SaveAsync(Actor actor)
+        public Task AddOrUpdateAsync(Actor actor)
         {
             ArgumentNullException.ThrowIfNull(actor, nameof(actor));
 
             var actorDocument = ActorMapper.Map(actor);
             return _repositoryContainer
                 .Container
-                .CreateItemAsync(actorDocument);
+                .UpsertItemAsync(actorDocument);
         }
 
         public async Task DeleteAsync(Actor actor)
@@ -72,7 +72,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             {
                 await _repositoryContainer
                     .Container
-                    .DeleteItemAsync<CosmosActor>(actorDocument.Id, new PartitionKey(actorDocument.ExternalId))
+                    .DeleteItemAsync<CosmosActor>(actorDocument.Id, new PartitionKey(actorDocument.Id))
                     .ConfigureAwait(false);
             }
             catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)

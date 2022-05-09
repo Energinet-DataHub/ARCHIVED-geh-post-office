@@ -30,10 +30,10 @@ namespace Energinet.DataHub.PostOffice.Domain.Repositories
         Task<Actor?> GetActorAsync(ExternalActorId externalActorId);
 
         /// <summary>
-        /// Saves the given actor to the database.
+        /// Adds or updates the given actor in the database.
         /// </summary>
-        /// <param name="actor">The actor to save.</param>
-        Task SaveAsync(Actor actor);
+        /// <param name="actor">The actor to add or update.</param>
+        Task AddOrUpdateAsync(Actor actor);
 
         /// <summary>
         /// Removes the given actor from the database.

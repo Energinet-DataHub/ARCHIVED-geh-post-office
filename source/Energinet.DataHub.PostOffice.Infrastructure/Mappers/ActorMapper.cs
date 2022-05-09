@@ -23,7 +23,7 @@ internal static class ActorMapper
     public static CosmosActor Map(Actor actor)
     {
         var externalId = actor.ExternalId.Value.ToString();
-        return new CosmosActor { Id = actor.Id.Value, ExternalId = externalId, PartitionKey = externalId };
+        return new CosmosActor { Id = actor.Id.Value, ExternalId = externalId, PartitionKey = actor.Id.Value };
     }
 
     public static Actor Map(CosmosActor actor)
