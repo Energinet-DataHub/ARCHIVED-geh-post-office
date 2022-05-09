@@ -31,6 +31,25 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
         {
             var config = services.BuildServiceProvider().GetService<IConfiguration>() ?? throw new InvalidOperationException("IConfiguration not found");
 
+            var serviceBusConnectionString = config["SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING"] ?? throw new InvalidOperationException("Health check connection string not found");
+
+            var timeSeriesQueue = config.GetValue("TIMESERIES_QUEUE_NAME", "timeseries");
+            var timeSeriesReplyQueue = config.GetValue("TIMESERIES_REPLY_QUEUE_NAME", "timeseries-reply");
+            var chargesQueue = config.GetValue("CHARGES_QUEUE_NAME", "charges");
+            var chargesReplyQueue = config.GetValue("CHARGES_REPLY_QUEUE_NAME", "charges-reply");
+            var marketRolesQueue = config.GetValue("MARKETROLES_QUEUE_NAME", "marketroles");
+            var marketRolesReplyQueue = config.GetValue("MARKETROLES_REPLY_QUEUE_NAME", "marketroles-reply");
+            var meteringPointsQueue = config.GetValue("METERINGPOINTS_QUEUE_NAME", "meteringpoints");
+            var meteringPointsReplyQueue = config.GetValue("METERINGPOINTS_REPLY_QUEUE_NAME", "meteringpoints-reply");
+            var aggregationsQueue = config.GetValue("AGGREGATIONS_QUEUE_NAME", "aggregations");
+            var aggregationsReplyQueue = config.GetValue("AGGREGATIONS_REPLY_QUEUE_NAME", "aggregations-reply");
+
+            var timeSeriesDequeueQueue = config.GetValue("TIMESERIES_DEQUEUE_QUEUE_NAME", "timeseries-dequeue");
+            var chargesDequeueQueue = config.GetValue("CHARGES_DEQUEUE_QUEUE_NAME", "charges-dequeue");
+            var marketRolesDequeueQueue = config.GetValue("MARKETROLES_DEQUEUE_QUEUE_NAME", "marketroles-dequeue");
+            var meteringPointsDequeueQueue = config.GetValue("METERINGPOINTS_DEQUEUE_QUEUE_NAME", "meteringpoints-dequeue");
+            var aggregationsDequeueQueue = config.GetValue("AGGREGATIONS_DEQUEUE_QUEUE_NAME", "aggregations-dequeue");
+
             // Health check
             services
                 .AddHealthChecks()
@@ -39,25 +58,25 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
                 .AddAzureBlobStorage(config["BlobStorageConnectionString"])
                 .AddSqlServer(config["SQL_ACTOR_DB_CONNECTION_STRING"])
 
-                .AddAzureServiceBusQueue(config["SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING"], config["TIMESERIES_QUEUE_NAME"], name: "TIMESERIES_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING"], config["TIMESERIES_REPLY_QUEUE_NAME"], name: "TIMESERIES_REPLY_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING"], config["TIMESERIES_DEQUEUE_QUEUE_NAME"], name: "TIMESERIES_DEQUEUE_QUEUE_NAME")
+                .AddAzureServiceBusQueue(serviceBusConnectionString, timeSeriesQueue, name: timeSeriesQueue)
+                .AddAzureServiceBusQueue(serviceBusConnectionString, timeSeriesReplyQueue, name: timeSeriesReplyQueue)
+                .AddAzureServiceBusQueue(serviceBusConnectionString, timeSeriesDequeueQueue, name: timeSeriesDequeueQueue)
 
-                .AddAzureServiceBusQueue(config["SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING"], config["CHARGES_QUEUE_NAME"], name: "CHARGES_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING"], config["CHARGES_REPLY_QUEUE_NAME"], name: "CHARGES_REPLY_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING"], config["CHARGES_DEQUEUE_QUEUE_NAME"], name: "CHARGES_DEQUEUE_QUEUE_NAME")
+                .AddAzureServiceBusQueue(serviceBusConnectionString, chargesQueue, name: chargesQueue)
+                .AddAzureServiceBusQueue(serviceBusConnectionString, chargesReplyQueue, name: chargesReplyQueue)
+                .AddAzureServiceBusQueue(serviceBusConnectionString, chargesDequeueQueue, name: chargesDequeueQueue)
 
-                .AddAzureServiceBusQueue(config["SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING"], config["MARKETROLES_QUEUE_NAME"], name: "MARKETROLES_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING"], config["MARKETROLES_REPLY_QUEUE_NAME"], name: "MARKETROLES_REPLY_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING"], config["MARKETROLES_DEQUEUE_QUEUE_NAME"], name: "MARKETROLES_DEQUEUE_QUEUE_NAME")
+                .AddAzureServiceBusQueue(serviceBusConnectionString, marketRolesQueue, name: marketRolesQueue)
+                .AddAzureServiceBusQueue(serviceBusConnectionString, marketRolesReplyQueue, name: marketRolesReplyQueue)
+                .AddAzureServiceBusQueue(serviceBusConnectionString, marketRolesDequeueQueue, name: marketRolesDequeueQueue)
 
-                .AddAzureServiceBusQueue(config["SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING"], config["METERINGPOINTS_QUEUE_NAME"], name: "METERINGPOINTS_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING"], config["METERINGPOINTS_REPLY_QUEUE_NAME"], name: "METERINGPOINTS_REPLY_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING"], config["METERINGPOINTS_DEQUEUE_QUEUE_NAME"], name: "METERINGPOINTS_DEQUEUE_QUEUE_NAME")
+                .AddAzureServiceBusQueue(serviceBusConnectionString, meteringPointsQueue, name: meteringPointsQueue)
+                .AddAzureServiceBusQueue(serviceBusConnectionString, meteringPointsReplyQueue, name: meteringPointsReplyQueue)
+                .AddAzureServiceBusQueue(serviceBusConnectionString, meteringPointsDequeueQueue, name: meteringPointsDequeueQueue)
 
-                .AddAzureServiceBusQueue(config["SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING"], config["AGGREGATIONS_QUEUE_NAME"], name: "AGGREGATIONS_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING"], config["AGGREGATIONS_REPLY_QUEUE_NAME"], name: "AGGREGATIONS_REPLY_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING"], config["AGGREGATIONS_DEQUEUE_QUEUE_NAME"], name: "AGGREGATIONS_DEQUEUE_QUEUE_NAME");
+                .AddAzureServiceBusQueue(serviceBusConnectionString, aggregationsQueue, name: aggregationsQueue)
+                .AddAzureServiceBusQueue(serviceBusConnectionString, aggregationsReplyQueue, name: aggregationsReplyQueue)
+                .AddAzureServiceBusQueue(serviceBusConnectionString, aggregationsDequeueQueue, name: aggregationsDequeueQueue);
         }
 
         protected override void Configure(Container container)
