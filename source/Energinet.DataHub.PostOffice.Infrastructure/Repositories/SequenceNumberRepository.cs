@@ -27,16 +27,12 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
     public sealed class SequenceNumberRepository : ISequenceNumberRepository
     {
         private readonly IDataAvailableNotificationRepositoryContainer _repositoryContainer;
-        private readonly ILogger<SequenceNumberRepository> _logger;
 
         private SequenceNumber? _sequenceNumberInScope;
 
-        public SequenceNumberRepository(
-            IDataAvailableNotificationRepositoryContainer repositoryContainer,
-            ILogger<SequenceNumberRepository> logger)
+        public SequenceNumberRepository(IDataAvailableNotificationRepositoryContainer repositoryContainer)
         {
             _repositoryContainer = repositoryContainer;
-            _logger = logger;
         }
 
         public async Task<SequenceNumber> GetMaximumSequenceNumberAsync()
