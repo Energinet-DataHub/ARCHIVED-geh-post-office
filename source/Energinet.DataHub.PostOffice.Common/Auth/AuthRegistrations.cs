@@ -36,7 +36,6 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
 
             container.Register<IMarketOperatorIdentity, MarketOperatorIdentity>(Lifestyle.Scoped);
             container.Register<JwtAuthenticationMiddleware>(Lifestyle.Scoped);
-            container.Register<QueryAuthenticationMiddleware>(Lifestyle.Scoped);
             RegisterJwt(container);
             RegisterActor(container);
 

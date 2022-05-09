@@ -17,7 +17,7 @@ using Energinet.DataHub.Core.App.FunctionApp.Diagnostics.HealthChecks;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 
-namespace Energinet.DataHub.PostOffice.EntryPoint.Operations.Monitor
+namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Monitor
 {
     public sealed class HealthCheckEndpoint
     {

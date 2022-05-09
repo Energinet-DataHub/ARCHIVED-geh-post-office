@@ -18,7 +18,7 @@ using Energinet.DataHub.Core.App.FunctionApp.Diagnostics.HealthChecks;
 using Energinet.DataHub.PostOffice.Common;
 using Energinet.DataHub.PostOffice.Common.Auth;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions;
-using Energinet.DataHub.PostOffice.EntryPoint.Operations.Monitor;
+using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Monitor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
