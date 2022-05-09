@@ -72,7 +72,6 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
             container.Register(() => new ExternalBundleIdProvider(), Lifestyle.Singleton);
 
             // Health check
-            container.Register<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>(Lifestyle.Scoped);
             container.Register<HealthCheckEndpoint>(Lifestyle.Scoped);
         }
     }

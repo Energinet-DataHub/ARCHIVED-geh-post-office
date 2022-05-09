@@ -61,7 +61,6 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain
             container.Register<DataAvailableTimerTrigger>(Lifestyle.Scoped);
 
             // health check
-            container.Register<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>(Lifestyle.Scoped);
             container.Register<HealthCheckEndpoint>(Lifestyle.Scoped);
         }
     }
