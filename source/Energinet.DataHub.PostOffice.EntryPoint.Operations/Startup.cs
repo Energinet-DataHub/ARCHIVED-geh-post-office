@@ -12,18 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Energinet.DataHub.Core.App.Common.Diagnostics.HealthChecks;
 using Energinet.DataHub.Core.App.FunctionApp.Diagnostics.HealthChecks;
 using Energinet.DataHub.PostOffice.Common;
 using Energinet.DataHub.PostOffice.Common.Auth;
 using Energinet.DataHub.PostOffice.EntryPoint.Operations.Functions;
 using Energinet.DataHub.PostOffice.EntryPoint.Operations.HealthCheck;
 using Energinet.DataHub.PostOffice.EntryPoint.Operations.Monitor;
+using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
 
 namespace Energinet.DataHub.PostOffice.EntryPoint.Operations
 {
     internal sealed class Startup : StartupBase
     {
+        protected override void Configure(IServiceCollection services)
+        {
+            // Health check
+            services.AddScoped<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>();
+            services
+                .AddHealthChecks()
+                .AddLiveCheck();
+        }
+
         protected override void Configure(Container container)
         {
             // market participant

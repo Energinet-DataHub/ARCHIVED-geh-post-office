@@ -57,32 +57,6 @@ namespace Energinet.DataHub.PostOffice.Common
 
             var config = services.BuildServiceProvider().GetService<IConfiguration>()!;
 
-            // Health check
-            services.AddScoped<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>();
-            services
-                .AddHealthChecks()
-                .AddLiveCheck()
-                .AddCosmosDb(config["MESSAGES_DB_CONNECTION_STRING"])
-                .AddAzureBlobStorage(config["BlobStorageConnectionString"])
-                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["DATAAVAILABLE_QUEUE_NAME"], name: "DATAAVAILABLE_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["DEQUEUE_CLEANUP_QUEUE_NAME"], name: "DEQUEUE_CLEANUP_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["TIMESERIES_QUEUE_NAME"], name: "TIMESERIES_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["TIMESERIES_REPLY_QUEUE_NAME"], name: "TIMESERIES_REPLY_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["CHARGES_QUEUE_NAME"], name: "CHARGES_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["CHARGES_REPLY_QUEUE_NAME"], name: "CHARGES_REPLY_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["MARKETROLES_QUEUE_NAME"], name: "MARKETROLES_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["MARKETROLES_REPLY_QUEUE_NAME"], name: "MARKETROLES_REPLY_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["METERINGPOINTS_QUEUE_NAME"], name: "METERINGPOINTS_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["METERINGPOINTS_REPLY_QUEUE_NAME"], name: "METERINGPOINTS_REPLY_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["AGGREGATIONS_QUEUE_NAME"], name: "AGGREGATIONS_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["AGGREGATIONS_REPLY_QUEUE_NAME"], name: "AGGREGATIONS_REPLY_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["TIMESERIES_DEQUEUE_QUEUE_NAME"], name: "TIMESERIES_DEQUEUE_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["CHARGES_DEQUEUE_QUEUE_NAME"], name: "CHARGES_DEQUEUE_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["MARKETROLES_DEQUEUE_QUEUE_NAME"], name: "MARKETROLES_DEQUEUE_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["METERINGPOINTS_DEQUEUE_QUEUE_NAME"], name: "METERINGPOINTS_DEQUEUE_QUEUE_NAME")
-                .AddAzureServiceBusQueue(config["ServiceBusConnectionString"], config["AGGREGATIONS_DEQUEUE_QUEUE_NAME"], name: "AGGREGATIONS_DEQUEUE_QUEUE_NAME")
-                .AddSqlServer(config["SQL_ACTOR_DB_CONNECTION_STRING"]);
-
             services.AddLogging();
             services.AddSimpleInjector(Container, x =>
             {
@@ -123,6 +97,7 @@ namespace Energinet.DataHub.PostOffice.Common
             // Add MediatR
             Container.BuildMediator(new[] { typeof(ApplicationAssemblyReference).Assembly });
 
+            Configure(services);
             Configure(Container);
         }
 
@@ -133,6 +108,8 @@ namespace Energinet.DataHub.PostOffice.Common
         {
             return Container.DisposeAsync();
         }
+
+        protected abstract void Configure(IServiceCollection services);
 
         protected abstract void Configure(Container container);
 

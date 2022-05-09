@@ -14,6 +14,7 @@
 
 using System;
 using Azure.Messaging.ServiceBus;
+using Energinet.DataHub.Core.App.Common.Diagnostics.HealthChecks;
 using Energinet.DataHub.Core.App.FunctionApp.Diagnostics.HealthChecks;
 using Energinet.DataHub.PostOffice.Common;
 using Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions;
@@ -27,6 +28,19 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain
 {
     internal sealed class Startup : StartupBase
     {
+        protected override void Configure(IServiceCollection services)
+        {
+            var config = services.BuildServiceProvider().GetService<IConfiguration>() ?? throw new InvalidOperationException("IConfiguration not found");
+
+            // Health check
+            services.AddScoped<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>();
+            services
+                .AddHealthChecks()
+                .AddLiveCheck()
+                .AddCosmosDb(config["MESSAGES_DB_CONNECTION_STRING"])
+                .AddAzureServiceBusQueue(config["SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING"], config["DATAAVAILABLE_QUEUE_NAME"]);
+        }
+
         protected override void Configure(Container container)
         {
             container.RegisterSingleton<IDataAvailableMessageReceiver>(() =>
