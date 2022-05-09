@@ -16,8 +16,6 @@ using Energinet.DataHub.Core.App.Common.Diagnostics.HealthChecks;
 using Energinet.DataHub.Core.App.FunctionApp.Diagnostics.HealthChecks;
 using Energinet.DataHub.PostOffice.Common;
 using Energinet.DataHub.PostOffice.Common.Auth;
-using Energinet.DataHub.PostOffice.EntryPoint.Operations.Functions;
-using Energinet.DataHub.PostOffice.EntryPoint.Operations.HealthCheck;
 using Energinet.DataHub.PostOffice.EntryPoint.Operations.Monitor;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
@@ -38,10 +36,6 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.Operations
         {
             // market participant
             container.AddMarketParticipantConfig();
-            container.Register<ICosmosDatabaseVerifier, CosmosDatabaseVerifier>(Lifestyle.Scoped);
-            container.Register<ISqlDatabaseVerifier, SqlDatabaseVerifier>(Lifestyle.Scoped);
-            container.Register<IServiceBusQueueVerifier, ServiceBusQueueVerifier>(Lifestyle.Scoped);
-            container.Register<IHealth, Health>(Lifestyle.Scoped);
 
             // health check
             container.Register<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>(Lifestyle.Scoped);
