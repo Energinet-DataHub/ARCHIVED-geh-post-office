@@ -33,7 +33,6 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain
             var config = services.BuildServiceProvider().GetService<IConfiguration>() ?? throw new InvalidOperationException("IConfiguration not found");
 
             // Health check
-            services.AddScoped<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>();
             services
                 .AddHealthChecks()
                 .AddLiveCheck()
@@ -61,6 +60,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain
             container.Register<DataAvailableTimerTrigger>(Lifestyle.Scoped);
 
             // health check
+            container.Register<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>(Lifestyle.Scoped);
             container.Register<HealthCheckEndpoint>(Lifestyle.Scoped);
         }
     }

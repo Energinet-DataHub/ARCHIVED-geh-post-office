@@ -29,7 +29,6 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.Operations
         protected override void Configure(IServiceCollection services)
         {
             // Health check
-            services.AddScoped<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>();
             services
                 .AddHealthChecks()
                 .AddLiveCheck();
@@ -39,17 +38,14 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.Operations
         {
             // market participant
             container.AddMarketParticipantConfig();
-
-            // health check
-            container.Register<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>(Lifestyle.Scoped);
-            container.Register<HealthCheckEndpoint>(Lifestyle.Scoped);
             container.Register<ICosmosDatabaseVerifier, CosmosDatabaseVerifier>(Lifestyle.Scoped);
             container.Register<ISqlDatabaseVerifier, SqlDatabaseVerifier>(Lifestyle.Scoped);
             container.Register<IServiceBusQueueVerifier, ServiceBusQueueVerifier>(Lifestyle.Scoped);
             container.Register<IHealth, Health>(Lifestyle.Scoped);
 
-            // functions
-            container.Register<HealthFunction>(Lifestyle.Scoped);
+            // health check
+            container.Register<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>(Lifestyle.Scoped);
+            container.Register<HealthCheckEndpoint>(Lifestyle.Scoped);
         }
     }
 }

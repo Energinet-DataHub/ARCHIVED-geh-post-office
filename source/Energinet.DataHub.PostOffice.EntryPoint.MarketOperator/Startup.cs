@@ -32,7 +32,6 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
             var config = services.BuildServiceProvider().GetService<IConfiguration>() ?? throw new InvalidOperationException("IConfiguration not found");
 
             // Health check
-            services.AddScoped<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>();
             services
                 .AddHealthChecks()
                 .AddLiveCheck()
@@ -71,7 +70,8 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
             container.Register<DequeueFunction>(Lifestyle.Scoped);
             container.Register(() => new ExternalBundleIdProvider(), Lifestyle.Singleton);
 
-            // Health check
+            // health check
+            container.Register<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>(Lifestyle.Scoped);
             container.Register<HealthCheckEndpoint>(Lifestyle.Scoped);
         }
     }
