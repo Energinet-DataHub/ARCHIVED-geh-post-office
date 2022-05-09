@@ -16,8 +16,6 @@ using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
-using Microsoft.Extensions.Logging;
-using Moq;
 using Xunit;
 using Xunit.Categories;
 
@@ -35,7 +33,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var scope = host.BeginScope();
 
             var container = scope.GetInstance<IDataAvailableNotificationRepositoryContainer>();
-            var target = new SequenceNumberRepository(container, new Mock<ILogger<SequenceNumberRepository>>().Object);
+            var target = new SequenceNumberRepository(container);
             var expected = 100000;
 
             // Act

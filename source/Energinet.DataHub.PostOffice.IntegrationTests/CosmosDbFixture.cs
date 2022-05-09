@@ -31,12 +31,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
                 .CreateDatabaseIfNotExistsAsync(LocalSettings.DatabaseName)
                 .ConfigureAwait(false);
 
-            var logDatabaseResponse = await cosmosClient
-                .CreateDatabaseIfNotExistsAsync(LocalSettings.LogDatabaseName)
-                .ConfigureAwait(false);
-
             var testDatabase = databaseResponse.Database;
-            var logDatabase = logDatabaseResponse.Database;
 
             var container = await testDatabase
                 .CreateContainerIfNotExistsAsync("catalog", "/partitionKey")
@@ -54,12 +49,12 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
                 .CreateContainerIfNotExistsAsync("idempotency", "/partitionKey")
                 .ConfigureAwait(false);
 
-            var bundlesResponse = await testDatabase
-                .CreateContainerIfNotExistsAsync("bundle", "/recipient")
+            await testDatabase
+                .CreateContainerIfNotExistsAsync("actor", "/partitionKey")
                 .ConfigureAwait(false);
 
-            await logDatabase
-                .CreateContainerIfNotExistsAsync("Logs", "/marketOperator")
+            var bundlesResponse = await testDatabase
+                .CreateContainerIfNotExistsAsync("bundle", "/recipient")
                 .ConfigureAwait(false);
 
             var singleBundleViolationTrigger = new TriggerProperties
