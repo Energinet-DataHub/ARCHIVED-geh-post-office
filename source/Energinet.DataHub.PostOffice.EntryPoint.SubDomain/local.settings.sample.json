@@ -2,6 +2,7 @@
   "IsEncrypted": false,
   "Values": {
     "ServiceBusConnectionString": "",
+    "SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING": "",
     "DATAAVAILABLE_QUEUE_CONNECTION_STRING": "",
     "DATAAVAILABLE_QUEUE_NAME": "",
     "DEQUEUE_CLEANUP_QUEUE_NAME": "",

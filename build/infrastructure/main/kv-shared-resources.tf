@@ -21,6 +21,11 @@ data "azurerm_key_vault_secret" "sb_domain_relay_transceiver_connection_string" 
   key_vault_id = data.azurerm_key_vault.kv_shared_resources.id
 }
 
+data "azurerm_key_vault_secret" "sb_domain_relay_manage_connection_string" {
+  name         = "sb-domain-relay-manage-connection-string"
+  key_vault_id = data.azurerm_key_vault.kv_shared_resources.id
+}
+
 data "azurerm_key_vault_secret" "st_market_operator_response_primary_connection_string" {
   name         = "st-marketres-primary-connection-string"
   key_vault_id = data.azurerm_key_vault.kv_shared_resources.id
@@ -93,5 +98,10 @@ data "azurerm_key_vault_secret" "plan_shared_id" {
 
 data "azurerm_key_vault_secret" "log_shared_id" {
   name         = "log-shared-id"
+  key_vault_id = data.azurerm_key_vault.kv_shared_resources.id
+}
+
+data "azurerm_key_vault_secret" "primary_action_group_id" {
+  name         = "ag-primary-id"
   key_vault_id = data.azurerm_key_vault.kv_shared_resources.id
 }

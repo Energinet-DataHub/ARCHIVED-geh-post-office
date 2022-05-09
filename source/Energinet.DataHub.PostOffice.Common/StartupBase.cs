@@ -14,6 +14,8 @@
 
 using System;
 using System.Threading.Tasks;
+using Energinet.DataHub.Core.App.Common.Diagnostics.HealthChecks;
+using Energinet.DataHub.Core.App.FunctionApp.Diagnostics.HealthChecks;
 using Energinet.DataHub.Core.App.FunctionApp.Middleware;
 using Energinet.DataHub.Core.App.FunctionApp.Middleware.CorrelationId;
 using Energinet.DataHub.Core.Logging.RequestResponseMiddleware;
@@ -53,6 +55,8 @@ namespace Energinet.DataHub.PostOffice.Common
         {
             SwitchToSimpleInjector(services);
 
+            var config = services.BuildServiceProvider().GetService<IConfiguration>()!;
+
             services.AddLogging();
             services.AddSimpleInjector(Container, x =>
             {
@@ -61,7 +65,6 @@ namespace Energinet.DataHub.PostOffice.Common
             });
 
             // config
-            var config = services.BuildServiceProvider().GetService<IConfiguration>()!;
             Container.RegisterSingleton(() => config);
             Container.AddDatabaseCosmosConfig();
             Container.AddCosmosClientBuilder();
@@ -94,6 +97,7 @@ namespace Energinet.DataHub.PostOffice.Common
             // Add MediatR
             Container.BuildMediator(new[] { typeof(ApplicationAssemblyReference).Assembly });
 
+            Configure(services);
             Configure(Container);
         }
 
@@ -104,6 +108,8 @@ namespace Energinet.DataHub.PostOffice.Common
         {
             return Container.DisposeAsync();
         }
+
+        protected abstract void Configure(IServiceCollection services);
 
         protected abstract void Configure(Container container);
 

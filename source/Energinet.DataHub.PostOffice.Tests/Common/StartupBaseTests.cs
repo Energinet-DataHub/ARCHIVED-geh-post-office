@@ -80,6 +80,10 @@ namespace Energinet.DataHub.PostOffice.Tests.Common
         {
             public Action? ConfigureContainer { get; init; }
 
+            protected override void Configure(IServiceCollection services)
+            {
+            }
+
             protected override void Configure(Container container)
             {
                 AddMockConfiguration(container);
