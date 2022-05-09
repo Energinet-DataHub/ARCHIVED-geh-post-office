@@ -29,23 +29,24 @@ module "func_subdomain" {
   health_check_alert_enabled                = var.enable_health_check_alerts
   app_settings                              = {
     # Region: Default Values
-    WEBSITE_ENABLE_SYNC_UPDATE_SITE           = true
-    WEBSITE_RUN_FROM_PACKAGE                  = 1
-    WEBSITES_ENABLE_APP_SERVICE_STORAGE       = true
-    FUNCTIONS_WORKER_RUNTIME                  = "dotnet-isolated"
+    WEBSITE_ENABLE_SYNC_UPDATE_SITE             = true
+    WEBSITE_RUN_FROM_PACKAGE                    = 1
+    WEBSITES_ENABLE_APP_SERVICE_STORAGE         = true
+    FUNCTIONS_WORKER_RUNTIME                    = "dotnet-isolated"
     # Endregion
-    MESSAGES_DB_CONNECTION_STRING             = local.message_db_connection_string
-    MESSAGES_DB_NAME                          = azurerm_cosmosdb_sql_database.db.name
-    DATAAVAILABLE_QUEUE_CONNECTION_STRING     = data.azurerm_key_vault_secret.sb_domain_relay_transceiver_connection_string.value
-    DATAAVAILABLE_QUEUE_NAME                  = data.azurerm_key_vault_secret.sbq_data_available_name.value
-    DATAAVAILABLE_BATCH_SIZE                  = 125
-    DATAAVAILABLE_TIMEOUT_IN_MS               = 1000
-    DEQUEUE_CLEANUP_QUEUE_NAME                = data.azurerm_key_vault_secret.sbq_messagehub_dequeue_cleanup_name.value
-    ServiceBusConnectionString                = data.azurerm_key_vault_secret.sb_domain_relay_transceiver_connection_string.value
-    BlobStorageConnectionString               = data.azurerm_key_vault_secret.st_market_operator_response_primary_connection_string.value
-    BlobStorageContainerName                  = data.azurerm_key_vault_secret.st_market_operator_response_postofficereply_container_name.value
-    RequestResponseLogConnectionString        = data.azurerm_key_vault_secret.st_market_operator_logs_primary_connection_string.value
-    RequestResponseLogContainerName           = data.azurerm_key_vault_secret.st_market_operator_logs_container_name.value
+    MESSAGES_DB_CONNECTION_STRING               = local.message_db_connection_string
+    MESSAGES_DB_NAME                            = azurerm_cosmosdb_sql_database.db.name
+    DATAAVAILABLE_QUEUE_CONNECTION_STRING       = data.azurerm_key_vault_secret.sb_domain_relay_transceiver_connection_string.value
+    DATAAVAILABLE_QUEUE_NAME                    = data.azurerm_key_vault_secret.sbq_data_available_name.value
+    DATAAVAILABLE_BATCH_SIZE                    = 125
+    DATAAVAILABLE_TIMEOUT_IN_MS                 = 1000
+    DEQUEUE_CLEANUP_QUEUE_NAME                  = data.azurerm_key_vault_secret.sbq_messagehub_dequeue_cleanup_name.value
+    ServiceBusConnectionString                  = data.azurerm_key_vault_secret.sb_domain_relay_transceiver_connection_string.value
+    SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING  = data.azurerm_key_vault_secret.sb_domain_relay_manage_connection_string.value
+    BlobStorageConnectionString                 = data.azurerm_key_vault_secret.st_market_operator_response_primary_connection_string.value
+    BlobStorageContainerName                    = data.azurerm_key_vault_secret.st_market_operator_response_postofficereply_container_name.value
+    RequestResponseLogConnectionString          = data.azurerm_key_vault_secret.st_market_operator_logs_primary_connection_string.value
+    RequestResponseLogContainerName             = data.azurerm_key_vault_secret.st_market_operator_logs_container_name.value
   }
 
   tags                                      = azurerm_resource_group.this.tags
