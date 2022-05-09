@@ -29,11 +29,6 @@ namespace Energinet.DataHub.PostOffice.Domain.Repositories
         Task<SequenceNumber> GetMaximumSequenceNumberAsync();
 
         /// <summary>
-        /// For debugging only.
-        /// </summary>
-        Task LogMaximumSequenceNumberAsync(SequenceNumber number);
-
-        /// <summary>
         /// Store max available sequence number representing a data available notification
         /// </summary>
         /// <param name="sequenceNumber"></param>
