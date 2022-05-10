@@ -61,7 +61,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Auth
             var identity = new MarketOperatorIdentity();
             var mockedFunctionContext = new MockedFunctionContext();
             var actorContext = new Mock<IActorContext>();
-            actorContext.Setup(x => x.CurrentActor).Returns(new Actor(Guid.Empty, "?", "1234", "?"));
+            actorContext.Setup(x => x.CurrentActor).Returns(new Actor(Guid.NewGuid(), "?", "1234", "?"));
 
             var target = new JwtAuthenticationMiddleware(identity, actorContext.Object);
 
@@ -89,7 +89,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Auth
                 .Returns(data);
 
             var actorContext = new Mock<IActorContext>();
-            actorContext.Setup(x => x.CurrentActor).Returns(new Actor(Guid.Empty, "?", "1234", "?"));
+            actorContext.Setup(x => x.CurrentActor).Returns(new Actor(Guid.NewGuid(), "?", "1234", "?"));
             var target = new JwtAuthenticationMiddleware(identity, actorContext.Object);
 
             // Act

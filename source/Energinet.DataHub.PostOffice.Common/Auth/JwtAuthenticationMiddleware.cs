@@ -38,14 +38,13 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
 
             if (!_identity.HasIdentity && _actorContext.CurrentActor != null)
             {
-                if (_actorContext.CurrentActor.ActorId != Guid.Empty)
-                {
-                    _identity.AssignId(_actorContext.CurrentActor.ActorId.ToString());
-                }
-
                 if (!string.IsNullOrWhiteSpace(_actorContext.CurrentActor.Identifier))
                 {
                     _identity.AssignId(_actorContext.CurrentActor.Identifier);
+                }
+                else
+                {
+                    _identity.AssignId(_actorContext.CurrentActor.ActorId.ToString());
                 }
             }
 
