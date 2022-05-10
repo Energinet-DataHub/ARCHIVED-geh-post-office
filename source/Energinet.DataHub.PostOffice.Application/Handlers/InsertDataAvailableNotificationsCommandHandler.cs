@@ -48,9 +48,13 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
 
         private static DataAvailableNotification Map(DataAvailableNotificationDto notificationDto)
         {
+            var recipient = Guid.TryParse(notificationDto.Recipient, out var actorId)
+                ? new ActorId(actorId)
+                : new LegacyActorId(new GlobalLocationNumber(notificationDto.Recipient));
+
             return new DataAvailableNotification(
                 new Uuid(notificationDto.Uuid),
-                new MarketOperator(new GlobalLocationNumber(notificationDto.Recipient)),
+                recipient,
                 new ContentType(notificationDto.ContentType),
                 Enum.Parse<DomainOrigin>(notificationDto.Origin, true),
                 new SupportsBundling(notificationDto.SupportsBundling),

@@ -62,7 +62,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
 
             var bundle = new Bundle(
                 new Uuid(bundleId),
-                new MarketOperator(new GlobalLocationNumber("fake_value")),
+                new LegacyActorId(new GlobalLocationNumber("fake_value")),
                 DomainOrigin.TimeSeries,
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
@@ -73,8 +73,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             warehouseDomainServiceMock
                 .Setup(x =>
                     x.GetNextUnacknowledgedAsync(
-                        It.Is<MarketOperator>(r =>
-                            string.Equals(r.Gln.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
+                        It.Is<LegacyActorId>(r =>
+                            string.Equals(r.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
                         It.Is<Uuid>(r => BundleIdCheck(r, request))))
                 .ReturnsAsync(bundle);
 
@@ -107,8 +107,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             warehouseDomainServiceMock
                 .Setup(x =>
                     x.GetNextUnacknowledgedAsync(
-                        It.Is<MarketOperator>(r =>
-                            string.Equals(r.Gln.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
+                        It.Is<LegacyActorId>(r =>
+                            string.Equals(r.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
                         bundleId))
                 .ReturnsAsync((Bundle?)null);
 
@@ -156,7 +156,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
 
             var bundle = new Bundle(
                 new Uuid(bundleId),
-                new MarketOperator(new GlobalLocationNumber("fake_value")),
+                new LegacyActorId(new GlobalLocationNumber("fake_value")),
                 DomainOrigin.TimeSeries,
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
@@ -167,8 +167,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             warehouseDomainServiceMock
                 .Setup(x =>
                     x.GetNextUnacknowledgedAggregationsAsync(
-                        It.Is<MarketOperator>(r =>
-                            string.Equals(r.Gln.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
+                        It.Is<LegacyActorId>(r =>
+                            string.Equals(r.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
                         It.Is<Uuid>(r => r.ToString().Equals(request.BundleId, StringComparison.OrdinalIgnoreCase))))
                 .ReturnsAsync(bundle);
 
@@ -199,7 +199,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             warehouseDomainServiceMock
                 .Setup(x =>
                     x.GetNextUnacknowledgedAggregationsAsync(
-                        It.Is<MarketOperator>(r => string.Equals(r.Gln.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
+                        It.Is<LegacyActorId>(r => string.Equals(r.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
                         It.Is<Uuid>(r => string.Equals(r.ToString(), request.BundleId, StringComparison.OrdinalIgnoreCase))))
                 .ReturnsAsync((Bundle?)null);
 
@@ -247,7 +247,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
 
             var bundle = new Bundle(
                 new Uuid(bundleId),
-                new MarketOperator(new GlobalLocationNumber("fake_value")),
+                new LegacyActorId(new GlobalLocationNumber("fake_value")),
                 DomainOrigin.Charges,
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
@@ -258,8 +258,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             warehouseDomainServiceMock
                 .Setup(x =>
                     x.GetNextUnacknowledgedTimeSeriesAsync(
-                        It.Is<MarketOperator>(r =>
-                            string.Equals(r.Gln.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
+                        It.Is<LegacyActorId>(r =>
+                            string.Equals(r.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
                         It.Is<Uuid>(r => BundleIdCheck(r, request))))
                 .ReturnsAsync(bundle);
 
@@ -290,8 +290,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             warehouseDomainServiceMock
                 .Setup(x =>
                     x.GetNextUnacknowledgedTimeSeriesAsync(
-                        It.Is<MarketOperator>(r =>
-                            string.Equals(r.Gln.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
+                        It.Is<LegacyActorId>(r =>
+                            string.Equals(r.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
                         It.Is<Uuid>(r => BundleIdCheck(r, request))))
                 .ReturnsAsync((Bundle?)null);
 
@@ -339,7 +339,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
 
             var bundle = new Bundle(
                 new Uuid(bundleId),
-                new MarketOperator(new GlobalLocationNumber("fake_value")),
+                new LegacyActorId(new GlobalLocationNumber("fake_value")),
                 DomainOrigin.MarketRoles,
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
@@ -350,8 +350,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             warehouseDomainServiceMock
                 .Setup(x =>
                     x.GetNextUnacknowledgedMasterDataAsync(
-                        It.Is<MarketOperator>(r =>
-                            string.Equals(r.Gln.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
+                        It.Is<LegacyActorId>(r =>
+                            string.Equals(r.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
                         It.Is<Uuid>(r => BundleIdCheck(r, request))))
                 .ReturnsAsync(bundle);
 
@@ -382,8 +382,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             warehouseDomainServiceMock
                 .Setup(x =>
                     x.GetNextUnacknowledgedMasterDataAsync(
-                        It.Is<MarketOperator>(r =>
-                            string.Equals(r.Gln.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
+                        It.Is<LegacyActorId>(r =>
+                            string.Equals(r.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
                         It.Is<Uuid>(r => BundleIdCheck(r, request))))
                 .ReturnsAsync((Bundle?)null);
 

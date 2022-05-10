@@ -24,7 +24,7 @@ namespace Energinet.DataHub.PostOffice.Application.Validation
         {
             RuleFor(command => command.MarketOperator)
                 .NotEmpty()
-                .SetValidator(new GlobalLocationNumberValidationRule<PeekCommand>());
+                .SetValidator(new LegacyActorIdValidationRule<PeekCommand>());
 
             RuleFor(command => command.BundleId)
                 .NotEmpty()

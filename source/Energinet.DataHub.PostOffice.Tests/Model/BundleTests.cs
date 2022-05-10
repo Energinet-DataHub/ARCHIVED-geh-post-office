@@ -30,7 +30,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Model
             // Arrange
             var target = new Bundle(
                 new Uuid(Guid.NewGuid()),
-                new MarketOperator(new GlobalLocationNumber("fake_value")),
+                new LegacyActorId(new GlobalLocationNumber("fake_value")),
                 DomainOrigin.TimeSeries,
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
@@ -50,7 +50,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Model
             // Arrange
             var target = new Bundle(
                 new Uuid(Guid.NewGuid()),
-                new MarketOperator(new GlobalLocationNumber("fake_value")),
+                new LegacyActorId(new GlobalLocationNumber("fake_value")),
                 DomainOrigin.TimeSeries,
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
@@ -71,7 +71,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Model
             // Arrange
             var target = new Bundle(
                 new Uuid(Guid.NewGuid()),
-                new MarketOperator(new GlobalLocationNumber("fake_value")),
+                new LegacyActorId(new GlobalLocationNumber("fake_value")),
                 DomainOrigin.TimeSeries,
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
@@ -92,7 +92,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Model
             var bundleContentMock = new Mock<IBundleContent>();
             var target = new Bundle(
                 new Uuid(Guid.NewGuid()),
-                new MarketOperator(new GlobalLocationNumber("fake_value")),
+                new LegacyActorId(new GlobalLocationNumber("fake_value")),
                 DomainOrigin.TimeSeries,
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
@@ -113,7 +113,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Model
             var bundleContentMock = new Mock<IBundleContent>();
             var target = new Bundle(
                 new Uuid(Guid.NewGuid()),
-                new MarketOperator(new GlobalLocationNumber("fake_value")),
+                new LegacyActorId(new GlobalLocationNumber("fake_value")),
                 DomainOrigin.TimeSeries,
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),

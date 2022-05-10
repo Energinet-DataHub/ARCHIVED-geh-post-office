@@ -120,7 +120,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         {
             return
                 notification.NotificationId == new Uuid(dto.Uuid) &&
-                notification.Recipient.Gln.Value == dto.Recipient &&
+                notification.Recipient.Value == dto.Recipient &&
                 notification.Origin.ToString() == dto.Origin &&
                 notification.ContentType.Value == dto.ContentType &&
                 notification.Weight.Value == dto.Weight &&
@@ -131,7 +131,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         private static Expression<Func<CabinetKey, bool>> ExpectedCabinetKey(DataAvailableNotificationDto dto)
         {
             return cabinetKey => cabinetKey == new CabinetKey(
-                new MarketOperator(new GlobalLocationNumber(dto.Recipient)),
+                new LegacyActorId(new GlobalLocationNumber(dto.Recipient)),
                 Enum.Parse<DomainOrigin>(dto.Origin, true),
                 new ContentType(dto.ContentType));
         }

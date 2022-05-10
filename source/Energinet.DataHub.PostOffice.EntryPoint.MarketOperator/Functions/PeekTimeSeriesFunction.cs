@@ -51,7 +51,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions
         {
             return request.ProcessAsync(async () =>
             {
-                var command = new PeekTimeSeriesCommand(_operatorIdentity.Gln, _bundleIdProvider.TryGetBundleId(request));
+                var command = new PeekTimeSeriesCommand(_operatorIdentity.ActorId, _bundleIdProvider.TryGetBundleId(request));
                 var (hasContent, bundleId, stream, documentTypes) = await _mediator.Send(command).ConfigureAwait(false);
 
                 var response = hasContent
