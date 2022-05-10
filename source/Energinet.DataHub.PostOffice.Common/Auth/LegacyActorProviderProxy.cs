@@ -42,14 +42,13 @@ public sealed class LegacyActorProviderProxy : IActorProvider
         var registryActor = await GetRegistryActorAsync(actorId).ConfigureAwait(false);
         var legacyActor = await GetLegacyActorAsync(actorId).ConfigureAwait(false);
 
-        if (registryActor != null && legacyActor != null)
-        {
-            _legacyActorIdIdentity.Identity = new LegacyActorId(new GlobalLocationNumber(legacyActor.Identifier));
-            return registryActor;
-        }
-
         if (registryActor != null)
         {
+            if (legacyActor != null)
+            {
+                _legacyActorIdIdentity.Identity = new LegacyActorId(new GlobalLocationNumber(legacyActor.Identifier));
+            }
+
             return registryActor;
         }
 
