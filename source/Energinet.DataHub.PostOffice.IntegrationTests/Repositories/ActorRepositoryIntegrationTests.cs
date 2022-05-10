@@ -54,7 +54,34 @@ public sealed class ActorRepositoryIntegrationTests
     }
 
     [Fact]
-    public async Task GetActorAsync_NoActor_ReturnsNull()
+    public async Task GetActorAsync_GivenActorId_ReturnsActor()
+    {
+        // Arrange
+        await using var host = await SubDomainIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
+        var scope = host.BeginScope();
+
+        var container = scope.GetInstance<IActorRepositoryContainer>();
+        var target = new ActorRepository(container);
+
+        var actorId = Guid.NewGuid();
+        var externalId = Guid.NewGuid();
+
+        var actor = new Actor(new ActorId(actorId), new ExternalActorId(externalId));
+        await target.AddOrUpdateAsync(actor).ConfigureAwait(false);
+
+        // Act
+        var actual = await target
+            .GetActorAsync(new ActorId(actorId))
+            .ConfigureAwait(false);
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.Equal(actorId, Guid.Parse(actual!.Id.Value));
+        Assert.Equal(externalId, actual.ExternalId.Value);
+    }
+
+    [Fact]
+    public async Task GetActorAsync_NoExternalActorId_ReturnsNull()
     {
         // Arrange
         await using var host = await SubDomainIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
@@ -68,6 +95,27 @@ public sealed class ActorRepositoryIntegrationTests
         // Act
         var actual = await target
             .GetActorAsync(new ExternalActorId(externalId))
+            .ConfigureAwait(false);
+
+        // Assert
+        Assert.Null(actual);
+    }
+
+    [Fact]
+    public async Task GetActorAsync_NoActorId_ReturnsNull()
+    {
+        // Arrange
+        await using var host = await SubDomainIntegrationTestHost.InitializeAsync().ConfigureAwait(false);
+        var scope = host.BeginScope();
+
+        var container = scope.GetInstance<IActorRepositoryContainer>();
+        var target = new ActorRepository(container);
+
+        var id = Guid.NewGuid();
+
+        // Act
+        var actual = await target
+            .GetActorAsync(new ActorId(id))
             .ConfigureAwait(false);
 
         // Assert
