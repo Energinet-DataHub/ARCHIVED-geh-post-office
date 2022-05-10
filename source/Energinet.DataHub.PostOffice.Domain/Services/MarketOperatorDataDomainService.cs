@@ -40,22 +40,22 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
             _weightCalculatorDomainService = weightCalculatorDomainService;
         }
 
-        public Task<Bundle?> GetNextUnacknowledgedAsync(MarketOperator recipient, Uuid? suggestedBundleId)
+        public Task<Bundle?> GetNextUnacknowledgedAsync(ActorId recipient, Uuid? suggestedBundleId)
         {
             return GetNextUnacknowledgedForDomainsAsync(recipient, suggestedBundleId);
         }
 
-        public Task<Bundle?> GetNextUnacknowledgedTimeSeriesAsync(MarketOperator recipient, Uuid? suggestedBundleId)
+        public Task<Bundle?> GetNextUnacknowledgedTimeSeriesAsync(ActorId recipient, Uuid? suggestedBundleId)
         {
             return GetNextUnacknowledgedForDomainsAsync(recipient, suggestedBundleId, DomainOrigin.TimeSeries);
         }
 
-        public Task<Bundle?> GetNextUnacknowledgedAggregationsAsync(MarketOperator recipient, Uuid? suggestedBundleId)
+        public Task<Bundle?> GetNextUnacknowledgedAggregationsAsync(ActorId recipient, Uuid? suggestedBundleId)
         {
             return GetNextUnacknowledgedForDomainsAsync(recipient, suggestedBundleId, DomainOrigin.Aggregations);
         }
 
-        public Task<Bundle?> GetNextUnacknowledgedMasterDataAsync(MarketOperator recipient, Uuid? suggestedBundleId)
+        public Task<Bundle?> GetNextUnacknowledgedMasterDataAsync(ActorId recipient, Uuid? suggestedBundleId)
         {
             return GetNextUnacknowledgedForDomainsAsync(
                 recipient,
@@ -65,7 +65,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
                 DomainOrigin.Charges);
         }
 
-        public async Task<(bool CanAcknowledge, Bundle? Bundle)> CanAcknowledgeAsync(MarketOperator recipient, Uuid bundleId)
+        public async Task<(bool CanAcknowledge, Bundle? Bundle)> CanAcknowledgeAsync(ActorId recipient, Uuid bundleId)
         {
             var bundle = await _bundleRepository.GetNextUnacknowledgedAsync(recipient).ConfigureAwait(false);
             return bundle != null && bundle.BundleId == bundleId
@@ -87,7 +87,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         }
 
         private async Task<Bundle?> GetNextUnacknowledgedForDomainsAsync(
-            MarketOperator recipient,
+            ActorId recipient,
             Uuid? suggestedBundleId,
             params DomainOrigin[] domains)
         {

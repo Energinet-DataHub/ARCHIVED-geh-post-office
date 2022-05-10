@@ -53,8 +53,10 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
 
             _logger.LogProcess("Dequeue", _correlationContext.Id, request.MarketOperator);
 
-            var recipient = new MarketOperator(new GlobalLocationNumber(request.MarketOperator));
             var bundleId = new Uuid(request.BundleId);
+            var recipient = Guid.TryParse(request.MarketOperator, out var actorId)
+                ? new ActorId(actorId)
+                : new LegacyActorId(new GlobalLocationNumber(request.MarketOperator));
 
             var (canAcknowledge, bundle) = await _marketOperatorDataDomainService
                 .CanAcknowledgeAsync(recipient, bundleId)

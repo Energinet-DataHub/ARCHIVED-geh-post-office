@@ -31,6 +31,11 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Common
             return new GlobalLocationNumber(mock._gln);
         }
 
+        public static implicit operator LegacyActorId(MockedGln mock)
+        {
+            return new LegacyActorId(new GlobalLocationNumber(mock._gln));
+        }
+
         public static implicit operator GlobalLocationNumberDto(MockedGln mock)
         {
             return new GlobalLocationNumberDto(mock._gln);

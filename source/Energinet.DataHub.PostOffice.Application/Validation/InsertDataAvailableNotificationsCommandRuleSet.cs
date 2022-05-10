@@ -38,7 +38,7 @@ namespace Energinet.DataHub.PostOffice.Application.Validation
 
                     dto.RuleFor(x => x.Recipient)
                         .NotEmpty()
-                        .SetValidator(new GlobalLocationNumberValidationRule<DataAvailableNotificationDto>());
+                        .SetValidator(new LegacyActorIdValidationRule<DataAvailableNotificationDto>());
 
                     dto.RuleFor(x => x.ContentType)
                         .NotEmpty();

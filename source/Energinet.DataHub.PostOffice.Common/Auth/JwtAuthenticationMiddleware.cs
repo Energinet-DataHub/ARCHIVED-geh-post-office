@@ -38,7 +38,7 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
 
             if (!_identity.HasIdentity && !string.IsNullOrWhiteSpace(_actorContext.CurrentActor?.Identifier))
             {
-                _identity.AssignGln(_actorContext.CurrentActor.Identifier);
+                _identity.AssignId(_actorContext.CurrentActor.Identifier);
             }
 
             return next(context);

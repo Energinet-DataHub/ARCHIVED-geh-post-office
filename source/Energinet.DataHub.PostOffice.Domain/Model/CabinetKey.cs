@@ -18,7 +18,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Model
 {
     public sealed record CabinetKey
     {
-        public CabinetKey(MarketOperator recipient, DomainOrigin origin, ContentType contentType)
+        public CabinetKey(ActorId recipient, DomainOrigin origin, ContentType contentType)
         {
             Recipient = recipient;
             Origin = origin;
@@ -34,7 +34,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Model
             ContentType = notification.ContentType;
         }
 
-        public MarketOperator Recipient { get; }
+        public ActorId Recipient { get; }
         public DomainOrigin Origin { get; }
         public ContentType ContentType { get; }
     }

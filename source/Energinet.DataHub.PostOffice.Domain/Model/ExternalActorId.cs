@@ -16,15 +16,5 @@ using System;
 
 namespace Energinet.DataHub.PostOffice.Domain.Model
 {
-    public sealed record ExternalActorId
-    {
-        private readonly Guid _id;
-
-        public ExternalActorId(Guid id)
-        {
-            _id = id;
-        }
-
-        public Guid Value => _id;
-    }
+    public sealed record ExternalActorId(Guid Value);
 }

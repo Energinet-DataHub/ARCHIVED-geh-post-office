@@ -45,7 +45,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             _marketOperatorDataStorageService = marketOperatorDataStorageService;
         }
 
-        public Task<Bundle?> GetNextUnacknowledgedAsync(MarketOperator recipient, params DomainOrigin[] domains)
+        public Task<Bundle?> GetNextUnacknowledgedAsync(ActorId recipient, params DomainOrigin[] domains)
         {
             ArgumentNullException.ThrowIfNull(recipient, nameof(recipient));
             ArgumentNullException.ThrowIfNull(domains, nameof(domains));
@@ -64,7 +64,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
             var query =
                 from bundle in domainFiltered
-                where bundle.Recipient == recipient.Gln.Value && !bundle.Dequeued
+                where bundle.Recipient == recipient.Value && !bundle.Dequeued
                 orderby bundle.Timestamp
                 select bundle;
 
@@ -106,7 +106,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             }
         }
 
-        public async Task AcknowledgeAsync(MarketOperator recipient, Uuid bundleId)
+        public async Task AcknowledgeAsync(ActorId recipient, Uuid bundleId)
         {
             ArgumentNullException.ThrowIfNull(recipient, nameof(recipient));
             ArgumentNullException.ThrowIfNull(bundleId, nameof(bundleId));
@@ -117,7 +117,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
             var query =
                 from bundle in asLinq
-                where bundle.Id == bundleId.ToString() && bundle.Recipient == recipient.Gln.Value
+                where bundle.Id == bundleId.ToString() && bundle.Recipient == recipient.Value
                 select bundle;
 
             var bundleToUpdate = await query
@@ -143,7 +143,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 from cosmosBundleDocument in asLinq
                 where
                     cosmosBundleDocument.Id == bundle.BundleId.ToString() &&
-                    cosmosBundleDocument.Recipient == bundle.Recipient.Gln.Value
+                    cosmosBundleDocument.Recipient == bundle.Recipient.Value
                 select new { cosmosBundleDocument.AffectedDrawers };
 
             var changes = await query

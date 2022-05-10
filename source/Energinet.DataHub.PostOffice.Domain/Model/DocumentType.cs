@@ -14,15 +14,8 @@
 
 namespace Energinet.DataHub.PostOffice.Domain.Model
 {
-    public sealed record DocumentType
+    public sealed record DocumentType(string Value)
     {
-        public DocumentType(string value)
-        {
-            Value = value;
-        }
-
-        public string Value { get; }
-
         public override string ToString()
         {
             return Value;

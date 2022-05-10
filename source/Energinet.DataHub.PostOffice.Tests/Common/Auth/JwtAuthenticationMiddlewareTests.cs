@@ -69,7 +69,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Auth
             await target.Invoke(mockedFunctionContext, _ => Task.CompletedTask).ConfigureAwait(false);
 
             // Assert
-            Assert.Equal("1234", identity.Gln);
+            Assert.Equal("1234", identity.ActorId);
         }
 
         [Fact]
@@ -82,7 +82,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Auth
             };
 
             var identity = new MarketOperatorIdentity();
-            ((IMarketOperatorIdentity)identity).AssignGln("other");
+            ((IMarketOperatorIdentity)identity).AssignId("other");
 
             var mockedFunctionContext = new MockedFunctionContext();
             mockedFunctionContext.BindingContext.Setup(x => x.BindingData)
@@ -96,7 +96,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Auth
             await target.Invoke(mockedFunctionContext, _ => Task.CompletedTask).ConfigureAwait(false);
 
             // Assert
-            Assert.Equal("other", identity.Gln);
+            Assert.Equal("other", identity.ActorId);
         }
     }
 }
