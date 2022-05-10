@@ -23,6 +23,13 @@ namespace Energinet.DataHub.PostOffice.Domain.Repositories
     public interface IActorRepository
     {
         /// <summary>
+        /// Gets the actor with the specified actor id.
+        /// </summary>
+        /// <param name="actorId">The id of the actor to get.</param>
+        /// <returns>The actor with the specified actor id; or null, if an actor was not found.</returns>
+        Task<Actor?> GetActorAsync(ActorId actorId);
+
+        /// <summary>
         /// Gets the actor with the specified external actor id.
         /// </summary>
         /// <param name="externalActorId">The external id of the actor to get.</param>
