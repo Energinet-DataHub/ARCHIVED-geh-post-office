@@ -35,6 +35,23 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             _repositoryContainer = repositoryContainer;
         }
 
+        public async Task<Actor?> GetActorAsync(ActorId actorId)
+        {
+            ArgumentNullException.ThrowIfNull(actorId, nameof(actorId));
+
+            var query =
+                from actor in _repositoryContainer.Container.GetItemLinqQueryable<CosmosActor>()
+                where actor.Id == actorId.Value
+                select actor;
+
+            var actorDocument = await query
+                .AsCosmosIteratorAsync()
+                .SingleOrDefaultAsync()
+                .ConfigureAwait(false);
+
+            return actorDocument != null ? ActorMapper.Map(actorDocument) : null;
+        }
+
         public async Task<Actor?> GetActorAsync(ExternalActorId externalActorId)
         {
             ArgumentNullException.ThrowIfNull(externalActorId, nameof(externalActorId));
