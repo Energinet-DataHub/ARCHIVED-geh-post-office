@@ -20,6 +20,7 @@ using Energinet.DataHub.Core.App.Common.Abstractions.Security;
 using Energinet.DataHub.Core.App.Common.Identity;
 using Energinet.DataHub.Core.App.Common.Security;
 using Energinet.DataHub.Core.App.FunctionApp.Middleware;
+using Energinet.DataHub.PostOffice.Infrastructure.Model;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
@@ -78,7 +79,11 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
         private static void RegisterActor(Container container)
         {
             container.Register<IActorContext, ActorContext>(Lifestyle.Scoped);
-            container.Register<IActorProvider, ActorProvider>(Lifestyle.Scoped);
+            container.Register<LegacyActorProvider>(Lifestyle.Scoped);
+            container.Register<ActorRegistryProvider>(Lifestyle.Scoped);
+            container.Register<LegacyActorIdIdentity>(Lifestyle.Scoped);
+            container.Register<IActorProvider, LegacyActorProviderProxy>(Lifestyle.Scoped);
+
             container.Register(
                 () => new ActorMiddleware(
                     container.GetRequiredService<IClaimsPrincipalAccessor>(),
