@@ -16,8 +16,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Xml;
 using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.FluentCimJson.Interfaces.Attributes;
+using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.FluentCimJson.Reader;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.FluentCimJson.Elements
 {
@@ -37,30 +39,25 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.FluentCimJson.Elem
         public List<ICimJsonAttributeFromXml> Attributes { get; }
         public List<ICimJsonAttributeDescriptor> AttributeDescriptors { get; set; }
 
-        public virtual void ReadData(XmlReader reader)
+        public virtual async ValueTask ReadDataAsync(CimXmlReader reader)
         {
-            ParseAttributes(reader);
-            ParseString(reader.NodeType != XmlNodeType.None
-                ? reader.ReadElementContentAsString()
-                : string.Empty);
+            ParseAttributesAsync(reader);
+            ParseString(await reader.ReadValueAsStringAsync().ConfigureAwait(false));
         }
 
         public abstract void WriteJson(Utf8JsonWriter writer);
         public abstract void ReturnElementToPool();
         protected abstract void ParseString(string value);
-        private void ParseAttributes(XmlReader reader)
+        private async ValueTask ParseAttributesAsync(CimXmlReader reader)
         {
             if (!AttributeDescriptors.Any()) return;
 
             if (AttributeDescriptors.Count == 1)
             {
+                await reader.AdvanceAsync().ConfigureAwait(false);
                 var attribute = AttributeDescriptors.First().CreateAttribute();
-                while (reader.MoveToNextAttribute())
-                {
-                    if (!string.Equals(attribute.Name, reader.LocalName, StringComparison.OrdinalIgnoreCase)) continue;
-                    attribute.ParseAttribute(reader.Value);
-                    Attributes.Add(attribute);
-                }
+                if (reader.CurrentNodeType != NodeType.Attribute)
+                    throw new InvalidOperationException($"Invalid XML Expected Attribute with name: {attribute.Name} found: NodeType {reader.CurrentNodeType} with Name: {reader.CurrentNodeName}");
             }
             else
             {

@@ -17,13 +17,14 @@ using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml;
+using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.FluentCimJson.Reader;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Templates
 {
     internal abstract class BaseJsonTemplate : IDisposable
     {
         private readonly string _jsonRootElementName;
-        private XmlReader? _reader;
+        private CimXmlReader? _reader;
         protected BaseJsonTemplate(string jsonRootElementName)
         {
             _jsonRootElementName = jsonRootElementName;
@@ -31,23 +32,24 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Templates
 
         public async Task<MemoryStream> ParseXmlAsync(Stream xmlData)
         {
-            _reader = XmlReader.Create(xmlData, new XmlReaderSettings()
-            {
-                Async = true,
-                CheckCharacters = false,
-                CloseInput = true,
-                ConformanceLevel = ConformanceLevel.Auto,
-                IgnoreWhitespace = true,
-            });
+            _reader = new CimXmlReader(xmlData);
+            // _reader = XmlReader.Create(xmlData, new XmlReaderSettings()
+            // {
+            //     Async = true,
+            //     CheckCharacters = false,
+            //     CloseInput = true,
+            //     ConformanceLevel = ConformanceLevel.Auto,
+            //     IgnoreWhitespace = true,
+            // });
+#pragma warning disable CA2007
             await using MemoryStream jsonStream = new();
             await using Utf8JsonWriter jsonWriter = new(
                 jsonStream,
                 new JsonWriterOptions { Indented = false, SkipValidation = true });
-
+#pragma warning restore CA2007
             jsonWriter.WriteStartObject();
             jsonWriter.WriteStartObject(_jsonRootElementName);
-            await _reader.MoveToContentAsync().ConfigureAwait(false);
-            Generate(jsonWriter, _reader);
+            await GenerateAsync(jsonWriter, _reader).ConfigureAwait(false);
             jsonWriter.WriteEndObject();
             jsonWriter.WriteEndObject();
             await jsonWriter.FlushAsync().ConfigureAwait(false);
@@ -60,6 +62,6 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Templates
             _reader?.Dispose();
         }
 
-        protected abstract void Generate(Utf8JsonWriter jsonWriter, XmlReader reader);
+        protected abstract ValueTask GenerateAsync(Utf8JsonWriter jsonWriter, CimXmlReader reader);
     }
 }

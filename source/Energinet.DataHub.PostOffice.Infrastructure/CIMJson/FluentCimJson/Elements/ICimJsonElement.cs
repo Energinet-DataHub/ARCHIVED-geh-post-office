@@ -13,7 +13,9 @@
 // // limitations under the License.
 
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Xml;
+using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.FluentCimJson.Reader;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.FluentCimJson.Elements
 {
@@ -37,7 +39,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.FluentCimJson.Elem
         /// Read data of the XML Reader
         /// </summary>
         /// <param name="reader"></param>
-        void ReadData(XmlReader reader);
+        ValueTask ReadDataAsync(CimXmlReader reader);
 
         /// <summary>
         /// Write the JSON representation of this Element

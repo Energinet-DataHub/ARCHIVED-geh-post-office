@@ -15,6 +15,7 @@
 using System;
 using System.Xml;
 using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.FluentCimJson.Builders.General;
+using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.FluentCimJson.Reader;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.FluentCimJson.Interfaces.General
 {
@@ -31,6 +32,6 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.FluentCimJson.Inte
         /// <returns>The CimJsonBuilder that can be used to construct the template for conversion</returns>
         CimJsonBuilder WithXmlReader(
             Action<ICimJsonConfigureElementDescriptor> configure,
-            XmlReader reader);
+            CimXmlReader reader);
     }
 }

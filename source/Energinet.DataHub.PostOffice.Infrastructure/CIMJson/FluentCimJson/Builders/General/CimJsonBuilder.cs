@@ -15,17 +15,19 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Xml;
 using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.FluentCimJson.Elements;
 using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.FluentCimJson.Interfaces.Descriptor;
 using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.FluentCimJson.Interfaces.General;
+using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.FluentCimJson.Reader;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.FluentCimJson.Builders.General
 {
     internal class CimJsonBuilder : ICimJsonAddXmlDataSource
     {
         private readonly List<ICimJsonElementDescriptor> _elementDescriptors;
-        private XmlReader? _xmlReader;
+        private CimXmlReader? _xmlReader;
         private CimJsonBuilder()
         {
             _elementDescriptors = new List<ICimJsonElementDescriptor>(20);
@@ -33,7 +35,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.FluentCimJson.Buil
 
         public static ICimJsonAddXmlDataSource Create() => new CimJsonBuilder();
 
-        public CimJsonBuilder WithXmlReader(Action<ICimJsonConfigureElementDescriptor> configure, XmlReader reader)
+        public CimJsonBuilder WithXmlReader(Action<ICimJsonConfigureElementDescriptor> configure, CimXmlReader reader)
         {
             var builder = new CimJsonElementDescriptorBuilder();
             configure(builder);
@@ -42,7 +44,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.FluentCimJson.Buil
             return this;
         }
 
-        public void Build(Utf8JsonWriter jsonWriter)
+        public async ValueTask BuildAsync(Utf8JsonWriter jsonWriter)
         {
             if (_xmlReader is not null)
             {
@@ -50,7 +52,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.FluentCimJson.Buil
                 foreach (var elementDescriptor in _elementDescriptors)
                 {
                     var element = elementDescriptor.CreateElement();
-                    if (ReadToElement(element.Name, element.IsOptional))
+                    if (await ReadToElementAsync(element.Name, element.IsOptional).ConfigureAwait(false))
                     {
                         element.ReadData(_xmlReader);
                         elementsToWrite.Add(element);
@@ -71,30 +73,47 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.FluentCimJson.Buil
             }
         }
 
-        private bool ReadToElement(string elementName, bool isOptional)
+        private async Task<bool> ReadToElementAsync(string elementName, bool isOptional)
         {
             if (_xmlReader is null) return false;
-            if (_xmlReader.IsStartElement() && _xmlReader.LocalName == elementName)
-            {
+            if (_xmlReader.CurrentNodeName == elementName && _xmlReader.CurrentNodeType == NodeType.StartElement)
                 return true;
-            }
 
-            if (isOptional && _xmlReader.IsStartElement() && _xmlReader.LocalName != elementName)
-                return false;
+            if (_xmlReader.CurrentNodeType == NodeType.EndElement)
+                await _xmlReader.AdvanceAsync().ConfigureAwait(false);
 
-            while (_xmlReader.Read())
+            while (await _xmlReader.AdvanceAsync().ConfigureAwait(false))
             {
-                _xmlReader.MoveToContent();
-                if (_xmlReader.NodeType == XmlNodeType.Element && _xmlReader.LocalName == elementName)
-                {
+                if (_xmlReader.CurrentNodeType == NodeType.StartElement && _xmlReader.CurrentNodeName == elementName)
                     return true;
-                }
 
-                if (isOptional && _xmlReader.IsStartElement() && _xmlReader.LocalName != elementName)
+                if (_xmlReader.CurrentNodeType == NodeType.StartElement && _xmlReader.CurrentNodeName != elementName && isOptional)
                     return false;
             }
 
             return false;
+            // if (_xmlReader is null) return false;
+            // if (_xmlReader.IsStartElement() && _xmlReader.LocalName == elementName)
+            // {
+            //     return true;
+            // }
+            //
+            // if (isOptional && _xmlReader.IsStartElement() && _xmlReader.LocalName != elementName)
+            //     return false;
+            //
+            // while (_xmlReader.Read())
+            // {
+            //     _xmlReader.MoveToContent();
+            //     if (_xmlReader.NodeType == XmlNodeType.Element && _xmlReader.LocalName == elementName)
+            //     {
+            //         return true;
+            //     }
+            //
+            //     if (isOptional && _xmlReader.IsStartElement() && _xmlReader.LocalName != elementName)
+            //         return false;
+            // }
+            //
+            // return false;
         }
     }
 }

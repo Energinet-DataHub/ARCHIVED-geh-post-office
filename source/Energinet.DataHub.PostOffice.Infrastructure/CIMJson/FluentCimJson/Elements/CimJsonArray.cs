@@ -52,7 +52,8 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.FluentCimJson.Elem
                     foreach (var elementDescriptor in _elementsDescriptors)
                     {
                         var element = elementDescriptor.CreateElement();
-                        var elementFound = ReadToElement(reader, element.Name, element.IsOptional);
+
+                        var elementFound = ReadToElement(reader, element.Name, element.IsOptional, true);
 
                         if (element.IsOptional && !elementFound)
                             continue;
@@ -112,7 +113,6 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.FluentCimJson.Elem
 
             while (reader.Read())
             {
-                reader.MoveToContent();
                 if (reader.NodeType == XmlNodeType.Element && reader.LocalName == elementName)
                 {
                     return true;

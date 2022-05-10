@@ -13,8 +13,10 @@
 // // limitations under the License.
 
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Xml;
 using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.FluentCimJson.Builders.General;
+using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.FluentCimJson.Reader;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Templates
 {
@@ -22,9 +24,9 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Templates
     {
         public NotifyValidatedMeasureDataTemplate()
             : base("NotifyValidatedMeasureData_MarketDocument") { }
-        protected override void Generate(Utf8JsonWriter jsonWriter, XmlReader reader)
+        protected override async ValueTask GenerateAsync(Utf8JsonWriter jsonWriter, CimXmlReader reader)
         {
-          CimJsonBuilder
+          await CimJsonBuilder
                 .Create()
                 .WithXmlReader(
                     x => x
@@ -127,7 +129,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Templates
                     .AddString(s => s
                         .WithName("jjtest")),
                     reader)
-                .Build(jsonWriter);
+                .BuildAsync(jsonWriter).ConfigureAwait(false);
         }
 
         private static class ElementNames

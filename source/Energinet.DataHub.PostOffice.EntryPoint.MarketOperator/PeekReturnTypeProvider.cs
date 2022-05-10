@@ -31,7 +31,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
         public BundleReturnType GetReturnType(HttpRequestData request)
 #pragma warning restore CA1822 // Mark members as static
         {
-            Guard.ThrowIfNull(request, nameof(request));
+            ArgumentNullException.ThrowIfNull(request, nameof(request));
 
             Enum.TryParse<BundleReturnType>(request.Url.GetQueryValue(Constants.ReturnTypeQueryName), true, out var returnType);
             return returnType;
