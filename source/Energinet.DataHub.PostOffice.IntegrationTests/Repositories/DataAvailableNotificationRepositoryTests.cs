@@ -42,7 +42,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
 
             var dataAvailableNotificationRepository = scope.GetInstance<IDataAvailableNotificationRepository>();
 
-            var recipient = new MarketOperator(new MockedGln());
+            var recipient = new LegacyActorId(new MockedGln());
             var notifications = CreateInfinite(recipient, 1)
                 .Take(count)
                 .ToList();
@@ -84,7 +84,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
 
             var dataAvailableNotificationRepository = scope.GetInstance<IDataAvailableNotificationRepository>();
 
-            var recipient = new MarketOperator(new MockedGln());
+            var recipient = new LegacyActorId(new MockedGln());
             var notifications = CreateInfinite(recipient, 1)
                 .Take(1)
                 .ToList();
@@ -128,7 +128,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
 
             var dataAvailableNotificationRepository = scope.GetInstance<IDataAvailableNotificationRepository>();
 
-            var recipient = new MarketOperator(new MockedGln());
+            var recipient = new LegacyActorId(new MockedGln());
 
             var notification1 = new DataAvailableNotification(
                 new Uuid(Guid.NewGuid()),
@@ -167,7 +167,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
 
             var dataAvailableNotificationRepository = scope.GetInstance<IDataAvailableNotificationRepository>();
 
-            var recipient = new MarketOperator(new MockedGln());
+            var recipient = new LegacyActorId(new MockedGln());
             var aggregations = CreateInfinite(recipient, 9, DomainOrigin.Aggregations).Take(5).ToList();
             var marketRoles = CreateInfinite(recipient, 1, DomainOrigin.MarketRoles).Take(5).ToList();
             var timeSeries = CreateInfinite(recipient, 19, DomainOrigin.TimeSeries).Take(5).ToList();
@@ -223,7 +223,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
 
             var dataAvailableNotificationRepository = scope.GetInstance<IDataAvailableNotificationRepository>();
 
-            var recipient = new MarketOperator(new MockedGln());
+            var recipient = new LegacyActorId(new MockedGln());
             var aggregations = CreateInfinite(recipient, 9, DomainOrigin.Aggregations).Take(5).ToList();
             var marketRoles = CreateInfinite(recipient, 1, DomainOrigin.MarketRoles).Take(5).ToList();
 
@@ -253,7 +253,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
 
             var dataAvailableNotificationRepository = scope.GetInstance<IDataAvailableNotificationRepository>();
 
-            var recipient = new MarketOperator(new MockedGln());
+            var recipient = new LegacyActorId(new MockedGln());
             var notifications = CreateInfinite(recipient, int.MaxValue * 2L, DomainOrigin.Aggregations)
                 .Take(5)
                 .ToList();
@@ -280,7 +280,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
 
             var dataAvailableNotificationRepository = scope.GetInstance<IDataAvailableNotificationRepository>();
 
-            var recipient = new MarketOperator(new MockedGln());
+            var recipient = new LegacyActorId(new MockedGln());
             var notifications = CreateInfinite(recipient, 1, DomainOrigin.Aggregations)
                 .Take(5)
                 .ToList();
@@ -333,7 +333,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var dataAvailableNotificationRepository = scope.GetInstance<IDataAvailableNotificationRepository>();
             var bundleRepository = scope.GetInstance<IBundleRepository>();
 
-            var recipient = new MarketOperator(new MockedGln());
+            var recipient = new LegacyActorId(new MockedGln());
             var notifications = CreateInfinite(recipient, 1, DomainOrigin.Charges)
                 .Take(5)
                 .ToList();
@@ -400,7 +400,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var dataAvailableNotificationRepository = scope.GetInstance<IDataAvailableNotificationRepository>();
             var bundleRepository = scope.GetInstance<IBundleRepository>();
 
-            var recipient = new MarketOperator(new MockedGln());
+            var recipient = new LegacyActorId(new MockedGln());
             var notifications = CreateInfinite(recipient, 1, DomainOrigin.Charges)
                 .Take(5)
                 .ToList();
@@ -441,7 +441,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
         }
 
         private static IEnumerable<DataAvailableNotification> CreateInfinite(
-            MarketOperator recipient,
+            ActorId recipient,
             long initialSequenceNumber,
             DomainOrigin domainOrigin = DomainOrigin.Charges,
             string contentType = "default_content_type",

@@ -29,7 +29,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Repositories
         /// <param name="recipient">The market operator to get the next notification for.</param>
         /// <param name="domains">The domains the retrieved notification must belong to.</param>
         /// <returns>A reader that can be used to obtain unacknowledged notifications; otherwise null.</returns>
-        Task<ICabinetReader?> GetNextUnacknowledgedAsync(MarketOperator recipient, params DomainOrigin[] domains);
+        Task<ICabinetReader?> GetNextUnacknowledgedAsync(ActorId recipient, params DomainOrigin[] domains);
 
         /// <summary>
         /// Saves the given notification as unacknowledged.

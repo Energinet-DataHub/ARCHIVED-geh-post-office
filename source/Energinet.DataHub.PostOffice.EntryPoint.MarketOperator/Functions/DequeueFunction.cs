@@ -43,7 +43,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions
         {
             return request.ProcessAsync(async () =>
             {
-                var command = new DequeueCommand(_operatorIdentity.Gln, request.Url.GetQueryValue(Constants.BundleIdQueryName));
+                var command = new DequeueCommand(_operatorIdentity.ActorId, request.Url.GetQueryValue(Constants.BundleIdQueryName));
                 var response = await _mediator.Send(command).ConfigureAwait(false);
 
                 var httpResponse = response.IsDequeued

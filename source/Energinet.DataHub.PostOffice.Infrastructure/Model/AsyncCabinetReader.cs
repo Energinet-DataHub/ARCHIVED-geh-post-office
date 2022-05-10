@@ -133,7 +133,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Model
             {
                 Id = Guid.NewGuid().ToString(),
                 ContentType = Key.ContentType.Value,
-                PartitionKey = string.Join('_', Key.Recipient.Gln.Value, Key.Origin)
+                PartitionKey = string.Join('_', Key.Recipient.Value, Key.Origin)
             };
 
             drawerChanges.UpdatedCatalogEntry = currentEntry with

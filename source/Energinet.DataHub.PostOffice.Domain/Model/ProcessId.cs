@@ -20,16 +20,16 @@ namespace Energinet.DataHub.PostOffice.Domain.Model
     {
         private readonly string _processId;
 
-        public ProcessId([NotNull] Uuid bundleId, [NotNull] MarketOperator recipient)
+        public ProcessId([NotNull] Uuid bundleId, [NotNull] ActorId recipient)
         {
             BundleId = bundleId;
             Recipient = recipient;
-            _processId = string.Join("_", bundleId.ToString(), recipient.Gln.Value);
+            _processId = string.Join("_", bundleId.ToString(), recipient.Value);
         }
 
         public Uuid BundleId { get; }
 
-        public MarketOperator Recipient { get; }
+        public ActorId Recipient { get; }
 
         public override string ToString()
         {

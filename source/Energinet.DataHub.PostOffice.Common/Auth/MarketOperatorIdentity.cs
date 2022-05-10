@@ -18,21 +18,21 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
 {
     internal sealed class MarketOperatorIdentity : IMarketOperatorIdentity
     {
-        private string? _gln;
+        private string? _actorId;
 
-        public bool HasIdentity => _gln != null;
+        public bool HasIdentity => _actorId != null;
 
-        public string Gln => _gln ?? throw new InvalidOperationException("The identity of the market operator is not known.");
+        public string ActorId => _actorId ?? throw new InvalidOperationException("The identity of the market operator is not known.");
 
-        void IMarketOperatorIdentity.AssignGln(string gln)
+        void IMarketOperatorIdentity.AssignId(string actorId)
         {
-            if (string.IsNullOrWhiteSpace(gln))
-                throw new ArgumentException("Cannot assign an empty value as GLN.", nameof(gln));
+            if (string.IsNullOrWhiteSpace(actorId))
+                throw new ArgumentException("Cannot assign an empty value as actor id.", nameof(actorId));
 
             if (HasIdentity)
                 throw new InvalidOperationException("An identity has already been assigned.");
 
-            _gln = gln;
+            _actorId = actorId;
         }
     }
 }
