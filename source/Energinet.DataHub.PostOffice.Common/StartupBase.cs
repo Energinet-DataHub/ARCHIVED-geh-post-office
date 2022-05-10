@@ -20,6 +20,7 @@ using Energinet.DataHub.Core.Logging.RequestResponseMiddleware;
 using Energinet.DataHub.PostOffice.Application;
 using Energinet.DataHub.PostOffice.Common.MediatR;
 using Energinet.DataHub.PostOffice.Common.SimpleInjector;
+using Energinet.DataHub.PostOffice.Infrastructure.Model;
 using Energinet.DataHub.PostOffice.Utilities;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
@@ -83,6 +84,8 @@ namespace Energinet.DataHub.PostOffice.Common
             Container.AddDomainServices();
             Container.AddApplicationServices();
             Container.AddInfrastructureServices();
+
+            Container.Register<LegacyActorIdIdentity>(Lifestyle.Scoped);
 
             Container.Register<ICorrelationContext, CorrelationContext>(Lifestyle.Scoped);
             Container.Register<CorrelationIdMiddleware>(Lifestyle.Scoped);
