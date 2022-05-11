@@ -16,6 +16,11 @@ data "azurerm_key_vault" "kv_shared_resources" {
   resource_group_name = var.shared_resources_resource_group_name
 }
 
+data "azurerm_key_vault_secret" "sb_domain_relay_listen_connection_string" {
+  name         = "sb-domain-relay-listen-connection-string"
+  key_vault_id = data.azurerm_key_vault.kv_shared_resources.id
+}
+
 data "azurerm_key_vault_secret" "sb_domain_relay_transceiver_connection_string" {
   name         = "sb-domain-relay-transceiver-connection-string"
   key_vault_id = data.azurerm_key_vault.kv_shared_resources.id
@@ -68,6 +73,16 @@ data "azurerm_key_vault_secret" "b2c_tenant_id" {
 
 data "azurerm_key_vault_secret" "backend_service_app_id" {
   name         = "backend-service-app-id"
+  key_vault_id = data.azurerm_key_vault.kv_shared_resources.id
+}
+
+data "azurerm_key_vault_secret" "sbt_market_participant_changed" {
+  name         = "market-participant-changed"
+  key_vault_id = data.azurerm_key_vault.kv_shared_resources.id
+}
+
+data "azurerm_key_vault_secret" "sbs_market_participant_changed_to_messagehub_name" {
+  name         = "sbs-market-participant-changed-to-messagehub-name"
   key_vault_id = data.azurerm_key_vault.kv_shared_resources.id
 }
 
