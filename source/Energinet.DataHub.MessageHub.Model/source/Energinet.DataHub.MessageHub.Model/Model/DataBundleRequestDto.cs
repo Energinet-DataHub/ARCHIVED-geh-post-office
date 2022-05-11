@@ -18,10 +18,19 @@ namespace Energinet.DataHub.MessageHub.Model.Model
 {
     /// <summary>
     /// Represents a request for a bundle.
-    /// <param name="RequestId">Uniquely identififies the current request.</param>
-    /// <param name="DataAvailableNotificationReferenceId">A reference id used to obtain the list of requested DataAvailableNotification ids.</param>
-    /// <param name="IdempotencyId">Uniquely identififies the contents of the message. Domains can use this property to ensure idempotency.</param>
-    /// <param name="MessageType">Specifies the common message type for the requested bundle.</param>
+    /// <param name="RequestId">Uniquely identifies the current request.</param>
+    /// <param name="DataAvailableNotificationReferenceId">
+    /// A reference id used to obtain the list of requested DataAvailableNotification ids.
+    /// </param>
+    /// <param name="IdempotencyId">
+    /// Uniquely identifies the contents of the message. Domains can use this property to ensure idempotency.
+    /// </param>
+    /// <param name="MessageType">
+    /// Specifies the common message type for the requested bundle.</param>
     /// </summary>
-    public sealed record DataBundleRequestDto(Guid RequestId, string DataAvailableNotificationReferenceId, string IdempotencyId, string MessageType);
+    public sealed record DataBundleRequestDto(
+        Guid RequestId,
+        string DataAvailableNotificationReferenceId,
+        string IdempotencyId,
+        MessageTypeDto MessageType);
 }
