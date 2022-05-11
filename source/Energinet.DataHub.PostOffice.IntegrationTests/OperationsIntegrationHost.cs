@@ -56,6 +56,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
 
         private static IConfigurationRoot BuildConfig()
         {
+            Environment.SetEnvironmentVariable("SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING", "SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING");
+
             return new ConfigurationBuilder().AddEnvironmentVariables().Build();
         }
     }
