@@ -1,18 +1,13 @@
 {
   "IsEncrypted": false,
   "Values": {
-    "ServiceBusConnectionString":"",
-    "DATAAVAILABLE_QUEUE_CONNECTION_STRING":"",
-    "DATAAVAILABLE_QUEUE_NAME": "",
-    "DEQUEUE_CLEANUP_QUEUE_NAME": "",
-    "MESSAGES_DB_NAME":"",
+    "MARKET_PARTICIPANT_CONNECTION_STRING": "",
+    "MARKET_PARTICIPANT_TOPIC_NAME": "",
+    "MARKET_PARTICIPANT_SUBSCRIPTION_NAME": "",
+    "MESSAGES_DB_NAME": "",
     "MESSAGES_DB_CONNECTION_STRING": "",
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
-    "APPINSIGHTS_INSTRUMENTATIONKEY": "",
-    "BlobStorageConnectionString": "",
-    "BlobStorageContainerName": "",
-    "B2C_TENANT_ID": "<Azure B2C tenant id>",
-    "BACKEND_SERVICE_APP_ID": "<Backend service application id>"
+    "APPINSIGHTS_INSTRUMENTATIONKEY": ""
   }
 }

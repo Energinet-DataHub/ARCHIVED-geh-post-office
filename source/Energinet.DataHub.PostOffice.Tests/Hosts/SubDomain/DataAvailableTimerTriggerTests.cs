@@ -221,12 +221,12 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.SubDomain
         {
             return new DataAvailableNotificationDto(
                 Guid.NewGuid(),
-                new GlobalLocationNumberDto(Guid.NewGuid().ToString()),
+                new ActorIdDto(Guid.NewGuid()),
                 new MessageTypeDto("fake_value"),
+                "RSM???",
                 DomainOrigin.Charges,
                 false,
-                10,
-                "RSM???");
+                10);
         }
 
         private static Expression<Func<InsertDataAvailableNotificationsCommand, bool>> ExpectedUuid(DataAvailableNotificationDto badDto)
@@ -239,7 +239,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.SubDomain
             var protobuf = new DataAvailableNotificationContract
             {
                 UUID = dto.Uuid.ToString(),
-                Recipient = dto.Recipient.Value,
+                Recipient = dto.Recipient.Value.ToString(),
                 Origin = dto.Origin.ToString(),
                 MessageType = dto.MessageType.Value,
                 RelativeWeight = dto.RelativeWeight,

@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using Energinet.DataHub.PostOffice.Application.Commands;
-using Energinet.DataHub.PostOffice.Application.Validation.Rules;
 using FluentValidation;
 
 namespace Energinet.DataHub.PostOffice.Application.Validation;
@@ -23,11 +22,9 @@ public sealed class UpdateActorCommandRuleSet : AbstractValidator<UpdateActorCom
     public UpdateActorCommandRuleSet()
     {
         RuleFor(command => command.ActorId)
-            .NotEmpty()
-            .SetValidator(new UuidValidationRule<UpdateActorCommand>());
+            .NotEmpty();
 
         RuleFor(command => command.ExternalActorId)
-            .NotEmpty()
-            .SetValidator(new UuidValidationRule<UpdateActorCommand>());
+            .NotEmpty();
     }
 }

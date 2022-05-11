@@ -67,11 +67,10 @@ namespace Energinet.DataHub.PostOffice.Common
             Container.RegisterSingleton(() => config);
             Container.AddDatabaseCosmosConfig();
             Container.AddCosmosClientBuilder();
-            Container.AddServiceBusConfig();
-            Container.AddServiceBus();
             Container.AddAzureBlobStorageConfig();
             Container.AddAzureBlobStorage();
             Container.AddQueueConfiguration();
+            Container.AddDataAvailableServiceBus();
 
             // feature flags
             Container.RegisterSingleton<IFeatureFlags, FeatureFlags>();

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Application.Commands;
@@ -24,34 +25,37 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation;
 [UnitTest]
 public sealed class DeleteActorCommandRuleSetTests
 {
-    [Theory]
-    [InlineData("", false)]
-    [InlineData(null, false)]
-    [InlineData("  ", false)]
-    [InlineData("8F9B8218-BAE6-412B-B91B-0C78A55FF128", true)]
-    [InlineData("8F9B8218-BAE6-412B-B91B-0C78A55FF1XX", false)]
-    public async Task Validate_ActorId_ValidatesProperty(string value, bool isValid)
+    [Fact]
+    public async Task Validate_InvalidActorId_ValidatesProperty()
     {
         // Arrange
         const string propertyName = nameof(DeleteActorCommand.ActorId);
 
         var target = new DeleteActorCommandRuleSet();
-        var command = new DeleteActorCommand(
-            value);
+        var command = new DeleteActorCommand(Guid.Empty);
 
         // Act
         var result = await target.ValidateAsync(command).ConfigureAwait(false);
 
         // Assert
-        if (isValid)
-        {
-            Assert.True(result.IsValid);
-            Assert.DoesNotContain(propertyName, result.Errors.Select(x => x.PropertyName));
-        }
-        else
-        {
-            Assert.False(result.IsValid);
-            Assert.Contains(propertyName, result.Errors.Select(x => x.PropertyName));
-        }
+        Assert.False(result.IsValid);
+        Assert.Contains(propertyName, result.Errors.Select(x => x.PropertyName));
+    }
+
+    [Fact]
+    public async Task Validate_ValidActorId_ValidatesProperty()
+    {
+        // Arrange
+        const string propertyName = nameof(DeleteActorCommand.ActorId);
+
+        var target = new DeleteActorCommandRuleSet();
+        var command = new DeleteActorCommand(Guid.NewGuid());
+
+        // Act
+        var result = await target.ValidateAsync(command).ConfigureAwait(false);
+
+        // Assert
+        Assert.True(result.IsValid);
+        Assert.DoesNotContain(propertyName, result.Errors.Select(x => x.PropertyName));
     }
 }

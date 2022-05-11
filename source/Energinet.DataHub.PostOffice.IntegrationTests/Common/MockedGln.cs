@@ -15,7 +15,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Domain.Model;
 
 namespace Energinet.DataHub.PostOffice.IntegrationTests.Common
@@ -34,11 +33,6 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Common
         public static implicit operator LegacyActorId(MockedGln mock)
         {
             return new LegacyActorId(new GlobalLocationNumber(mock._gln));
-        }
-
-        public static implicit operator GlobalLocationNumberDto(MockedGln mock)
-        {
-            return new GlobalLocationNumberDto(mock._gln);
         }
 
         public static implicit operator string(MockedGln mock)
