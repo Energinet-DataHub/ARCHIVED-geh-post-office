@@ -27,9 +27,16 @@ namespace Energinet.DataHub.MessageHub.Model.Dequeue
             try
             {
                 var dequeueContract = DequeueContract.Parser.ParseFrom(dequeueNotificationContract);
+
+                var marketOperator = Guid.TryParse(dequeueContract.MarketOperator, out var actorId)
+                    ? new ActorIdDto(actorId)
+#pragma warning disable CS0618 // Type or member is obsolete
+                    : new LegacyActorIdDto(dequeueContract.MarketOperator);
+#pragma warning restore CS0618 // Type or member is obsolete
+
                 return new DequeueNotificationDto(
                     dequeueContract.DataAvailableNotificationReferenceId,
-                    new GlobalLocationNumberDto(dequeueContract.MarketOperator));
+                    marketOperator);
             }
             catch (Exception ex) when (ex is InvalidProtocolBufferException or FormatException)
             {
@@ -41,10 +48,16 @@ namespace Energinet.DataHub.MessageHub.Model.Dequeue
         {
             ArgumentNullException.ThrowIfNull(dequeueNotificationDto, nameof(dequeueNotificationDto));
 
+#pragma warning disable CS0618 // Type or member is obsolete
+            var marketOperator = dequeueNotificationDto.MarketOperator is LegacyActorIdDto legacyActorIdDto
+#pragma warning restore CS0618 // Type or member is obsolete
+                ? legacyActorIdDto.LegacyValue
+                : dequeueNotificationDto.MarketOperator.Value.ToString();
+
             var message = new DequeueContract
             {
                 DataAvailableNotificationReferenceId = dequeueNotificationDto.DataAvailableNotificationReferenceId,
-                MarketOperator = dequeueNotificationDto.MarketOperator.Value,
+                MarketOperator = marketOperator
             };
 
             return message.ToByteArray();

@@ -12,7 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+
 namespace Energinet.DataHub.MessageHub.Model.Model
 {
-    public record MessageTypeDto(string Value);
+    public sealed record MessageTypeDto
+    {
+        public MessageTypeDto(string value)
+        {
+            ArgumentNullException.ThrowIfNull(value, nameof(value));
+            Value = value;
+        }
+
+        public string Value { get; }
+    }
 }

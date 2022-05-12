@@ -12,7 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+
 namespace Energinet.DataHub.MessageHub.Model.Model
 {
-    public record GlobalLocationNumberDto(string Value);
+    [Obsolete("LegacyActorIdDto uses GLN to identify the market operator. Use ActorIdDto to identify by GUID.")]
+    public sealed record LegacyActorIdDto(string LegacyValue) : ActorIdDto(Guid.Empty)
+    {
+        public override Guid Value => throw new InvalidOperationException("LegacyActorIdDto does not have a GUID.");
+    }
 }

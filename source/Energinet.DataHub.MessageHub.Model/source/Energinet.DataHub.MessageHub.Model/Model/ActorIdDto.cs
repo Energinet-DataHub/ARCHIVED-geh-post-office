@@ -12,18 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+
 namespace Energinet.DataHub.MessageHub.Model.Model
 {
-    /// <summary>
-    /// Signals the sub-domains that a market operator has acknowledged the specified data.
-    /// Remember to check for LegacyActorIdDto!
-    /// <param name="DataAvailableNotificationReferenceId">
-    /// A reference id used to obtain the list of dequeue DataAvailableNotification ids.
-    /// </param>
-    /// <param name="MarketOperator">
-    /// The id of the market operator that acknowledged the specified data.
-    /// Remember to check for LegacyActorIdDto!
-    /// </param>
-    /// </summary>
-    public sealed record DequeueNotificationDto(string DataAvailableNotificationReferenceId, ActorIdDto MarketOperator);
+    public record ActorIdDto(Guid Value)
+    {
+        public virtual Guid Value { get; } = Value;
+    }
 }

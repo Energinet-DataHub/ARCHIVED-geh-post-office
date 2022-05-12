@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using Energinet.DataHub.MessageHub.Model.Dequeue;
 using Energinet.DataHub.MessageHub.Model.Exceptions;
 using Energinet.DataHub.MessageHub.Model.Model;
@@ -41,7 +42,7 @@ namespace Energinet.DataHub.MessageHub.Model.Tests.Dequeue
 
             // assert
             Assert.NotNull(actual);
-            Assert.Equal("06FD1AB3-D650-45BC-860E-EE598A3623CA", actual.MarketOperator.Value);
+            Assert.Equal(Guid.Parse("06FD1AB3-D650-45BC-860E-EE598A3623CA"), actual.MarketOperator.Value);
             Assert.Equal("7946F84C-FE27-43F3-B3D4-EE59CBA2F82C", actual.DataAvailableNotificationReferenceId);
         }
 
@@ -61,15 +62,43 @@ namespace Energinet.DataHub.MessageHub.Model.Tests.Dequeue
         {
             // arrange
             var target = new DequeueNotificationParser();
+            var actorId = Guid.NewGuid();
+
             var valid = new DequeueNotificationDto(
                 "F8201E4D-8989-4B75-A2C2-1E163DA7660B",
-                new GlobalLocationNumberDto("test"));
+                new ActorIdDto(actorId));
 
             // act
             var actual = target.Parse(valid);
 
             // assert
             Assert.NotNull(actual);
+
+            var dequeueNotificationDto = target.Parse(actual);
+            Assert.Equal(actorId, dequeueNotificationDto.MarketOperator.Value);
+        }
+
+        [Fact]
+        public void Parse_LegacyObject_Returns_Bytes()
+        {
+            // arrange
+            var target = new DequeueNotificationParser();
+            var valid = new DequeueNotificationDto(
+                "F8201E4D-8989-4B75-A2C2-1E163DA7660B",
+#pragma warning disable CS0618 // Type or member is obsolete
+                new LegacyActorIdDto("test"));
+#pragma warning restore CS0618 // Type or member is obsolete
+
+            // act
+            var actual = target.Parse(valid);
+
+            // assert
+            Assert.NotNull(actual);
+
+            var dequeueNotificationDto = target.Parse(actual);
+#pragma warning disable CS0618 // Type or member is obsolete
+            Assert.Equal("test", ((LegacyActorIdDto)dequeueNotificationDto.MarketOperator).LegacyValue);
+#pragma warning restore CS0618 // Type or member is obsolete
         }
     }
 }
