@@ -77,7 +77,7 @@ data "azurerm_key_vault_secret" "backend_service_app_id" {
 }
 
 data "azurerm_key_vault_secret" "sbt_market_participant_changed" {
-  name         = "market-participant-changed"
+  name         = "sbt-market-participant-changed-name"
   key_vault_id = data.azurerm_key_vault.kv_shared_resources.id
 }
 
