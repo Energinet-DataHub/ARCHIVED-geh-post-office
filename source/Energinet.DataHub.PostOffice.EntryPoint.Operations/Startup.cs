@@ -17,6 +17,7 @@ using Energinet.DataHub.Core.App.FunctionApp.Diagnostics.HealthChecks;
 using Energinet.DataHub.MarketParticipant.Integration.Model.Parsers;
 using Energinet.DataHub.PostOffice.Common;
 using Energinet.DataHub.PostOffice.Common.Auth;
+using Energinet.DataHub.PostOffice.EntryPoint.Operations.Functions;
 using Energinet.DataHub.PostOffice.EntryPoint.Operations.Monitor;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
@@ -39,6 +40,8 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.Operations
             container.AddMarketParticipantServiceBus();
 
             container.Register<ISharedIntegrationEventParser, SharedIntegrationEventParser>(Lifestyle.Singleton);
+
+            container.Register<MarketParticipantIngestionFunction>(Lifestyle.Scoped);
 
             // health check
             container.Register<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>(Lifestyle.Scoped);
