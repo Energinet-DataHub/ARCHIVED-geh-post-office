@@ -21,7 +21,6 @@ using Energinet.DataHub.MarketParticipant.Integration.Model.Parsers;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.EntryPoint.Operations.Functions;
 using MediatR;
-using Microsoft.Azure.Functions.Isolated.TestDoubles;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -40,7 +39,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.Operations
             var mediator = new Mock<IMediator>();
             var parser = new SharedIntegrationEventParser();
 
-            using var mockFunctionContext = new MockFunctionContext();
             var target = new MarketParticipantIngestionFunction(logger, mediator.Object, parser);
 
             var message = new GridAreaUpdatedIntegrationEvent(
@@ -54,7 +52,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.Operations
             var bytes = new GridAreaUpdatedIntegrationEventParser().Parse(message);
 
             // Act
-            await target.RunAsync(mockFunctionContext, bytes).ConfigureAwait(false);
+            await target.RunAsync(bytes).ConfigureAwait(false);
 
             // Assert
             mediator.Verify(m => m.Send(It.IsAny<UpdateActorCommand>(), CancellationToken.None), Times.Never);
@@ -69,7 +67,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.Operations
             var mediator = new Mock<IMediator>();
             var parser = new SharedIntegrationEventParser();
 
-            using var mockFunctionContext = new MockFunctionContext();
             var target = new MarketParticipantIngestionFunction(logger, mediator.Object, parser);
 
             var message = new OrganizationUpdatedIntegrationEvent(
@@ -82,7 +79,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.Operations
             var bytes = new OrganizationUpdatedIntegrationEventParser().Parse(message);
 
             // Act
-            await target.RunAsync(mockFunctionContext, bytes).ConfigureAwait(false);
+            await target.RunAsync(bytes).ConfigureAwait(false);
 
             // Assert
             mediator.Verify(m => m.Send(It.IsAny<UpdateActorCommand>(), CancellationToken.None), Times.Never);
@@ -102,7 +99,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.Operations
             var mediator = new Mock<IMediator>();
             var parser = new SharedIntegrationEventParser();
 
-            using var mockFunctionContext = new MockFunctionContext();
             var target = new MarketParticipantIngestionFunction(logger, mediator.Object, parser);
 
             var message = new ActorUpdatedIntegrationEvent(
@@ -120,7 +116,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.Operations
             var bytes = new ActorUpdatedIntegrationEventParser().Parse(message);
 
             // Act
-            await target.RunAsync(mockFunctionContext, bytes).ConfigureAwait(false);
+            await target.RunAsync(bytes).ConfigureAwait(false);
 
             // Assert
             if (isUpdate)
