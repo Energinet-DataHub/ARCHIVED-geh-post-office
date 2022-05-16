@@ -41,6 +41,7 @@ module "func_operations" {
     MARKET_PARTICIPANT_CONNECTION_STRING      = data.azurerm_key_vault_secret.sb_domain_relay_listen_connection_string.value
     MARKET_PARTICIPANT_TOPIC_NAME             = data.azurerm_key_vault_secret.sbt_market_participant_changed.value
     MARKET_PARTICIPANT_SUBSCRIPTION_NAME      = data.azurerm_key_vault_secret.sbs_market_participant_changed_to_messagehub_name.value
+    SQL_ACTOR_DB_CONNECTION_STRING            = local.sql_actor_db_connection_string
     BlobStorageConnectionString               = data.azurerm_key_vault_secret.st_market_operator_response_primary_connection_string.value
     BlobStorageContainerName                  = data.azurerm_key_vault_secret.st_market_operator_response_postofficereply_container_name.value
     RequestResponseLogConnectionString        = data.azurerm_key_vault_secret.st_market_operator_logs_primary_connection_string.value

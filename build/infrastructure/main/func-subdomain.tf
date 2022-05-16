@@ -41,6 +41,7 @@ module "func_subdomain" {
     DATAAVAILABLE_BATCH_SIZE                    = 125
     DATAAVAILABLE_TIMEOUT_IN_MS                 = 1000
     SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING  = data.azurerm_key_vault_secret.sb_domain_relay_manage_connection_string.value
+    SQL_ACTOR_DB_CONNECTION_STRING              = local.sql_actor_db_connection_string
     BlobStorageConnectionString                 = data.azurerm_key_vault_secret.st_market_operator_response_primary_connection_string.value
     BlobStorageContainerName                    = data.azurerm_key_vault_secret.st_market_operator_response_postofficereply_container_name.value
     RequestResponseLogConnectionString          = data.azurerm_key_vault_secret.st_market_operator_logs_primary_connection_string.value
