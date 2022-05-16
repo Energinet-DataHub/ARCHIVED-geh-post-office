@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using MediatR;
 
 namespace Energinet.DataHub.PostOffice.Application.Commands;
 
-public sealed record DeleteActorCommand(string ActorId) : IRequest;
+public sealed record DeleteActorCommand(Guid ActorId) : IRequest;

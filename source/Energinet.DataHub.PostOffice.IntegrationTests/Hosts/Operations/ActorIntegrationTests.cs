@@ -22,7 +22,7 @@ using MediatR;
 using Xunit;
 using Xunit.Categories;
 
-namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.SubDomain;
+namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.Operations;
 
 [Collection("IntegrationTest")]
 [IntegrationTest]
@@ -32,16 +32,14 @@ public sealed class ActorIntegrationTests
     public async Task UpdateActorCommand_InvalidCommand_ThrowsException()
     {
         // Arrange
-        const string blankValue = "  ";
-
-        await using var host = await SubDomainIntegrationTestHost
+        await using var host = await OperationsIntegrationHost
             .InitializeAsync()
             .ConfigureAwait(false);
 
         await using var scope = host.BeginScope();
         var mediator = scope.GetInstance<IMediator>();
 
-        var command = new UpdateActorCommand(blankValue, blankValue);
+        var command = new UpdateActorCommand(Guid.Empty, Guid.Empty);
 
         // Act + Assert
         await Assert
@@ -53,16 +51,14 @@ public sealed class ActorIntegrationTests
     public async Task DeleteActorCommand_InvalidCommand_ThrowsException()
     {
         // Arrange
-        const string blankValue = "  ";
-
-        await using var host = await SubDomainIntegrationTestHost
+        await using var host = await OperationsIntegrationHost
             .InitializeAsync()
             .ConfigureAwait(false);
 
         await using var scope = host.BeginScope();
         var mediator = scope.GetInstance<IMediator>();
 
-        var command = new DeleteActorCommand(blankValue);
+        var command = new DeleteActorCommand(Guid.Empty);
 
         // Act + Assert
         await Assert
@@ -74,7 +70,7 @@ public sealed class ActorIntegrationTests
     public async Task UpdateActorCommand_NewActor_InsertsActor()
     {
         // Arrange
-        await using var host = await SubDomainIntegrationTestHost
+        await using var host = await OperationsIntegrationHost
             .InitializeAsync()
             .ConfigureAwait(false);
 
@@ -84,7 +80,7 @@ public sealed class ActorIntegrationTests
         var actorId = Guid.NewGuid();
         var externalId = Guid.NewGuid();
 
-        var command = new UpdateActorCommand(actorId.ToString(), externalId.ToString());
+        var command = new UpdateActorCommand(actorId, externalId);
 
         // Act
         await mediator.Send(command).ConfigureAwait(false);
@@ -103,7 +99,7 @@ public sealed class ActorIntegrationTests
     public async Task UpdateActorCommand_ExistingActor_UpdateActor()
     {
         // Arrange
-        await using var host = await SubDomainIntegrationTestHost
+        await using var host = await OperationsIntegrationHost
             .InitializeAsync()
             .ConfigureAwait(false);
 
@@ -114,10 +110,10 @@ public sealed class ActorIntegrationTests
         var externalId = Guid.NewGuid();
         var updatedId = Guid.NewGuid();
 
-        var initialCommand = new UpdateActorCommand(actorId.ToString(), externalId.ToString());
+        var initialCommand = new UpdateActorCommand(actorId, externalId);
         await mediator.Send(initialCommand).ConfigureAwait(false);
 
-        var command = new UpdateActorCommand(actorId.ToString(), updatedId.ToString());
+        var command = new UpdateActorCommand(actorId, updatedId);
 
         // Act
         await mediator.Send(command).ConfigureAwait(false);
@@ -137,7 +133,7 @@ public sealed class ActorIntegrationTests
     public async Task DeleteActorCommand_HasActor_DeletesActor()
     {
         // Arrange
-        await using var host = await SubDomainIntegrationTestHost
+        await using var host = await OperationsIntegrationHost
             .InitializeAsync()
             .ConfigureAwait(false);
 
@@ -147,10 +143,10 @@ public sealed class ActorIntegrationTests
         var actorId = Guid.NewGuid();
         var externalId = Guid.NewGuid();
 
-        var initialCommand = new UpdateActorCommand(actorId.ToString(), externalId.ToString());
+        var initialCommand = new UpdateActorCommand(actorId, externalId);
         await mediator.Send(initialCommand).ConfigureAwait(false);
 
-        var command = new DeleteActorCommand(actorId.ToString());
+        var command = new DeleteActorCommand(actorId);
 
         // Act
         await mediator.Send(command).ConfigureAwait(false);
@@ -169,7 +165,7 @@ public sealed class ActorIntegrationTests
     public async Task DeleteActorCommand_NoActor_DoesNothing()
     {
         // Arrange
-        await using var host = await SubDomainIntegrationTestHost
+        await using var host = await OperationsIntegrationHost
             .InitializeAsync()
             .ConfigureAwait(false);
 
@@ -177,7 +173,7 @@ public sealed class ActorIntegrationTests
         var mediator = scope.GetInstance<IMediator>();
 
         var actorId = Guid.NewGuid();
-        var command = new DeleteActorCommand(actorId.ToString());
+        var command = new DeleteActorCommand(actorId);
 
         // Act + Assert
         await mediator.Send(command).ConfigureAwait(false);

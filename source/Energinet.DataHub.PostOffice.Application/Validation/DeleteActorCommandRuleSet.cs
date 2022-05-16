@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using Energinet.DataHub.PostOffice.Application.Commands;
-using Energinet.DataHub.PostOffice.Application.Validation.Rules;
 using FluentValidation;
 
 namespace Energinet.DataHub.PostOffice.Application.Validation;
@@ -23,7 +22,6 @@ public sealed class DeleteActorCommandRuleSet : AbstractValidator<DeleteActorCom
     public DeleteActorCommandRuleSet()
     {
         RuleFor(command => command.ActorId)
-            .NotEmpty()
-            .SetValidator(new UuidValidationRule<DeleteActorCommand>());
+            .NotEmpty();
     }
 }

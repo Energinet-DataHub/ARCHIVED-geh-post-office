@@ -40,8 +40,6 @@ module "func_subdomain" {
     DATAAVAILABLE_QUEUE_NAME                    = data.azurerm_key_vault_secret.sbq_data_available_name.value
     DATAAVAILABLE_BATCH_SIZE                    = 125
     DATAAVAILABLE_TIMEOUT_IN_MS                 = 1000
-    DEQUEUE_CLEANUP_QUEUE_NAME                  = data.azurerm_key_vault_secret.sbq_messagehub_dequeue_cleanup_name.value
-    ServiceBusConnectionString                  = data.azurerm_key_vault_secret.sb_domain_relay_transceiver_connection_string.value
     SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING  = data.azurerm_key_vault_secret.sb_domain_relay_manage_connection_string.value
     BlobStorageConnectionString                 = data.azurerm_key_vault_secret.st_market_operator_response_primary_connection_string.value
     BlobStorageContainerName                    = data.azurerm_key_vault_secret.st_market_operator_response_postofficereply_container_name.value

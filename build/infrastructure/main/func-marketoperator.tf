@@ -38,11 +38,9 @@ module "func_marketoperator" {
     MESSAGES_DB_NAME                            = azurerm_cosmosdb_sql_database.db.name
     BlobStorageConnectionString                 = data.azurerm_key_vault_secret.st_market_operator_response_primary_connection_string.value
     BlobStorageContainerName                    = data.azurerm_key_vault_secret.st_market_operator_response_postofficereply_container_name.value
-    ServiceBusConnectionString                  = data.azurerm_key_vault_secret.sb_domain_relay_transceiver_connection_string.value
     SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING  = data.azurerm_key_vault_secret.sb_domain_relay_manage_connection_string.value
     DATAAVAILABLE_QUEUE_CONNECTION_STRING       = data.azurerm_key_vault_secret.sb_domain_relay_transceiver_connection_string.value
     DATAAVAILABLE_QUEUE_NAME                    = data.azurerm_key_vault_secret.sbq_data_available_name.value
-    DEQUEUE_CLEANUP_QUEUE_NAME                  = data.azurerm_key_vault_secret.sbq_messagehub_dequeue_cleanup_name.value
     RequestResponseLogConnectionString          = data.azurerm_key_vault_secret.st_market_operator_logs_primary_connection_string.value
     RequestResponseLogContainerName             = data.azurerm_key_vault_secret.st_market_operator_logs_container_name.value
     B2C_TENANT_ID                               = data.azurerm_key_vault_secret.b2c_tenant_id.value
