@@ -47,7 +47,6 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.Operations.Functions
                 "%" + MarketParticipantServiceBusConfig.MarketParticipantTopicNameKey + "%",
                 "%" + MarketParticipantServiceBusConfig.MarketParticipantSubscriptionNameKey + "%",
                 Connection = MarketParticipantServiceBusConfig.MarketParticipantConnectionStringKey)]
-            FunctionContext context,
             byte[] message)
         {
             _logger.LogInformation("Begins processing MarketParticipantSyncFunction.");
