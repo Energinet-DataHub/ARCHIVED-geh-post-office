@@ -21,42 +21,51 @@ using Container = SimpleInjector.Container;
 
 namespace Energinet.DataHub.PostOffice.Common
 {
-    internal static class ServiceBusRegistration
+    public static class ServiceBusRegistration
     {
-        public static void AddServiceBus(this Container container)
+        public static void AddMarketParticipantServiceBus(this Container container)
         {
-            container.RegisterSingleton<IServiceBusClientFactory>(() =>
+            ArgumentNullException.ThrowIfNull(container, nameof(container));
+
+            container.RegisterSingleton(() =>
             {
                 var configuration = container.GetService<IConfiguration>();
-                var connectionString = configuration.GetConnectionStringOrSetting("ServiceBusConnectionString");
 
-                if (string.IsNullOrEmpty(connectionString))
-                {
-                    throw new InvalidOperationException(
-                        "Please specify a valid ServiceBus in the appSettings.json file or your Azure Functions Settings.");
-                }
+                var marketParticipantConnectionString = configuration.GetValue<string>(MarketParticipantServiceBusConfig.MarketParticipantConnectionStringKey);
 
-                return new ServiceBusClientFactory(connectionString);
-            });
+                var marketParticipantTopicName = configuration.GetValue<string>(MarketParticipantServiceBusConfig.MarketParticipantTopicNameKey);
 
-            container.RegisterSingleton<IMessageBusFactory>(() =>
-            {
-                var serviceBusClientFactory = container.GetInstance<IServiceBusClientFactory>();
+                var marketParticipantSubscriptionName = configuration.GetValue<string>(MarketParticipantServiceBusConfig.MarketParticipantSubscriptionNameKey);
 
-                return new AzureServiceBusFactory(serviceBusClientFactory);
+                return new MarketParticipantServiceBusConfig(
+                    marketParticipantConnectionString,
+                    marketParticipantTopicName,
+                    marketParticipantSubscriptionName);
             });
         }
 
-        public static void AddServiceBusConfig(this Container container)
+        internal static void AddDataAvailableServiceBus(this Container container)
         {
             container.RegisterSingleton(() =>
             {
                 var configuration = container.GetService<IConfiguration>();
 
-                return new ServiceBusConfig(
-                    configuration.GetValue<string>(ServiceBusConfig.DataAvailableQueueNameKey),
-                    configuration.GetValue<string>(ServiceBusConfig.DequeueCleanUpQueueNameKey),
-                    configuration.GetValue<string>(ServiceBusConfig.DataAvailableQueueConnectionStringKey));
+                var dataAvailableQueueName = configuration.GetValue<string>(DataAvailableServiceBusConfig.DataAvailableQueueNameKey);
+                var dataAvailableQueueConnectionString = configuration.GetValue<string>(DataAvailableServiceBusConfig.DataAvailableQueueConnectionStringKey);
+
+                return new DataAvailableServiceBusConfig(dataAvailableQueueName, dataAvailableQueueConnectionString);
+            });
+
+            container.RegisterSingleton<IServiceBusClientFactory>(() =>
+            {
+                var configuration = container.GetInstance<DataAvailableServiceBusConfig>();
+                return new ServiceBusClientFactory(configuration.DataAvailableQueueConnectionString);
+            });
+
+            container.RegisterSingleton<IMessageBusFactory>(() =>
+            {
+                var serviceBusClientFactory = container.GetInstance<IServiceBusClientFactory>();
+                return new AzureServiceBusFactory(serviceBusClientFactory);
             });
         }
     }

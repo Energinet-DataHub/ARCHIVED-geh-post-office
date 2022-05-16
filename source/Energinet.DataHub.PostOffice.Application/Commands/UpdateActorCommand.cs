@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using MediatR;
 
 namespace Energinet.DataHub.PostOffice.Application.Commands;
 
-public sealed record UpdateActorCommand(string ActorId, string ExternalActorId) : IRequest;
+public sealed record UpdateActorCommand(Guid ActorId, Guid ExternalActorId) : IRequest;

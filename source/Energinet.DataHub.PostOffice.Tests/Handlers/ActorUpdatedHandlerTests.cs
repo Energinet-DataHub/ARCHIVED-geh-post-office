@@ -65,7 +65,7 @@ public sealed class ActorUpdatedHandlerTests
         var actorId = Guid.NewGuid();
         var externalId = Guid.NewGuid();
 
-        var updateActorCommand = new UpdateActorCommand(actorId.ToString(), externalId.ToString());
+        var updateActorCommand = new UpdateActorCommand(actorId, externalId);
 
         // Act
         await target.Handle(updateActorCommand, CancellationToken.None).ConfigureAwait(false);
@@ -91,7 +91,7 @@ public sealed class ActorUpdatedHandlerTests
             .Setup(r => r.GetActorAsync(It.Is<ActorId>(id => id == actorId)))
             .ReturnsAsync(actor);
 
-        var deleteActorCommand = new DeleteActorCommand(actorId.Value);
+        var deleteActorCommand = new DeleteActorCommand(Guid.Parse(actorId.Value));
 
         // Act
         await target.Handle(deleteActorCommand, CancellationToken.None).ConfigureAwait(false);
@@ -113,7 +113,7 @@ public sealed class ActorUpdatedHandlerTests
             .Setup(r => r.GetActorAsync(It.Is<ActorId>(id => id == actorId)))
             .ReturnsAsync((Actor?)null);
 
-        var deleteActorCommand = new DeleteActorCommand(actorId.Value);
+        var deleteActorCommand = new DeleteActorCommand(Guid.Parse(actorId.Value));
 
         // Act + Assert
         await target.Handle(deleteActorCommand, CancellationToken.None).ConfigureAwait(false);

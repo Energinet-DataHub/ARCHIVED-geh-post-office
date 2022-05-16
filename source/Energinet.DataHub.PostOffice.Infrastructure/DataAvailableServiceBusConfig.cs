@@ -16,30 +16,26 @@ using System;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure
 {
-    public class ServiceBusConfig
+    public sealed class DataAvailableServiceBusConfig
     {
         public const string DataAvailableQueueNameKey = "DATAAVAILABLE_QUEUE_NAME";
         public const string DataAvailableQueueConnectionStringKey = "DATAAVAILABLE_QUEUE_CONNECTION_STRING";
-        public const string DequeueCleanUpQueueNameKey = "DEQUEUE_CLEANUP_QUEUE_NAME";
 
-        public ServiceBusConfig(string dataAvailableQueueName, string dequeueCleanUpQueueName, string dataAvailableQueueConnectionString)
+        public DataAvailableServiceBusConfig(
+            string dataAvailableQueueName,
+            string dataAvailableQueueConnectionString)
         {
             if (string.IsNullOrWhiteSpace(dataAvailableQueueName))
-                throw new ArgumentException($"{nameof(dataAvailableQueueName)} must be specified in {nameof(ServiceBusConfig)}", nameof(dataAvailableQueueName));
-
-            if (string.IsNullOrWhiteSpace(dequeueCleanUpQueueName))
-                throw new ArgumentException($"{nameof(dequeueCleanUpQueueName)} must be specified in {nameof(ServiceBusConfig)}", nameof(dequeueCleanUpQueueName));
+                throw new InvalidOperationException($"{DataAvailableQueueNameKey} must be specified in {nameof(DataAvailableServiceBusConfig)}");
 
             if (string.IsNullOrWhiteSpace(dataAvailableQueueConnectionString))
-                throw new ArgumentException($"{nameof(dataAvailableQueueConnectionString)} must be specified in {nameof(ServiceBusConfig)}", nameof(dataAvailableQueueConnectionString));
+                throw new InvalidOperationException($"{DataAvailableQueueConnectionStringKey} must be specified in {nameof(DataAvailableServiceBusConfig)}");
 
             DataAvailableQueueName = dataAvailableQueueName;
             DataAvailableQueueConnectionString = dataAvailableQueueConnectionString;
-            DequeueCleanUpQueueName = dequeueCleanUpQueueName;
         }
 
         public string DataAvailableQueueName { get; }
         public string DataAvailableQueueConnectionString { get; }
-        public string DequeueCleanUpQueueName { get; }
     }
 }

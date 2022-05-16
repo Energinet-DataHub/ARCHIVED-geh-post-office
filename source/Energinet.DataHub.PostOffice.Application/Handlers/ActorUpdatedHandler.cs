@@ -44,8 +44,8 @@ public sealed class ActorUpdatedHandler :
 
         _logger.LogInformation("Updating actor with ActorId: {ActorId}.", request.ActorId);
 
-        var actorId = new ActorId(Guid.Parse(request.ActorId));
-        var externalId = new ExternalActorId(Guid.Parse(request.ExternalActorId));
+        var actorId = new ActorId(request.ActorId);
+        var externalId = new ExternalActorId(request.ExternalActorId);
 
         var actor = new Actor(actorId, externalId);
         await _actorRepository.AddOrUpdateAsync(actor).ConfigureAwait(false);
@@ -59,7 +59,7 @@ public sealed class ActorUpdatedHandler :
 
         _logger.LogInformation("Delete actor with ActorId: {ActorId}.", request.ActorId);
 
-        var actorId = new ActorId(Guid.Parse(request.ActorId));
+        var actorId = new ActorId(request.ActorId);
 
         var actor = await _actorRepository.GetActorAsync(actorId).ConfigureAwait(false);
         if (actor != null)

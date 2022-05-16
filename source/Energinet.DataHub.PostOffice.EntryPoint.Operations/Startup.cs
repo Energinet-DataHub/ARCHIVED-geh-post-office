@@ -14,6 +14,7 @@
 
 using Energinet.DataHub.Core.App.Common.Diagnostics.HealthChecks;
 using Energinet.DataHub.Core.App.FunctionApp.Diagnostics.HealthChecks;
+using Energinet.DataHub.MarketParticipant.Integration.Model.Parsers;
 using Energinet.DataHub.PostOffice.Common;
 using Energinet.DataHub.PostOffice.Common.Auth;
 using Energinet.DataHub.PostOffice.EntryPoint.Operations.Monitor;
@@ -34,8 +35,10 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.Operations
 
         protected override void Configure(Container container)
         {
-            // market participant
             container.AddMarketParticipantConfig();
+            container.AddMarketParticipantServiceBus();
+
+            container.Register<ISharedIntegrationEventParser, SharedIntegrationEventParser>(Lifestyle.Singleton);
 
             // health check
             container.Register<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>(Lifestyle.Scoped);

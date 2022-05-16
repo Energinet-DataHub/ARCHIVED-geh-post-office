@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Application.Commands;
@@ -24,69 +25,73 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation;
 [UnitTest]
 public sealed class UpdateActorCommandRuleSetTests
 {
-    private const string ValidUuid = "169B53A2-0A17-47D7-9603-4E41854E4181";
+    private static readonly Guid _validUuid = Guid.Parse("169B53A2-0A17-47D7-9603-4E41854E4181");
 
-    [Theory]
-    [InlineData("", false)]
-    [InlineData(null, false)]
-    [InlineData("  ", false)]
-    [InlineData("8F9B8218-BAE6-412B-B91B-0C78A55FF128", true)]
-    [InlineData("8F9B8218-BAE6-412B-B91B-0C78A55FF1XX", false)]
-    public async Task Validate_ActorId_ValidatesProperty(string value, bool isValid)
+    [Fact]
+    public async Task Validate_InvalidActorId_ValidatesProperty()
     {
         // Arrange
         const string propertyName = nameof(UpdateActorCommand.ActorId);
 
         var target = new UpdateActorCommandRuleSet();
-        var command = new UpdateActorCommand(
-            value,
-            ValidUuid);
+        var command = new UpdateActorCommand(Guid.Empty, _validUuid);
 
         // Act
         var result = await target.ValidateAsync(command).ConfigureAwait(false);
 
         // Assert
-        if (isValid)
-        {
-            Assert.True(result.IsValid);
-            Assert.DoesNotContain(propertyName, result.Errors.Select(x => x.PropertyName));
-        }
-        else
-        {
-            Assert.False(result.IsValid);
-            Assert.Contains(propertyName, result.Errors.Select(x => x.PropertyName));
-        }
+        Assert.False(result.IsValid);
+        Assert.Contains(propertyName, result.Errors.Select(x => x.PropertyName));
     }
 
-    [Theory]
-    [InlineData("", false)]
-    [InlineData(null, false)]
-    [InlineData("  ", false)]
-    [InlineData("8F9B8218-BAE6-412B-B91B-0C78A55FF128", true)]
-    [InlineData("8F9B8218-BAE6-412B-B91B-0C78A55FF1XX", false)]
-    public async Task Validate_ExternalActorId_ValidatesProperty(string value, bool isValid)
+    [Fact]
+    public async Task Validate_ValidActorId_ValidatesProperty()
+    {
+        // Arrange
+        const string propertyName = nameof(UpdateActorCommand.ActorId);
+
+        var target = new UpdateActorCommandRuleSet();
+        var command = new UpdateActorCommand(Guid.NewGuid(), _validUuid);
+
+        // Act
+        var result = await target.ValidateAsync(command).ConfigureAwait(false);
+
+        // Assert
+        Assert.True(result.IsValid);
+        Assert.DoesNotContain(propertyName, result.Errors.Select(x => x.PropertyName));
+    }
+
+    [Fact]
+    public async Task Validate_InvalidExternalActorId_ValidatesProperty()
     {
         // Arrange
         const string propertyName = nameof(UpdateActorCommand.ExternalActorId);
 
         var target = new UpdateActorCommandRuleSet();
-        var command = new UpdateActorCommand(
-            ValidUuid,
-            value);
+        var command = new UpdateActorCommand(_validUuid, Guid.Empty);
 
         // Act
         var result = await target.ValidateAsync(command).ConfigureAwait(false);
 
         // Assert
-        if (isValid)
-        {
-            Assert.True(result.IsValid);
-            Assert.DoesNotContain(propertyName, result.Errors.Select(x => x.PropertyName));
-        }
-        else
-        {
-            Assert.False(result.IsValid);
-            Assert.Contains(propertyName, result.Errors.Select(x => x.PropertyName));
-        }
+        Assert.False(result.IsValid);
+        Assert.Contains(propertyName, result.Errors.Select(x => x.PropertyName));
+    }
+
+    [Fact]
+    public async Task Validate_ValidExternalActorId_ValidatesProperty()
+    {
+        // Arrange
+        const string propertyName = nameof(UpdateActorCommand.ExternalActorId);
+
+        var target = new UpdateActorCommandRuleSet();
+        var command = new UpdateActorCommand(_validUuid, Guid.NewGuid());
+
+        // Act
+        var result = await target.ValidateAsync(command).ConfigureAwait(false);
+
+        // Assert
+        Assert.True(result.IsValid);
+        Assert.DoesNotContain(propertyName, result.Errors.Select(x => x.PropertyName));
     }
 }

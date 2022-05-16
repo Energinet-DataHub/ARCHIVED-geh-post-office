@@ -1,20 +1,16 @@
 {
   "IsEncrypted": false,
   "Values": {
+    "DATAAVAILABLE_QUEUE_NAME": "",
+    "DATAAVAILABLE_QUEUE_CONNECTION_STRING": "",
     "MESSAGES_DB_CONNECTION_STRING": "",
     "MESSAGES_DB_NAME": "",
-    "MESSAGE_DB_CONTAINERS": "",
     "BlobStorageConnectionString": "",
     "BlobStorageContainerName": "",
-    "ServiceBusConnectionString": "",
     "SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING": "",
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
     "APPINSIGHTS_INSTRUMENTATIONKEY": "",
-    "MessageReplyTopic": "",
-    "DATAAVAILABLE_QUEUE_NAME": "",
-    "DATAAVAILABLE_QUEUE_CONNECTION_STRING": "",
-    "DEQUEUE_CLEANUP_QUEUE_NAME": "",
     "RequestResponseLogConnectionString": "",
     "RequestResponseLogContainerName": "",
 
@@ -34,8 +30,10 @@
     "MARKETROLES_DEQUEUE_QUEUE_NAME": "marketroles-dequeue",
     "METERINGPOINTS_DEQUEUE_QUEUE_NAME": "meteringpoints-dequeue",
     "AGGREGATIONS_DEQUEUE_QUEUE_NAME": "aggregations-dequeue",
+    
     "B2C_TENANT_ID": "<Azure B2C tenant id>",
     "BACKEND_SERVICE_APP_ID": "<Backend service application id>",
+    
     "SQL_ACTOR_DB_CONNECTION_STRING": ""
   }
 }
