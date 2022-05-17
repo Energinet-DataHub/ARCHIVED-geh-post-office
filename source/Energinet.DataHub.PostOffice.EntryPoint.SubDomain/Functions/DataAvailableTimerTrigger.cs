@@ -60,6 +60,8 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
                 .ReceiveAsync()
                 .ConfigureAwait(false);
 
+            VerifyMessageSequence(messages);
+
             _logger.LogInformation("Received a batch of size {0}.", messages.Count);
 
             if (messages.Count == 0)
@@ -95,6 +97,26 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
         {
             ArgumentNullException.ThrowIfNull(message, nameof(message));
             return message.SequenceNumber;
+        }
+
+        private void VerifyMessageSequence(IReadOnlyCollection<ServiceBusReceivedMessage> messages)
+        {
+            var ordered = messages.OrderBy(x => x.EnqueuedTime);
+            var asQueue = new Queue<ServiceBusReceivedMessage>(ordered);
+
+            foreach (var message in messages)
+            {
+                var peek = asQueue.Peek();
+                if (peek.EnqueuedTime == message.EnqueuedTime)
+                {
+                    asQueue.Dequeue();
+                }
+                else
+                {
+                    _logger.LogError("Order of messages is incorrect.");
+                    return;
+                }
+            }
         }
 
         private async Task ProcessMessagesAsync(
