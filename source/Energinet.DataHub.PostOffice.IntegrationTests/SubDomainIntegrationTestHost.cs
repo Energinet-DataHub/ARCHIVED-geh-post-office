@@ -68,6 +68,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
             KeyValuePair<string, string>[] keyValuePairs =
             {
                 new(Settings.DataAvailableQueueName.Key, "fake_value"),
+                new(Settings.BlobStorageConnectionString.Key, "UseDevelopmentStorage=true"),
+                new(Settings.BlobStorageContainerName.Key, "test-blob-storage"),
                 new(Settings.ServiceBusHealthCheckConnectionString.Key, "fake_value")
             };
 
