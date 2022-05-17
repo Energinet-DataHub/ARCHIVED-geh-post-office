@@ -17,9 +17,10 @@ using Azure.Messaging.ServiceBus;
 using Energinet.DataHub.Core.App.Common.Diagnostics.HealthChecks;
 using Energinet.DataHub.Core.App.FunctionApp.Diagnostics.HealthChecks;
 using Energinet.DataHub.PostOffice.Common;
+using Energinet.DataHub.PostOffice.Common.Configuration;
+using Energinet.DataHub.PostOffice.Common.Extensions;
 using Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions;
 using Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Monitor;
-using Energinet.DataHub.PostOffice.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
@@ -28,31 +29,39 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain
 {
     internal sealed class Startup : StartupBase
     {
+        public Startup(IConfiguration configuration)
+            : base(configuration)
+        {
+        }
+
         protected override void Configure(IServiceCollection services)
         {
-            var config = services.BuildServiceProvider().GetService<IConfiguration>() ?? throw new InvalidOperationException("IConfiguration not found");
-            var serviceBusConnectionString = config["SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING"] ?? throw new InvalidOperationException("Health check connection string not found");
+            var cosmosDbConnectionString = Configuration.GetSetting(Settings.MessagesDbConnectionString);
+            var serviceBusConnectionString = Configuration.GetSetting(Settings.ServiceBusHealthCheckConnectionString);
+            var dataAvailableQueueName = Configuration.GetSetting(Settings.DataAvailableQueueName);
 
             // Health check
             services
                 .AddHealthChecks()
                 .AddLiveCheck()
-                .AddCosmosDb(config["MESSAGES_DB_CONNECTION_STRING"])
-                .AddAzureServiceBusQueue(serviceBusConnectionString, config["DATAAVAILABLE_QUEUE_NAME"]);
+                .AddCosmosDb(cosmosDbConnectionString)
+                .AddAzureServiceBusQueue(serviceBusConnectionString, dataAvailableQueueName);
         }
 
         protected override void Configure(Container container)
         {
             container.RegisterSingleton<IDataAvailableMessageReceiver>(() =>
             {
-                var configuration = container.GetService<IConfiguration>();
-                var batchSize = configuration.GetValue("DATAAVAILABLE_BATCH_SIZE", 10000);
-                var timeoutInMs = configuration.GetValue("DATAAVAILABLE_TIMEOUT_IN_MS", 1000);
+                var dataAvailableConnectionString = Configuration.GetSetting(Settings.DataAvailableConnectionString);
+                var dataAvailableQueueName = Configuration.GetSetting(Settings.DataAvailableQueueName);
 
-                var serviceBusConfig = container.GetInstance<DataAvailableServiceBusConfig>();
-                var serviceBusClient = new ServiceBusClient(serviceBusConfig.DataAvailableQueueConnectionString);
+                var batchSize = Configuration.GetSetting(Settings.DataAvailableBatchSize);
+                var timeoutInMs = Configuration.GetSetting(Settings.DataAvailableTimeoutMs);
+
+                var serviceBusClient = new ServiceBusClient(dataAvailableConnectionString);
+
                 var receiver = serviceBusClient.CreateReceiver(
-                    serviceBusConfig.DataAvailableQueueName,
+                    dataAvailableQueueName,
                     new ServiceBusReceiverOptions { PrefetchCount = batchSize });
 
                 return new DataAvailableMessageReceiver(receiver, batchSize, TimeSpan.FromMilliseconds(timeoutInMs));

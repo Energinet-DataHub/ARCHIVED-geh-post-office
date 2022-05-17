@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Diagnostics.CodeAnalysis;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers.CosmosClients;
 using Microsoft.Azure.Cosmos;
 
@@ -20,14 +19,16 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
 
 public sealed class ActorRepositoryContainer : IActorRepositoryContainer
 {
-    private readonly CosmosClient _client;
+    private readonly ICosmosClient _cosmosClient;
     private readonly CosmosDatabaseConfig _cosmosDatabaseConfig;
 
-    public ActorRepositoryContainer([NotNull] ICosmosClient clientProvider, CosmosDatabaseConfig cosmosDatabaseConfig)
+    public ActorRepositoryContainer(
+        ICosmosClient cosmosClient,
+        CosmosDatabaseConfig cosmosDatabaseConfig)
     {
-        _client = clientProvider.Client;
+        _cosmosClient = cosmosClient;
         _cosmosDatabaseConfig = cosmosDatabaseConfig;
     }
 
-    public Container Container => _client.GetContainer(_cosmosDatabaseConfig.MessageHubDatabaseId, "actor");
+    public Container Container => _cosmosClient.Client.GetContainer(_cosmosDatabaseConfig.MessageHubDatabaseId, "actor");
 }

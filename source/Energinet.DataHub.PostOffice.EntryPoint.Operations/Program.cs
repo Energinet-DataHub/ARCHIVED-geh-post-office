@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Energinet.DataHub.Core.App.FunctionApp.Middleware;
 using Energinet.DataHub.Core.App.FunctionApp.Middleware.CorrelationId;
 using Energinet.DataHub.PostOffice.Common.SimpleInjector;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using SimpleInjector;
 
@@ -25,9 +26,14 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.Operations
     {
         public static async Task Main()
         {
+            var configuration = new ConfigurationBuilder()
+                .AddEnvironmentVariables()
+                .Build();
+
 #pragma warning disable CA2000 // Dispose objects before losing scope
-            var startup = new Startup();
+            var startup = new Startup(configuration);
 #pragma warning restore CA2000 // Dispose objects before losing scope
+
             await using (startup.ConfigureAwait(false))
             {
                 var host = new HostBuilder()

@@ -34,7 +34,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.SubDomain
             // Arrange
             const string blankValue = "  ";
 
-            await using var host = await MarketOperatorIntegrationTestHost
+            await using var host = await SubDomainIntegrationTestHost
                 .InitializeAsync()
                 .ConfigureAwait(false);
 
@@ -66,7 +66,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.SubDomain
             var recipientGln = new MockedGln();
             var bundleId = Guid.NewGuid().ToString();
 
-            await using var host = await MarketOperatorIntegrationTestHost
+            await using var host = await SubDomainIntegrationTestHost
                 .InitializeAsync()
                 .ConfigureAwait(false);
 
@@ -102,7 +102,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.SubDomain
             var bundleIdA = Guid.NewGuid().ToString();
             var bundleIdB = Guid.NewGuid().ToString();
 
-            await using var host = await MarketOperatorIntegrationTestHost
+            await using var host = await SubDomainIntegrationTestHost
                 .InitializeAsync()
                 .ConfigureAwait(false);
 
@@ -187,7 +187,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.SubDomain
             var bundleIdA = Guid.NewGuid().ToString();
             var bundleIdB = Guid.NewGuid().ToString();
 
-            await using var host = await MarketOperatorIntegrationTestHost
+            await using var host = await SubDomainIntegrationTestHost
                 .InitializeAsync()
                 .ConfigureAwait(false);
 
@@ -239,7 +239,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.SubDomain
         public async Task GetMaximumSequenceNumberCommand_ValidCommand_ReturnsNumber()
         {
             // Arrange
-            await using var host = await MarketOperatorIntegrationTestHost
+            await using var host = await SubDomainIntegrationTestHost
                 .InitializeAsync()
                 .ConfigureAwait(false);
 
@@ -259,7 +259,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.SubDomain
         public async Task UpdateMaximumSequenceNumberCommand_InvalidCommand_ThrowsException()
         {
             // Arrange
-            await using var host = await MarketOperatorIntegrationTestHost
+            await using var host = await SubDomainIntegrationTestHost
                 .InitializeAsync()
                 .ConfigureAwait(false);
 
@@ -280,7 +280,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.SubDomain
             // Arrange
             const long sequenceNumber = int.MaxValue + 1L;
 
-            await using var host = await MarketOperatorIntegrationTestHost
+            await using var host = await SubDomainIntegrationTestHost
                 .InitializeAsync()
                 .ConfigureAwait(false);
 

@@ -13,10 +13,12 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Energinet.DataHub.Core.App.FunctionApp.Middleware.CorrelationId;
 using Energinet.DataHub.MessageHub.Core.Factories;
+using Energinet.DataHub.PostOffice.Common.Configuration;
 using Energinet.DataHub.PostOffice.Domain.Services;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator;
 using Energinet.DataHub.PostOffice.IntegrationTests.Common;
@@ -33,7 +35,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
 
         private MarketOperatorIntegrationTestHost()
         {
-            _startup = new Startup();
+            _startup = new Startup(BuildConfig());
         }
 
         public static async Task<MarketOperatorIntegrationTestHost> InitializeAsync()
@@ -41,9 +43,11 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
             var host = new MarketOperatorIntegrationTestHost();
 
             var serviceCollection = new ServiceCollection();
-            serviceCollection.AddSingleton<IConfiguration>(BuildConfig());
             host._startup.ConfigureServices(serviceCollection);
-            serviceCollection.BuildServiceProvider().UseSimpleInjector(host._startup.Container, o => o.Container.Options.EnableAutoVerification = false);
+            serviceCollection
+                .BuildServiceProvider()
+                .UseSimpleInjector(host._startup.Container, o => o.Container.Options.EnableAutoVerification = false);
+
             host._startup.Container.Options.AllowOverridingRegistrations = true;
             await InitTestBlobStorageAsync(host._startup.Container).ConfigureAwait(false);
             InitTestServiceBus(host._startup.Container);
@@ -62,16 +66,20 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
             await _startup.DisposeAsync().ConfigureAwait(false);
         }
 
-        private static IConfigurationRoot BuildConfig()
+        private static IConfiguration BuildConfig()
         {
-            Environment.SetEnvironmentVariable("BlobStorageConnectionString", "UseDevelopmentStorage=true");
-            Environment.SetEnvironmentVariable("BlobStorageContainerName", "test-blob-storage");
-            Environment.SetEnvironmentVariable("B2C_TENANT_ID", "test-tenant-id");
-            Environment.SetEnvironmentVariable("BACKEND_SERVICE_APP_ID", "test-backend-service-id");
-            Environment.SetEnvironmentVariable("SQL_ACTOR_DB_CONNECTION_STRING", "SQL_ACTOR_DB_CONNECTION_STRING");
-            Environment.SetEnvironmentVariable("SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING", "SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING");
+            KeyValuePair<string, string>[] keyValuePairs =
+            {
+                new(Settings.SqlActorDbConnectionString.Key, "fake_value"),
+                new(Settings.BlobStorageConnectionString.Key, "UseDevelopmentStorage=true"),
+                new(Settings.BlobStorageContainerName.Key, "test-blob-storage"),
+                new(Settings.ServiceBusHealthCheckConnectionString.Key, "fake_value")
+            };
 
-            return new ConfigurationBuilder().AddEnvironmentVariables().Build();
+            return new ConfigurationBuilder()
+                .AddInMemoryCollection(keyValuePairs)
+                .AddEnvironmentVariables()
+                .Build();
         }
 
         private static async Task InitTestBlobStorageAsync(Container container)

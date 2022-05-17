@@ -12,54 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using Energinet.DataHub.MessageHub.Core.Factories;
-using Energinet.DataHub.PostOffice.Infrastructure;
+using Energinet.DataHub.PostOffice.Common.Configuration;
+using Energinet.DataHub.PostOffice.Common.Extensions;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Container = SimpleInjector.Container;
 
 namespace Energinet.DataHub.PostOffice.Common
 {
-    public static class ServiceBusRegistration
+    internal static class ServiceBusRegistration
     {
-        public static void AddMarketParticipantServiceBus(this Container container)
+        public static void AddDataAvailableServiceBus(this Container container)
         {
-            ArgumentNullException.ThrowIfNull(container, nameof(container));
-
-            container.RegisterSingleton(() =>
-            {
-                var configuration = container.GetService<IConfiguration>();
-
-                var marketParticipantConnectionString = configuration.GetValue<string>(MarketParticipantServiceBusConfig.MarketParticipantConnectionStringKey);
-
-                var marketParticipantTopicName = configuration.GetValue<string>(MarketParticipantServiceBusConfig.MarketParticipantTopicNameKey);
-
-                var marketParticipantSubscriptionName = configuration.GetValue<string>(MarketParticipantServiceBusConfig.MarketParticipantSubscriptionNameKey);
-
-                return new MarketParticipantServiceBusConfig(
-                    marketParticipantConnectionString,
-                    marketParticipantTopicName,
-                    marketParticipantSubscriptionName);
-            });
-        }
-
-        internal static void AddDataAvailableServiceBus(this Container container)
-        {
-            container.RegisterSingleton(() =>
-            {
-                var configuration = container.GetService<IConfiguration>();
-
-                var dataAvailableQueueName = configuration.GetValue<string>(DataAvailableServiceBusConfig.DataAvailableQueueNameKey);
-                var dataAvailableQueueConnectionString = configuration.GetValue<string>(DataAvailableServiceBusConfig.DataAvailableQueueConnectionStringKey);
-
-                return new DataAvailableServiceBusConfig(dataAvailableQueueName, dataAvailableQueueConnectionString);
-            });
-
             container.RegisterSingleton<IServiceBusClientFactory>(() =>
             {
-                var configuration = container.GetInstance<DataAvailableServiceBusConfig>();
-                return new ServiceBusClientFactory(configuration.DataAvailableQueueConnectionString);
+                var configuration = container.GetInstance<IConfiguration>();
+                var connectionString = configuration.GetSetting(Settings.DataAvailableConnectionString);
+                return new ServiceBusClientFactory(connectionString);
             });
 
             container.RegisterSingleton<IMessageBusFactory>(() =>

@@ -12,51 +12,61 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using Energinet.DataHub.Core.App.Common.Diagnostics.HealthChecks;
 using Energinet.DataHub.Core.App.FunctionApp.Diagnostics.HealthChecks;
+using Energinet.DataHub.Core.Logging.RequestResponseMiddleware;
+using Energinet.DataHub.Core.Logging.RequestResponseMiddleware.Storage;
 using Energinet.DataHub.PostOffice.Common;
 using Energinet.DataHub.PostOffice.Common.Auth;
+using Energinet.DataHub.PostOffice.Common.Configuration;
+using Energinet.DataHub.PostOffice.Common.Extensions;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Monitor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using SimpleInjector;
 
 namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
 {
     internal sealed class Startup : StartupBase
     {
+        public Startup(IConfiguration configuration)
+            : base(configuration)
+        {
+        }
+
         protected override void Configure(IServiceCollection services)
         {
-            var config = services.BuildServiceProvider().GetService<IConfiguration>() ?? throw new InvalidOperationException("IConfiguration not found");
+            var cosmosDbConnectionString = Configuration.GetSetting(Settings.MessagesDbConnectionString);
+            var serviceBusConnectionString = Configuration.GetSetting(Settings.ServiceBusHealthCheckConnectionString);
+            var sqlActorDbConnectionString = Configuration.GetSetting(Settings.SqlActorDbConnectionString);
+            var blobStorageConnectionString = Configuration.GetSetting(Settings.BlobStorageConnectionString);
 
-            var serviceBusConnectionString = config["SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING"] ?? throw new InvalidOperationException("Health check connection string not found");
+            var timeSeriesQueue = Configuration.GetSetting(Settings.TimeSeriesQueue);
+            var timeSeriesReplyQueue = Configuration.GetSetting(Settings.TimeSeriesReplyQueue);
+            var chargesQueue = Configuration.GetSetting(Settings.ChargesQueue);
+            var chargesReplyQueue = Configuration.GetSetting(Settings.ChargesReplyQueue);
+            var marketRolesQueue = Configuration.GetSetting(Settings.MarketRolesQueue);
+            var marketRolesReplyQueue = Configuration.GetSetting(Settings.MarketRolesReplyQueue);
+            var meteringPointsQueue = Configuration.GetSetting(Settings.MeteringPointsQueue);
+            var meteringPointsReplyQueue = Configuration.GetSetting(Settings.MeteringPointsReplyQueue);
+            var aggregationsQueue = Configuration.GetSetting(Settings.AggregationsQueue);
+            var aggregationsReplyQueue = Configuration.GetSetting(Settings.AggregationsReplyQueue);
 
-            var timeSeriesQueue = config.GetValue("TIMESERIES_QUEUE_NAME", "timeseries");
-            var timeSeriesReplyQueue = config.GetValue("TIMESERIES_REPLY_QUEUE_NAME", "timeseries-reply");
-            var chargesQueue = config.GetValue("CHARGES_QUEUE_NAME", "charges");
-            var chargesReplyQueue = config.GetValue("CHARGES_REPLY_QUEUE_NAME", "charges-reply");
-            var marketRolesQueue = config.GetValue("MARKETROLES_QUEUE_NAME", "marketroles");
-            var marketRolesReplyQueue = config.GetValue("MARKETROLES_REPLY_QUEUE_NAME", "marketroles-reply");
-            var meteringPointsQueue = config.GetValue("METERINGPOINTS_QUEUE_NAME", "meteringpoints");
-            var meteringPointsReplyQueue = config.GetValue("METERINGPOINTS_REPLY_QUEUE_NAME", "meteringpoints-reply");
-            var aggregationsQueue = config.GetValue("AGGREGATIONS_QUEUE_NAME", "aggregations");
-            var aggregationsReplyQueue = config.GetValue("AGGREGATIONS_REPLY_QUEUE_NAME", "aggregations-reply");
-
-            var timeSeriesDequeueQueue = config.GetValue("TIMESERIES_DEQUEUE_QUEUE_NAME", "timeseries-dequeue");
-            var chargesDequeueQueue = config.GetValue("CHARGES_DEQUEUE_QUEUE_NAME", "charges-dequeue");
-            var marketRolesDequeueQueue = config.GetValue("MARKETROLES_DEQUEUE_QUEUE_NAME", "marketroles-dequeue");
-            var meteringPointsDequeueQueue = config.GetValue("METERINGPOINTS_DEQUEUE_QUEUE_NAME", "meteringpoints-dequeue");
-            var aggregationsDequeueQueue = config.GetValue("AGGREGATIONS_DEQUEUE_QUEUE_NAME", "aggregations-dequeue");
+            var timeSeriesDequeueQueue = Configuration.GetSetting(Settings.TimeSeriesDequeueQueue);
+            var chargesDequeueQueue = Configuration.GetSetting(Settings.ChargesDequeueQueue);
+            var marketRolesDequeueQueue = Configuration.GetSetting(Settings.MarketRolesDequeueQueue);
+            var meteringPointsDequeueQueue = Configuration.GetSetting(Settings.MeteringPointsDequeueQueue);
+            var aggregationsDequeueQueue = Configuration.GetSetting(Settings.AggregationsDequeueQueue);
 
             // Health check
             services
                 .AddHealthChecks()
                 .AddLiveCheck()
-                .AddCosmosDb(config["MESSAGES_DB_CONNECTION_STRING"])
-                .AddAzureBlobStorage(config["BlobStorageConnectionString"])
-                .AddSqlServer(config["SQL_ACTOR_DB_CONNECTION_STRING"])
+                .AddCosmosDb(cosmosDbConnectionString)
+                .AddAzureBlobStorage(blobStorageConnectionString)
+                .AddSqlServer(sqlActorDbConnectionString)
 
                 .AddAzureServiceBusQueue(serviceBusConnectionString, timeSeriesQueue, name: timeSeriesQueue)
                 .AddAzureServiceBusQueue(serviceBusConnectionString, timeSeriesReplyQueue, name: timeSeriesReplyQueue)
@@ -89,9 +99,25 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
             container.Register<DequeueFunction>(Lifestyle.Scoped);
             container.Register(() => new ExternalBundleIdProvider(), Lifestyle.Singleton);
 
+            AddRequestResponseLogging(container);
+
             // health check
             container.Register<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>(Lifestyle.Scoped);
             container.Register<HealthCheckEndpoint>(Lifestyle.Scoped);
+        }
+
+        private static void AddRequestResponseLogging(Container container)
+        {
+            container.Register<RequestResponseLoggingMiddleware>(Lifestyle.Scoped);
+            container.RegisterSingleton<IRequestResponseLogging>(() =>
+            {
+                var configuration = container.GetService<IConfiguration>();
+                var connectionString = configuration.GetSetting(Settings.RequestResponseLogConnectionString);
+                var containerName = configuration.GetSetting(Settings.RequestResponseLogContainerName);
+
+                var logger = container.GetService<ILogger<RequestResponseLoggingBlobStorage>>();
+                return new RequestResponseLoggingBlobStorage(connectionString, containerName, logger!);
+            });
         }
     }
 }

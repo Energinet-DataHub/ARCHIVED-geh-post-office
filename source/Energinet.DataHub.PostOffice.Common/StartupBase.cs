@@ -16,7 +16,6 @@ using System;
 using System.Threading.Tasks;
 using Energinet.DataHub.Core.App.FunctionApp.Middleware;
 using Energinet.DataHub.Core.App.FunctionApp.Middleware.CorrelationId;
-using Energinet.DataHub.Core.Logging.RequestResponseMiddleware;
 using Energinet.DataHub.PostOffice.Application;
 using Energinet.DataHub.PostOffice.Common.MediatR;
 using Energinet.DataHub.PostOffice.Common.SimpleInjector;
@@ -37,12 +36,15 @@ namespace Energinet.DataHub.PostOffice.Common
             FluentValidationHelper.SetupErrorCodeResolver();
         }
 
-        protected StartupBase()
+        protected StartupBase(IConfiguration configuration)
         {
             Container = new Container();
+            Configuration = configuration;
         }
 
         public Container Container { get; }
+
+        public IConfiguration Configuration { get; }
 
         public async ValueTask DisposeAsync()
         {
@@ -54,8 +56,6 @@ namespace Energinet.DataHub.PostOffice.Common
         {
             SwitchToSimpleInjector(services);
 
-            var config = services.BuildServiceProvider().GetService<IConfiguration>()!;
-
             services.AddLogging();
             services.AddSimpleInjector(Container, x =>
             {
@@ -64,7 +64,7 @@ namespace Energinet.DataHub.PostOffice.Common
             });
 
             // config
-            Container.RegisterSingleton(() => config);
+            Container.RegisterSingleton(() => Configuration);
             Container.AddDatabaseCosmosConfig();
             Container.AddCosmosClientBuilder();
             Container.AddAzureBlobStorageConfig();
@@ -76,7 +76,7 @@ namespace Energinet.DataHub.PostOffice.Common
             Container.RegisterSingleton<IFeatureFlags, FeatureFlags>();
 
             // Add Application insights telemetry
-            services.SetupApplicationInsightTelemetry(config);
+            services.SetupApplicationInsightTelemetry(Configuration);
 
             // services
             Container.AddRepositories();
@@ -89,10 +89,6 @@ namespace Energinet.DataHub.PostOffice.Common
             Container.Register<ICorrelationContext, CorrelationContext>(Lifestyle.Scoped);
             Container.Register<CorrelationIdMiddleware>(Lifestyle.Scoped);
             Container.Register<FunctionTelemetryScopeMiddleware>(Lifestyle.Scoped);
-
-            // Add middleware logging
-            Container.AddRequestResponseLoggingStorage();
-            Container.Register<RequestResponseLoggingMiddleware>(Lifestyle.Scoped);
 
             // Add MediatR
             Container.BuildMediator(new[] { typeof(ApplicationAssemblyReference).Assembly });

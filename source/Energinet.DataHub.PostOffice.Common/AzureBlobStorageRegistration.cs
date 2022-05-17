@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using Energinet.DataHub.MessageHub.Core;
 using Energinet.DataHub.MessageHub.Core.Factories;
+using Energinet.DataHub.PostOffice.Common.Configuration;
+using Energinet.DataHub.PostOffice.Common.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
@@ -28,13 +29,7 @@ namespace Energinet.DataHub.PostOffice.Common
             container.RegisterSingleton<IStorageServiceClientFactory>(() =>
             {
                 var configuration = container.GetService<IConfiguration>();
-                var connectionString = configuration.GetConnectionStringOrSetting("BlobStorageConnectionString");
-
-                if (string.IsNullOrWhiteSpace(connectionString))
-                {
-                    throw new InvalidOperationException("Please specify a valid BlobStorageConnectionString in the appSettings.json file or your Azure Functions Settings.");
-                }
-
+                var connectionString = configuration.GetSetting(Settings.BlobStorageConnectionString);
                 return new StorageServiceClientFactory(connectionString);
             });
         }
@@ -44,13 +39,7 @@ namespace Energinet.DataHub.PostOffice.Common
             container.RegisterSingleton(() =>
             {
                 var configuration = container.GetService<IConfiguration>();
-                var containerName = configuration.GetValue<string>("BlobStorageContainerName");
-
-                if (string.IsNullOrWhiteSpace(containerName))
-                {
-                    throw new InvalidOperationException("Please specify a valid BlobStorageContainerName in the appSettings.json file or your Azure Functions Settings.");
-                }
-
+                var containerName = configuration.GetSetting(Settings.BlobStorageContainerName);
                 return new StorageConfig(containerName);
             });
         }
