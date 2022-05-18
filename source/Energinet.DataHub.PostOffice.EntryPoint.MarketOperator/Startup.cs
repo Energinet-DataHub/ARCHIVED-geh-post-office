@@ -31,34 +31,29 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
 {
     internal sealed class Startup : StartupBase
     {
-        public Startup(IConfiguration configuration)
-            : base(configuration)
+        protected override void Configure(IConfiguration configuration, IServiceCollection services)
         {
-        }
+            var cosmosDbConnectionString = configuration.GetSetting(Settings.MessagesDbConnectionString);
+            var serviceBusConnectionString = configuration.GetSetting(Settings.ServiceBusHealthCheckConnectionString);
+            var sqlActorDbConnectionString = configuration.GetSetting(Settings.SqlActorDbConnectionString);
+            var blobStorageConnectionString = configuration.GetSetting(Settings.BlobStorageConnectionString);
 
-        protected override void Configure(IServiceCollection services)
-        {
-            var cosmosDbConnectionString = Configuration.GetSetting(Settings.MessagesDbConnectionString);
-            var serviceBusConnectionString = Configuration.GetSetting(Settings.ServiceBusHealthCheckConnectionString);
-            var sqlActorDbConnectionString = Configuration.GetSetting(Settings.SqlActorDbConnectionString);
-            var blobStorageConnectionString = Configuration.GetSetting(Settings.BlobStorageConnectionString);
+            var timeSeriesQueue = configuration.GetSetting(Settings.TimeSeriesQueue);
+            var timeSeriesReplyQueue = configuration.GetSetting(Settings.TimeSeriesReplyQueue);
+            var chargesQueue = configuration.GetSetting(Settings.ChargesQueue);
+            var chargesReplyQueue = configuration.GetSetting(Settings.ChargesReplyQueue);
+            var marketRolesQueue = configuration.GetSetting(Settings.MarketRolesQueue);
+            var marketRolesReplyQueue = configuration.GetSetting(Settings.MarketRolesReplyQueue);
+            var meteringPointsQueue = configuration.GetSetting(Settings.MeteringPointsQueue);
+            var meteringPointsReplyQueue = configuration.GetSetting(Settings.MeteringPointsReplyQueue);
+            var aggregationsQueue = configuration.GetSetting(Settings.AggregationsQueue);
+            var aggregationsReplyQueue = configuration.GetSetting(Settings.AggregationsReplyQueue);
 
-            var timeSeriesQueue = Configuration.GetSetting(Settings.TimeSeriesQueue);
-            var timeSeriesReplyQueue = Configuration.GetSetting(Settings.TimeSeriesReplyQueue);
-            var chargesQueue = Configuration.GetSetting(Settings.ChargesQueue);
-            var chargesReplyQueue = Configuration.GetSetting(Settings.ChargesReplyQueue);
-            var marketRolesQueue = Configuration.GetSetting(Settings.MarketRolesQueue);
-            var marketRolesReplyQueue = Configuration.GetSetting(Settings.MarketRolesReplyQueue);
-            var meteringPointsQueue = Configuration.GetSetting(Settings.MeteringPointsQueue);
-            var meteringPointsReplyQueue = Configuration.GetSetting(Settings.MeteringPointsReplyQueue);
-            var aggregationsQueue = Configuration.GetSetting(Settings.AggregationsQueue);
-            var aggregationsReplyQueue = Configuration.GetSetting(Settings.AggregationsReplyQueue);
-
-            var timeSeriesDequeueQueue = Configuration.GetSetting(Settings.TimeSeriesDequeueQueue);
-            var chargesDequeueQueue = Configuration.GetSetting(Settings.ChargesDequeueQueue);
-            var marketRolesDequeueQueue = Configuration.GetSetting(Settings.MarketRolesDequeueQueue);
-            var meteringPointsDequeueQueue = Configuration.GetSetting(Settings.MeteringPointsDequeueQueue);
-            var aggregationsDequeueQueue = Configuration.GetSetting(Settings.AggregationsDequeueQueue);
+            var timeSeriesDequeueQueue = configuration.GetSetting(Settings.TimeSeriesDequeueQueue);
+            var chargesDequeueQueue = configuration.GetSetting(Settings.ChargesDequeueQueue);
+            var marketRolesDequeueQueue = configuration.GetSetting(Settings.MarketRolesDequeueQueue);
+            var meteringPointsDequeueQueue = configuration.GetSetting(Settings.MeteringPointsDequeueQueue);
+            var aggregationsDequeueQueue = configuration.GetSetting(Settings.AggregationsDequeueQueue);
 
             // Health check
             services
@@ -89,7 +84,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
                 .AddAzureServiceBusQueue(serviceBusConnectionString, aggregationsDequeueQueue, name: aggregationsDequeueQueue);
         }
 
-        protected override void Configure(Container container)
+        protected override void Configure(IConfiguration configuration, Container container)
         {
             container.AddHttpAuthentication();
             container.Register<PeekFunction>(Lifestyle.Scoped);

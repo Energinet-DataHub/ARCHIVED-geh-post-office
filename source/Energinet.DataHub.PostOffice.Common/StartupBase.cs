@@ -36,15 +36,12 @@ namespace Energinet.DataHub.PostOffice.Common
             FluentValidationHelper.SetupErrorCodeResolver();
         }
 
-        protected StartupBase(IConfiguration configuration)
+        protected StartupBase()
         {
             Container = new Container();
-            Configuration = configuration;
         }
 
         public Container Container { get; }
-
-        public IConfiguration Configuration { get; }
 
         public async ValueTask DisposeAsync()
         {
@@ -52,7 +49,7 @@ namespace Energinet.DataHub.PostOffice.Common
             GC.SuppressFinalize(this);
         }
 
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
             SwitchToSimpleInjector(services);
 
@@ -64,7 +61,6 @@ namespace Energinet.DataHub.PostOffice.Common
             });
 
             // config
-            Container.RegisterSingleton(() => Configuration);
             Container.AddDatabaseCosmosConfig();
             Container.AddCosmosClientBuilder();
             Container.AddAzureBlobStorageConfig();
@@ -76,7 +72,7 @@ namespace Energinet.DataHub.PostOffice.Common
             Container.RegisterSingleton<IFeatureFlags, FeatureFlags>();
 
             // Add Application insights telemetry
-            services.SetupApplicationInsightTelemetry(Configuration);
+            services.SetupApplicationInsightTelemetry(configuration);
 
             // services
             Container.AddRepositories();
@@ -93,8 +89,8 @@ namespace Energinet.DataHub.PostOffice.Common
             // Add MediatR
             Container.BuildMediator(new[] { typeof(ApplicationAssemblyReference).Assembly });
 
-            Configure(services);
-            Configure(Container);
+            Configure(configuration, services);
+            Configure(configuration, Container);
         }
 
         // Recommended convention is DisposeAsyncCore, Core being last.
@@ -105,9 +101,9 @@ namespace Energinet.DataHub.PostOffice.Common
             return Container.DisposeAsync();
         }
 
-        protected abstract void Configure(IServiceCollection services);
+        protected abstract void Configure(IConfiguration configuration, IServiceCollection services);
 
-        protected abstract void Configure(Container container);
+        protected abstract void Configure(IConfiguration configuration, Container container);
 
         private static void SwitchToSimpleInjector(IServiceCollection services)
         {

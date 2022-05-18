@@ -33,15 +33,17 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
 
         private SubDomainIntegrationTestHost()
         {
-            _startup = new Startup(BuildConfig());
+            _startup = new Startup();
         }
 
         public static Task<SubDomainIntegrationTestHost> InitializeAsync()
         {
             var host = new SubDomainIntegrationTestHost();
 
+            var configuration = BuildConfig();
             var serviceCollection = new ServiceCollection();
-            host._startup.ConfigureServices(serviceCollection);
+            serviceCollection.AddSingleton(configuration);
+            host._startup.ConfigureServices(configuration, serviceCollection);
             serviceCollection
                 .BuildServiceProvider()
                 .UseSimpleInjector(host._startup.Container, o => o.Container.Options.EnableAutoVerification = false);

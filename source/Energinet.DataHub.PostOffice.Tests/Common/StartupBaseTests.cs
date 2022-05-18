@@ -37,11 +37,13 @@ namespace Energinet.DataHub.PostOffice.Tests.Common
         public async Task Startup_ConfigureServices_ShouldVerify()
         {
             // Arrange
+            var configuration = BuildConfig();
             var serviceCollection = new ServiceCollection();
-            await using var target = new TestOfStartupBase(MockConfig());
+            serviceCollection.AddSingleton(configuration);
+            await using var target = new TestOfStartupBase();
 
             // Act
-            target.ConfigureServices(serviceCollection);
+            target.ConfigureServices(configuration, serviceCollection);
             await using var serviceProvider = serviceCollection.BuildServiceProvider();
             serviceProvider.UseSimpleInjector(target.Container);
 
@@ -53,21 +55,23 @@ namespace Energinet.DataHub.PostOffice.Tests.Common
         public async Task Startup_ConfigureServices_ShouldCallConfigureContainer()
         {
             // Arrange
+            var configuration = BuildConfig();
             var serviceCollection = new ServiceCollection();
+            serviceCollection.AddSingleton(configuration);
             var configureContainerMock = new Mock<Action>();
-            await using var target = new TestOfStartupBase(MockConfig())
+            await using var target = new TestOfStartupBase()
             {
                 ConfigureContainer = configureContainerMock.Object
             };
 
             // Act
-            target.ConfigureServices(serviceCollection);
+            target.ConfigureServices(configuration, serviceCollection);
 
             // Assert
             configureContainerMock.Verify(x => x(), Times.Once);
         }
 
-        private static IConfiguration MockConfig()
+        private static IConfiguration BuildConfig()
         {
             KeyValuePair<string, string>[] keyValuePairs =
             {
@@ -82,18 +86,13 @@ namespace Energinet.DataHub.PostOffice.Tests.Common
 
         private sealed class TestOfStartupBase : StartupBase
         {
-            public TestOfStartupBase(IConfiguration configuration)
-                : base(configuration)
-            {
-            }
-
             public Action? ConfigureContainer { get; init; }
 
-            protected override void Configure(IServiceCollection services)
+            protected override void Configure(IConfiguration configuration, IServiceCollection services)
             {
             }
 
-            protected override void Configure(Container container)
+            protected override void Configure(IConfiguration configuration, Container container)
             {
                 AddMockConfiguration(container);
                 ConfigureContainer?.Invoke();

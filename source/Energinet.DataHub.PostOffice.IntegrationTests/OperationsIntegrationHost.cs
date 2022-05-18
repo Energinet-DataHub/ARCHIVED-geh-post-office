@@ -30,15 +30,17 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
 
         private OperationsIntegrationHost()
         {
-            _startup = new Startup(BuildConfig());
+            _startup = new Startup();
         }
 
         public static Task<OperationsIntegrationHost> InitializeAsync()
         {
             var host = new OperationsIntegrationHost();
 
+            var configuration = BuildConfig();
             var serviceCollection = new ServiceCollection();
-            host._startup.ConfigureServices(serviceCollection);
+            serviceCollection.AddSingleton(configuration);
+            host._startup.ConfigureServices(configuration, serviceCollection);
             serviceCollection
                 .BuildServiceProvider()
                 .UseSimpleInjector(host._startup.Container, o => o.Container.Options.EnableAutoVerification = false);

@@ -35,15 +35,17 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
 
         private MarketOperatorIntegrationTestHost()
         {
-            _startup = new Startup(BuildConfig());
+            _startup = new Startup();
         }
 
         public static async Task<MarketOperatorIntegrationTestHost> InitializeAsync()
         {
             var host = new MarketOperatorIntegrationTestHost();
 
+            var configuration = BuildConfig();
             var serviceCollection = new ServiceCollection();
-            host._startup.ConfigureServices(serviceCollection);
+            serviceCollection.AddSingleton(configuration);
+            host._startup.ConfigureServices(configuration, serviceCollection);
             serviceCollection
                 .BuildServiceProvider()
                 .UseSimpleInjector(host._startup.Container, o => o.Container.Options.EnableAutoVerification = false);

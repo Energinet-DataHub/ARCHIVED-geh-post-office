@@ -18,7 +18,6 @@ using Energinet.DataHub.Core.App.FunctionApp.Middleware.CorrelationId;
 using Energinet.DataHub.Core.Logging.RequestResponseMiddleware;
 using Energinet.DataHub.PostOffice.Common.Auth;
 using Energinet.DataHub.PostOffice.Common.SimpleInjector;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using SimpleInjector;
 
@@ -28,12 +27,8 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
     {
         public static async Task Main()
         {
-            var configuration = new ConfigurationBuilder()
-                .AddEnvironmentVariables()
-                .Build();
-
 #pragma warning disable CA2000 // Dispose objects before losing scope
-            var startup = new Startup(configuration);
+            var startup = new Startup();
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
             await using (startup.ConfigureAwait(false))
@@ -49,7 +44,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
                         options.UseMiddleware<JwtAuthenticationMiddleware>();
                         options.UseMiddleware<RequestResponseLoggingMiddleware>();
                     })
-                    .ConfigureServices(startup.ConfigureServices)
+                    .ConfigureServices((context, services) => startup.ConfigureServices(context.Configuration, services))
                     .Build()
                     .UseSimpleInjector(startup.Container);
 
