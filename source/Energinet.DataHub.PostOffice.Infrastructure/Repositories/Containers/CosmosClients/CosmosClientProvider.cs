@@ -23,6 +23,6 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers.Co
             Client = client;
         }
 
-        public CosmosClient Client { get; set; }
+        public CosmosClient Client { get; }
     }
 }

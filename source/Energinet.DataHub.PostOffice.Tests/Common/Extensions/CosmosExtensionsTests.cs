@@ -22,7 +22,7 @@ using Xunit.Categories;
 namespace Energinet.DataHub.PostOffice.Tests.Common.Extensions
 {
     [UnitTest]
-    public class CosmosExtensionsTests
+    public sealed class CosmosExtensionsTests
     {
         [Fact]
         public async Task FirstOrDefaultAsync_EmptyCollection_ReturnsNull()
