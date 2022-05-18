@@ -23,7 +23,7 @@ jobs:
     uses: Energinet-DataHub/.github/.github/workflows/ci-base.yml@6.0.0
 
   dotnet_solution_ci:
-    uses: Energinet-DataHub/.github/.github/workflows/dotnet-solution-ci.yml@6.1.0
+    uses: Energinet-DataHub/.github/.github/workflows/dotnet-solution-ci.yml@7.3.1
     with:
       SOLUTION_FILE_PATH: 'source/Energinet.DataHub.PostOffice.sln'
       DOTNET_VERSION: '6.0.201'
@@ -37,7 +37,7 @@ jobs:
       AZURE_KEYVAULT_URL: ${{ secrets.AZURE_KEYVAULT_URL }}
 
   package_ci:
-    uses: Energinet-DataHub/.github/.github/workflows/dotnet-solution-ci.yml@6.0.0
+    uses: Energinet-DataHub/.github/.github/workflows/dotnet-solution-ci.yml@7.3.1
     with:
       SOLUTION_FILE_PATH: 'source/Energinet.DataHub.PostOffice.Libraries.sln'
       DOTNET_VERSION: '6.0.201'
