@@ -12,10 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.PostOffice.EntryPoint.Operations.HealthCheck
+using System;
+
+namespace Energinet.DataHub.MessageHub.Model.Model
 {
-    public interface IHealth
+    [Obsolete("LegacyActorIdDto uses GLN to identify the market operator. Use ActorIdDto to identify by GUID.")]
+    public sealed record LegacyActorIdDto(string LegacyValue) : ActorIdDto(Guid.Empty)
     {
-        IFluentHealth CreateFluentValidator();
+        public override Guid Value => throw new InvalidOperationException("LegacyActorIdDto does not have a GUID.");
     }
 }

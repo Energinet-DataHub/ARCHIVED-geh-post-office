@@ -17,23 +17,22 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 using Energinet.DataHub.MessageHub.Model.DataAvailable;
+using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using MediatR;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using DataAvailableNotificationDto = Energinet.DataHub.PostOffice.Application.Commands.DataAvailableNotificationDto;
 
 namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
 {
     public class DataAvailableTimerTrigger
     {
         private const string FunctionName = nameof(DataAvailableTimerTrigger);
-
-        private static long _lock;
 
         private readonly ILogger<DataAvailableTimerTrigger> _logger;
         private readonly IMediator _mediator;
@@ -53,9 +52,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
         }
 
         [Function(FunctionName)]
-#pragma warning disable CA1801
         public async Task RunAsync([TimerTrigger("*/5 * * * * *", UseMonitor = true)] FunctionContext context)
-#pragma warning restore CA1801
         {
             _logger.LogInformation("Begins processing DataAvailableTimerTrigger.");
 
@@ -63,54 +60,63 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
                 .ReceiveAsync()
                 .ConfigureAwait(false);
 
+            VerifyMessageSequence(messages);
+
             _logger.LogInformation("Received a batch of size {0}.", messages.Count);
 
             if (messages.Count == 0)
                 return;
 
-            var res = Interlocked.Increment(ref _lock);
-            if (res > 1)
-            {
-                _logger.LogError("Multiple RunAsync running: {instances}", res);
-            }
+            var sw = Stopwatch.StartNew();
 
-            try
-            {
-                var sw = Stopwatch.StartNew();
+            var internalSequenceNumber = await _mediator
+                .Send(new GetMaximumSequenceNumberCommand())
+                .ConfigureAwait(false);
 
-                var internalSequenceNumber = await _mediator
-                    .Send(new GetMaximumSequenceNumberCommand())
-                    .ConfigureAwait(false);
+            var complete = new List<ServiceBusReceivedMessage>();
+            var deadletter = new List<ServiceBusReceivedMessage>();
 
-                var complete = new List<ServiceBusReceivedMessage>();
-                var deadletter = new List<ServiceBusReceivedMessage>();
+            await ProcessMessagesAsync(
+                messages,
+                internalSequenceNumber + 1,
+                complete,
+                deadletter).ConfigureAwait(false);
 
-                await ProcessMessagesAsync(
-                    messages,
-                    internalSequenceNumber + 1,
-                    complete,
-                    deadletter).ConfigureAwait(false);
+            var newMaximumSequenceNumber = internalSequenceNumber + messages.Count;
+            await _mediator
+                .Send(new UpdateMaximumSequenceNumberCommand(newMaximumSequenceNumber))
+                .ConfigureAwait(false);
 
-                var newMaximumSequenceNumber = internalSequenceNumber + messages.Count;
-                await _mediator
-                    .Send(new UpdateMaximumSequenceNumberCommand(newMaximumSequenceNumber))
-                    .ConfigureAwait(false);
+            _logger.LogInformation("Ready to complete messages after {0} ms.", sw.ElapsedMilliseconds);
 
-                _logger.LogInformation("Ready to complete messages after {0} ms.", sw.ElapsedMilliseconds);
-
-                await _messageReceiver.CompleteAsync(complete).ConfigureAwait(false);
-                await _messageReceiver.DeadLetterAsync(deadletter).ConfigureAwait(false);
-            }
-            finally
-            {
-                Interlocked.Decrement(ref _lock);
-            }
+            await _messageReceiver.CompleteAsync(complete).ConfigureAwait(false);
+            await _messageReceiver.DeadLetterAsync(deadletter).ConfigureAwait(false);
         }
 
         protected virtual long GetSequenceNumber(ServiceBusReceivedMessage message)
         {
             ArgumentNullException.ThrowIfNull(message, nameof(message));
             return message.SequenceNumber;
+        }
+
+        private void VerifyMessageSequence(IReadOnlyCollection<ServiceBusReceivedMessage> messages)
+        {
+            var ordered = messages.OrderBy(x => x.EnqueuedTime);
+            var asQueue = new Queue<ServiceBusReceivedMessage>(ordered);
+
+            foreach (var message in messages)
+            {
+                var peek = asQueue.Peek();
+                if (peek.EnqueuedTime == message.EnqueuedTime)
+                {
+                    asQueue.Dequeue();
+                }
+                else
+                {
+                    _logger.LogError("Order of messages is incorrect.");
+                    return;
+                }
+            }
         }
 
         private async Task ProcessMessagesAsync(
@@ -214,9 +220,16 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
             try
             {
                 var parsedValue = _dataAvailableNotificationParser.Parse(message.Body.ToArray());
+
+#pragma warning disable CS0618
+                var recipient = parsedValue.Recipient is LegacyActorIdDto legacyActor
+#pragma warning restore CS0618
+                    ? legacyActor.LegacyValue
+                    : parsedValue.Recipient.Value.ToString();
+
                 return (message, true, new DataAvailableNotificationDto(
                     parsedValue.Uuid.ToString(),
-                    parsedValue.Recipient.Value,
+                    recipient,
                     parsedValue.MessageType.Value,
                     parsedValue.Origin.ToString(),
                     parsedValue.SupportsBundling,

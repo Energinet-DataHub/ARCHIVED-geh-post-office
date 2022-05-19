@@ -36,7 +36,6 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
 
             container.Register<IMarketOperatorIdentity, MarketOperatorIdentity>(Lifestyle.Scoped);
             container.Register<JwtAuthenticationMiddleware>(Lifestyle.Scoped);
-            container.Register<QueryAuthenticationMiddleware>(Lifestyle.Scoped);
             RegisterJwt(container);
             RegisterActor(container);
 
@@ -79,7 +78,10 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
         private static void RegisterActor(Container container)
         {
             container.Register<IActorContext, ActorContext>(Lifestyle.Scoped);
-            container.Register<IActorProvider, ActorProvider>(Lifestyle.Scoped);
+            container.Register<LegacyActorProvider>(Lifestyle.Scoped);
+            container.Register<ActorRegistryProvider>(Lifestyle.Scoped);
+            container.Register<IActorProvider, LegacyActorProviderProxy>(Lifestyle.Scoped);
+
             container.Register(
                 () => new ActorMiddleware(
                     container.GetRequiredService<IClaimsPrincipalAccessor>(),

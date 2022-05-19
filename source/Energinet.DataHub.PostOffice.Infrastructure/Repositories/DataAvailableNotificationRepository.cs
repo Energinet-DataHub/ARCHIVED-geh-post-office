@@ -119,7 +119,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             }
         }
 
-        public async Task<ICabinetReader?> GetNextUnacknowledgedAsync(MarketOperator recipient, params DomainOrigin[] domains)
+        public async Task<ICabinetReader?> GetNextUnacknowledgedAsync(ActorId recipient, params DomainOrigin[] domains)
         {
             ArgumentNullException.ThrowIfNull(recipient, nameof(recipient));
             ArgumentNullException.ThrowIfNull(domains, nameof(domains));
@@ -135,7 +135,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                         .Catalog
                         .GetItemLinqQueryable<CosmosCatalogEntry>();
 
-                    var partitionKey = string.Join('_', recipient.Gln.Value, domain);
+                    var partitionKey = string.Join('_', recipient.Value, domain);
 
                     var query =
                         from catalogEntry in asLinq
@@ -201,7 +201,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 .Container
                 .GetItemLinqQueryable<CosmosBundleDocument>();
 
-            var recipient = bundle.Recipient.Gln.Value;
+            var recipient = bundle.Recipient.Value;
             var bundleId = bundle.BundleId.ToString();
 
             var query =
@@ -244,7 +244,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
         {
             var partitionKey = string.Join(
                 '_',
-                notification.Recipient.Gln.Value,
+                notification.Recipient.Value,
                 notification.Origin);
 
             return new CosmosCatalogEntry
@@ -260,7 +260,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
         {
             var partitionKey = string.Join(
                 '_',
-                notification.Recipient.Gln.Value,
+                notification.Recipient.Value,
                 notification.Origin,
                 notification.ContentType.Value);
 
@@ -281,7 +281,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
             var partitionKey = string.Join(
                 '_',
-                cabinetKey.Recipient.Gln.Value,
+                cabinetKey.Recipient.Value,
                 cabinetKey.Origin,
                 cabinetKey.ContentType.Value);
 
@@ -354,7 +354,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
         {
             var partitionKey = string.Join(
                 '_',
-                cabinetKey.Recipient.Gln.Value,
+                cabinetKey.Recipient.Value,
                 cabinetKey.Origin,
                 cabinetKey.ContentType.Value);
 
@@ -554,7 +554,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 using var ms = new MemoryStream();
                 ms.Write(Encoding.UTF8.GetBytes(notification.ContentType.Value));
                 ms.Write(BitConverter.GetBytes((int)notification.Origin));
-                ms.Write(Encoding.UTF8.GetBytes(notification.Recipient.Gln.Value));
+                ms.Write(Encoding.UTF8.GetBytes(notification.Recipient.Value));
                 ms.Write(BitConverter.GetBytes(notification.SupportsBundling.Value));
                 ms.Write(BitConverter.GetBytes(notification.Weight.Value));
                 return Convert.ToBase64String(ms.ToArray());

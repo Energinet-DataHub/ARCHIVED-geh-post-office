@@ -41,10 +41,16 @@ namespace Energinet.DataHub.MessageHub.Core.Dequeue
             var queueName = GetQueueName(domainOrigin);
             var serviceBusSender = _messageBusFactory.GetSenderClient(queueName);
 
+#pragma warning disable CS0618
+            var marketOperator = dequeueNotificationDto.MarketOperator is LegacyActorIdDto legacyActorIdDto
+#pragma warning restore CS0618
+                ? legacyActorIdDto.LegacyValue
+                : dequeueNotificationDto.MarketOperator.Value.ToString();
+
             var contract = new DequeueContract
             {
                 DataAvailableNotificationReferenceId = dequeueNotificationDto.DataAvailableNotificationReferenceId,
-                MarketOperator = dequeueNotificationDto.MarketOperator.Value
+                MarketOperator = marketOperator
             };
 
             var dequeueMessage = new ServiceBusMessage(new BinaryData(contract.ToByteArray()))

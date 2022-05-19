@@ -14,11 +14,7 @@
 
 using System;
 using System.Threading.Tasks;
-using Azure.Storage.Blobs;
-using Energinet.DataHub.MessageHub.Core.Factories;
-using Energinet.DataHub.PostOffice.Domain.Services;
-using Energinet.DataHub.PostOffice.EntryPoint.SubDomain;
-using Energinet.DataHub.PostOffice.IntegrationTests.Common;
+using Energinet.DataHub.PostOffice.EntryPoint.Operations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
@@ -35,7 +31,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
             _startup = new Startup();
         }
 
-        public static async Task<OperationsIntegrationHost> InitializeAsync()
+        public static Task<OperationsIntegrationHost> InitializeAsync()
         {
             var host = new OperationsIntegrationHost();
 
@@ -44,10 +40,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
             host._startup.ConfigureServices(serviceCollection);
             serviceCollection.BuildServiceProvider().UseSimpleInjector(host._startup.Container, o => o.Container.Options.EnableAutoVerification = false);
             host._startup.Container.Options.AllowOverridingRegistrations = true;
-            await InitTestBlobStorageAsync(host._startup.Container).ConfigureAwait(false);
-            InitTestServiceBus(host._startup.Container);
 
-            return host;
+            return Task.FromResult(host);
         }
 
         public Scope BeginScope()
@@ -62,26 +56,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
 
         private static IConfigurationRoot BuildConfig()
         {
-            Environment.SetEnvironmentVariable("BlobStorageConnectionString", "UseDevelopmentStorage=true");
-            Environment.SetEnvironmentVariable("BlobStorageContainerName", "test-blob-storage");
+            Environment.SetEnvironmentVariable("SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING", "SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING");
 
             return new ConfigurationBuilder().AddEnvironmentVariables().Build();
-        }
-
-        private static async Task InitTestBlobStorageAsync(Container container)
-        {
-            var blobStorage = new BlobServiceClient("UseDevelopmentStorage=true");
-            await blobStorage
-                .GetBlobContainerClient("test-blob-storage")
-                .CreateIfNotExistsAsync()
-                .ConfigureAwait(false);
-
-            container.Register<IMarketOperatorDataStorageService, MockedMarketOperatorDataStorageService>(Lifestyle.Scoped);
-        }
-
-        private static void InitTestServiceBus(Container container)
-        {
-            container.Register<IServiceBusClientFactory, MockedServiceBusClientFactory>(Lifestyle.Singleton);
         }
     }
 }

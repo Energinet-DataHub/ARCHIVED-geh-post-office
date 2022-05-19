@@ -24,7 +24,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Model
 
         public Bundle(
             Uuid bundleId,
-            MarketOperator recipient,
+            ActorId recipient,
             DomainOrigin origin,
             ContentType contentType,
             IEnumerable<Uuid> notificationIds,
@@ -41,7 +41,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Model
 
         public Bundle(
             Uuid bundleId,
-            MarketOperator recipient,
+            ActorId recipient,
             DomainOrigin origin,
             ContentType contentType,
             IEnumerable<Uuid> notificationIds,
@@ -61,7 +61,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Model
         public Uuid BundleId { get; }
         public ProcessId ProcessId { get; }
 
-        public MarketOperator Recipient { get; }
+        public ActorId Recipient { get; }
         public DomainOrigin Origin { get; }
         public ContentType ContentType { get; }
 

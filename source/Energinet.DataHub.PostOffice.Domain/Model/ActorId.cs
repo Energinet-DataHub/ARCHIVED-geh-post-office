@@ -12,12 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Threading.Tasks;
+using System;
 
-namespace Energinet.DataHub.PostOffice.EntryPoint.Operations.HealthCheck
+namespace Energinet.DataHub.PostOffice.Domain.Model
 {
-    public interface ICosmosDatabaseVerifier
+    public record ActorId
     {
-        Task<bool> VerifyAsync(string connectionString, string name);
+        private readonly Guid _id;
+
+        public ActorId(Guid id)
+        {
+            _id = id;
+        }
+
+        // This property can be changed to a Guid once LegacyActor has been removed.
+        public virtual string Value => _id.ToString();
     }
 }

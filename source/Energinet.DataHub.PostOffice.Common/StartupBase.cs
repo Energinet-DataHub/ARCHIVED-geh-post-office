@@ -20,6 +20,7 @@ using Energinet.DataHub.Core.Logging.RequestResponseMiddleware;
 using Energinet.DataHub.PostOffice.Application;
 using Energinet.DataHub.PostOffice.Common.MediatR;
 using Energinet.DataHub.PostOffice.Common.SimpleInjector;
+using Energinet.DataHub.PostOffice.Infrastructure.Model;
 using Energinet.DataHub.PostOffice.Utilities;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
@@ -53,6 +54,8 @@ namespace Energinet.DataHub.PostOffice.Common
         {
             SwitchToSimpleInjector(services);
 
+            var config = services.BuildServiceProvider().GetService<IConfiguration>()!;
+
             services.AddLogging();
             services.AddSimpleInjector(Container, x =>
             {
@@ -61,15 +64,13 @@ namespace Energinet.DataHub.PostOffice.Common
             });
 
             // config
-            var config = services.BuildServiceProvider().GetService<IConfiguration>()!;
             Container.RegisterSingleton(() => config);
             Container.AddDatabaseCosmosConfig();
             Container.AddCosmosClientBuilder();
-            Container.AddServiceBusConfig();
-            Container.AddServiceBus();
             Container.AddAzureBlobStorageConfig();
             Container.AddAzureBlobStorage();
             Container.AddQueueConfiguration();
+            Container.AddDataAvailableServiceBus();
 
             // feature flags
             Container.RegisterSingleton<IFeatureFlags, FeatureFlags>();
@@ -83,6 +84,8 @@ namespace Energinet.DataHub.PostOffice.Common
             Container.AddApplicationServices();
             Container.AddInfrastructureServices();
 
+            Container.Register<LegacyActorIdIdentity>(Lifestyle.Scoped);
+
             Container.Register<ICorrelationContext, CorrelationContext>(Lifestyle.Scoped);
             Container.Register<CorrelationIdMiddleware>(Lifestyle.Scoped);
             Container.Register<FunctionTelemetryScopeMiddleware>(Lifestyle.Scoped);
@@ -94,6 +97,7 @@ namespace Energinet.DataHub.PostOffice.Common
             // Add MediatR
             Container.BuildMediator(new[] { typeof(ApplicationAssemblyReference).Assembly });
 
+            Configure(services);
             Configure(Container);
         }
 
@@ -104,6 +108,8 @@ namespace Energinet.DataHub.PostOffice.Common
         {
             return Container.DisposeAsync();
         }
+
+        protected abstract void Configure(IServiceCollection services);
 
         protected abstract void Configure(Container container);
 

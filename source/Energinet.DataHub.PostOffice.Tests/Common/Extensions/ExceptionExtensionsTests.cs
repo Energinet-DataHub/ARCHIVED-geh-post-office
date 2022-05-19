@@ -195,7 +195,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Extensions
                 LogLevel logLevel,
                 EventId eventId,
                 TState state,
-                Exception exception,
+                Exception? exception,
                 Func<TState, Exception, string> formatter)
             {
                 ++LogCallCount;

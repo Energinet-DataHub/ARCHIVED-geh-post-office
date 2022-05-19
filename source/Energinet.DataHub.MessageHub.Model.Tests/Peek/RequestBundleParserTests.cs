@@ -46,7 +46,7 @@ namespace Energinet.DataHub.MessageHub.Model.Tests.Peek
             Assert.Equal(Guid.Parse("07814976-6567-4E43-8C31-26630FEA3671"), actual.RequestId);
             Assert.Equal("2139E118-96D9-4D68-9094-44C15D8CEACF", actual.DataAvailableNotificationReferenceId);
             Assert.Equal("06FD1AB3-D650-45BC-860E-EE598A3623CA", actual.IdempotencyId);
-            Assert.Equal("some_message_type", actual.MessageType);
+            Assert.Equal("some_message_type", actual.MessageType.Value);
         }
 
         [Fact]

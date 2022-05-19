@@ -12,12 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Threading.Tasks;
-
-namespace Energinet.DataHub.PostOffice.EntryPoint.Operations.HealthCheck
+namespace Energinet.DataHub.PostOffice.Domain.Model
 {
-    public interface IServiceBusQueueVerifier
+    public sealed class Actor
     {
-        Task<bool> VerifyAsync(string connectionString, string name);
+        public Actor(ActorId id, ExternalActorId externalId)
+        {
+            Id = id;
+            ExternalId = externalId;
+        }
+
+        public ActorId Id { get; }
+        public ExternalActorId ExternalId { get; }
     }
 }

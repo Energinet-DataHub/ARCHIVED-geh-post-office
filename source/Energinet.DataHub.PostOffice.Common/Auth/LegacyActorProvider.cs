@@ -22,11 +22,11 @@ using Energinet.DataHub.Core.App.Common.Abstractions.Actor;
 
 namespace Energinet.DataHub.PostOffice.Common.Auth
 {
-    public sealed class ActorProvider : IActorProvider
+    public sealed class LegacyActorProvider : IActorProvider
     {
         private readonly ActorDbConfig _actorDbConfig;
 
-        public ActorProvider(ActorDbConfig actorDbConfig)
+        public LegacyActorProvider(ActorDbConfig actorDbConfig)
         {
             _actorDbConfig = actorDbConfig;
         }

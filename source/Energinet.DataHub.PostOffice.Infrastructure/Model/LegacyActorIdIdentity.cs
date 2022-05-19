@@ -12,17 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Energinet.DataHub.PostOffice.Domain.Model;
 
-namespace Energinet.DataHub.PostOffice.EntryPoint.Operations.HealthCheck
+namespace Energinet.DataHub.PostOffice.Infrastructure.Model
 {
-    public interface IFluentHealth
+    public sealed class LegacyActorIdIdentity
     {
-        Task<IEnumerable<(string Key, bool Result)>> RunAsync();
-        Task<IEnumerable<(string Key, bool Result)>> RunInParallelAsync();
-        IFluentHealth AddCosmosDatabase(string verficationKey, string connectionString, string name);
-        IFluentHealth AddSqlDatabase(string verficationKey, string connectionString);
-        IFluentHealth AddMessageBus(string verficationKey, string connectionString, string queueName);
+        public LegacyActorId? Identity { get; set; }
     }
 }

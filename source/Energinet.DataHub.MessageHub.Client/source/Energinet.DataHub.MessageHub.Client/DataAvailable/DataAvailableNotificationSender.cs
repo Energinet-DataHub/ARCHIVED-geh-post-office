@@ -41,12 +41,18 @@ namespace Energinet.DataHub.MessageHub.Client.DataAvailable
 
             var sender = _messageBusFactory.GetSenderClient(_messageHubConfig.DataAvailableQueue);
 
+#pragma warning disable CS0618
+            var recipient = dataAvailableNotificationDto.Recipient is LegacyActorIdDto legacyActorIdDto
+#pragma warning restore CS0618
+                ? legacyActorIdDto.LegacyValue
+                : dataAvailableNotificationDto.Recipient.Value.ToString();
+
             var contract = new DataAvailableNotificationContract
             {
                 UUID = dataAvailableNotificationDto.Uuid.ToString(),
+                Recipient = recipient,
                 MessageType = dataAvailableNotificationDto.MessageType.Value,
                 Origin = dataAvailableNotificationDto.Origin.ToString(),
-                Recipient = dataAvailableNotificationDto.Recipient.Value,
                 SupportsBundling = dataAvailableNotificationDto.SupportsBundling,
                 RelativeWeight = dataAvailableNotificationDto.RelativeWeight,
                 DocumentType = dataAvailableNotificationDto.DocumentType

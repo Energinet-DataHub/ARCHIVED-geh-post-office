@@ -27,14 +27,19 @@ namespace Energinet.DataHub.MessageHub.Model.Model
         /// to the sub-domain with the request for data to be generated.
         /// </param>
         /// <param name="recipient">
-        /// A Global Location Number identifying the market operator.
+        /// The id of the actor that can consume this data.
+        /// This ActorId is provided by the MarketParticipant domain, and should not be confused with ExternalActorId.
         /// </param>
         /// <param name="messageType">
         /// A unique case-insensitive identification of the type of data.
         /// Data with matching types can be bundled together.
         /// </param>
+        /// <param name="documentType">
+        /// The RSM document type.
+        /// Returned to market operators to help identify the contents of the data.
+        /// </param>
         /// <param name="origin">
-        /// An enum indentifying the source domain.<br />
+        /// An enum identifying the source domain.<br />
         /// - Market operators can request data from a specific origin (domain).<br />
         /// - When data has to be generated, the request will be sent to the specified origin (domain).
         /// </param>
@@ -48,51 +53,37 @@ namespace Energinet.DataHub.MessageHub.Model.Model
         /// The weight and maximum weight are used to ensure
         /// that the resulting bundle stays within the data size limit.
         /// </param>
-        /// <param name="documentType">
-        /// The RSM message type.
-        /// </param>
         public DataAvailableNotificationDto(
             Guid uuid,
-            GlobalLocationNumberDto recipient,
+            ActorIdDto recipient,
             MessageTypeDto messageType,
-            DomainOrigin origin,
-            bool supportsBundling,
-            int relativeWeight,
-            string documentType)
-        {
-            Uuid = uuid;
-            Recipient = recipient;
-            MessageType = messageType;
-            Origin = origin;
-            SupportsBundling = supportsBundling;
-            RelativeWeight = relativeWeight;
-            DocumentType = documentType;
-        }
-
-        public DataAvailableNotificationDto(
-            Guid uuid,
-            GlobalLocationNumberDto recipient,
-            MessageTypeDto messageType,
+            string documentType,
             DomainOrigin origin,
             bool supportsBundling,
             int relativeWeight)
-            : this(
-                uuid,
-                recipient,
-                messageType,
-                origin,
-                supportsBundling,
-                relativeWeight,
-                messageType?.Value ?? string.Empty)
         {
+            if (uuid == Guid.Empty)
+                throw new ArgumentOutOfRangeException(nameof(uuid));
+
+            ArgumentNullException.ThrowIfNull(recipient, nameof(recipient));
+            ArgumentNullException.ThrowIfNull(messageType, nameof(messageType));
+            ArgumentNullException.ThrowIfNull(documentType, nameof(documentType));
+
+            Uuid = uuid;
+            Recipient = recipient;
+            MessageType = messageType;
+            DocumentType = documentType;
+            Origin = origin;
+            SupportsBundling = supportsBundling;
+            RelativeWeight = relativeWeight;
         }
 
         public Guid Uuid { get; }
-        public GlobalLocationNumberDto Recipient { get; }
+        public ActorIdDto Recipient { get; }
         public MessageTypeDto MessageType { get; }
+        public string DocumentType { get; }
         public DomainOrigin Origin { get; }
         public bool SupportsBundling { get; }
         public int RelativeWeight { get; }
-        public string DocumentType { get; }
     }
 }

@@ -12,7 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.MessageHub.Model.Model
+using System;
+
+namespace Energinet.DataHub.PostOffice.Domain.Model
 {
-    public record GlobalLocationNumberDto(string Value);
+    public sealed record LegacyActorId : ActorId
+    {
+        private readonly GlobalLocationNumber _id;
+
+        public LegacyActorId(GlobalLocationNumber id)
+            : base(Guid.Empty)
+        {
+            _id = id;
+        }
+
+        public override string Value => _id.Value;
+    }
 }

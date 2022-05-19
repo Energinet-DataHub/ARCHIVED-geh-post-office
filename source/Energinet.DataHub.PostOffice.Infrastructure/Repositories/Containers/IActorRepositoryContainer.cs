@@ -12,7 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.PostOffice.Domain.Model
+using Microsoft.Azure.Cosmos;
+
+namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers
 {
-    public sealed record MarketOperator(GlobalLocationNumber Gln);
+    /// <summary>
+    /// Provides access to the CosmosDB container to use with ActorRepository.
+    /// </summary>
+    public interface IActorRepositoryContainer
+    {
+        /// <summary>
+        /// The CosmosDB container to use with ActorRepository.
+        /// </summary>
+        public Container Container { get; }
+    }
 }

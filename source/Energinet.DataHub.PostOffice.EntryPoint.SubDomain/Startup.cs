@@ -14,8 +14,11 @@
 
 using System;
 using Azure.Messaging.ServiceBus;
+using Energinet.DataHub.Core.App.Common.Diagnostics.HealthChecks;
+using Energinet.DataHub.Core.App.FunctionApp.Diagnostics.HealthChecks;
 using Energinet.DataHub.PostOffice.Common;
 using Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions;
+using Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Monitor;
 using Energinet.DataHub.PostOffice.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +28,19 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain
 {
     internal sealed class Startup : StartupBase
     {
+        protected override void Configure(IServiceCollection services)
+        {
+            var config = services.BuildServiceProvider().GetService<IConfiguration>() ?? throw new InvalidOperationException("IConfiguration not found");
+            var serviceBusConnectionString = config["SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING"] ?? throw new InvalidOperationException("Health check connection string not found");
+
+            // Health check
+            services
+                .AddHealthChecks()
+                .AddLiveCheck()
+                .AddCosmosDb(config["MESSAGES_DB_CONNECTION_STRING"])
+                .AddAzureServiceBusQueue(serviceBusConnectionString, config["DATAAVAILABLE_QUEUE_NAME"]);
+        }
+
         protected override void Configure(Container container)
         {
             container.RegisterSingleton<IDataAvailableMessageReceiver>(() =>
@@ -33,17 +49,20 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain
                 var batchSize = configuration.GetValue("DATAAVAILABLE_BATCH_SIZE", 10000);
                 var timeoutInMs = configuration.GetValue("DATAAVAILABLE_TIMEOUT_IN_MS", 1000);
 
-                var serviceBusConfig = container.GetInstance<ServiceBusConfig>();
+                var serviceBusConfig = container.GetInstance<DataAvailableServiceBusConfig>();
                 var serviceBusClient = new ServiceBusClient(serviceBusConfig.DataAvailableQueueConnectionString);
                 var receiver = serviceBusClient.CreateReceiver(
                     serviceBusConfig.DataAvailableQueueName,
-                    new ServiceBusReceiverOptions() { PrefetchCount = batchSize });
+                    new ServiceBusReceiverOptions { PrefetchCount = batchSize });
 
                 return new DataAvailableMessageReceiver(receiver, batchSize, TimeSpan.FromMilliseconds(timeoutInMs));
             });
 
             container.Register<DataAvailableTimerTrigger>(Lifestyle.Scoped);
-            container.Register<OverlapTestTimerTrigger>(Lifestyle.Scoped);
+
+            // health check
+            container.Register<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>(Lifestyle.Scoped);
+            container.Register<HealthCheckEndpoint>(Lifestyle.Scoped);
         }
     }
 }

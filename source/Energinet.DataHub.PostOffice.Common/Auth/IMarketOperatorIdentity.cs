@@ -25,14 +25,14 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
         bool HasIdentity { get; }
 
         /// <summary>
-        /// The GLN of the market operator, or an exception if the identity is unassigned.
+        /// The id of the market operator, or an exception if the identity is unassigned.
         /// </summary>
-        string Gln { get; }
+        string ActorId { get; }
 
         /// <summary>
         /// Used by infrastructure to assign the identity.
         /// </summary>
-        /// <param name="gln">The GLN to assign to the identity.</param>
-        internal void AssignGln(string gln);
+        /// <param name="actorId">The id to assign to the identity.</param>
+        internal void AssignId(string actorId);
     }
 }

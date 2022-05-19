@@ -28,7 +28,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Repositories
         /// <param name="recipient">The market operator to retrieve the next bundle for.</param>
         /// <param name="domains">The domains the retrieved bundle must belong to.</param>
         /// <returns>The next unacknowledged bundle; or null, if none is available.</returns>
-        Task<Bundle?> GetNextUnacknowledgedAsync(MarketOperator recipient, params DomainOrigin[] domains);
+        Task<Bundle?> GetNextUnacknowledgedAsync(ActorId recipient, params DomainOrigin[] domains);
 
         /// <summary>
         /// Adds the specified bundle as the next unacknowledged bundle,
@@ -44,7 +44,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Repositories
         /// </summary>
         /// <param name="recipient">The market operator owning the bundle.</param>
         /// <param name="bundleId">The bundle id to acknowledge.</param>
-        Task AcknowledgeAsync(MarketOperator recipient, Uuid bundleId);
+        Task AcknowledgeAsync(ActorId recipient, Uuid bundleId);
 
         /// <summary>
         /// Saves the bundle.

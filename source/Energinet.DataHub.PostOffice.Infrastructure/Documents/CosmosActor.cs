@@ -12,12 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Threading.Tasks;
+namespace Energinet.DataHub.PostOffice.Infrastructure.Documents;
 
-namespace Energinet.DataHub.PostOffice.EntryPoint.Operations.HealthCheck
+internal sealed record CosmosActor
 {
-    public interface ISqlDatabaseVerifier
-    {
-        Task<bool> VerifyAsync(string connectionString);
-    }
+    public string Id { get; init; } = default!;
+    public string PartitionKey { get; init; } = default!;
+    public string ExternalId { get; init; } = default!;
 }

@@ -80,6 +80,10 @@ namespace Energinet.DataHub.PostOffice.Tests.Common
         {
             public Action? ConfigureContainer { get; init; }
 
+            protected override void Configure(IServiceCollection services)
+            {
+            }
+
             protected override void Configure(Container container)
             {
                 AddMockConfiguration(container);
@@ -95,7 +99,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Common
                 container.RegisterSingleton<ICosmosBulkClient>(() => new CosmosClientProvider(new MockedCosmosClient()));
                 container.RegisterSingleton<ICosmosClient>(() => new CosmosClientProvider(new MockedCosmosClient()));
                 container.RegisterSingleton(() => new StorageConfig("fake_value"));
-                container.RegisterSingleton(() => new ServiceBusConfig("fake_value", "fake_value", "fake_value"));
+                container.RegisterSingleton(() => new DataAvailableServiceBusConfig("fake_value", "fake_value"));
                 container.RegisterSingleton(() => new CosmosDatabaseConfig("fake_value", "fake_value"));
                 container.RegisterSingleton<IServiceBusClientFactory>(() => new MockedServiceBusClientFactory(new MockedServiceBusClient()));
                 container.RegisterSingleton<IStorageServiceClientFactory>(() => new MockedStorageServiceClientFactory());

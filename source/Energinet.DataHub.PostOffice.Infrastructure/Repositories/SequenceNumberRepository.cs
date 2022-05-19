@@ -27,16 +27,12 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
     public sealed class SequenceNumberRepository : ISequenceNumberRepository
     {
         private readonly IDataAvailableNotificationRepositoryContainer _repositoryContainer;
-        private readonly ILogger<SequenceNumberRepository> _logger;
 
         private SequenceNumber? _sequenceNumberInScope;
 
-        public SequenceNumberRepository(
-            IDataAvailableNotificationRepositoryContainer repositoryContainer,
-            ILogger<SequenceNumberRepository> logger)
+        public SequenceNumberRepository(IDataAvailableNotificationRepositoryContainer repositoryContainer)
         {
             _repositoryContainer = repositoryContainer;
-            _logger = logger;
         }
 
         public async Task<SequenceNumber> GetMaximumSequenceNumberAsync()
@@ -60,23 +56,6 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             catch (CosmosException e) when (e.StatusCode == HttpStatusCode.NotFound)
             {
                 return new SequenceNumber(0);
-            }
-        }
-
-        public async Task LogMaximumSequenceNumberAsync(SequenceNumber number)
-        {
-            ArgumentNullException.ThrowIfNull(number, nameof(number));
-
-            try
-            {
-                await _repositoryContainer
-                    .Cabinet
-                    .CreateItemAsync(new CosmosLockOverlap(number.Value))
-                    .ConfigureAwait(false);
-            }
-            catch (CosmosException ex)
-            {
-                _logger.LogError(ex, "V3 Sequence Number {SequenceNumber} requested twice.", number.Value);
             }
         }
 

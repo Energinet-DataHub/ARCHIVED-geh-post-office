@@ -36,9 +36,16 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
             ArgumentNullException.ThrowIfNull(context, nameof(context));
             ArgumentNullException.ThrowIfNull(next, nameof(next));
 
-            if (!_identity.HasIdentity && !string.IsNullOrWhiteSpace(_actorContext.CurrentActor?.Identifier))
+            if (!_identity.HasIdentity && _actorContext.CurrentActor != null)
             {
-                _identity.AssignGln(_actorContext.CurrentActor.Identifier);
+                if (!string.IsNullOrWhiteSpace(_actorContext.CurrentActor.Identifier))
+                {
+                    _identity.AssignId(_actorContext.CurrentActor.Identifier);
+                }
+                else
+                {
+                    _identity.AssignId(_actorContext.CurrentActor.ActorId.ToString());
+                }
             }
 
             return next(context);
