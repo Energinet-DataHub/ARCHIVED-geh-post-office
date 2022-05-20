@@ -34,16 +34,15 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.Operations
             configuration.GetSetting(Settings.MarketParticipantConnectionString);
 
             var cosmosDbConnectionString = configuration.GetSetting(Settings.MessagesDbConnectionString);
-            var serviceBusConnectionString = configuration.GetSetting(Settings.ServiceBusHealthCheckConnectionString);
-            var marketParticipantTopicName = configuration.GetSetting(Settings.MarketParticipantTopicName);
-            var marketParticipantSubscriptionName = configuration.GetSetting(Settings.MarketParticipantSubscriptionName);
-
+            //var serviceBusConnectionString = configuration.GetSetting(Settings.ServiceBusHealthCheckConnectionString);
+            //var marketParticipantTopicName = configuration.GetSetting(Settings.MarketParticipantTopicName);
+            //var marketParticipantSubscriptionName = configuration.GetSetting(Settings.MarketParticipantSubscriptionName);
             // Health check
             services
                 .AddHealthChecks()
                 .AddLiveCheck()
                 .AddCosmosDb(cosmosDbConnectionString)
-                .AddAzureServiceBusSubscription(serviceBusConnectionString, marketParticipantTopicName, marketParticipantSubscriptionName);
+                //.AddAzureServiceBusSubscription(serviceBusConnectionString, marketParticipantTopicName, marketParticipantSubscriptionName);
         }
 
         protected override void Configure(IConfiguration configuration, Container container)
