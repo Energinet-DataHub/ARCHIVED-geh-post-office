@@ -130,5 +130,37 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.Operations
                 mediator.Verify(m => m.Send(It.IsAny<DeleteActorCommand>(), CancellationToken.None), Times.Once);
             }
         }
+
+        [Fact]
+        public async Task RunAsync_ActorUpdatedNoExternalId_DoesNothing()
+        {
+            // Arrange
+            var logger = new Mock<ILogger<MarketParticipantIngestionFunction>>().Object;
+            var mediator = new Mock<IMediator>();
+            var parser = new SharedIntegrationEventParser();
+
+            var target = new MarketParticipantIngestionFunction(logger, mediator.Object, parser);
+
+            var message = new ActorUpdatedIntegrationEvent(
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                null,
+                "fake_value",
+                ActorStatus.Active,
+                Enumerable.Empty<BusinessRoleCode>(),
+                Enumerable.Empty<EicFunction>(),
+                Enumerable.Empty<Guid>(),
+                Enumerable.Empty<string>());
+
+            var bytes = new ActorUpdatedIntegrationEventParser().Parse(message);
+
+            // Act
+            await target.RunAsync(bytes).ConfigureAwait(false);
+
+            // Assert
+            mediator.Verify(m => m.Send(It.IsAny<UpdateActorCommand>(), CancellationToken.None), Times.Never);
+            mediator.Verify(m => m.Send(It.IsAny<DeleteActorCommand>(), CancellationToken.None), Times.Never);
+        }
     }
 }
