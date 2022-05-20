@@ -30,6 +30,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
 #pragma warning disable CA2000 // Dispose objects before losing scope
             var startup = new Startup();
 #pragma warning restore CA2000 // Dispose objects before losing scope
+
             await using (startup.ConfigureAwait(false))
             {
                 var host = new HostBuilder()
@@ -43,7 +44,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
                         options.UseMiddleware<JwtAuthenticationMiddleware>();
                         options.UseMiddleware<RequestResponseLoggingMiddleware>();
                     })
-                    .ConfigureServices(startup.ConfigureServices)
+                    .ConfigureServices((context, services) => startup.ConfigureServices(context.Configuration, services))
                     .Build()
                     .UseSimpleInjector(startup.Container);
 

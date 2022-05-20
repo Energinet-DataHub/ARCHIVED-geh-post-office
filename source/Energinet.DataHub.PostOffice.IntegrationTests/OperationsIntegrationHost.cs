@@ -13,7 +13,9 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Energinet.DataHub.PostOffice.Common.Configuration;
 using Energinet.DataHub.PostOffice.EntryPoint.Operations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,12 +37,15 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
         {
             var host = new OperationsIntegrationHost();
 
+            var configuration = BuildConfig();
             var serviceCollection = new ServiceCollection();
-            serviceCollection.AddSingleton<IConfiguration>(BuildConfig());
-            host._startup.ConfigureServices(serviceCollection);
-            serviceCollection.BuildServiceProvider().UseSimpleInjector(host._startup.Container, o => o.Container.Options.EnableAutoVerification = false);
-            host._startup.Container.Options.AllowOverridingRegistrations = true;
+            serviceCollection.AddSingleton(configuration);
+            host._startup.ConfigureServices(configuration, serviceCollection);
+            serviceCollection
+                .BuildServiceProvider()
+                .UseSimpleInjector(host._startup.Container, o => o.Container.Options.EnableAutoVerification = false);
 
+            host._startup.Container.Options.AllowOverridingRegistrations = true;
             return Task.FromResult(host);
         }
 
@@ -49,16 +54,25 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
             return AsyncScopedLifestyle.BeginScope(_startup.Container);
         }
 
-        public async ValueTask DisposeAsync()
+        public ValueTask DisposeAsync()
         {
-            await _startup.DisposeAsync().ConfigureAwait(false);
+            return _startup.DisposeAsync();
         }
 
-        private static IConfigurationRoot BuildConfig()
+        private static IConfiguration BuildConfig()
         {
-            Environment.SetEnvironmentVariable("SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING", "SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING");
+            KeyValuePair<string, string>[] keyValuePairs =
+            {
+                new(Settings.MarketParticipantConnectionString.Key, "fake_value"),
+                new(Settings.MarketParticipantTopicName.Key, "fake_value"),
+                new(Settings.MarketParticipantSubscriptionName.Key, "fake_value"),
+                new(Settings.ServiceBusHealthCheckConnectionString.Key, "fake_value")
+            };
 
-            return new ConfigurationBuilder().AddEnvironmentVariables().Build();
+            return new ConfigurationBuilder()
+                .AddInMemoryCollection(keyValuePairs)
+                .AddEnvironmentVariables()
+                .Build();
         }
     }
 }
