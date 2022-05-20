@@ -41,8 +41,8 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.Operations
             services
                 .AddHealthChecks()
                 .AddLiveCheck()
-                .AddCosmosDb(cosmosDbConnectionString)
-                //.AddAzureServiceBusSubscription(serviceBusConnectionString, marketParticipantTopicName, marketParticipantSubscriptionName);
+                .AddCosmosDb(cosmosDbConnectionString);
+            //.AddAzureServiceBusSubscription(serviceBusConnectionString, marketParticipantTopicName, marketParticipantSubscriptionName);
         }
 
         protected override void Configure(IConfiguration configuration, Container container)
