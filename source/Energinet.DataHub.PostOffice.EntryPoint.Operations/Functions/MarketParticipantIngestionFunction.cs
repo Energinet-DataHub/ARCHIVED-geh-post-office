@@ -54,9 +54,13 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.Operations.Functions
             var integrationEvent = _sharedIntegrationEventParser.Parse(message);
             if (integrationEvent is ActorUpdatedIntegrationEvent actorUpdated)
             {
-                if (actorUpdated.Status is ActorStatus.Active or ActorStatus.Passive)
+                if (actorUpdated.Status is ActorStatus.Active or ActorStatus.Passive &&
+                    actorUpdated.ExternalActorId.HasValue)
                 {
-                    var command = new UpdateActorCommand(actorUpdated.ActorId, actorUpdated.ExternalActorId);
+                    var command = new UpdateActorCommand(
+                        actorUpdated.ActorId,
+                        actorUpdated.ExternalActorId.Value);
+
                     await _mediator.Send(command).ConfigureAwait(false);
                 }
                 else
