@@ -13,6 +13,8 @@
 // limitations under the License.
 
 using Energinet.DataHub.MessageHub.Core;
+using Energinet.DataHub.PostOffice.Common.Configuration;
+using Energinet.DataHub.PostOffice.Common.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
@@ -26,45 +28,28 @@ namespace Energinet.DataHub.PostOffice.Common
             container.RegisterSingleton(() =>
             {
                 var configuration = container.GetService<IConfiguration>();
-                var timeSeriesQueue = configuration.GetValue("TIMESERIES_QUEUE_NAME", "timeseries");
-                var timeSeriesReplyQueue = configuration.GetValue("TIMESERIES_REPLY_QUEUE_NAME", "timeseries-reply");
-                var chargesQueue = configuration.GetValue("CHARGES_QUEUE_NAME", "charges");
-                var chargesReplyQueue = configuration.GetValue("CHARGES_REPLY_QUEUE_NAME", "charges-reply");
-                var marketRolesQueue = configuration.GetValue("MARKETROLES_QUEUE_NAME", "marketroles");
-                var marketRolesReplyQueue = configuration.GetValue("MARKETROLES_REPLY_QUEUE_NAME", "marketroles-reply");
-                var meteringPointsQueue = configuration.GetValue("METERINGPOINTS_QUEUE_NAME", "meteringpoints");
-                var meteringPointsReplyQueue = configuration.GetValue("METERINGPOINTS_REPLY_QUEUE_NAME", "meteringpoints-reply");
-                var aggregationsQueue = configuration.GetValue("AGGREGATIONS_QUEUE_NAME", "aggregations");
-                var aggregationsReplyQueue = configuration.GetValue("AGGREGATIONS_REPLY_QUEUE_NAME", "aggregations-reply");
-
                 return new PeekRequestConfig(
-                    timeSeriesQueue,
-                    timeSeriesReplyQueue,
-                    chargesQueue,
-                    chargesReplyQueue,
-                    marketRolesQueue,
-                    marketRolesReplyQueue,
-                    meteringPointsQueue,
-                    meteringPointsReplyQueue,
-                    aggregationsQueue,
-                    aggregationsReplyQueue);
+                    configuration.GetSetting(Settings.TimeSeriesQueue),
+                    configuration.GetSetting(Settings.TimeSeriesReplyQueue),
+                    configuration.GetSetting(Settings.ChargesQueue),
+                    configuration.GetSetting(Settings.ChargesReplyQueue),
+                    configuration.GetSetting(Settings.MarketRolesQueue),
+                    configuration.GetSetting(Settings.MarketRolesReplyQueue),
+                    configuration.GetSetting(Settings.MeteringPointsQueue),
+                    configuration.GetSetting(Settings.MeteringPointsReplyQueue),
+                    configuration.GetSetting(Settings.AggregationsQueue),
+                    configuration.GetSetting(Settings.AggregationsReplyQueue));
             });
 
             container.RegisterSingleton(() =>
             {
                 var configuration = container.GetService<IConfiguration>();
-                var timeSeriesDequeueQueue = configuration.GetValue("TIMESERIES_DEQUEUE_QUEUE_NAME", "timeseries-dequeue");
-                var chargesDequeueQueue = configuration.GetValue("CHARGES_DEQUEUE_QUEUE_NAME", "charges-dequeue");
-                var marketRolesDequeueQueue = configuration.GetValue("MARKETROLES_DEQUEUE_QUEUE_NAME", "marketroles-dequeue");
-                var meteringPointsDequeueQueue = configuration.GetValue("METERINGPOINTS_DEQUEUE_QUEUE_NAME", "meteringpoints-dequeue");
-                var aggregationsDequeueQueue = configuration.GetValue("AGGREGATIONS_DEQUEUE_QUEUE_NAME", "aggregations-dequeue");
-
                 return new DequeueConfig(
-                    timeSeriesDequeueQueue,
-                    chargesDequeueQueue,
-                    marketRolesDequeueQueue,
-                    meteringPointsDequeueQueue,
-                    aggregationsDequeueQueue);
+                    configuration.GetSetting(Settings.TimeSeriesDequeueQueue),
+                    configuration.GetSetting(Settings.ChargesDequeueQueue),
+                    configuration.GetSetting(Settings.MarketRolesDequeueQueue),
+                    configuration.GetSetting(Settings.MeteringPointsDequeueQueue),
+                    configuration.GetSetting(Settings.AggregationsDequeueQueue));
             });
         }
     }

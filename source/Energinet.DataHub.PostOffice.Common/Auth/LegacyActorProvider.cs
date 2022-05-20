@@ -19,16 +19,19 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Threading.Tasks;
 using Energinet.DataHub.Core.App.Common.Abstractions.Actor;
+using Energinet.DataHub.PostOffice.Common.Configuration;
+using Energinet.DataHub.PostOffice.Common.Extensions;
+using Microsoft.Extensions.Configuration;
 
 namespace Energinet.DataHub.PostOffice.Common.Auth
 {
     public sealed class LegacyActorProvider : IActorProvider
     {
-        private readonly ActorDbConfig _actorDbConfig;
+        private readonly IConfiguration _configuration;
 
-        public LegacyActorProvider(ActorDbConfig actorDbConfig)
+        public LegacyActorProvider(IConfiguration configuration)
         {
-            _actorDbConfig = actorDbConfig;
+            _configuration = configuration;
         }
 
         [SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "Issue: https://github.com/dotnet/roslyn-analyzers/issues/5712")]
@@ -42,7 +45,9 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
                         FROM  [dbo].[ActorInfo]
                         WHERE Id = @" + param;
 
-            await using var connection = new SqlConnection(_actorDbConfig.ConnectionString);
+            var legacyConnectionString = _configuration.GetSetting(Settings.SqlActorDbConnectionString);
+
+            await using var connection = new SqlConnection(legacyConnectionString);
             await connection.OpenAsync().ConfigureAwait(false);
 
             await using var command = new SqlCommand(query, connection)

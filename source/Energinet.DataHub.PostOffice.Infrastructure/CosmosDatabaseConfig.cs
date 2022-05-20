@@ -12,22 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-
 namespace Energinet.DataHub.PostOffice.Infrastructure
 {
-    public class CosmosDatabaseConfig
+    public sealed class CosmosDatabaseConfig
     {
-        public CosmosDatabaseConfig(string connectionsString, string messageHubDatabaseId)
+        public CosmosDatabaseConfig(string messageHubDatabaseId)
         {
-            ArgumentNullException.ThrowIfNull(connectionsString, nameof(connectionsString));
-            ArgumentNullException.ThrowIfNull(messageHubDatabaseId, nameof(messageHubDatabaseId));
-
-            ConnectionsString = connectionsString;
             MessageHubDatabaseId = messageHubDatabaseId;
         }
 
-        public string ConnectionsString { get; }
         public string MessageHubDatabaseId { get; }
     }
 }

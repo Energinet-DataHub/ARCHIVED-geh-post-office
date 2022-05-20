@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Diagnostics.CodeAnalysis;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers.CosmosClients;
 using Microsoft.Azure.Cosmos;
 
@@ -20,15 +19,17 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers
 {
     public class BundleRepositoryContainer : IBundleRepositoryContainer
     {
-        private readonly CosmosClient _client;
+        private readonly ICosmosClient _cosmosClient;
         private readonly CosmosDatabaseConfig _cosmosDatabaseConfig;
 
-        public BundleRepositoryContainer([NotNull] ICosmosClient clientProvider, CosmosDatabaseConfig cosmosDatabaseConfig)
+        public BundleRepositoryContainer(
+            ICosmosClient cosmosCosmosClient,
+            CosmosDatabaseConfig cosmosDatabaseConfig)
         {
-            _client = clientProvider.Client;
+            _cosmosClient = cosmosCosmosClient;
             _cosmosDatabaseConfig = cosmosDatabaseConfig;
         }
 
-        public Container Container => _client.GetContainer(_cosmosDatabaseConfig.MessageHubDatabaseId, "bundle");
+        public Container Container => _cosmosClient.Client.GetContainer(_cosmosDatabaseConfig.MessageHubDatabaseId, "bundle");
     }
 }
