@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Diagnostics.CodeAnalysis;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers.CosmosClients;
 using Microsoft.Azure.Cosmos;
 
@@ -20,17 +19,19 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers
 {
     public sealed class DataAvailableNotificationRepositoryContainer : IDataAvailableNotificationRepositoryContainer
     {
-        private readonly CosmosClient _client;
+        private readonly ICosmosBulkClient _cosmosBulkClient;
         private readonly CosmosDatabaseConfig _cosmosDatabaseConfig;
 
-        public DataAvailableNotificationRepositoryContainer([NotNull] ICosmosBulkClient clientProvider, CosmosDatabaseConfig cosmosDatabaseConfig)
+        public DataAvailableNotificationRepositoryContainer(
+            ICosmosBulkClient cosmosBulkClient,
+            CosmosDatabaseConfig cosmosDatabaseConfig)
         {
-            _client = clientProvider.Client;
+            _cosmosBulkClient = cosmosBulkClient;
             _cosmosDatabaseConfig = cosmosDatabaseConfig;
         }
 
-        public Container Catalog => _client.GetContainer(_cosmosDatabaseConfig.MessageHubDatabaseId, "catalog");
-        public Container Cabinet => _client.GetContainer(_cosmosDatabaseConfig.MessageHubDatabaseId, "cabinet");
-        public Container Idempotency => _client.GetContainer(_cosmosDatabaseConfig.MessageHubDatabaseId, "idempotency");
+        public Container Catalog => _cosmosBulkClient.Client.GetContainer(_cosmosDatabaseConfig.MessageHubDatabaseId, "catalog");
+        public Container Cabinet => _cosmosBulkClient.Client.GetContainer(_cosmosDatabaseConfig.MessageHubDatabaseId, "cabinet");
+        public Container Idempotency => _cosmosBulkClient.Client.GetContainer(_cosmosDatabaseConfig.MessageHubDatabaseId, "idempotency");
     }
 }

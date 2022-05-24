@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 using Energinet.DataHub.MarketParticipant.Integration.Model.Dtos;
 using Energinet.DataHub.MarketParticipant.Integration.Model.Parsers;
 using Energinet.DataHub.PostOffice.Application.Commands;
-using Energinet.DataHub.PostOffice.Infrastructure;
+using Energinet.DataHub.PostOffice.Common.Configuration;
 using MediatR;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
@@ -44,9 +44,9 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.Operations.Functions
         [Function(FunctionName)]
         public async Task RunAsync(
             [ServiceBusTrigger(
-                "%" + MarketParticipantServiceBusConfig.MarketParticipantTopicNameKey + "%",
-                "%" + MarketParticipantServiceBusConfig.MarketParticipantSubscriptionNameKey + "%",
-                Connection = MarketParticipantServiceBusConfig.MarketParticipantConnectionStringKey)]
+                "%" + Settings.MarketParticipantTopicNameKey + "%",
+                "%" + Settings.MarketParticipantSubscriptionNameKey + "%",
+                Connection = Settings.MarketParticipantConnectionStringKey)]
             byte[] message)
         {
             _logger.LogInformation("Begins processing MarketParticipantSyncFunction.");
@@ -54,9 +54,13 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.Operations.Functions
             var integrationEvent = _sharedIntegrationEventParser.Parse(message);
             if (integrationEvent is ActorUpdatedIntegrationEvent actorUpdated)
             {
-                if (actorUpdated.Status is ActorStatus.Active or ActorStatus.Passive)
+                if (actorUpdated.Status is ActorStatus.Active or ActorStatus.Passive &&
+                    actorUpdated.ExternalActorId.HasValue)
                 {
-                    var command = new UpdateActorCommand(actorUpdated.ActorId, actorUpdated.ExternalActorId);
+                    var command = new UpdateActorCommand(
+                        actorUpdated.ActorId,
+                        actorUpdated.ExternalActorId.Value);
+
                     await _mediator.Send(command).ConfigureAwait(false);
                 }
                 else

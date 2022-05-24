@@ -16,9 +16,11 @@ using Energinet.DataHub.Core.App.Common.Diagnostics.HealthChecks;
 using Energinet.DataHub.Core.App.FunctionApp.Diagnostics.HealthChecks;
 using Energinet.DataHub.MarketParticipant.Integration.Model.Parsers;
 using Energinet.DataHub.PostOffice.Common;
-using Energinet.DataHub.PostOffice.Common.Auth;
+using Energinet.DataHub.PostOffice.Common.Configuration;
+using Energinet.DataHub.PostOffice.Common.Extensions;
 using Energinet.DataHub.PostOffice.EntryPoint.Operations.Functions;
 using Energinet.DataHub.PostOffice.EntryPoint.Operations.Monitor;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
 
@@ -26,19 +28,25 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.Operations
 {
     internal sealed class Startup : StartupBase
     {
-        protected override void Configure(IServiceCollection services)
+        protected override void Configure(IConfiguration configuration, IServiceCollection services)
         {
+            // This is called to ensure the property is filled out. Actual value is read by Azure SDK.
+            configuration.GetSetting(Settings.MarketParticipantConnectionString);
+
+            var cosmosDbConnectionString = configuration.GetSetting(Settings.MessagesDbConnectionString);
+            //var serviceBusConnectionString = configuration.GetSetting(Settings.ServiceBusHealthCheckConnectionString);
+            //var marketParticipantTopicName = configuration.GetSetting(Settings.MarketParticipantTopicName);
+            //var marketParticipantSubscriptionName = configuration.GetSetting(Settings.MarketParticipantSubscriptionName);
             // Health check
             services
                 .AddHealthChecks()
-                .AddLiveCheck();
+                .AddLiveCheck()
+                .AddCosmosDb(cosmosDbConnectionString);
+            //.AddAzureServiceBusSubscription(serviceBusConnectionString, marketParticipantTopicName, marketParticipantSubscriptionName);
         }
 
-        protected override void Configure(Container container)
+        protected override void Configure(IConfiguration configuration, Container container)
         {
-            container.AddMarketParticipantConfig();
-            container.AddMarketParticipantServiceBus();
-
             container.Register<ISharedIntegrationEventParser, SharedIntegrationEventParser>(Lifestyle.Singleton);
 
             container.Register<MarketParticipantIngestionFunction>(Lifestyle.Scoped);

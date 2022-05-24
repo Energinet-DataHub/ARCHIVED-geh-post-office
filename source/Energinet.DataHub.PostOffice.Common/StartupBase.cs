@@ -16,7 +16,6 @@ using System;
 using System.Threading.Tasks;
 using Energinet.DataHub.Core.App.FunctionApp.Middleware;
 using Energinet.DataHub.Core.App.FunctionApp.Middleware.CorrelationId;
-using Energinet.DataHub.Core.Logging.RequestResponseMiddleware;
 using Energinet.DataHub.PostOffice.Application;
 using Energinet.DataHub.PostOffice.Common.MediatR;
 using Energinet.DataHub.PostOffice.Common.SimpleInjector;
@@ -50,11 +49,9 @@ namespace Energinet.DataHub.PostOffice.Common
             GC.SuppressFinalize(this);
         }
 
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
             SwitchToSimpleInjector(services);
-
-            var config = services.BuildServiceProvider().GetService<IConfiguration>()!;
 
             services.AddLogging();
             services.AddSimpleInjector(Container, x =>
@@ -64,7 +61,6 @@ namespace Energinet.DataHub.PostOffice.Common
             });
 
             // config
-            Container.RegisterSingleton(() => config);
             Container.AddDatabaseCosmosConfig();
             Container.AddCosmosClientBuilder();
             Container.AddAzureBlobStorageConfig();
@@ -76,7 +72,7 @@ namespace Energinet.DataHub.PostOffice.Common
             Container.RegisterSingleton<IFeatureFlags, FeatureFlags>();
 
             // Add Application insights telemetry
-            services.SetupApplicationInsightTelemetry(config);
+            services.SetupApplicationInsightTelemetry(configuration);
 
             // services
             Container.AddRepositories();
@@ -90,15 +86,11 @@ namespace Energinet.DataHub.PostOffice.Common
             Container.Register<CorrelationIdMiddleware>(Lifestyle.Scoped);
             Container.Register<FunctionTelemetryScopeMiddleware>(Lifestyle.Scoped);
 
-            // Add middleware logging
-            Container.AddRequestResponseLoggingStorage();
-            Container.Register<RequestResponseLoggingMiddleware>(Lifestyle.Scoped);
-
             // Add MediatR
             Container.BuildMediator(new[] { typeof(ApplicationAssemblyReference).Assembly });
 
-            Configure(services);
-            Configure(Container);
+            Configure(configuration, services);
+            Configure(configuration, Container);
         }
 
         // Recommended convention is DisposeAsyncCore, Core being last.
@@ -109,9 +101,9 @@ namespace Energinet.DataHub.PostOffice.Common
             return Container.DisposeAsync();
         }
 
-        protected abstract void Configure(IServiceCollection services);
+        protected abstract void Configure(IConfiguration configuration, IServiceCollection services);
 
-        protected abstract void Configure(Container container);
+        protected abstract void Configure(IConfiguration configuration, Container container);
 
         private static void SwitchToSimpleInjector(IServiceCollection services)
         {

@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Energinet.DataHub.PostOffice.Common.Configuration;
+using Energinet.DataHub.PostOffice.Common.Extensions;
+using Microsoft.ApplicationInsights.WorkerService;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,12 +24,12 @@ namespace Energinet.DataHub.PostOffice.Common
     {
         public static void SetupApplicationInsightTelemetry(this IServiceCollection services, IConfiguration configuration)
         {
-            var appInsightsInstrumentationKey = configuration["APPINSIGHTS_INSTRUMENTATIONKEY"] ?? string.Empty;
+            var instrumentationKey = configuration.GetOptionalSetting(Settings.AppInsightsInstrumentationKey);
 
-            var appInsightsServiceOptions = new Microsoft.ApplicationInsights.WorkerService.ApplicationInsightsServiceOptions
+            var appInsightsServiceOptions = new ApplicationInsightsServiceOptions
             {
-                InstrumentationKey = appInsightsInstrumentationKey,
-                EnableDependencyTrackingTelemetryModule = !string.IsNullOrWhiteSpace(appInsightsInstrumentationKey)
+                InstrumentationKey = instrumentationKey,
+                EnableDependencyTrackingTelemetryModule = !string.IsNullOrWhiteSpace(instrumentationKey)
             };
 
             services.AddApplicationInsightsTelemetryWorkerService(appInsightsServiceOptions);
