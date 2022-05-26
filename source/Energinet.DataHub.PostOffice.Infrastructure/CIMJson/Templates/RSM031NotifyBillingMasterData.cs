@@ -13,36 +13,41 @@
 // limitations under the License.
 
 using System;
-using TestJSonConversion.SimpleCimJson.Elements;
-using TestJSonConversion.SimpleCimJson.Factories;
-using TestJSonConversion.SimpleCimJson.Reader;
+using System.Diagnostics.CodeAnalysis;
+using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Elements;
+using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Factories;
+using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Reader;
 
-namespace TestJSonConversion.SimpleCimJson.Templates;
+namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Templates;
 
 internal class RSM031NotifyBillingMasterData : BaseTemplate
 {
     protected override void Convert()
     {
-        _jsonWriter.WriteStartObject();
-        while (_reader.Advance())
+        JsonWriter().WriteStartObject();
+        while (CimReader().Advance())
         {
-            if (!_reader.CurrentNodeName.Equals(ElementNames.RootElement,
+            if (!CimReader().CurrentNodeName.Equals(
+                    ElementNames.RootElement,
                     StringComparison.OrdinalIgnoreCase)) continue;
-            if (_reader.CurrentNodeType == NodeType.EndElement) continue;
-                ReadNotifyBillingMasterData();
+
+            if (CimReader().CurrentNodeType == NodeType.EndElement) continue;
+
+            ReadNotifyBillingMasterData();
         }
-        _jsonWriter.WriteEndObject();
+
+        JsonWriter().WriteEndObject();
     }
 
     private void ReadNotifyBillingMasterData()
     {
         var rootElement = CimJsonObjectPools.GetObjectElement(ElementNames.RootElement, 10);
-        var mkActivityArray = new CimArrayElement( ElementNames.Root.MktActivityRecordElement, 5);
-        rootElement.AddElement(9, mkActivityArray);
+        var activityArray = CimJsonObjectPools.GetArrayElement(ElementNames.Root.MktActivityRecordElement, 5);
+        rootElement.AddElement(9, activityArray);
         do
         {
-            if (_reader.CurrentNodeType != NodeType.StartElement ) continue;
-            switch (_reader.CurrentNodeName)
+            if (CimReader().CurrentNodeType != NodeType.StartElement) continue;
+            switch (CimReader().CurrentNodeName)
             {
                 case ElementNames.Root.MRID:
                     rootElement.AddElement(0, WriteAsString(ElementNames.Root.MRID));
@@ -71,58 +76,60 @@ internal class RSM031NotifyBillingMasterData : BaseTemplate
                 case ElementNames.Root.CreatedDateTime:
                     rootElement.AddElement(8,  WriteAsString(ElementNames.Root.CreatedDateTime));
                     break;
-                 case ElementNames.Root.MktActivityRecordElement:
-                     ReadMktActivityRecord(mkActivityArray);
-                     break;
+                case ElementNames.Root.MktActivityRecordElement:
+                    ReadMktActivityRecord(activityArray);
+                    break;
             }
-        } while (_reader.AdvanceUntilClosed(ElementNames.RootElement));
-        rootElement.WriteJson(_jsonWriter);
-        rootElement.ReturnToPool();
+        }
+        while (CimReader().AdvanceUntilClosed(ElementNames.RootElement));
+        rootElement.WriteJson(JsonWriter());
     }
 
-    private void ReadMktActivityRecord(CimArrayElement mkActivityArray)
+    private void ReadMktActivityRecord(CimArrayElement activityArray)
     {
-        mkActivityArray.BeginNewArrayElement();
+        activityArray.BeginNewArrayElement();
         do
         {
-            if (_reader.CurrentNodeType != NodeType.StartElement ) continue;
-            switch (_reader.CurrentNodeName)
+            if (CimReader().CurrentNodeType != NodeType.StartElement) continue;
+            switch (CimReader().CurrentNodeName)
             {
                 case ElementNames.Root.MktActivityRecord.MRID:
-                    mkActivityArray.AddElement(0, WriteAsString(ElementNames.Root.MktActivityRecord.MRID));
+                    activityArray.AddElement(0, WriteAsString(ElementNames.Root.MktActivityRecord.MRID));
                     break;
                 case ElementNames.Root.MktActivityRecord.MarketEvaluationPointmRID:
-                    mkActivityArray.AddElement(1, WriteObjectWithCodingSchemeElement(ElementNames.Root.MktActivityRecord.MarketEvaluationPointmRID));
+                    activityArray.AddElement(1, WriteObjectWithCodingSchemeElement(ElementNames.Root.MktActivityRecord.MarketEvaluationPointmRID));
                     break;
                 case ElementNames.Root.MktActivityRecord.BusinessProcessReferenceMktActivityRecordmRID:
-                    mkActivityArray.AddElement(2, WriteAsString(ElementNames.Root.MktActivityRecord.BusinessProcessReferenceMktActivityRecordmRID));
+                    activityArray.AddElement(2, WriteAsString(ElementNames.Root.MktActivityRecord.BusinessProcessReferenceMktActivityRecordmRID));
                     break;
                 case ElementNames.Root.MktActivityRecord.OriginalTransactionIDReferenceMktActivityRecordmRID:
-                    mkActivityArray.AddElement(3, WriteAsString(ElementNames.Root.MktActivityRecord.OriginalTransactionIDReferenceMktActivityRecordmRID));
+                    activityArray.AddElement(3, WriteAsString(ElementNames.Root.MktActivityRecord.OriginalTransactionIDReferenceMktActivityRecordmRID));
                     break;
                 case ElementNames.Root.MktActivityRecord.ChargeGroupElement:
-                    mkActivityArray.AddElement(4, ReadChargeGroup());
+                    activityArray.AddElement(4, ReadChargeGroup());
                     break;
             }
-        } while (_reader.AdvanceUntilClosed(ElementNames.Root.MktActivityRecordElement));
+        }
+        while (CimReader().AdvanceUntilClosed(ElementNames.Root.MktActivityRecordElement));
     }
 
     private CimObjectElement ReadChargeGroup()
     {
         var chargeGroup = CimJsonObjectPools.GetObjectElement(ElementNames.Root.MktActivityRecord.ChargeGroupElement, 1);
         var chargeTypeArray =
-            new CimArrayElement(ElementNames.Root.MktActivityRecord.ChargeGroup.ChargeTypeElement, 6);
+            CimJsonObjectPools.GetArrayElement(ElementNames.Root.MktActivityRecord.ChargeGroup.ChargeTypeElement, 6);
         chargeGroup.AddElement(0, chargeTypeArray);
         do
         {
-            if (_reader.CurrentNodeType != NodeType.StartElement ) continue;
-            switch (_reader.CurrentNodeName)
+            if (CimReader().CurrentNodeType != NodeType.StartElement) continue;
+            switch (CimReader().CurrentNodeName)
             {
                 case ElementNames.Root.MktActivityRecord.ChargeGroup.ChargeTypeElement:
                     ReadChargeType(chargeTypeArray);
                     break;
             }
-        } while (_reader.AdvanceUntilClosed(ElementNames.Root.MktActivityRecord.ChargeGroupElement));
+        }
+        while (CimReader().AdvanceUntilClosed(ElementNames.Root.MktActivityRecord.ChargeGroupElement));
 
         return chargeGroup;
     }
@@ -132,11 +139,11 @@ internal class RSM031NotifyBillingMasterData : BaseTemplate
         chargeTypeArray.BeginNewArrayElement();
         do
         {
-            if (_reader.CurrentNodeType != NodeType.StartElement ) continue;
-            switch (_reader.CurrentNodeName)
+            if (CimReader().CurrentNodeType != NodeType.StartElement) continue;
+            switch (CimReader().CurrentNodeName)
             {
-                case ElementNames.Root.MktActivityRecord.ChargeGroup.ChargeType.mRID:
-                    chargeTypeArray.AddElement(0, WriteAsString(ElementNames.Root.MktActivityRecord.ChargeGroup.ChargeType.mRID));
+                case ElementNames.Root.MktActivityRecord.ChargeGroup.ChargeType.MRID:
+                    chargeTypeArray.AddElement(0, WriteAsString(ElementNames.Root.MktActivityRecord.ChargeGroup.ChargeType.MRID));
                     break;
                 case ElementNames.Root.MktActivityRecord.ChargeGroup.ChargeType.ChargeTypeOwnerMarketParticipantmRID:
                     chargeTypeArray.AddElement(1, WriteObjectWithCodingSchemeElement(ElementNames.Root.MktActivityRecord.ChargeGroup.ChargeType.ChargeTypeOwnerMarketParticipantmRID));
@@ -154,8 +161,13 @@ internal class RSM031NotifyBillingMasterData : BaseTemplate
                     chargeTypeArray.AddElement(5, WriteAsStringValueObject(ElementNames.Root.MktActivityRecord.ChargeGroup.ChargeType.Type));
                     break;
             }
-        } while (_reader.AdvanceUntilClosed(ElementNames.Root.MktActivityRecord.ChargeGroup.ChargeTypeElement));
+        }
+        while (CimReader().AdvanceUntilClosed(ElementNames.Root.MktActivityRecord.ChargeGroup.ChargeTypeElement));
     }
+
+    [SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass", Justification = "Names matches those from xml for ease of identification")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Names matches those from xml for ease of identification")]
+    [SuppressMessage("ReSharper", "IdentifierTypo", Justification = "Names matches those from xml for ease of identification")]
     private static class ElementNames
     {
         public const string RootElement = "NotifyBillingMasterData_MarketDocument";
@@ -189,7 +201,7 @@ internal class RSM031NotifyBillingMasterData : BaseTemplate
                     {
                         public const string ChargeTypeOwnerMarketParticipantmRID = "chargeTypeOwner_MarketParticipant.mRID";
                         public const string Type = "type";
-                        public const string mRID = "mRID";
+                        public const string MRID = "mRID";
                         public const string Factor = "factor";
                         public const string EffectiveDate = "effectiveDate";
                         public const string TerminationDate = "terminationDate";
@@ -198,5 +210,4 @@ internal class RSM031NotifyBillingMasterData : BaseTemplate
             }
         }
     }
-
 }

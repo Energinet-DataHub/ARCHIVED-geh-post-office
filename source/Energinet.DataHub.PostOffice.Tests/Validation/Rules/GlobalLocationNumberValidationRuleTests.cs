@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using Energinet.DataHub.PostOffice.Application.Validation.Rules;
-using FluentValidation.Validators;
 using Xunit;
 using Xunit.Categories;
 

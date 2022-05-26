@@ -14,10 +14,21 @@
 
 using System.Text.Json;
 
-namespace TestJSonConversion.SimpleCimJson.Elements;
+namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Elements;
 
+/// <summary>
+/// An element to describe a cim converted xml element in json
+/// </summary>
 public interface ICimElement
 {
+    /// <summary>
+    /// Used to write the json that corresponds to this element
+    /// </summary>
+    /// <param name="jsonWriter"></param>
     void WriteJson(Utf8JsonWriter jsonWriter);
+
+    /// <summary>
+    /// Ensures that the element is returned to it's respective pool
+    /// </summary>
     void ReturnToPool();
 }

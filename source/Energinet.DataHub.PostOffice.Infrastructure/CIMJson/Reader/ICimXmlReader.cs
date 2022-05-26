@@ -14,7 +14,7 @@
 
 using System;
 
-namespace TestJSonConversion.SimpleCimJson.Reader;
+namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Reader;
 
 /// <summary>
 /// Reads nodes from an XML stream

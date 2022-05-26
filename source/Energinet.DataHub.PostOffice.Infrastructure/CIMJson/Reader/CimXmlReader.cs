@@ -15,22 +15,20 @@
 using System;
 using System.Buffers;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Xml;
 
-namespace TestJSonConversion.SimpleCimJson.Reader;
+namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Reader;
 
 public sealed class CimXmlReader : ICimXmlReader, IDisposable
 {
     private const int BufferSize = 128;
     private readonly Stream _inputStream;
+    private readonly List<char[]> _buffers = new() { ArrayPool<char>.Shared.Rent(BufferSize) };
     private XmlReader? _xmlReader;
     private string? _emptyElementTag;
-    private readonly List<char[]> _buffers = new() { ArrayPool<char>.Shared.Rent(BufferSize) } ;
     private int _index;
     private int _buffersIndex;
     private bool _hasReachedNewNode;
@@ -69,8 +67,10 @@ public sealed class CimXmlReader : ICimXmlReader, IDisposable
                     _hasReachedNewNode = true;
                     return true;
                 }
+
                 CanReadValue = true;
             }
+
             return true;
         }
 
@@ -92,6 +92,25 @@ public sealed class CimXmlReader : ICimXmlReader, IDisposable
                 case XmlNodeType.EndElement:
                     ProcessEndElement();
                     return true;
+                case XmlNodeType.None:
+                case XmlNodeType.Attribute:
+                case XmlNodeType.Text:
+                case XmlNodeType.CDATA:
+                case XmlNodeType.EntityReference:
+                case XmlNodeType.Entity:
+                case XmlNodeType.ProcessingInstruction:
+                case XmlNodeType.Comment:
+                case XmlNodeType.Document:
+                case XmlNodeType.DocumentType:
+                case XmlNodeType.DocumentFragment:
+                case XmlNodeType.Notation:
+                case XmlNodeType.Whitespace:
+                case XmlNodeType.SignificantWhitespace:
+                case XmlNodeType.EndEntity:
+                case XmlNodeType.XmlDeclaration:
+                    continue;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -124,15 +143,9 @@ public sealed class CimXmlReader : ICimXmlReader, IDisposable
         {
             if (CurrentNodeType == NodeType.EndElement)
             {
-                if (CurrentNodeName.Equals(nodeName, StringComparison.Ordinal))
-                {
-                    break;
-                }
+                if (CurrentNodeName.Equals(nodeName, StringComparison.Ordinal)) break;
 
-                if (CanReadValue)
-                {
-                    return true;
-                }
+                if (CanReadValue) return true;
             }
             else
             {
@@ -143,7 +156,7 @@ public sealed class CimXmlReader : ICimXmlReader, IDisposable
         return false;
     }
 
-  public ReadOnlyMemory<char> ReadValue()
+    public ReadOnlyMemory<char> ReadValue()
     {
         EnsureReader();
         int read;
@@ -160,39 +173,25 @@ public sealed class CimXmlReader : ICimXmlReader, IDisposable
                 startIndex = 0;
             }
         }
+
         //Check if we exactly filled the entire buffer with this read, and expand if necessary
         if (_buffers[_buffersIndex].Length - _index <= 0)
         {
             ExpandBuffers(startIndex, false);
             _index = 0;
         }
+
         return _buffers[_buffersIndex].AsMemory(startIndex, total); //.Slice(startIndex, total);
     }
 
-  private void ExpandBuffers(int startIndex, bool copyPrevious = true)
-  {
-      //Create new buffer, copy all read from this element to this, to avoid splitting Memory object
-      //This leaves a bit of unused space in the previous buffer, but should only happen rarely, and the
-      //performance is better this way, than the small amount of memory wasted.
-      _buffers.Add(ArrayPool<char>.Shared.Rent(_buffers[_buffersIndex].Length + BufferSize ));
-      if (copyPrevious)
-      {
-          Array.Copy(_buffers[_buffersIndex], startIndex, _buffers[_buffersIndex+1], 0, _buffers[_buffersIndex].Length - startIndex);
-          _index = _buffers[_buffersIndex].Length - startIndex;
-      }
-      _buffersIndex++;
-  }
-
-  public void Dispose()
+    public void Dispose()
     {
         _inputStream.Dispose();
         _xmlReader?.Dispose();
         if (!_buffers.Any()) return;
-        foreach (var buffer in _buffers)
-        {
-            ArrayPool<char>.Shared.Return(buffer);
-        }
+        foreach (var buffer in _buffers) ArrayPool<char>.Shared.Return(buffer);
     }
+
     private bool ValidatingRead()
     {
         EnsureReader();
@@ -200,56 +199,36 @@ public sealed class CimXmlReader : ICimXmlReader, IDisposable
 
         do
         {
-            couldRead =  _xmlReader!.Read();
+            couldRead = _xmlReader!.Read();
 
             // If could read without errors, return true.
             // Otherwise, read to end to get all the errors.
-            if (couldRead)
-            {
-                return true;
-            }
+            if (couldRead) return true;
         }
         while (couldRead);
 
         return false;
     }
 
-    public string GetTotalMemoryUsedInBuffers()
+    private void ExpandBuffers(int startIndex, bool copyPrevious = true)
     {
-        return BytesToString( _buffers.Sum(x => x.Length) - (_buffers[^1].Length-_index));
-    }
-
-    public string GetTotalBufferSize()
-    {
-        return BytesToString(_buffers.Sum(x => x.Length));
-    }
-
-    public int GetTotalNumberOfBuffers()
-    {
-        return _buffers.Count;
-    }
-
-    public string GetIndividualBufferSizes()
-    {
-        var builder = new StringBuilder();
-        var counter = 1;
-        _buffers.ForEach(x=>
+        // Create new buffer, copy all read from this element to this, to avoid splitting Memory object
+        // This leaves a bit of unused space in the previous buffer, but should only happen rarely, and the
+        // performance is better this way, than the small amount of memory wasted.
+        _buffers.Add(ArrayPool<char>.Shared.Rent(_buffers[_buffersIndex].Length + BufferSize));
+        if (copyPrevious)
         {
-            builder.AppendLine($"Buffer[{counter}] Length: {x.Length}");
-            counter++;
-        });
-        return builder.ToString();
-    }
+            Array.Copy(
+                _buffers[_buffersIndex],
+                startIndex,
+                _buffers[_buffersIndex + 1],
+                0,
+                _buffers[_buffersIndex].Length - startIndex);
 
-    private static string BytesToString(long byteCount)
-    {
-        string[] suf = { "B", "KB", "MB", "GB", "TB", "PB", "EB" }; //Longs run out around EB
-        if (byteCount == 0)
-            return "0" + suf[0];
-        var bytes = Math.Abs(byteCount);
-        var place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
-        var num = Math.Round(bytes / Math.Pow(1024, place), 1);
-        return (Math.Sign(byteCount) * num).ToString(CultureInfo.InvariantCulture) + suf[place];
+            _index = _buffers[_buffersIndex].Length - startIndex;
+        }
+
+        _buffersIndex++;
     }
 
     private void ProcessElement()
@@ -264,20 +243,13 @@ public sealed class CimXmlReader : ICimXmlReader, IDisposable
             return;
         }
 
-        if (HandleEmptyElement())
-        {
-            return;
-        }
-
+        if (HandleEmptyElement()) return;
 
         _xmlReader.ReadStartElement();
         if (_xmlReader.NodeType != XmlNodeType.Text && _xmlReader.LocalName != CurrentNodeName)
             _hasReachedNewNode = true;
 
-        if (_xmlReader!.NodeType == XmlNodeType.Text)
-        {
-            CanReadValue = true;
-        }
+        if (_xmlReader!.NodeType == XmlNodeType.Text) CanReadValue = true;
     }
 
     private void ProcessEmptyElement(string closedTag)

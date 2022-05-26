@@ -40,27 +40,27 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
             _weightCalculatorDomainService = weightCalculatorDomainService;
         }
 
-        public Task<Bundle?> GetNextUnacknowledgedAsync(MarketOperator recipient, Uuid? suggestedBundleId, BundleReturnType returnType)
+        public Task<Bundle?> GetNextUnacknowledgedAsync(ActorId recipient, Uuid? suggestedBundleId, BundleReturnType returnType)
         {
             return GetNextUnacknowledgedForDomainsAsync(recipient, suggestedBundleId, returnType);
         }
 
-        public Task<Bundle?> GetNextUnacknowledgedTimeSeriesAsync(MarketOperator recipient, Uuid? suggestedBundleId, BundleReturnType returnType)
+        public Task<Bundle?> GetNextUnacknowledgedTimeSeriesAsync(ActorId recipient, Uuid? suggestedBundleId, BundleReturnType returnType)
         {
             return GetNextUnacknowledgedForDomainsAsync(recipient, suggestedBundleId, returnType, DomainOrigin.TimeSeries);
         }
 
-        public Task<Bundle?> GetNextUnacknowledgedAggregationsAsync(MarketOperator recipient, Uuid? suggestedBundleId, BundleReturnType returnType)
+        public Task<Bundle?> GetNextUnacknowledgedAggregationsAsync(ActorId recipient, Uuid? suggestedBundleId, BundleReturnType returnType)
         {
             return GetNextUnacknowledgedForDomainsAsync(recipient, suggestedBundleId, returnType, DomainOrigin.Aggregations);
         }
 
-        public Task<(bool CanAcknowledge, Bundle? Bundle)> CanAcknowledgeAsync(MarketOperator recipient, Uuid bundleId, BundleReturnType returnType)
+        public Task<(bool CanAcknowledge, Bundle? Bundle)> CanAcknowledgeAsync(ActorId recipient, Uuid bundleId, BundleReturnType returnType)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Bundle?> GetNextUnacknowledgedMasterDataAsync(MarketOperator recipient, Uuid? suggestedBundleId, BundleReturnType returnType)
+        public Task<Bundle?> GetNextUnacknowledgedMasterDataAsync(ActorId recipient, Uuid? suggestedBundleId, BundleReturnType returnType)
         {
             return GetNextUnacknowledgedForDomainsAsync(
                 recipient,

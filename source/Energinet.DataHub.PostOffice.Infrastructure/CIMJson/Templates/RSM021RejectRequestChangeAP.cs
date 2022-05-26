@@ -13,35 +13,40 @@
 // limitations under the License.
 
 using System;
-using TestJSonConversion.SimpleCimJson.Elements;
-using TestJSonConversion.SimpleCimJson.Factories;
-using TestJSonConversion.SimpleCimJson.Reader;
+using System.Diagnostics.CodeAnalysis;
+using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Elements;
+using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Factories;
+using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Reader;
 
-namespace TestJSonConversion.SimpleCimJson.Templates;
+namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Templates;
 
 internal class RSM021RejectRequestChangeAP : BaseTemplate
 {
     protected override void Convert()
     {
-        _jsonWriter.WriteStartObject();
-        while (_reader.Advance())
+        JsonWriter().WriteStartObject();
+        while (CimReader().Advance())
         {
-            if (!_reader.CurrentNodeName.Equals(ElementNames.RootElement,
+            if (!CimReader().CurrentNodeName.Equals(
+                    ElementNames.RootElement,
                     StringComparison.OrdinalIgnoreCase)) continue;
-            if (_reader.CurrentNodeType == NodeType.EndElement) continue;
-                ReadRejectRequestChangeAccountingPointCharacteristics();
+
+            if (CimReader().CurrentNodeType == NodeType.EndElement) continue;
+
+            ReadRejectRequestChangeAccountingPointCharacteristics();
         }
-        _jsonWriter.WriteEndObject();
+
+        JsonWriter().WriteEndObject();
     }
 
     private void ReadRejectRequestChangeAccountingPointCharacteristics()
     {
         var rootElement = CimJsonObjectPools.GetObjectElement(ElementNames.RootElement, 11);
-        var mkActivityArray = new CimArrayElement( ElementNames.Root.MktActivityRecordElement, 5);
+        var activityArray = CimJsonObjectPools.GetArrayElement(ElementNames.Root.MktActivityRecordElement, 5);
         do
         {
-            if (_reader.CurrentNodeType != NodeType.StartElement ) continue;
-            switch (_reader.CurrentNodeName)
+            if (CimReader().CurrentNodeType != NodeType.StartElement) continue;
+            switch (CimReader().CurrentNodeName)
             {
                 case ElementNames.Root.MRID:
                     rootElement.AddElement(0, WriteAsString(ElementNames.Root.MRID));
@@ -73,43 +78,44 @@ internal class RSM021RejectRequestChangeAP : BaseTemplate
                 case ElementNames.Root.ReasonCode:
                     rootElement.AddElement(9,  WriteAsStringValueObject(ElementNames.Root.ReasonCode));
                     break;
-                 case ElementNames.Root.MktActivityRecordElement:
-                     ReadMktActivityRecord(mkActivityArray);
-                     break;
+                case ElementNames.Root.MktActivityRecordElement:
+                    ReadMktActivityRecord(activityArray);
+                    break;
             }
-        } while (_reader.AdvanceUntilClosed(ElementNames.RootElement));
-        rootElement.AddElement(10, mkActivityArray);
-        rootElement.WriteJson(_jsonWriter);
-        rootElement.ReturnToPool();
+        }
+        while (CimReader().AdvanceUntilClosed(ElementNames.RootElement));
+        rootElement.AddElement(10, activityArray);
+        rootElement.WriteJson(JsonWriter());
     }
 
-    private void ReadMktActivityRecord(CimArrayElement mkActivityArray)
+    private void ReadMktActivityRecord(CimArrayElement activityArray)
     {
-        mkActivityArray.BeginNewArrayElement();
-        var reasonArray = new CimArrayElement(ElementNames.Root.MktActivityRecord.ReasonElement, 2);
-        mkActivityArray.AddElement(4, reasonArray);
+        activityArray.BeginNewArrayElement();
+        var reasonArray = CimJsonObjectPools.GetArrayElement(ElementNames.Root.MktActivityRecord.ReasonElement, 2);
+        activityArray.AddElement(4, reasonArray);
         do
         {
-            if (_reader.CurrentNodeType != NodeType.StartElement ) continue;
-            switch (_reader.CurrentNodeName)
+            if (CimReader().CurrentNodeType != NodeType.StartElement) continue;
+            switch (CimReader().CurrentNodeName)
             {
                 case ElementNames.Root.MktActivityRecord.MRID:
-                    mkActivityArray.AddElement(0, WriteAsString(ElementNames.Root.MktActivityRecord.MRID));
+                    activityArray.AddElement(0, WriteAsString(ElementNames.Root.MktActivityRecord.MRID));
                     break;
                 case ElementNames.Root.MktActivityRecord.MarketEvaluationPointmRID:
-                    mkActivityArray.AddElement(1, WriteObjectWithCodingSchemeElement(ElementNames.Root.MktActivityRecord.MarketEvaluationPointmRID));
+                    activityArray.AddElement(1, WriteObjectWithCodingSchemeElement(ElementNames.Root.MktActivityRecord.MarketEvaluationPointmRID));
                     break;
                 case ElementNames.Root.MktActivityRecord.BusinessProcessReferenceMktActivityRecordmRID:
-                    mkActivityArray.AddElement(2, WriteAsString(ElementNames.Root.MktActivityRecord.BusinessProcessReferenceMktActivityRecordmRID));
+                    activityArray.AddElement(2, WriteAsString(ElementNames.Root.MktActivityRecord.BusinessProcessReferenceMktActivityRecordmRID));
                     break;
                 case ElementNames.Root.MktActivityRecord.OriginalTransactionIDReferenceMktActivityRecordmRID:
-                    mkActivityArray.AddElement(3, WriteAsString(ElementNames.Root.MktActivityRecord.OriginalTransactionIDReferenceMktActivityRecordmRID));
+                    activityArray.AddElement(3, WriteAsString(ElementNames.Root.MktActivityRecord.OriginalTransactionIDReferenceMktActivityRecordmRID));
                     break;
                 case ElementNames.Root.MktActivityRecord.ReasonElement:
                     ReadReason(reasonArray);
                     break;
             }
-        } while (_reader.AdvanceUntilClosed(ElementNames.Root.MktActivityRecordElement));
+        }
+        while (CimReader().AdvanceUntilClosed(ElementNames.Root.MktActivityRecordElement));
     }
 
     private void ReadReason(CimArrayElement reasonArray)
@@ -117,8 +123,8 @@ internal class RSM021RejectRequestChangeAP : BaseTemplate
         reasonArray.BeginNewArrayElement();
         do
         {
-            if (_reader.CurrentNodeType != NodeType.StartElement ) continue;
-            switch (_reader.CurrentNodeName)
+            if (CimReader().CurrentNodeType != NodeType.StartElement) continue;
+            switch (CimReader().CurrentNodeName)
             {
                 case ElementNames.Root.MktActivityRecord.Reason.Code:
                     reasonArray.AddElement(0, WriteAsStringValueObject(ElementNames.Root.MktActivityRecord.Reason.Code));
@@ -127,8 +133,13 @@ internal class RSM021RejectRequestChangeAP : BaseTemplate
                     reasonArray.AddElement(1, WriteAsString(ElementNames.Root.MktActivityRecord.Reason.Text));
                     break;
             }
-        } while (_reader.AdvanceUntilClosed(ElementNames.Root.MktActivityRecord.ReasonElement));
+        }
+        while (CimReader().AdvanceUntilClosed(ElementNames.Root.MktActivityRecord.ReasonElement));
     }
+
+    [SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass", Justification = "Names matches those from xml for ease of identification")]
+    [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Names matches those from xml for ease of identification")]
+    [SuppressMessage("ReSharper", "IdentifierTypo", Justification = "Names matches those from xml for ease of identification")]
     private static class ElementNames
     {
         public const string RootElement = "RejectRequestChangeAccountingPointCharacteristics_MarketDocument";
@@ -163,5 +174,4 @@ internal class RSM021RejectRequestChangeAP : BaseTemplate
             }
         }
     }
-
 }

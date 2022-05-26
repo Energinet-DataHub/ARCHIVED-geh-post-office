@@ -55,7 +55,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions
             return request.ProcessAsync(async () =>
             {
                 var command = new PeekMasterDataCommand(
-                    _operatorIdentity.Gln,
+                    _operatorIdentity.ActorId,
                     _bundleIdProvider.TryGetBundleId(request),
                     _bundleReturnTypeProvider.GetReturnType(request));
 

@@ -14,17 +14,18 @@
 
 using System;
 using System.Text.Json;
-using TestJSonConversion.SimpleCimJson.Factories;
+using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Factories;
 
-namespace TestJSonConversion.SimpleCimJson.Elements;
+namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Elements;
 
-public sealed class CimStringValueElement: ICimElement
+public sealed class CimStringValueElement : ICimElement
 {
-    public ReadOnlyMemory<char> Value;
-    public string Key { get; set; }
+    public ReadOnlyMemory<char> Value { get; set; }
+    public string Key { get; set; } = string.Empty;
 
     public void WriteJson(Utf8JsonWriter jsonWriter)
     {
+        ArgumentNullException.ThrowIfNull(jsonWriter, nameof(jsonWriter));
         jsonWriter.WriteString(Key.AsSpan(), Value.Span);
     }
 

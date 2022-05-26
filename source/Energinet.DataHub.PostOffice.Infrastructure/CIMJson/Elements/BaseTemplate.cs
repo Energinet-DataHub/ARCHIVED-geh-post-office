@@ -11,65 +11,81 @@
 // // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // // See the License for the specific language governing permissions and
 // // limitations under the License.
+
 using System;
 using System.Buffers;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
-using TestJSonConversion.SimpleCimJson.Factories;
-using TestJSonConversion.SimpleCimJson.Reader;
+using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Factories;
+using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Reader;
 
-namespace TestJSonConversion.SimpleCimJson.Elements;
+namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Elements;
 
-internal abstract class BaseTemplate
+internal abstract class BaseTemplate : IDisposable
 {
     private readonly ArrayBufferWriter<byte> _jsonStream = new();
-    protected Utf8JsonWriter _jsonWriter;
-    protected CimXmlReader _reader;
+    private CimXmlReader? _reader;
+    private Utf8JsonWriter? _jsonWriter;
+    private bool _isDisposed;
 
     public ReadOnlyMemory<byte> ConvertXmlToJson(Stream xmlData)
     {
-        using var reader = new CimXmlReader(xmlData);
-        using Utf8JsonWriter jsonWriter = new(_jsonStream, new JsonWriterOptions { Indented = false, SkipValidation = true});
-        _jsonWriter = jsonWriter;
-        _reader = reader;
+        _reader = new CimXmlReader(xmlData);
+        _jsonWriter = new Utf8JsonWriter(_jsonStream, new JsonWriterOptions { Indented = false, SkipValidation = true });
         Convert();
-        jsonWriter.Flush();
+        _jsonWriter.Flush();
         return _jsonStream.WrittenMemory;
     }
+
+    public void Dispose()
+    {
+        Dispose(true);
+    }
+
     protected abstract void Convert();
 
-    public string GetTotalUsedBuffer() => _reader.GetTotalMemoryUsedInBuffers();
-    public string GetTotalBuffer() => _reader.GetTotalBufferSize();
-    public int GetTotalNumberOfBuffers() => _reader.GetTotalNumberOfBuffers();
-    public string GetIndividualBufferSizes() => _reader.GetIndividualBufferSizes();
+    protected Utf8JsonWriter JsonWriter() => _jsonWriter!;
+    protected CimXmlReader CimReader() => _reader!;
 
-    protected void DirectWriteSimpleStringSegment(string elementName)
+    protected bool Advance()
     {
-        _jsonWriter.WriteString(elementName, _reader.ReadValue().Span);
+        return _reader!.Advance();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected CimStringValueElement WriteAsString(string elementName)
     {
-       return  CimJsonObjectPools.GetStringValueElement(elementName, _reader);
+        if (_reader is null)
+            throw new InvalidOperationException("Error in conversion, _reader was null");
+
+        return CimJsonObjectPools.GetStringValueElement(elementName, _reader);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected CimIntValueElement WriteAsNumber(string elementName)
     {
-        return  CimJsonObjectPools.GetIntValueElement(elementName, _reader);
+        if (_reader is null)
+            throw new InvalidOperationException("Error in conversion, _reader was null");
+
+        return CimJsonObjectPools.GetIntValueElement(elementName, _reader);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected CimBoolValueElement WriteAsBool(string elementName)
     {
-        return  CimJsonObjectPools.GetBoolValueElement(elementName, _reader);
+        if (_reader is null)
+            throw new InvalidOperationException("Error in conversion, _reader was null");
+
+        return CimJsonObjectPools.GetBoolValueElement(elementName, _reader);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected CimObjectElement WriteAsStringValueObject(string elementName)
     {
+        if (_reader is null)
+            throw new InvalidOperationException("Error in conversion, _reader was null");
+
         var element = CimJsonObjectPools.GetObjectElement(elementName, 1);
         element.AddElement(0, CimJsonObjectPools.GetStringValueElement(GenericElementNames.Value, _reader));
         return element;
@@ -77,6 +93,9 @@ internal abstract class BaseTemplate
 
     protected CimObjectElement WriteObjectWithCodingSchemeElement(string elementName)
     {
+        if (_reader is null)
+            throw new InvalidOperationException("Error in conversion, _reader was null");
+
         var element = CimJsonObjectPools.GetObjectElement(elementName, 2);
         do
         {
@@ -86,13 +105,31 @@ internal abstract class BaseTemplate
                     element.AddElement(0, CimJsonObjectPools.GetStringValueElement(GenericElementNames.Attributes.CodingScheme, _reader));
                     break;
             }
-        } while (_reader.AdvanceAttribute());
+        }
+        while (_reader.AdvanceAttribute());
+
         do
         {
-            if (_reader.CurrentNodeType != NodeType.StartElement ) continue;
+            if (_reader.CurrentNodeType != NodeType.StartElement) continue;
             element.AddElement(1, CimJsonObjectPools.GetStringValueElement(GenericElementNames.Value, _reader));
-        } while (_reader.AdvanceUntilClosed(elementName));
+        }
+        while (_reader.AdvanceUntilClosed(elementName));
+
         return element;
+    }
+
+    private void Dispose(bool disposing)
+    {
+        if (_isDisposed) return;
+
+        if (disposing)
+        {
+            // free managed resources
+            _reader?.Dispose();
+            _jsonWriter?.Dispose();
+        }
+
+        _isDisposed = true;
     }
 
     protected static class GenericElementNames

@@ -15,18 +15,26 @@
 using System;
 using System.Buffers;
 using System.Text.Json;
-using TestJSonConversion.SimpleCimJson.Factories;
+using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Factories;
 
-namespace TestJSonConversion.SimpleCimJson.Elements;
+namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Elements;
 
 public sealed class CimObjectElement : ICimElement
 {
-    private ICimElement?[] _currentElements;
+    private ICimElement?[] _currentElements = null!;
+    private string Key { get; set; } = string.Empty;
 
-    public void SetSize(int capacity)
+    public void Initialize(string key, int capacity)
     {
         _currentElements = ArrayPool<ICimElement?>.Shared.Rent(capacity);
         Array.Clear(_currentElements, 0, _currentElements.Length);
+        Key = key;
+    }
+
+    public void ReturnToPool()
+    {
+        CimJsonObjectPools.ReturnElement(this);
+        ArrayPool<ICimElement?>.Shared.Return(_currentElements);
     }
 
     public void AddElement(int index, ICimElement element)
@@ -34,10 +42,9 @@ public sealed class CimObjectElement : ICimElement
         _currentElements[index] = element;
     }
 
-    public string Key { get; set; }
-
     public void WriteJson(Utf8JsonWriter jsonWriter)
     {
+        ArgumentNullException.ThrowIfNull(jsonWriter, nameof(jsonWriter));
         jsonWriter.WriteStartObject(Key);
         for (var i = 0; i < _currentElements.Length; i++)
         {
@@ -47,13 +54,7 @@ public sealed class CimObjectElement : ICimElement
                 _currentElements[i]?.ReturnToPool();
             }
         }
-        jsonWriter.WriteEndObject();
-        Array.Clear(_currentElements, 0, _currentElements.Length);
-    }
 
-    public void ReturnToPool()
-    {
-        CimJsonObjectPools.ReturnElement(this);
-        ArrayPool<ICimElement?>.Shared.Return(_currentElements);
+        jsonWriter.WriteEndObject();
     }
 }
