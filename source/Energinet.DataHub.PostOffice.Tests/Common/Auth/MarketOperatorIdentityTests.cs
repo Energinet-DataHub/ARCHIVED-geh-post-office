@@ -40,7 +40,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Auth
         {
             // Arrange
             var target = new MarketOperatorIdentity();
-            ((IMarketOperatorIdentity)target).AssignGln("ABC");
+            ((IMarketOperatorIdentity)target).AssignId("ABC");
 
             // Act
             var actual = target.HasIdentity;
@@ -59,7 +59,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Auth
             var target = new MarketOperatorIdentity();
 
             // Act + Assert
-            Assert.Throws<ArgumentException>(() => ((IMarketOperatorIdentity)target).AssignGln(value));
+            Assert.Throws<ArgumentException>(() => ((IMarketOperatorIdentity)target).AssignId(value));
         }
 
         [Fact]
@@ -67,10 +67,10 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Auth
         {
             // Arrange
             var target = new MarketOperatorIdentity();
-            ((IMarketOperatorIdentity)target).AssignGln("other");
+            ((IMarketOperatorIdentity)target).AssignId("other");
 
             // Act + Assert
-            Assert.Throws<InvalidOperationException>(() => ((IMarketOperatorIdentity)target).AssignGln("value"));
+            Assert.Throws<InvalidOperationException>(() => ((IMarketOperatorIdentity)target).AssignId("value"));
         }
 
         [Fact]
@@ -80,11 +80,11 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Auth
             var target = new MarketOperatorIdentity();
 
             // Act
-            ((IMarketOperatorIdentity)target).AssignGln("123456");
+            ((IMarketOperatorIdentity)target).AssignId("123456");
 
             // Assert
             Assert.True(target.HasIdentity);
-            Assert.Equal("123456", target.Gln);
+            Assert.Equal("123456", target.ActorId);
         }
 
         [Fact]
@@ -94,7 +94,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Auth
             var target = new MarketOperatorIdentity();
 
             // Act + Assert
-            Assert.Throws<InvalidOperationException>(() => target.Gln);
+            Assert.Throws<InvalidOperationException>(() => target.ActorId);
         }
     }
 }

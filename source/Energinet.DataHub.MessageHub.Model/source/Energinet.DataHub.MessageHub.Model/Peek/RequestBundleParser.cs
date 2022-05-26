@@ -31,7 +31,7 @@ namespace Energinet.DataHub.MessageHub.Model.Peek
                 RequestId = request.RequestId.ToString(),
                 DataAvailableNotificationReferenceId = request.DataAvailableNotificationReferenceId,
                 IdempotencyId = request.IdempotencyId,
-                MessageType = request.MessageType,
+                MessageType = request.MessageType.Value
             };
 
             return message.ToByteArray();
@@ -46,7 +46,7 @@ namespace Energinet.DataHub.MessageHub.Model.Peek
                     Guid.Parse(bundleResponse.RequestId),
                     bundleResponse.DataAvailableNotificationReferenceId,
                     bundleResponse.IdempotencyId,
-                    bundleResponse.MessageType);
+                    new MessageTypeDto(bundleResponse.MessageType));
             }
             catch (Exception ex) when (ex is InvalidProtocolBufferException or FormatException)
             {

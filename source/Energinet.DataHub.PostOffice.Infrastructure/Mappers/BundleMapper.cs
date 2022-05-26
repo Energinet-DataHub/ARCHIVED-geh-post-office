@@ -41,9 +41,13 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Mappers
             if (!Enum.TryParse<BundleReturnType>(bundleDocument.ReturnType, out var returnType))
                 returnType = BundleReturnType.Xml;
 
+            var recipient = Guid.TryParse(bundleDocument.Recipient, out var actorId)
+                ? new ActorId(actorId)
+                : new LegacyActorId(new GlobalLocationNumber(bundleDocument.Recipient));
+
             var bundle = new Bundle(
                 new Uuid(bundleDocument.Id),
-                new MarketOperator(new GlobalLocationNumber(bundleDocument.Recipient)),
+                recipient,
                 Enum.Parse<DomainOrigin>(bundleDocument.Origin),
                 new ContentType(bundleDocument.ContentType),
                 notificationIds,
@@ -72,7 +76,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Mappers
             {
                 Id = source.BundleId.ToString(),
                 ProcessId = source.ProcessId.ToString(),
-                Recipient = source.Recipient.Gln.Value,
+                Recipient = source.Recipient.Value,
                 Origin = source.Origin.ToString(),
                 ContentType = source.ContentType.Value,
 

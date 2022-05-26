@@ -34,8 +34,6 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
                         ConnectionString = cosmosConnectionString;
                     if (json.TryGetValue("databaseName", out var databaseName))
                         DatabaseName = databaseName;
-                    if (json.TryGetValue("logDatabaseName", out var logDatabaseName))
-                        LogDatabaseName = logDatabaseName;
                     if (json.TryGetValue("disableAzurite", out var disableAzuriteStr) && bool.TryParse(disableAzuriteStr, out var disableAzurite))
                         DisableAzurite = disableAzurite;
                 }
@@ -49,12 +47,10 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
 
             Environment.SetEnvironmentVariable("MESSAGES_DB_NAME", DatabaseName);
             Environment.SetEnvironmentVariable("MESSAGES_DB_CONNECTION_STRING", ConnectionString);
-            Environment.SetEnvironmentVariable("LOG_DB_NAME", LogDatabaseName);
         }
 
         internal static string ConnectionString { get; } = "AccountEndpoint=https://localhost:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
         internal static string DatabaseName { get; } = "post-office";
-        internal static string LogDatabaseName { get; } = "Log";
         internal static bool DisableAzurite { get; }
     }
 }

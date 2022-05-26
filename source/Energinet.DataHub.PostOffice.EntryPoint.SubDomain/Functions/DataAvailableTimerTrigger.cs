@@ -20,11 +20,13 @@ using System.Net;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 using Energinet.DataHub.MessageHub.Model.DataAvailable;
+using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using MediatR;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using DataAvailableNotificationDto = Energinet.DataHub.PostOffice.Application.Commands.DataAvailableNotificationDto;
 
 namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
 {
@@ -50,15 +52,15 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
         }
 
         [Function(FunctionName)]
-#pragma warning disable CA1801
-        public async Task RunAsync([TimerTrigger("*/5 * * * * *")] FunctionContext context)
-#pragma warning restore CA1801
+        public async Task RunAsync([TimerTrigger("*/5 * * * * *", UseMonitor = true)] FunctionContext context)
         {
             _logger.LogInformation("Begins processing DataAvailableTimerTrigger.");
 
             var messages = await _messageReceiver
                 .ReceiveAsync()
                 .ConfigureAwait(false);
+
+            VerifyMessageSequence(messages);
 
             _logger.LogInformation("Received a batch of size {0}.", messages.Count);
 
@@ -95,6 +97,26 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
         {
             ArgumentNullException.ThrowIfNull(message, nameof(message));
             return message.SequenceNumber;
+        }
+
+        private void VerifyMessageSequence(IReadOnlyCollection<ServiceBusReceivedMessage> messages)
+        {
+            var ordered = messages.OrderBy(x => x.EnqueuedTime);
+            var asQueue = new Queue<ServiceBusReceivedMessage>(ordered);
+
+            foreach (var message in messages)
+            {
+                var peek = asQueue.Peek();
+                if (peek.EnqueuedTime == message.EnqueuedTime)
+                {
+                    asQueue.Dequeue();
+                }
+                else
+                {
+                    _logger.LogError("Order of messages is incorrect.");
+                    return;
+                }
+            }
         }
 
         private async Task ProcessMessagesAsync(
@@ -198,9 +220,16 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
             try
             {
                 var parsedValue = _dataAvailableNotificationParser.Parse(message.Body.ToArray());
+
+#pragma warning disable CS0618
+                var recipient = parsedValue.Recipient is LegacyActorIdDto legacyActor
+#pragma warning restore CS0618
+                    ? legacyActor.LegacyValue
+                    : parsedValue.Recipient.Value.ToString();
+
                 return (message, true, new DataAvailableNotificationDto(
                     parsedValue.Uuid.ToString(),
-                    parsedValue.Recipient.Value,
+                    recipient,
                     parsedValue.MessageType.Value,
                     parsedValue.Origin.ToString(),
                     parsedValue.SupportsBundling,

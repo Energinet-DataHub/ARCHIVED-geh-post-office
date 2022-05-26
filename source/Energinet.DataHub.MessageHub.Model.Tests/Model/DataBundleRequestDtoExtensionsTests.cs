@@ -47,7 +47,7 @@ namespace Energinet.DataHub.MessageHub.Model.Tests.Model
                 requestId,
                 "C141D536-170F-48A6-92FC-EA0D79D2F7E0",
                 "D5D400AD-CC11-409A-B757-75EB9AA8B0EA",
-                "message_type");
+                new MessageTypeDto("message_type"));
 
             // act
             var actual = request.CreateResponse(uri);
@@ -66,7 +66,7 @@ namespace Energinet.DataHub.MessageHub.Model.Tests.Model
                 requestId,
                 "CBF03641-95C2-4386-A04E-892CDF1D793A",
                 "D5D400AD-CC11-409A-B757-75EB9AA8B0EA",
-                "message_type");
+                new MessageTypeDto("message_type"));
 
             var dataBundleResponseErrorDto = new DataBundleResponseErrorDto(
                 DataBundleResponseErrorReason.DatasetNotFound,

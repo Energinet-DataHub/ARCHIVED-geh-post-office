@@ -69,7 +69,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         /// <param name="recipient">The market operator that is the recipient of the bundle.</param>
         /// <param name="bundleId">The id of the bundle that is being acknowledged.</param>
         /// <returns>true is the bundle can be acknowledged; false if the id is incorrect or there is nothing to acknowledge.</returns>
-        Task<(bool CanAcknowledge, Bundle? Bundle)> CanAcknowledgeAsync(MarketOperator recipient, Uuid bundleId);
+        Task<(bool CanAcknowledge, Bundle? Bundle)> CanAcknowledgeAsync(ActorId recipient, Uuid bundleId);
 
         /// <summary>
         /// Acknowledges the current bundle, as returned by <see cref="GetNextUnacknowledgedAsync" />.

@@ -18,7 +18,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Model
     {
         public DataAvailableNotification(
             Uuid notificationId,
-            MarketOperator recipient,
+            ActorId recipient,
             ContentType contentType,
             DomainOrigin origin,
             SupportsBundling supportsBundling,
@@ -37,7 +37,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Model
         }
 
         public Uuid NotificationId { get; }
-        public MarketOperator Recipient { get; }
+        public ActorId Recipient { get; }
         public ContentType ContentType { get; }
         public DomainOrigin Origin { get; }
         public SupportsBundling SupportsBundling { get; }

@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Globalization;
 using Energinet.DataHub.MessageHub.Model.DataAvailable;
 using Energinet.DataHub.MessageHub.Model.Exceptions;
+using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.MessageHub.Model.Protobuf;
 using Google.Protobuf;
 using Xunit;
@@ -26,7 +28,7 @@ namespace Energinet.DataHub.MessageHub.Model.Tests.DataAvailable
     public sealed class DataAvailableNotificationParserTests
     {
         [Fact]
-        public void Parse_ValidInput_ReturnsData()
+        public void Parse_LegacyInput_ReturnsData()
         {
             // Arrange
             var target = new DataAvailableNotificationParser();
@@ -48,7 +50,40 @@ namespace Energinet.DataHub.MessageHub.Model.Tests.DataAvailable
             Assert.Equal(contract.UUID, actual.Uuid.ToString().ToUpper(CultureInfo.InvariantCulture));
             Assert.Equal(contract.MessageType, actual.MessageType.Value);
             Assert.Equal(contract.Origin, actual.Origin.ToString());
-            Assert.Equal(contract.Recipient, actual.Recipient.Value);
+
+#pragma warning disable CS0618
+            var legacyVariant = (LegacyActorIdDto)actual.Recipient;
+#pragma warning restore CS0618
+
+            Assert.Equal(contract.Recipient, legacyVariant.LegacyValue);
+            Assert.Equal(contract.RelativeWeight, actual.RelativeWeight);
+            Assert.Equal(contract.SupportsBundling, actual.SupportsBundling);
+        }
+
+        [Fact]
+        public void Parse_ValidInput_ReturnsData()
+        {
+            // Arrange
+            var target = new DataAvailableNotificationParser();
+            var contract = new DataAvailableNotificationContract
+            {
+                UUID = "94681547-C70D-409C-9255-83B310AF7010",
+                Recipient = "F3FD4E86-BF06-456A-9CC5-6D38FB471DE3",
+                MessageType = "messageType",
+                Origin = "TimeSeries",
+                RelativeWeight = 5,
+                SupportsBundling = true
+            };
+
+            // Act
+            var actual = target.Parse(contract.ToByteArray());
+
+            // Assert
+            Assert.NotNull(actual);
+            Assert.Equal(contract.UUID, actual.Uuid.ToString().ToUpper(CultureInfo.InvariantCulture));
+            Assert.Equal(contract.MessageType, actual.MessageType.Value);
+            Assert.Equal(contract.Origin, actual.Origin.ToString());
+            Assert.Equal(Guid.Parse(contract.Recipient), actual.Recipient.Value);
             Assert.Equal(contract.RelativeWeight, actual.RelativeWeight);
             Assert.Equal(contract.SupportsBundling, actual.SupportsBundling);
         }

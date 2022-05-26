@@ -53,8 +53,10 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
 
             _logger.LogProcess("Dequeue", _correlationContext.Id, request.MarketOperator);
 
-            var recipient = new MarketOperator(new GlobalLocationNumber(request.MarketOperator));
             var bundleId = new Uuid(request.BundleId);
+            var recipient = Guid.TryParse(request.MarketOperator, out var actorId)
+                ? new ActorId(actorId)
+                : new LegacyActorId(new GlobalLocationNumber(request.MarketOperator));
 
             var (canAcknowledge, bundle) = await _marketOperatorDataDomainService
                 .CanAcknowledgeAsync(recipient, bundleId)
@@ -66,9 +68,15 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
                 return new DequeueResponse(false);
             }
 
+            var marketOperator = recipient is LegacyActorId legacyActor
+#pragma warning disable CS0618
+                ? new LegacyActorIdDto(legacyActor.Value)
+#pragma warning restore CS0618
+                : new ActorIdDto(Guid.Parse(recipient.Value));
+
             var dequeueNotification = new DequeueNotificationDto(
                 bundle!.ProcessId.ToString(),
-                new GlobalLocationNumberDto(request.MarketOperator));
+                marketOperator);
 
             await _dequeueNotificationSender
                 .SendAsync(bundle.ProcessId.ToString(), dequeueNotification, (DomainOrigin)bundle.Origin)

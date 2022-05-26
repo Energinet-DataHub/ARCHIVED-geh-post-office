@@ -18,17 +18,17 @@ using FluentValidation;
 
 namespace Energinet.DataHub.PostOffice.Application.Validation
 {
-    public sealed class PeekTimeSeriesCommandRuleSet : AbstractRuleSet<PeekTimeSeriesCommand>
+    public sealed class PeekTimeSeriesCommandRuleSet : AbstractValidator<PeekTimeSeriesCommand>
     {
         public PeekTimeSeriesCommandRuleSet()
         {
             RuleFor(command => command.MarketOperator)
                 .NotEmpty()
-                .SetValidator(new GlobalLocationNumberValidationRule());
+                .SetValidator(new LegacyActorIdValidationRule<PeekTimeSeriesCommand>());
 
             RuleFor(command => command.BundleId)
                 .NotEmpty()
-                .SetValidator(new UuidValidationRule())
+                .SetValidator(new UuidValidationRule<PeekTimeSeriesCommand>())
                 .When(x => x.BundleId != null);
         }
     }

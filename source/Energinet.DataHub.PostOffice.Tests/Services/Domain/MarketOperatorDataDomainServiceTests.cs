@@ -35,7 +35,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedAsync_NoNotificationsReady_ReturnsNull()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid("7dfb2080-fb56-4a37-a85d-1ac2f1559b45");
 
             var dataAvailableNotificationRepositoryMock = new Mock<IDataAvailableNotificationRepository>();
@@ -68,7 +68,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedAsync_HasNotificationsButCannotTryAdd_ReturnsNull()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid("7dfb2080-fb56-4a37-a85d-1ac2f1559b45");
             var contentType = new ContentType("timeseries");
 
@@ -123,7 +123,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedAsync_HasNotificationsReady_ReturnsBundle()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid("7dfb2080-fb56-4a37-a85d-1ac2f1559b45");
             var contentType = new ContentType("timeseries");
 
@@ -187,7 +187,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedAsync_HasNotificationsNoBundleId_ReturnsBundle()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var contentType = new ContentType("timeseries");
 
             var dataAvailableNotificationFirst = CreateDataAvailableNotification(recipient, contentType);
@@ -251,7 +251,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedAsync_BundleIdAlreadyInUse_ReturnsValidationException()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid("7dfb2080-fb56-4a37-a85d-1ac2f1559b45");
             var contentType = new ContentType("timeseries");
 
@@ -311,7 +311,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedAsync_HasBundleNotYetDequeued_ReturnsThatPreviousBundle()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid("7dfb2080-fb56-4a37-a85d-1ac2f1559b45");
             var dataAvailableNotificationRepositoryMock = new Mock<IDataAvailableNotificationRepository>();
 
@@ -350,7 +350,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedAsync_HasBundleNotYetDequeuedWithNoData_ReturnsBundle()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid("7dfb2080-fb56-4a37-a85d-1ac2f1559b45");
 
             var bundleContentMock = new Mock<IBundleContent>();
@@ -395,7 +395,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedAsync_HasBundleNotYetDequeuedCannotGetData_ReturnsNull()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid("7dfb2080-fb56-4a37-a85d-1ac2f1559b45");
             var setupBundle = new Bundle(
                 bundleId,
@@ -435,7 +435,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedAsync_BundlingNotSupported_ReturnsBundleWithSingleNotification()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid("7dfb2080-fb56-4a37-a85d-1ac2f1559b45");
             var contentType = new ContentType("timeseries");
 
@@ -511,7 +511,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedAsync_TooLargeToBundle_ReturnsBundleWithSingleNotification()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid("7dfb2080-fb56-4a37-a85d-1ac2f1559b45");
             var contentType = new ContentType("timeseries");
 
@@ -576,7 +576,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedTimeSeriesAsync_NoNotificationsReady_ReturnsNull()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid(Guid.NewGuid());
 
             var dataAvailableNotificationRepositoryMock = new Mock<IDataAvailableNotificationRepository>();
@@ -610,7 +610,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedTimeSeriesAsync_HasNotificationsButCannotTryAdd_ReturnsNull()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var contentType = new ContentType("rms-xyz");
             var bundleId = new Uuid(Guid.NewGuid());
 
@@ -666,7 +666,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedTimeSeriesAsync_HasNotificationsReady_ReturnsBundle()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var contentType = new ContentType("rms-xyz");
             var bundleId = new Uuid(Guid.NewGuid());
 
@@ -731,7 +731,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedTimeSeriesAsync_HasNotificationsNoBundleId_ReturnsBundle()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var contentType = new ContentType("rms-xyz");
 
             var dataAvailableNotificationFirst = CreateDataAvailableNotification(recipient, contentType);
@@ -796,7 +796,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedTimeSeriesAsync_HasBundleNotYetDequeued_ReturnsThatPreviousBundle()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var dataAvailableNotificationRepositoryMock = new Mock<IDataAvailableNotificationRepository>();
             var bundleId = new Uuid(Guid.NewGuid());
             var bundleContentMock = new Mock<IBundleContent>();
@@ -834,7 +834,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedTimeSeriesAsync_HasBundleNotYetDequeuedWithNoData_ReturnsBundle()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid(Guid.NewGuid());
             var bundleContentMock = new Mock<IBundleContent>();
             var setupBundle = new Bundle(
@@ -878,7 +878,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedTimeSeriesAsync_HasBundleNotYetDequeuedCannotGetData_ReturnsNull()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid(Guid.NewGuid());
             var setupBundle = new Bundle(
                 bundleId,
@@ -918,7 +918,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedTimeSeriesAsync_BundlingNotSupported_ReturnsBundleWithSingleNotification()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid("7dfb2080-fb56-4a37-a85d-1ac2f1559b45");
             var contentType = new ContentType("timeseries");
 
@@ -995,7 +995,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedTimeSeriesAsync_TooLargeToBundle_ReturnsBundleWithSingleNotification()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid("7dfb2080-fb56-4a37-a85d-1ac2f1559b45");
             var contentType = new ContentType("timeseries");
 
@@ -1061,7 +1061,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedAggregationsAsync_NoNotificationsReady_ReturnsNull()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid(Guid.NewGuid());
 
             var dataAvailableNotificationRepositoryMock = new Mock<IDataAvailableNotificationRepository>();
@@ -1095,7 +1095,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedAggregationsAsync_HasNotificationsButCannotTryAdd_ReturnsNull()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid(Guid.NewGuid());
             var contentType = new ContentType("aggregations");
 
@@ -1151,7 +1151,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedAggregationsAsync_HasNotificationsReady_ReturnsBundle()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid(Guid.NewGuid());
             var contentType = new ContentType("aggregations");
 
@@ -1216,7 +1216,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedAggregationsAsync_HasNotificationsNoBundleId_ReturnsBundle()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var contentType = new ContentType("aggregations");
 
             var dataAvailableNotificationFirst = CreateDataAvailableNotification(recipient, contentType, DomainOrigin.Aggregations);
@@ -1281,7 +1281,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedAggregationsAsync_HasBundleNotYetDequeued_ReturnsThatPreviousBundle()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid(Guid.NewGuid());
             var dataAvailableNotificationRepositoryMock = new Mock<IDataAvailableNotificationRepository>();
 
@@ -1321,7 +1321,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedAggregationsAsync_HasBundleNotYetDequeuedWithNoData_ReturnsBundle()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid(Guid.NewGuid());
 
             var bundleContentMock = new Mock<IBundleContent>();
@@ -1366,7 +1366,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedAggregationsAsync_HasBundleNotYetDequeuedCannotGetData_ReturnsNull()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid(Guid.NewGuid());
             var setupBundle = new Bundle(
                 bundleId,
@@ -1406,7 +1406,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedAggregationsAsync_BundlingNotSupported_ReturnsBundleWithSingleNotification()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid("7dfb2080-fb56-4a37-a85d-1ac2f1559b45");
             var contentType = new ContentType("aggregations");
 
@@ -1483,7 +1483,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedAggregationsAsync_TooLargeToBundle_ReturnsBundleWithSingleNotification()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid("7dfb2080-fb56-4a37-a85d-1ac2f1559b45");
             var contentType = new ContentType("aggregations");
 
@@ -1549,7 +1549,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedMasterDataAsync_NoNotificationsReady_ReturnsNull()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid(Guid.NewGuid());
 
             var dataAvailableNotificationRepositoryMock = new Mock<IDataAvailableNotificationRepository>();
@@ -1592,7 +1592,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedMasterDataAsync_HasNotificationsNoBundleId_ReturnsBundle()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var contentType = new ContentType("marketroles");
 
             var dataAvailableNotificationFirst = CreateDataAvailableNotification(recipient, contentType, DomainOrigin.MarketRoles);
@@ -1666,7 +1666,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedMasterDataAsync_MarketRolesHasNotificationsButCannotTryAdd_ReturnsNull()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid(Guid.NewGuid());
             var contentType = new ContentType("marketroles");
 
@@ -1731,7 +1731,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedMasterDataAsync_MeteringPointsHasNotificationsButCannotTryAdd_ReturnsNull()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid(Guid.NewGuid());
             var contentType = new ContentType("meteringpoints");
 
@@ -1796,7 +1796,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedMasterDataAsync_MarketRolesHasNotificationsReady_ReturnsBundle()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid(Guid.NewGuid());
             var contentType = new ContentType("marketroles");
 
@@ -1870,7 +1870,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedMasterDataAsync_MarketRolesHasBundleNotYetDequeued_ReturnsThatPreviousBundle()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid(Guid.NewGuid());
             var dataAvailableNotificationRepositoryMock = new Mock<IDataAvailableNotificationRepository>();
 
@@ -1914,7 +1914,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedMasterDataAsync_MarketRolesHasBundleNotYetDequeuedWithNoData_ReturnsBundle()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid(Guid.NewGuid());
 
             var bundleContentMock = new Mock<IBundleContent>();
@@ -1964,7 +1964,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedMasterDataAsync_MarketRolesHasBundleNotYetDequeuedCannotGetData_ReturnsNull()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid(Guid.NewGuid());
             var setupBundle = new Bundle(
                 bundleId,
@@ -2009,7 +2009,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedMasterDataAsync_BundlingNotSupported_ReturnsBundleWithSingleNotification()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid("7dfb2080-fb56-4a37-a85d-1ac2f1559b45");
             var contentType = new ContentType("charges");
 
@@ -2094,7 +2094,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task GetNextUnacknowledgedMasterDataAsync_TooLargeToBundle_ReturnsBundleWithSingleNotification()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleId = new Uuid("7dfb2080-fb56-4a37-a85d-1ac2f1559b45");
             var contentType = new ContentType("charges");
 
@@ -2168,7 +2168,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task CanAcknowledgeAsync_HasBundle_ReturnsTrue()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleUuid = new Uuid("1E0A906E-8895-4C86-B4FC-48E9BAF2A2B6");
             var idsInBundle = new[]
             {
@@ -2213,7 +2213,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task CanAcknowledgeAsync_HasNoBundle_ReturnsFalse()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleUuid = new Uuid("60D041F5-548B-49C0-8118-BB0F3DF1E692");
             var dataAvailableNotificationRepositoryMock = new Mock<IDataAvailableNotificationRepository>();
 
@@ -2241,7 +2241,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task CanAcknowledgeAsync_WrongId_ReturnsFalse()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleUuid = new Uuid("60D041F5-548B-49C0-8118-BB0F3DF1E692");
             var incorrectId = new Uuid("8BF7791E-A179-4B86-AE2F-69B5C276E99F");
             var dataAvailableNotificationRepositoryMock = new Mock<IDataAvailableNotificationRepository>();
@@ -2279,7 +2279,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         public async Task AcknowledgeAsync_HasBundle_Succeeds()
         {
             // Arrange
-            var recipient = new MarketOperator(new GlobalLocationNumber("fake_value"));
+            var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleUuid = new Uuid("1E0A906E-8895-4C86-B4FC-48E9BAF2A2B6");
             var idsInBundle = new[]
             {
@@ -2339,7 +2339,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         }
 
         private static DataAvailableNotification CreateDataAvailableNotification(
-            MarketOperator recipient,
+            ActorId recipient,
             ContentType contentType,
             DomainOrigin domainOrigin = DomainOrigin.TimeSeries)
         {

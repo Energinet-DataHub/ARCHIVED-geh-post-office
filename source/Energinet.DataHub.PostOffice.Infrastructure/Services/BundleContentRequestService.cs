@@ -53,7 +53,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
                 Guid.NewGuid(),
                 bundle.ProcessId.ToString(),
                 bundle.ProcessId.ToString(),
-                bundle.ContentType.Value);
+                new MessageTypeDto(bundle.ContentType.Value));
 
             _logger.LogProcess("Peek", "WaitForContent", _correlationContext.Id, bundle.Recipient.ToString(), bundle.BundleId.ToString(), bundle.Origin.ToString());
 

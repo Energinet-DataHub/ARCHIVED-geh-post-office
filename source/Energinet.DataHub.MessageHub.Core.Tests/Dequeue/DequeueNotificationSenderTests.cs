@@ -89,7 +89,7 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Dequeue
 
             var dataAvailable = new DequeueNotificationDto(
                 "fake_value",
-                new GlobalLocationNumberDto("fake_value"));
+                new ActorIdDto(Guid.NewGuid()));
 
             // Act
             await target.SendAsync("fake_value", dataAvailable, domainOrigin).ConfigureAwait(false);
@@ -122,7 +122,7 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Dequeue
 
             var dataAvailable = new DequeueNotificationDto(
                 "fake_value",
-                new GlobalLocationNumberDto("fake_value"));
+                new ActorIdDto(Guid.NewGuid()));
 
             // Act
             await target.SendAsync("fake_value", dataAvailable, DomainOrigin.TimeSeries).ConfigureAwait(false);

@@ -71,7 +71,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
                 DomainOrigin.Charges);
         }
 
-        public async Task<(bool CanAcknowledge, Bundle? Bundle)> CanAcknowledgeAsync(MarketOperator recipient, Uuid bundleId)
+        public async Task<(bool CanAcknowledge, Bundle? Bundle)> CanAcknowledgeAsync(ActorId recipient, Uuid bundleId)
         {
             var bundle = await _bundleRepository.GetNextUnacknowledgedAsync(recipient).ConfigureAwait(false);
             return bundle != null && bundle.BundleId == bundleId
@@ -93,7 +93,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         }
 
         private async Task<Bundle?> GetNextUnacknowledgedForDomainsAsync(
-            MarketOperator recipient,
+            ActorId recipient,
             Uuid? suggestedBundleId,
             BundleReturnType returnType,
             params DomainOrigin[] domains)

@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
+using Energinet.DataHub.PostOffice.Common.Configuration;
+using Energinet.DataHub.PostOffice.Common.Extensions;
 using Energinet.DataHub.PostOffice.Infrastructure;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers.CosmosClients;
 using Microsoft.Azure.Cosmos;
@@ -33,31 +34,24 @@ namespace Energinet.DataHub.PostOffice.Common
 
         public static void AddDatabaseCosmosConfig(this Container container)
         {
-            container.RegisterSingleton(
-                () =>
-                {
-                    var configuration = container.GetService<IConfiguration>();
-                    var connectionString = configuration.GetConnectionStringOrSetting("MESSAGES_DB_CONNECTION_STRING");
-                    var messageHubDatabaseId = configuration.GetValue<string>("MESSAGES_DB_NAME");
-
-                    return new CosmosDatabaseConfig(connectionString, messageHubDatabaseId);
-                });
+            container.RegisterSingleton(() =>
+            {
+                var configuration = container.GetService<IConfiguration>();
+                var messageHubDatabaseId = configuration.GetSetting(Settings.MessagesDbId);
+                return new CosmosDatabaseConfig(messageHubDatabaseId);
+            });
         }
 
         private static CosmosClientProvider GetCosmosClient(Container container, bool bulkConfiguration)
         {
             var configuration = container.GetService<IConfiguration>();
-            var connectionString = configuration.GetConnectionStringOrSetting("MESSAGES_DB_CONNECTION_STRING");
+            var connectionString = configuration.GetSetting(Settings.MessagesDbConnectionString);
 
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new InvalidOperationException(
-                    "Please specify a valid CosmosDBConnection in the appSettings.json file or your Azure Functions Settings.");
-            }
+            var cosmosSerializationOptions = new CosmosSerializationOptions { PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase };
 
             var cosmosClient = new CosmosClientBuilder(connectionString)
                 .WithBulkExecution(bulkConfiguration)
-                .WithSerializerOptions(new CosmosSerializationOptions { PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase })
+                .WithSerializerOptions(cosmosSerializationOptions)
                 .Build();
 
             return new CosmosClientProvider(cosmosClient);

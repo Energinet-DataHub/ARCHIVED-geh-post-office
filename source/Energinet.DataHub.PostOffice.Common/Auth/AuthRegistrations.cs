@@ -20,6 +20,8 @@ using Energinet.DataHub.Core.App.Common.Abstractions.Security;
 using Energinet.DataHub.Core.App.Common.Identity;
 using Energinet.DataHub.Core.App.Common.Security;
 using Energinet.DataHub.Core.App.FunctionApp.Middleware;
+using Energinet.DataHub.PostOffice.Common.Configuration;
+using Energinet.DataHub.PostOffice.Common.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SimpleInjector;
@@ -28,7 +30,7 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
 {
     public static class HttpAuthenticationRegistrations
     {
-        private static readonly string[] _functionNamesToExclude = { "HealthCheck", };
+        private static readonly string[] _functionNamesToExclude = { "HealthCheck" };
 
         public static void AddHttpAuthentication(this Container container)
         {
@@ -36,23 +38,8 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
 
             container.Register<IMarketOperatorIdentity, MarketOperatorIdentity>(Lifestyle.Scoped);
             container.Register<JwtAuthenticationMiddleware>(Lifestyle.Scoped);
-            container.Register<QueryAuthenticationMiddleware>(Lifestyle.Scoped);
             RegisterJwt(container);
             RegisterActor(container);
-
-            container.AddMarketParticipantConfig();
-        }
-
-        public static void AddMarketParticipantConfig(this Container container)
-        {
-            ArgumentNullException.ThrowIfNull(container, nameof(container));
-
-            container.Register(() =>
-            {
-                const string connectionStringKey = "SQL_ACTOR_DB_CONNECTION_STRING";
-                var connectionString = Environment.GetEnvironmentVariable(connectionStringKey) ?? throw new InvalidOperationException($"{connectionStringKey} is required");
-                return new ActorDbConfig(connectionString);
-            });
         }
 
         private static void RegisterJwt(Container container)
@@ -70,16 +57,21 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
             container.Register(() =>
             {
                 var configuration = container.GetService<IConfiguration>();
-                var tenantId = configuration.GetValue<string>("B2C_TENANT_ID") ?? throw new InvalidOperationException("B2C tenant id not found.");
-                var audience = configuration.GetValue<string>("BACKEND_SERVICE_APP_ID") ?? throw new InvalidOperationException("Backend service app id not found.");
-                return new OpenIdSettings($"https://login.microsoftonline.com/{tenantId}/v2.0/.well-known/openid-configuration", audience);
+                var tenantId = configuration.GetSetting(Settings.OpenIdTenantId);
+                var audience = configuration.GetSetting(Settings.OpenIdAudience);
+                return new OpenIdSettings(
+                    $"https://login.microsoftonline.com/{tenantId}/v2.0/.well-known/openid-configuration",
+                    audience);
             });
         }
 
         private static void RegisterActor(Container container)
         {
+            container.Register<LegacyActorProvider>(Lifestyle.Scoped);
+            container.Register<ActorRegistryProvider>(Lifestyle.Scoped);
             container.Register<IActorContext, ActorContext>(Lifestyle.Scoped);
-            container.Register<IActorProvider, ActorProvider>(Lifestyle.Scoped);
+            container.Register<IActorProvider, LegacyActorProviderProxy>(Lifestyle.Scoped);
+
             container.Register(
                 () => new ActorMiddleware(
                     container.GetRequiredService<IClaimsPrincipalAccessor>(),

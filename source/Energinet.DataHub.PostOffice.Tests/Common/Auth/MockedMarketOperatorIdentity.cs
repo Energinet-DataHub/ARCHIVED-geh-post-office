@@ -19,19 +19,19 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Auth
 {
     public sealed class MockedMarketOperatorIdentity : IMarketOperatorIdentity
     {
-        public MockedMarketOperatorIdentity(string gln)
+        public MockedMarketOperatorIdentity(string actorId)
         {
-            Gln = gln;
+            ActorId = actorId;
             HasIdentity = true;
         }
 
         public bool HasIdentity { get; }
 
-        public string Gln { get; }
+        public string ActorId { get; }
 
-        void IMarketOperatorIdentity.AssignGln(string gln)
+        void IMarketOperatorIdentity.AssignId(string actorId)
         {
-            throw new InvalidOperationException("Cannot assign GLN to mocked MarketOperatorIdentity.");
+            throw new InvalidOperationException("Cannot assign actor to mocked MarketOperatorIdentity.");
         }
     }
 }

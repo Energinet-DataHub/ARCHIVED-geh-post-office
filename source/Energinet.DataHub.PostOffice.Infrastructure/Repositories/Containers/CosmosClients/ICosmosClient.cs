@@ -25,6 +25,6 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers.Co
         /// Placeholder for the Cosmos client without bulk execution.
         /// </summary>
         /// <returns>A Cosmos client without bulk execution.</returns>
-        public CosmosClient Client { get; set; }
+        public CosmosClient Client { get; }
     }
 }

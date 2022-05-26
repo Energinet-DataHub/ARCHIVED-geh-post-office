@@ -75,7 +75,9 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
 
             _logger.LogProcess("Peek", _correlationContext.Id, request.MarketOperator);
 
-            var marketOperator = new MarketOperator(new GlobalLocationNumber(request.MarketOperator));
+            var marketOperator = Guid.TryParse(request.MarketOperator, out var actorId)
+                ? new ActorId(actorId)
+                : new LegacyActorId(new GlobalLocationNumber(request.MarketOperator));
 
             var suggestedBundleId = request.BundleId != null
                 ? new Uuid(request.BundleId)
