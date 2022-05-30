@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 module "func_marketoperator" {
-  source                                    = "git::https://github.com/Energinet-DataHub/geh-terraform-modules.git//azure/function-app?ref=6.0.0"
+  source                                    = "git::https://github.com/Energinet-DataHub/geh-terraform-modules.git//azure/function-app?ref=6.1.0-app-settings-format"
 
   name                                      = "marketoperator"
   project_name                              = var.domain_name_short
@@ -29,6 +29,14 @@ module "func_marketoperator" {
   health_check_path                         = "/api/monitor/ready"
   health_check_alert_action_group_id        = data.azurerm_key_vault_secret.primary_action_group_id.value
   health_check_alert_enabled                = var.enable_health_check_alerts
+  keyvault_app_settings                     = [
+    {
+      keyvault_name     = data.azurerm_key_vault.kv_shared_resources.name
+      keyvault_id       = data.azurerm_key_vault.kv_shared_resources.id
+      secret_name       = "st-marketres-primary-connection-string"
+      app_setting_name  = "BlobStorageConnectionString"
+    }
+  ]
   app_settings                              = {
     # Region: Default Values
     WEBSITE_ENABLE_SYNC_UPDATE_SITE             = true
