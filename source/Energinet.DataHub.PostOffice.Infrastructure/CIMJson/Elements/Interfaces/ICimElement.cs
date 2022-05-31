@@ -12,25 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Text.Json;
-using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Factories;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Elements;
 
-public sealed class CimIntValueElement : ICimElement
+/// <summary>
+/// An element to describe a cim converted xml element in json
+/// </summary>
+public interface ICimElement
 {
-    public int Value { get; set; }
-    public string Key { get; set; } = string.Empty;
+    /// <summary>
+    /// The key of the current element
+    /// </summary>
+    string Key { get; }
 
-    public void WriteJson(Utf8JsonWriter jsonWriter)
-    {
-        ArgumentNullException.ThrowIfNull(jsonWriter, nameof(jsonWriter));
-        jsonWriter.WriteNumber(Key.AsSpan(), Value);
-    }
-
-    public void ReturnToPool()
-    {
-        CimJsonObjectPools.ReturnElement(this);
-    }
+    /// <summary>
+    /// Used to write the json that corresponds to this element
+    /// </summary>
+    /// <param name="jsonWriter"></param>
+    void WriteJson(Utf8JsonWriter jsonWriter);
 }

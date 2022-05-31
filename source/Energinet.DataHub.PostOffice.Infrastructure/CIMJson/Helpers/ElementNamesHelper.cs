@@ -12,25 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Text.Json;
-using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Factories;
+namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Helpers;
 
-namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Elements;
-
-public sealed class CimStringValueElement : ICimElement
+public static class ElementNamesHelper
 {
-    public ReadOnlyMemory<char> Value { get; set; }
-    public string Key { get; set; } = string.Empty;
-
-    public void WriteJson(Utf8JsonWriter jsonWriter)
+    internal static class GenericElementNames
     {
-        ArgumentNullException.ThrowIfNull(jsonWriter, nameof(jsonWriter));
-        jsonWriter.WriteString(Key.AsSpan(), Value.Span);
-    }
+        public const string Value = "value";
 
-    public void ReturnToPool()
-    {
-        CimJsonObjectPools.ReturnElement(this);
+        public static class Attributes
+        {
+            public const string CodingScheme = "codingScheme";
+            public const string Unit = "unit";
+        }
     }
 }

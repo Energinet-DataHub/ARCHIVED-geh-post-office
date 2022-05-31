@@ -14,23 +14,29 @@
 
 using System;
 using System.Text.Json;
-using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Factories;
+using Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Elements.Interfaces;
 
-namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Elements;
+namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Elements.ValueElements;
 
-public sealed class CimBoolValueElement : ICimElement
+internal class CimIntValueElement : ICimValueElement
 {
-    public bool Value { get; set; }
-    public string Key { get; set; } = string.Empty;
+    private int _value;
+    public CimIntValueElement(string key, ReadOnlyMemory<char> value)
+    {
+        Key = key;
+        _value = int.Parse(value.Span);
+    }
+
+    public string Key { get; }
 
     public void WriteJson(Utf8JsonWriter jsonWriter)
     {
         ArgumentNullException.ThrowIfNull(jsonWriter, nameof(jsonWriter));
-        jsonWriter.WriteBoolean(Key.AsSpan(), Value);
+        jsonWriter.WriteNumber(Key.AsSpan(), _value);
     }
 
-    public void ReturnToPool()
+    public void SetValue(ReadOnlyMemory<char> value)
     {
-        CimJsonObjectPools.ReturnElement(this);
+        _value = int.Parse(value.Span);
     }
 }

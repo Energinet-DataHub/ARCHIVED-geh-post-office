@@ -12,23 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Text.Json;
+using System;
 
-namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Elements;
+namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Elements.Interfaces;
 
 /// <summary>
 /// An element to describe a cim converted xml element in json
 /// </summary>
-public interface ICimElement
+public interface ICimValueElement : ICimElement
 {
     /// <summary>
-    /// Used to write the json that corresponds to this element
+    /// Set's the value of this element
     /// </summary>
-    /// <param name="jsonWriter"></param>
-    void WriteJson(Utf8JsonWriter jsonWriter);
-
-    /// <summary>
-    /// Ensures that the element is returned to it's respective pool
-    /// </summary>
-    void ReturnToPool();
+    /// <param name="value">THe value</param>
+    void SetValue(ReadOnlyMemory<char> value);
 }

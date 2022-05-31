@@ -14,9 +14,7 @@
 
 using System;
 using System.Buffers;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Xml;
 
@@ -24,13 +22,11 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.CIMJson.Reader;
 
 public sealed class CimXmlReader : ICimXmlReader, IDisposable
 {
-    private const int BufferSize = 128;
+    private const int BufferSize = 1 * 1024 * 1024;
     private readonly Stream _inputStream;
-    private readonly List<char[]> _buffers = new() { ArrayPool<char>.Shared.Rent(BufferSize) };
+    private readonly ArrayBufferWriter<char> _valueBuffer = new(BufferSize);
     private XmlReader? _xmlReader;
     private string? _emptyElementTag;
-    private int _index;
-    private int _buffersIndex;
     private bool _hasReachedNewNode;
 
     public CimXmlReader(Stream inputStream)
@@ -47,6 +43,10 @@ public sealed class CimXmlReader : ICimXmlReader, IDisposable
     public bool CanReadValue { get; private set; }
     public NodeType CurrentNodeType { get; private set; }
     public bool HasAttributes { get; private set; }
+
+    public int ValueBufferLength => _valueBuffer.Capacity;
+    public int ValueBufferFree => _valueBuffer.FreeCapacity;
+    public int ValueBufferUsed => _valueBuffer.Capacity - _valueBuffer.FreeCapacity;
 
     public bool Advance()
     {
@@ -161,35 +161,22 @@ public sealed class CimXmlReader : ICimXmlReader, IDisposable
         EnsureReader();
         int read;
         var total = 0;
-        var startIndex = _index;
-        while ((read = _xmlReader!.ReadValueChunk(_buffers[_buffersIndex], _index, _buffers[_buffersIndex].Length - _index)) > 0)
+        var startIndex = _valueBuffer.WrittenCount;
+        var readBuffer = ArrayPool<char>.Shared.Rent(128);
+        while ((read = _xmlReader!.ReadValueChunk(readBuffer, 0, 128)) > 0)
         {
             total += read;
-            _index += read;
-            //Check if we filled the entire buffer with this read, and expand if necessary
-            if (_buffers[_buffersIndex].Length - _index <= 0)
-            {
-                ExpandBuffers(startIndex);
-                startIndex = 0;
-            }
+            _valueBuffer.Write(readBuffer.AsSpan(0, read));
         }
 
-        //Check if we exactly filled the entire buffer with this read, and expand if necessary
-        if (_buffers[_buffersIndex].Length - _index <= 0)
-        {
-            ExpandBuffers(startIndex, false);
-            _index = 0;
-        }
-
-        return _buffers[_buffersIndex].AsMemory(startIndex, total); //.Slice(startIndex, total);
+        ArrayPool<char>.Shared.Return(readBuffer);
+        return _valueBuffer.WrittenMemory.Slice(startIndex, total);
     }
 
     public void Dispose()
     {
         _inputStream.Dispose();
         _xmlReader?.Dispose();
-        if (!_buffers.Any()) return;
-        foreach (var buffer in _buffers) ArrayPool<char>.Shared.Return(buffer);
     }
 
     private bool ValidatingRead()
@@ -208,27 +195,6 @@ public sealed class CimXmlReader : ICimXmlReader, IDisposable
         while (couldRead);
 
         return false;
-    }
-
-    private void ExpandBuffers(int startIndex, bool copyPrevious = true)
-    {
-        // Create new buffer, copy all read from this element to this, to avoid splitting Memory object
-        // This leaves a bit of unused space in the previous buffer, but should only happen rarely, and the
-        // performance is better this way, than the small amount of memory wasted.
-        _buffers.Add(ArrayPool<char>.Shared.Rent(_buffers[_buffersIndex].Length + BufferSize));
-        if (copyPrevious)
-        {
-            Array.Copy(
-                _buffers[_buffersIndex],
-                startIndex,
-                _buffers[_buffersIndex + 1],
-                0,
-                _buffers[_buffersIndex].Length - startIndex);
-
-            _index = _buffers[_buffersIndex].Length - startIndex;
-        }
-
-        _buffersIndex++;
     }
 
     private void ProcessElement()
