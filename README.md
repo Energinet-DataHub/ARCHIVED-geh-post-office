@@ -70,7 +70,7 @@ ToDo
 
 ### Format
 
-All documents inserted into the queues will have to comply with the protobuf contract.
+All documents inserted into the queues will have to comply with the ProtoBuf contract.
 
 If a document is inserted into the queue that does not comply with this contract, **IT WILL NOT** be handled.
 
