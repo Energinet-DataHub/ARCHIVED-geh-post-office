@@ -122,9 +122,9 @@ DataBundleResponseContract consists of four components. Below are five tables wh
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | Reply | oneof | required | Signals if the request was a success or a failure |
-| FileResource | message | requried if Reply is Success | Uri to get requested data along with dataset identifications |
-| RequestFailure | message | requried if Reply is Failure | Failure reason and description along with dataset identifications |
-| Reason | enum | requried if Reply is Failure | Multiple failure reasons to choose from |
+| FileResource | message | required if Reply is Success | Uri to get requested data along with dataset identifications |
+| RequestFailure | message | required if Reply is Failure | Failure reason and description along with dataset identifications |
+| Reason | enum | required if Reply is Failure | Multiple failure reasons to choose from |
 
 <b>Reply</b>
 
@@ -138,14 +138,14 @@ DataBundleResponseContract consists of four components. Below are five tables wh
 | Field | Type | Label | Description | Limits |
 | ----- | ---- | ----- | ----------- | ------ |
 | UUID | repeated string | required | Unique dataset identification | Must be a valid Guid in string format |
-| uri | string | requried | Uri to get requested data | Must be a valid Uri to data storage |
+| uri | string | required | Uri to get requested data | Must be a valid Uri to data storage |
 
 <b>RequestFailure</b>
 
 | Field | Type | Label | Description | Limits |
 | ----- | ---- | ----- | ----------- | ------ |
 | UUID | repeated string | required | Unique dataset identification | Must be a valid Guid in string format |
-| reason | Reason | requried | Failure reason | Must be a constant from Reason |
+| reason | Reason | required | Failure reason | Must be a constant from Reason |
 | failureDescription | string | optional | Description of the failure | N/A |
 
 <b>Reason</b>
