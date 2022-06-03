@@ -36,7 +36,7 @@ The main system handles core business logic and communication with market actors
 
 ![Container diagram](https://user-images.githubusercontent.com/17023767/141787188-5aea1090-ca82-4e44-bf38-e80c29c01903.png)
 
-Inside MessageHub five boxes are drawed. From left, the boxes have the following responsibilities:
+Inside MessageHub five boxes are drawn. From left, the boxes have the following responsibilities:
 
 - **Sub domain entry point** acts as interface between Libraries and MessageHub and processes all data-available notifications.
 - **Domain** contains business logic to represent MessageHub.
@@ -70,7 +70,7 @@ ToDo
 
 ### Format
 
-All documents inserted into the queues will have to comply with the protobuf contract.
+All documents inserted into the queues will have to comply with the ProtoBuf contract.
 
 If a document is inserted into the queue that does not comply with this contract, **IT WILL NOT** be handled.
 
