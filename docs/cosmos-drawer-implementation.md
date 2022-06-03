@@ -66,7 +66,7 @@ A unique and strictly ascending number assigned to each event. The drawers and t
 
 A Peek request is made by an actor, asking for data from a specific domain. The first step is to look in the catalog for all entries for this recipient and domain. This is done by constructing the composite partition key Actor-Domain and doing a lookup using the key. If no catalog entry is found, then no new unacknowledged data is available. Otherwise, of all the found catalog entries, the one with the smallest sequence number points to the drawer with the next event. The cabinet key from this catalog entry is used to find the cabinet and all its drawers.
 
-Once the drawers have been found, they are ordered by sequence number, skipping drawers without unacknowledged events. The events for up to 6 next drawers - the maximum number of events bundable - are then fetched in parallel. A cabinet reader is created from these fetched drawers and their events. The reader facilitates iteration through these events, while simultaneously tracking the position in each drawer.
+Once the drawers have been found, they are ordered by sequence number, skipping drawers without unacknowledged events. The events for up to 6 next drawers - the maximum number of events bundeable - are then fetched in parallel. A cabinet reader is created from these fetched drawers and their events. The reader facilitates iteration through these events, while simultaneously tracking the position in each drawer.
 
 This reader is then returned to the domain layer, which will iterate through the events based on domain-specific logic. The events chosen in the domain are grouped together in a bundle. The bundle, as well as the changed position inside the drawer, is then persisted to CosmosDB.
 
@@ -93,7 +93,7 @@ Saving an event requires finding the right cabinet and the next drawer. Finding 
 
 Once the cabinet key is known, it is necessary to find the right drawer. This is done by finding the last drawer in the cabinet, as it is the only drawer that can be partially filled. If the last drawer is completely filled, a new drawer is created instead. Once the drawer is known, the event is saved into it. Furthermore, if the drawer did not already have any unacknowledged events, a new catalog entry is created that points the newly saved event.
 
-When saving several events at once, the process stays mostly the same. However, several events are bulk-inserted into the drawer, up the maximum amount of 10.000. Because events must be saved in order, it is not possible to save across drawers in parallel. Saving events with different Cabinet keys can be done in parallel, though. 
+When saving several events at once, the process stays mostly the same. However, several events are bulk-inserted into the drawer, up the maximum amount of 10.000. Because events must be saved in order, it is not possible to save across drawers in parallel. Saving events with different Cabinet keys can be done in parallel, though.
 
 ### Parallel Execution
 
