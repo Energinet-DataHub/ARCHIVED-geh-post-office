@@ -38,17 +38,17 @@ module "func_operations" {
     # Endregion
     MESSAGES_DB_CONNECTION_STRING              = local.message_db_connection_string
     MESSAGES_DB_NAME                           = azurerm_cosmosdb_sql_database.db.name
-    DATAAVAILABLE_QUEUE_CONNECTION_STRING      = data.azurerm_key_vault_secret.sb_domain_relay_transceiver_connection_string.value
-    DATAAVAILABLE_QUEUE_NAME                   = data.azurerm_key_vault_secret.sbq_data_available_name.value
-    MARKET_PARTICIPANT_CONNECTION_STRING       = data.azurerm_key_vault_secret.sb_domain_relay_listen_connection_string.value
-    MARKET_PARTICIPANT_TOPIC_NAME              = data.azurerm_key_vault_secret.sbt_market_participant_changed.value
-    MARKET_PARTICIPANT_SUBSCRIPTION_NAME       = data.azurerm_key_vault_secret.sbs_market_participant_changed_to_messagehub_name.value
-    SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING = data.azurerm_key_vault_secret.sb_domain_relay_manage_connection_string.value
+    DATAAVAILABLE_QUEUE_CONNECTION_STRING      = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=sb-domain-relay-transceiver-connection-string)"
+    DATAAVAILABLE_QUEUE_NAME                   = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=sbq-data-available-name)"
+    MARKET_PARTICIPANT_CONNECTION_STRING       = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=sb-domain-relay-listen-connection-string)"
+    MARKET_PARTICIPANT_TOPIC_NAME              = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=sbt-market-participant-changed-name)"
+    MARKET_PARTICIPANT_SUBSCRIPTION_NAME       = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=sbs-market-participant-changed-to-messagehub-name)"
+    SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=sb-domain-relay-manage-connection-string)"
     SQL_ACTOR_DB_CONNECTION_STRING             = local.sql_actor_db_connection_string
-    BlobStorageConnectionString                = data.azurerm_key_vault_secret.st_market_operator_response_primary_connection_string.value
-    BlobStorageContainerName                   = data.azurerm_key_vault_secret.st_market_operator_response_postofficereply_container_name.value
-    RequestResponseLogConnectionString         = data.azurerm_key_vault_secret.st_market_operator_logs_primary_connection_string.value
-    RequestResponseLogContainerName            = data.azurerm_key_vault_secret.st_market_operator_logs_container_name.value
+    BlobStorageConnectionString                = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st-marketres-primary-connection-string)"
+    BlobStorageContainerName                   = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st-marketres-postofficereply-container-name)"
+    RequestResponseLogConnectionString         = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st-marketoplogs-primary-connection-string)"
+    RequestResponseLogContainerName            = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st-marketoplogs-container-name)"
   }
 
   tags                                      = azurerm_resource_group.this.tags

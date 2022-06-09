@@ -38,15 +38,15 @@ module "func_marketoperator" {
     # Endregion
     MESSAGES_DB_CONNECTION_STRING               = local.message_db_connection_string
     MESSAGES_DB_NAME                            = azurerm_cosmosdb_sql_database.db.name
-    BlobStorageConnectionString                 = data.azurerm_key_vault_secret.st_market_operator_response_primary_connection_string.value
-    BlobStorageContainerName                    = data.azurerm_key_vault_secret.st_market_operator_response_postofficereply_container_name.value
-    SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING  = data.azurerm_key_vault_secret.sb_domain_relay_manage_connection_string.value
-    DATAAVAILABLE_QUEUE_CONNECTION_STRING       = data.azurerm_key_vault_secret.sb_domain_relay_transceiver_connection_string.value
-    DATAAVAILABLE_QUEUE_NAME                    = data.azurerm_key_vault_secret.sbq_data_available_name.value
-    RequestResponseLogConnectionString          = data.azurerm_key_vault_secret.st_market_operator_logs_primary_connection_string.value
-    RequestResponseLogContainerName             = data.azurerm_key_vault_secret.st_market_operator_logs_container_name.value
-    B2C_TENANT_ID                               = data.azurerm_key_vault_secret.b2c_tenant_id.value
-    BACKEND_SERVICE_APP_ID                      = data.azurerm_key_vault_secret.backend_service_app_id.value
+    BlobStorageConnectionString                 = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st-marketres-primary-connection-string)"
+    BlobStorageContainerName                    = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st-marketres-postofficereply-container-name)"
+    SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING  = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=sb-domain-relay-manage-connection-string)"
+    DATAAVAILABLE_QUEUE_CONNECTION_STRING       = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=sb-domain-relay-transceiver-connection-string)"
+    DATAAVAILABLE_QUEUE_NAME                    = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=sbq-data-available-name)"
+    RequestResponseLogConnectionString          = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st-marketoplogs-primary-connection-string)"
+    RequestResponseLogContainerName             = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st-marketoplogs-container-name)"
+    B2C_TENANT_ID                               = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=b2c-tenant-id)"
+    BACKEND_SERVICE_APP_ID                      = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=backend-service-app-id)"
     SQL_ACTOR_DB_CONNECTION_STRING              = local.sql_actor_db_connection_string
     # feature flags
     FEATURE_SENDMESSAGETYPEHEADER               = local.feature_send_messagetype_header
