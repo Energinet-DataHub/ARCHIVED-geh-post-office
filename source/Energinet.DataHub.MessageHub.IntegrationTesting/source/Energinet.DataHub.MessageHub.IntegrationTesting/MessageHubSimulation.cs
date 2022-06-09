@@ -148,7 +148,7 @@ namespace Energinet.DataHub.MessageHub.IntegrationTesting
                 requestId,
                 referenceId,
                 idempotencyId.ToString(),
-                messageType);
+                new MessageTypeDto(messageType));
 
             // This domain origin must be valid, but it is not used.
             // All the queue names point to the same domain.
@@ -188,7 +188,7 @@ namespace Energinet.DataHub.MessageHub.IntegrationTesting
 
             var dequeue = new DequeueNotificationDto(
                 simulatedPeek.DataAvailableNotificationReferenceId,
-                new GlobalLocationNumberDto(marketOperator));
+                new ActorIdDto(marketOperator));
 
             // This domain origin must be valid, but it is not used.
             // All the queue names point to the same domain.
