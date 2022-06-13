@@ -19,6 +19,5 @@ namespace Energinet.DataHub.PostOffice.Utilities
     [Flags]
     public enum Feature
     {
-        SendMessageTypeHeader = 1
     }
 }
