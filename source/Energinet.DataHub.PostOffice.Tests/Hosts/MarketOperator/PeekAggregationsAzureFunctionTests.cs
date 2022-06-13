@@ -22,7 +22,6 @@ using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions;
 using Energinet.DataHub.PostOffice.Tests.Common.Auth;
-using Energinet.DataHub.PostOffice.Utilities;
 using FluentValidation;
 using MediatR;
 using Microsoft.Azure.Functions.Isolated.TestDoubles;
@@ -55,7 +54,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             var target = new PeekAggregationsFunction(
                 mockedMediator.Object,
                 mockedIdentity,
-                new Mock<IFeatureFlags>().Object,
                 new ExternalBundleIdProvider());
 
             // Act
@@ -84,7 +82,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             var target = new PeekAggregationsFunction(
                 mockedMediator.Object,
                 mockedIdentity,
-                new Mock<IFeatureFlags>().Object,
                 new ExternalBundleIdProvider());
 
             // Act
@@ -110,7 +107,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             var target = new PeekAggregationsFunction(
                 mockedMediator.Object,
                 mockedIdentity,
-                new Mock<IFeatureFlags>().Object,
                 new ExternalBundleIdProvider());
 
             // Act
@@ -136,7 +132,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             var target = new PeekAggregationsFunction(
                 mockedMediator.Object,
                 mockedIdentity,
-                new Mock<IFeatureFlags>().Object,
                 new ExternalBundleIdProvider());
 
             // Act
