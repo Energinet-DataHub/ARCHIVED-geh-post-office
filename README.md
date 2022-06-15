@@ -65,6 +65,7 @@ Flow of communication between MessageHub and domains is always through four Azur
 ![QueuesDiagram](https://user-images.githubusercontent.com/17023767/141968153-7baa3b44-d9da-4d59-b24e-8c26ebd8dd59.png)
 
 ## Delivering documents to the message hub
+
 In order to make data available for market operators, sub domains must notify message hub, that new data is available. This is done by putting `DataAvailableNotification`'s on the message hub owned `dataavaialble` queue. On a set interval, messages from this queue will be read, processed and made available for peeking by the market operators.
 
 Documentation regarding the internal workings on how `DataAvailableNotification`'s are stored and made available for peeking, can be found [here](https://github.com/Energinet-DataHub/geh-post-office/blob/main/docs/cosmos-drawer-implementation.md).
@@ -76,12 +77,15 @@ All documents inserted into the queues will have to comply with the ProtoBuf con
 If a document is inserted into the queue that does not comply with this contract, **IT WILL NOT** be handled.
 
 ## Peek and dequeue documents from the message hub
+
 Below is a list of the actor facing endpoints, actors can use to peek and dequeue data.
 
 ### Authenticating
+
 Authentication of actors is done through JWT token validation, using common logic from the `geh-core` project. More info on this can be found [here](https://github.com/Energinet-DataHub/geh-core/blob/main/source/App/documents/middleware.md#jwt-token-middleware)
 
 ### GET:/Peek
+
 ```api/peek?bundleId={bundleId:Guid}```
 
 Retrieves the next set of unacknowledged bundled messages for the market operator. A bundleId can be supplied, and if no bundle with that ID already exists it is used. If bundleId is not supplied, one will be generated.
@@ -89,21 +93,25 @@ Retrieves the next set of unacknowledged bundled messages for the market operato
 If a bundle does not exist `200 NO CONTENT` is returned. If one does exist, a stream to the actual bundle is returned.
 
 ### GET:/Peek/Aggregations
+
 ```api/peek/aggregations?bundleId={bundleId:Guid}```
 
 Same as a normal peek except it only bundles aggregations.
 
 ### GET:/Peek/MasterData
+
 ```api/peek/masterdata?bundleId={bundleId:Guid}```
 
 Same as a normal peek except it only bundles masterdata.
 
 ### GET:/Peek/TimeSeries
+
 ```api/peek/timeseries?bundleId={bundleId:Guid}```
 
 Same as a normal peek except it only bundles time series.
 
 ### DELETE:/Dequeue
+
 ```api/Dequeue?bundleId={bundleId:Guid}```
 
 Marks a bundle retrieved/acknowledged. If no bundle was found, `404 NOT FOUND` is returned, otherwise `200 OK`. The actual bundle is not returned.
