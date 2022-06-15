@@ -5,8 +5,8 @@
 Welcome to the MessageHub domain of the [Green Energy Hub project](https://github.com/Energinet-DataHub/green-energy-hub).
 
 - [Intro](#intro)
-- [Delivering documents to the post office](#delivering-documents-to-the-post-office)
-- [Peek and dequeue documents from the post office](#peek-and-dequeue-documents-from-the-post-office)
+- [Delivering documents to the message hub](#delivering-documents-to-the-post-office)
+- [Peek and dequeue documents from the message hub](#peek-and-dequeue-documents-from-the-post-office)
 - [Architecture](#architecture)
 
 ## Intro
@@ -17,9 +17,9 @@ MessageHub is the central place for handling outbound documents from within the 
 
 Highlighted in red, the MessageHub acts as a middleman between other domains within GEH and market actors. Other domains deliver data to the MessageHub which are sent to market actors on request. By centralizing communication through MessageHub, domains avoid to implement local message hubs and instead can specialize in domain specific knowledge. Also, MessageHub keeps state on documents and requests which can be useful for internal business interests.
 
-For a market actor to retrieve data from GEH, it needs to provide an appropriate type which the MessageHub uses to identify which domain(s) to retrieve the data from, see [Delivering documents to the post office](#delivering-documents-to-the-post-office).
+For a market actor to retrieve data from GEH, it needs to provide an appropriate type which the MessageHub uses to identify which domain(s) to retrieve the data from, see [Delivering documents to the message hub](#delivering-documents-to-the-post-office).
 
-The market actors will only be able to get (peek) and read documents that they are marked as recipients of. The same goes for documents market actors want to dequeue, i.e. tell MessageHub the document has been processed, and thereby indicate they are ready to get new documents. See [Fetching documents from the post office](#peek-and-dequeue-documents-from-the-post-office).
+The market actors will only be able to get (peek) and read documents that they are marked as recipients of. The same goes for documents market actors want to dequeue, i.e. tell MessageHub the document has been processed, and thereby indicate they are ready to get new documents. See [Fetching documents from the message hub](#peek-and-dequeue-documents-from-the-post-office).
 
 ### Architecture
 
@@ -64,60 +64,54 @@ Flow of communication between MessageHub and domains is always through four Azur
 
 ![QueuesDiagram](https://user-images.githubusercontent.com/17023767/141968153-7baa3b44-d9da-4d59-b24e-8c26ebd8dd59.png)
 
-## Delivering documents to the post office
+## Delivering documents to the message hub
 
-ToDo
+In order to make data available for market operators, sub domains must notify message hub, that new data is available. This is done by putting `DataAvailableNotification`'s on the message hub owned `dataavaialble` queue. On a set interval, messages from this queue will be read, processed and made available for peeking by the market operators.
+
+Documentation regarding the internal workings on how `DataAvailableNotification`'s are stored and made available for peeking, can be found [here](https://github.com/Energinet-DataHub/geh-post-office/blob/main/docs/cosmos-drawer-implementation.md).
 
 ### Format
 
-All documents inserted into the queues will have to comply with the ProtoBuf contract.
+All documents inserted into the queues will have to comply with the ProtoBuf contract. More info on these can be found [here](https://github.com/Energinet-DataHub/geh-post-office/blob/main/docs/Contracts.md).
 
 If a document is inserted into the queue that does not comply with this contract, **IT WILL NOT** be handled.
 
-More ToDo?
+## Peek and dequeue documents from the message hub
 
-## Peek and dequeue documents from the post office
+Below is a list of the actor facing endpoints, actors can use to peek and dequeue data.
 
 ### Authenticating
 
-TODO: This will have to be updated once we know more about how authentication is done throughout the system.
+Authentication of actors is done through JWT token validation, using common logic from the `geh-core` project. More info on this can be found [here](https://github.com/Energinet-DataHub/geh-core/blob/main/source/App/documents/middleware.md#jwt-token-middleware)
 
 ### GET:/Peek
 
-ToDo
+```api/peek?bundleId={bundleId:Guid}```
 
-#### Peek URI Parameters
+Retrieves the next set of unacknowledged bundled messages for the market operator. A bundleId can be supplied, and if no bundle with that ID already exists it is used. If bundleId is not supplied, one will be generated.
 
-ToDo
+If a bundle does not exist `204 NO CONTENT` is returned. If one does exist, a stream to the actual bundle is returned.
 
-#### Peek Responses
+### GET:/Peek/Aggregations
 
-ToDo
+```api/peek/aggregations?bundleId={bundleId:Guid}```
 
-### GET:/Dequeue
+Same as a normal peek except it only bundles aggregations.
 
-ToDo
+### GET:/Peek/MasterData
 
-#### Dequeue Request body
+```api/peek/masterdata?bundleId={bundleId:Guid}```
 
-ToDo
+Same as a normal peek except it only bundles masterdata.
 
-#### Dequeue Responses
+### GET:/Peek/TimeSeries
 
-ToDo
+```api/peek/timeseries?bundleId={bundleId:Guid}```
 
-## Types
+Same as a normal peek except it only bundles time series.
 
-### Peeked documents
+### DELETE:/Dequeue
 
-ToDo
+```api/Dequeue?bundleId={bundleId:Guid}```
 
-An array of documents.
-
-```json
-[
-   {
-      "Recipient": "string"
-   }
-]
-```
+Marks a bundle retrieved/acknowledged. If no bundle was found, `404 NOT FOUND` is returned, otherwise `200 OK`. The actual bundle is not returned.

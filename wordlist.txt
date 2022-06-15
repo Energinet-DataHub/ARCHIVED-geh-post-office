@@ -120,3 +120,8 @@ IDataAvailableRepository
 GetNextUnacknowledged
 dequeues
 etags
+JWT
+bundleId
+MasterData
+masterdata
+TimeSeries
