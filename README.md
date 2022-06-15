@@ -90,7 +90,7 @@ Authentication of actors is done through JWT token validation, using common logi
 
 Retrieves the next set of unacknowledged bundled messages for the market operator. A bundleId can be supplied, and if no bundle with that ID already exists it is used. If bundleId is not supplied, one will be generated.
 
-If a bundle does not exist `200 NO CONTENT` is returned. If one does exist, a stream to the actual bundle is returned.
+If a bundle does not exist `204 NO CONTENT` is returned. If one does exist, a stream to the actual bundle is returned.
 
 ### GET:/Peek/Aggregations
 
