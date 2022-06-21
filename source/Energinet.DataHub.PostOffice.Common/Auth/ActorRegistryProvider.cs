@@ -40,7 +40,7 @@ public sealed class ActorRegistryProvider : IActorProvider
             throw new InvalidOperationException($"Actor with id {actorId} not found.");
 
         return new Actor(
-            actor.ExternalId.Value,
+            Guid.Parse(actor.Id.Value),
             string.Empty,
             string.Empty,
             string.Empty);
