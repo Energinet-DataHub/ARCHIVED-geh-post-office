@@ -44,7 +44,7 @@ public sealed class ActorRegistryProviderTests
         var actual = await target.GetActorAsync(externalActorId).ConfigureAwait(false);
 
         // Assert
-        Assert.Equal(externalActorId, actual.ActorId);
+        Assert.Equal(internalActorId, actual.ActorId);
     }
 
     [Fact]
