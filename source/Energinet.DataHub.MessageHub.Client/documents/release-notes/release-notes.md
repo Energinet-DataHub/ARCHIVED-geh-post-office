@@ -2,7 +2,7 @@
 
 ## Version 3.0.1
 
-- Domain origin `Wholesale` has been added to enum `DocumentType`.
+- Domain origin `Aggregations` renamed to `Wholesale` in enum `DocumentType`.
 
 ## Version 3.0.0
 

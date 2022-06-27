@@ -22,9 +22,8 @@ namespace Energinet.DataHub.MessageHub.Model.Model
         Unknown = 0,
         Charges = 1,
         TimeSeries = 2,
-        Aggregations = 3,
+        Wholesale = 3,
         MarketRoles = 4,
         MeteringPoints = 5,
-        Wholesale = 6,
     }
 }
