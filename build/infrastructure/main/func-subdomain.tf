@@ -40,9 +40,6 @@ module "func_subdomain" {
     DATAAVAILABLE_TIMEOUT_IN_MS                 = 1000
     SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING  = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=sb-domain-relay-manage-connection-string)"
     SQL_ACTOR_DB_CONNECTION_STRING              = local.sql_actor_db_connection_string
-    AGGREGATIONS_QUEUE_NAME                     = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=sbq-wholesale-name)"
-    AGGREGATIONS_REPLY_QUEUE_NAME               = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=sbq-wholesale-reply-name)"
-    AGGREGATIONS_DEQUEUE_QUEUE_NAME             = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=sbq-wholesale-dequeue-name)"
     BlobStorageConnectionString                 = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st-marketres-primary-connection-string)"
     BlobStorageContainerName                    = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st-marketres-postofficereply-container-name)"
     RequestResponseLogConnectionString          = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st-marketoplogs-primary-connection-string)"
