@@ -1,5 +1,9 @@
 # Energinet.DataHub.MessageHub.Client Release notes
 
+## Version 3.0.1
+
+- Domain origin `Aggregations` renamed to `Wholesale` in enum `DocumentType`.
+
 ## Version 3.0.0
 
 - Recipients are now identified by actor id and not global location numbers.
