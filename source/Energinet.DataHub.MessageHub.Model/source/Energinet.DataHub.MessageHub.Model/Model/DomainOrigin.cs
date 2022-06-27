@@ -24,6 +24,7 @@ namespace Energinet.DataHub.MessageHub.Model.Model
         TimeSeries = 2,
         Aggregations = 3,
         MarketRoles = 4,
-        MeteringPoints = 5
+        MeteringPoints = 5,
+        Wholesale = 6,
     }
 }

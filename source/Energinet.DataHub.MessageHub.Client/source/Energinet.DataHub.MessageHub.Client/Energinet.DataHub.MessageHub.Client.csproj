@@ -28,7 +28,7 @@ limitations under the License.
 
   <PropertyGroup>
     <PackageId>Energinet.DataHub.MessageHub.Client</PackageId>
-    <PackageVersion>3.0.0$(VersionSuffix)</PackageVersion>
+    <PackageVersion>3.0.1$(VersionSuffix)</PackageVersion>
     <Title>Energinet.DataHub.MessageHub.Client library</Title>
     <Company>Energinet-DataHub</Company>
     <Authors>Energinet-DataHub</Authors>
@@ -63,6 +63,9 @@ https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energine
     <!-- Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\..\documents\release-notes\release-notes.md" Link="release-notes.md" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.5.0" />
