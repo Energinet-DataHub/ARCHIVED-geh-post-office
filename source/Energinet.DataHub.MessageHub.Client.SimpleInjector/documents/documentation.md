@@ -1,8 +1,8 @@
 # Documentation
 
-This package supports registration of MessageHub for IServiceCollection and SimpleInjector.
+This package supports registration of MessageHub for `IServiceCollection` and `SimpleInjector`.
 
-IServiceCollection example:
+`IServiceCollection` example:
 
 ```csharp
         serviceCollection.AddMessageHub(
