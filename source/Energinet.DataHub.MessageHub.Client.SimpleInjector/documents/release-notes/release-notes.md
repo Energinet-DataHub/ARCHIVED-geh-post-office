@@ -1,5 +1,9 @@
 # Energinet.DataHub.MessageHub.SimpleInjector Release notes
 
+## Version 2.2.0
+
+- Add registration method for `IServiceCollection`.
+
 ## Version 2.1.0
 
 - Model package upgrade.
