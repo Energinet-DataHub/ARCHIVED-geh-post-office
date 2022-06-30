@@ -28,7 +28,7 @@ limitations under the License.
 
   <PropertyGroup>
     <PackageId>Energinet.DataHub.MessageHub.Client.SimpleInjector</PackageId>
-	  <PackageVersion>2.1.0$(VersionSuffix)</PackageVersion>
+	  <PackageVersion>2.2.0$(VersionSuffix)</PackageVersion>
 	  <Title>Energinet.DataHub.MessageHub.Client.SimpleInjector library</Title>
     <Company>Energinet-DataHub</Company>
     <Authors>Energinet-DataHub</Authors>
@@ -76,6 +76,15 @@ https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energine
 
   <ItemGroup>
     <Compile Remove="AssemblyInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\documents\documentation.md">
+      <Link>documents\documentation.md</Link>
+    </Content>
+    <Content Include="..\..\documents\release-notes\release-notes.md">
+      <Link>documents\release-notes\release-notes.md</Link>
+    </Content>
   </ItemGroup>
 
 </Project>
