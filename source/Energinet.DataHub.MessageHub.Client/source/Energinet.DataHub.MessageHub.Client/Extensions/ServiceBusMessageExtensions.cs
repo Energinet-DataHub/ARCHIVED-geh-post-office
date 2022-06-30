@@ -13,8 +13,11 @@
 // limitations under the License.
 
 using System;
+using System.Globalization;
 using Azure.Messaging.ServiceBus;
 using Energinet.DataHub.MessageHub.Model.IntegrationEvents;
+using NodaTime;
+using NodaTime.Text;
 
 namespace Energinet.DataHub.MessageHub.Client.Extensions
 {
@@ -42,7 +45,7 @@ namespace Energinet.DataHub.MessageHub.Client.Extensions
             IntegrationEventsMessageType messageType,
             string eventIdentification)
         {
-            serviceBusMessage.ApplicationProperties.Add("OperationTimestamp", DateTimeOffset.UtcNow);
+            serviceBusMessage.ApplicationProperties.Add("OperationTimestamp", SystemClock.Instance.GetCurrentInstant().ToString(null, CultureInfo.InvariantCulture));
             serviceBusMessage.ApplicationProperties.Add("OperationCorrelationId", operationCorrelationId);
             serviceBusMessage.ApplicationProperties.Add("MessageVersion", 1);
             serviceBusMessage.ApplicationProperties.Add("MessageType", messageType.ToString());
