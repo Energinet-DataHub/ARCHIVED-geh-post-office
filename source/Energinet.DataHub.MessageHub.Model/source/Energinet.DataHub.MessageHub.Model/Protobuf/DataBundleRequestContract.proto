@@ -22,4 +22,6 @@ message DataBundleRequestContract {
   string DataAvailableNotificationReferenceId = 2; // A reference id used to obtain the list of requested DataAvailableNotification ids.
   string IdempotencyId = 3; // Uniquely identififies the contents of the message. Domains can use this property to ensure idempotency.
   string MessageType = 4; // Specifies the common message type for the requested bundle.
+  string ReturnTypeRequested = 5;
+  double Version = 6;
 }
