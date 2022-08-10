@@ -14,6 +14,7 @@
 
 using System;
 using Energinet.DataHub.MessageHub.Model.Exceptions;
+using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.MessageHub.Model.Peek;
 using Energinet.DataHub.MessageHub.Model.Protobuf;
 using Google.Protobuf;
@@ -35,7 +36,9 @@ namespace Energinet.DataHub.MessageHub.Model.Tests.Peek
                 RequestId = "07814976-6567-4E43-8C31-26630FEA3671",
                 DataAvailableNotificationReferenceId = "2139E118-96D9-4D68-9094-44C15D8CEACF",
                 IdempotencyId = "06FD1AB3-D650-45BC-860E-EE598A3623CA",
-                MessageType = "some_message_type"
+                MessageType = "some_message_type",
+                ResponseFormatRequested = "Json",
+                ResponseFromatVersion = 1.0
             }.ToByteArray();
 
             // act
@@ -47,6 +50,8 @@ namespace Energinet.DataHub.MessageHub.Model.Tests.Peek
             Assert.Equal("2139E118-96D9-4D68-9094-44C15D8CEACF", actual.DataAvailableNotificationReferenceId);
             Assert.Equal("06FD1AB3-D650-45BC-860E-EE598A3623CA", actual.IdempotencyId);
             Assert.Equal("some_message_type", actual.MessageType.Value);
+            Assert.Equal(ResponseFormat.Json, actual.ResponseFormat);
+            Assert.Equal(1.0, actual.ResponseVersion);
         }
 
         [Fact]
