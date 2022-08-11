@@ -16,23 +16,27 @@ using System;
 using Energinet.DataHub.PostOffice.Common.Extensions;
 using Microsoft.Azure.Functions.Worker.Http;
 
-namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
+namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpers
 {
-    public sealed class ExternalBundleIdProvider
+    public sealed class ExternalResponseVersionProvider
     {
         /// <summary>
-        /// Get the bundle id from the request, or returns null if no bundle id was provided.
+        /// Get the Response format version from the request, or returns null if no version was provided.
         /// </summary>
         /// <param name="request">The request to probe for the bundle id.</param>
-        /// <returns>The bundle id, or null.</returns>
+        /// <returns>The Response format version, or null.</returns>
 #pragma warning disable CA1822 // Mark members as static
-        public string? TryGetBundleId(HttpRequestData request)
+        public double? TryGetResponseVersion(HttpRequestData request)
 #pragma warning restore CA1822 // Mark members as static
         {
             ArgumentNullException.ThrowIfNull(request, nameof(request));
 
-            var maybeBundleId = request.Url.GetQueryValue(Constants.BundleIdQueryName);
-            return !string.IsNullOrWhiteSpace(maybeBundleId) ? maybeBundleId : null;
+            if (double.TryParse(request.Url.GetQueryValue(Constants.ResponseVersionQueryName), out var version))
+            {
+                return version;
+            }
+
+            return null;
         }
     }
 }

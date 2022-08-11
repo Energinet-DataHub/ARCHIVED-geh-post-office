@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
+namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpers
 {
     public static class Constants
     {
@@ -30,5 +30,15 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
         /// Name of HttpHeader that contains the message types found in a given bundle
         /// </summary>
         public const string MessageTypeName = "MessageType";
+
+        /// <summary>
+        /// Name of the Query Parameter that contains the ResponseFormat value
+        /// </summary>
+        public const string ResponseFormatQueryName = "responseformat";
+
+        /// <summary>
+        /// Name of the Query Parameter that contains the ResponseVersion value
+        /// </summary>
+        public const string ResponseVersionQueryName = "responseversion";
     }
 }

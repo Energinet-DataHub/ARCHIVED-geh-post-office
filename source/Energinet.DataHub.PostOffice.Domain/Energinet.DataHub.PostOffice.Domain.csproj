@@ -28,6 +28,7 @@ limitations under the License.
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Energinet.DataHub.MessageHub.Model" Version="3.0.2-alpha-20220811T073234" />
       <PackageReference Include="NodaTime" Version="3.1.0" />
     </ItemGroup>
 </Project>

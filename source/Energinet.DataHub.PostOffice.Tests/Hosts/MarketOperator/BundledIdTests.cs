@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions;
+using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpers;
 using Energinet.DataHub.PostOffice.Tests.Common.Auth;
 using FluentAssertions;
 using MediatR;
@@ -46,7 +47,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             var sut = new PeekAggregationsFunction(
                 mediator.Object,
                 identifier,
-                new ExternalBundleIdProvider());
+                new ExternalBundleIdProvider(),
+                new ExternalResponseFormatProvider(),
+                new ExternalResponseVersionProvider());
 
             var response = await sut.RunAsync(request).ConfigureAwait(false);
 

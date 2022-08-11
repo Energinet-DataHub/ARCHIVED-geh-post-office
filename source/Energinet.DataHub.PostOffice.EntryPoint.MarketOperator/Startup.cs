@@ -21,6 +21,7 @@ using Energinet.DataHub.PostOffice.Common.Auth;
 using Energinet.DataHub.PostOffice.Common.Configuration;
 using Energinet.DataHub.PostOffice.Common.Extensions;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions;
+using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpers;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Monitor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -93,6 +94,8 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
             container.Register<PeekAggregationsFunction>(Lifestyle.Scoped);
             container.Register<DequeueFunction>(Lifestyle.Scoped);
             container.Register(() => new ExternalBundleIdProvider(), Lifestyle.Singleton);
+            container.Register(() => new ExternalResponseFormatProvider(), Lifestyle.Singleton);
+            container.Register(() => new ExternalResponseVersionProvider(), Lifestyle.Singleton);
 
             AddRequestResponseLogging(container);
 

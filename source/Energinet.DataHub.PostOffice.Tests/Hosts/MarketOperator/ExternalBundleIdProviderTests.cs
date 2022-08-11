@@ -14,6 +14,7 @@
 
 using System;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator;
+using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpers;
 using FluentAssertions;
 using Microsoft.Azure.Functions.Isolated.TestDoubles;
 using Xunit;

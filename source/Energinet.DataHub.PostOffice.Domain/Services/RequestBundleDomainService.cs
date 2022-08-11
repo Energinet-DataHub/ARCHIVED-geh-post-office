@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Threading.Tasks;
+using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Domain.Model;
 
 namespace Energinet.DataHub.PostOffice.Domain.Services
@@ -26,9 +27,9 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
             _bundleContentRequestService = bundleContentRequestService;
         }
 
-        public Task<IBundleContent?> WaitForBundleContentFromSubDomainAsync(Bundle bundle)
+        public Task<IBundleContent?> WaitForBundleContentFromSubDomainAsync(Bundle bundle, ResponseFormat responseFormat, double responseVersion)
         {
-            return _bundleContentRequestService.WaitForBundleContentFromSubDomainAsync(bundle);
+            return _bundleContentRequestService.WaitForBundleContentFromSubDomainAsync(bundle, responseFormat, responseVersion);
         }
     }
 }

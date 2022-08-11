@@ -12,9 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Energinet.DataHub.MessageHub.Model.Model;
 using MediatR;
 
 namespace Energinet.DataHub.PostOffice.Application.Commands
 {
-    public abstract record PeekCommandBase(string MarketOperator, string? BundleId) : IRequest<PeekResponse>;
+    public abstract record PeekCommandBase(
+        string MarketOperator,
+        string? BundleId,
+        ResponseFormat? ResponseFormat,
+        double? ResponseVersion) : IRequest<PeekResponse>;
 }

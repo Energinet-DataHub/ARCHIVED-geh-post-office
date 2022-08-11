@@ -18,6 +18,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Energinet.DataHub.Core.App.FunctionApp.Middleware.CorrelationId;
+using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Services;
@@ -67,7 +68,9 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
             return HandleAsync(request, _marketOperatorDataDomainService.GetNextUnacknowledgedAggregationsAsync);
         }
 
-        private async Task<PeekResponse> HandleAsync(PeekCommandBase request, Func<ActorId, Uuid?, Task<Bundle?>> requestHandler)
+        private async Task<PeekResponse> HandleAsync(
+            PeekCommandBase request,
+            Func<ActorId, Uuid?, ResponseFormat, double, Task<Bundle?>> requestHandler)
         {
             ArgumentNullException.ThrowIfNull(request, nameof(request));
 
@@ -81,7 +84,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
                 ? new Uuid(request.BundleId)
                 : null;
 
-            var bundle = await requestHandler(marketOperator, suggestedBundleId).ConfigureAwait(false);
+            var bundle = await requestHandler(marketOperator, suggestedBundleId, request.ResponseFormat, request.ResponseVersion).ConfigureAwait(false);
 
             if (bundle != null)
             {
