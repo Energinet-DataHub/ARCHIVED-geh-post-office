@@ -84,7 +84,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
                 ? new Uuid(request.BundleId)
                 : null;
 
-            var bundle = await requestHandler(marketOperator, suggestedBundleId, request.ResponseFormat, request.ResponseVersion).ConfigureAwait(false);
+            var bundle = await requestHandler(marketOperator, suggestedBundleId, request.ResponseFormat ?? ResponseFormat.Xml, request.ResponseVersion ?? 1.0).ConfigureAwait(false);
 
             if (bundle != null)
             {

@@ -15,6 +15,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Application.Validation;
 using Xunit;
@@ -25,6 +26,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation
     [UnitTest]
     public sealed class PeekCommandRuleSetTests
     {
+        private const ResponseFormat ResponseFormat = MessageHub.Model.Model.ResponseFormat.Json;
+        private const double ResponseVersion = 1.0;
         private const string ValidRecipient = "5790000555550";
 
         [Theory]
@@ -41,7 +44,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation
             var target = new PeekCommandRuleSet();
             var command = new PeekCommand(
                 ValidRecipient,
-                value);
+                value,
+                ResponseFormat,
+                ResponseVersion);
 
             // Act
             var result = await target.ValidateAsync(command).ConfigureAwait(false);
@@ -70,7 +75,11 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation
             const string propertyName = nameof(PeekCommand.MarketOperator);
 
             var target = new PeekCommandRuleSet();
-            var command = new PeekCommand(value, Guid.NewGuid().ToString());
+            var command = new PeekCommand(
+                value,
+                Guid.NewGuid().ToString(),
+                ResponseFormat,
+                ResponseVersion);
 
             // Act
             var result = await target.ValidateAsync(command).ConfigureAwait(false);

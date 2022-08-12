@@ -55,7 +55,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             var target = new PeekMasterDataFunction(
                 mockedMediator.Object,
                 mockedIdentity,
-                new ExternalBundleIdProvider());
+                new ExternalBundleIdProvider(),
+                new ExternalResponseFormatProvider(),
+                new ExternalResponseVersionProvider());
 
             // Act
             var response = await target.RunAsync(mockedRequestData).ConfigureAwait(false);
@@ -83,7 +85,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             var target = new PeekMasterDataFunction(
                 mockedMediator.Object,
                 mockedIdentity,
-                new ExternalBundleIdProvider());
+                new ExternalBundleIdProvider(),
+                new ExternalResponseFormatProvider(),
+                new ExternalResponseVersionProvider());
 
             // Act
             var response = await target.RunAsync(mockedRequestData).ConfigureAwait(false);
@@ -108,7 +112,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             var target = new PeekMasterDataFunction(
                 mockedMediator.Object,
                 mockedIdentity,
-                new ExternalBundleIdProvider());
+                new ExternalBundleIdProvider(),
+                new ExternalResponseFormatProvider(),
+                new ExternalResponseVersionProvider());
 
             // Act
             var response = await target.RunAsync(mockedRequestData).ConfigureAwait(false);
@@ -133,7 +139,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             var target = new PeekMasterDataFunction(
                 mockedMediator.Object,
                 mockedIdentity,
-                new ExternalBundleIdProvider());
+                new ExternalBundleIdProvider(),
+                new ExternalResponseFormatProvider(),
+                new ExternalResponseVersionProvider());
 
             // Act
             var response = await target.RunAsync(mockedRequestData).ConfigureAwait(false);

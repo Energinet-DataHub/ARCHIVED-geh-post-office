@@ -16,6 +16,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions;
@@ -31,12 +32,15 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
 {
     public class BundledIdTests
     {
+        private const ResponseFormat ResponseFormat = MessageHub.Model.Model.ResponseFormat.Json;
+        private const double ResponseVersion = 1.0;
+
         [Fact]
         public async Task Given_PeekAggregations_WhenBundleIdIsPresentInQuery_ShouldSetBundledIdHeader()
         {
             // Arrange
             var bundleId = Guid.NewGuid().ToString("N");
-            Uri path = new($"https://localhost?{Constants.BundleIdQueryName}={bundleId}");
+            Uri path = new($"https://localhost?{Constants.BundleIdQueryName}={bundleId}&{Constants.ResponseFormatQueryName}={ResponseVersion}&{Constants.ResponseVersionQueryName}={ResponseFormat}");
 
             var request = MockHelpers.CreateHttpRequestData(url: path);
             var mediator = new Mock<IMediator>();
@@ -65,7 +69,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
         {
             // Arrange
             var bundleId = Guid.NewGuid().ToString("N");
-            Uri path = new($"https://localhost?{Constants.BundleIdQueryName}={bundleId}");
+
+            Uri path = new($"https://localhost?{Constants.BundleIdQueryName}={bundleId}&{Constants.ResponseFormatQueryName}={ResponseFormat}&{Constants.ResponseVersionQueryName}={ResponseVersion}");
 
             var request = MockHelpers.CreateHttpRequestData(url: path);
             var mediator = new Mock<IMediator>();
@@ -76,7 +81,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             var sut = new PeekFunction(
                 mediator.Object,
                 identifier,
-                new ExternalBundleIdProvider());
+                new ExternalBundleIdProvider(),
+                new ExternalResponseFormatProvider(),
+                new ExternalResponseVersionProvider());
 
             var response = await sut.RunAsync(request).ConfigureAwait(false);
 
@@ -92,7 +99,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
         {
             // Arrange
             var bundleId = Guid.NewGuid().ToString("N");
-            Uri path = new($"https://localhost?{Constants.BundleIdQueryName}={bundleId}");
+            Uri path = new($"https://localhost?{Constants.BundleIdQueryName}={bundleId}&{Constants.ResponseFormatQueryName}={ResponseFormat}&{Constants.ResponseVersionQueryName}={ResponseVersion}");
 
             var request = MockHelpers.CreateHttpRequestData(url: path);
             var mediator = new Mock<IMediator>();
@@ -103,7 +110,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             var sut = new PeekMasterDataFunction(
                 mediator.Object,
                 identifier,
-                new ExternalBundleIdProvider());
+                new ExternalBundleIdProvider(),
+                new ExternalResponseFormatProvider(),
+                new ExternalResponseVersionProvider());
 
             var response = await sut.RunAsync(request).ConfigureAwait(false);
 
@@ -119,7 +128,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
         {
             // Arrange
             var bundleId = Guid.NewGuid().ToString("N");
-            Uri path = new($"https://localhost?{Constants.BundleIdQueryName}={bundleId}");
+            Uri path = new($"https://localhost?{Constants.BundleIdQueryName}={bundleId}&{Constants.ResponseFormatQueryName}={ResponseFormat}&{Constants.ResponseVersionQueryName}={ResponseVersion}");
 
             var request = MockHelpers.CreateHttpRequestData(url: path);
             var mediator = new Mock<IMediator>();
@@ -130,7 +139,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
             var sut = new PeekTimeSeriesFunction(
                 mediator.Object,
                 identifier,
-                new ExternalBundleIdProvider());
+                new ExternalBundleIdProvider(),
+                new ExternalResponseFormatProvider(),
+                new ExternalResponseVersionProvider());
             var response = await sut.RunAsync(request).ConfigureAwait(false);
 
             // Assert
