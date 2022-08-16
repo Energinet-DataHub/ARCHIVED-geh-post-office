@@ -26,17 +26,12 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpe
         /// <param name="request">The request to probe for the bundle id.</param>
         /// <returns>The Response format version, or null.</returns>
 #pragma warning disable CA1822 // Mark members as static
-        public double? TryGetResponseVersion(HttpRequestData request)
+        public double TryGetResponseVersion(HttpRequestData request)
 #pragma warning restore CA1822 // Mark members as static
         {
             ArgumentNullException.ThrowIfNull(request, nameof(request));
 
-            if (double.TryParse(request.Url.GetQueryValue(Constants.ResponseVersionQueryName), out var version))
-            {
-                return version;
-            }
-
-            return null;
+            return double.TryParse(request.Url.GetQueryValue(Constants.ResponseVersionQueryName), out var version) ? version : 1.0;
         }
     }
 }

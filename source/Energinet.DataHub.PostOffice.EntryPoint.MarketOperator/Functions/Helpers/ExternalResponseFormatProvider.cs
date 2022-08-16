@@ -27,7 +27,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpe
         /// <param name="request">The request to probe for the bundle id.</param>
         /// <returns>The bundle id, or null.</returns>
 #pragma warning disable CA1822 // Mark members as static
-        public ResponseFormat? TryGetResponseFormat(HttpRequestData request)
+        public ResponseFormat TryGetResponseFormat(HttpRequestData request)
 #pragma warning restore CA1822 // Mark members as static
         {
             ArgumentNullException.ThrowIfNull(request, nameof(request));
@@ -35,10 +35,10 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpe
             var maybeResponseFormat = request.Url.GetQueryValue(Constants.ResponseFormatQueryName);
             if (Enum.TryParse<ResponseFormat>(maybeResponseFormat, true, out var format))
             {
-                return Enum.IsDefined(format) ? format : null;
+                return Enum.IsDefined(format) ? format : ResponseFormat.Xml;
             }
 
-            return null;
+            return ResponseFormat.Xml;
         }
     }
 }
