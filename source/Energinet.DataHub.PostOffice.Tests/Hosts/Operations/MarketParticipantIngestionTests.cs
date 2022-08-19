@@ -18,6 +18,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Energinet.DataHub.MarketParticipant.Integration.Model.Dtos;
 using Energinet.DataHub.MarketParticipant.Integration.Model.Parsers;
+using Energinet.DataHub.MarketParticipant.Integration.Model.Parsers.GridArea;
+using Energinet.DataHub.MarketParticipant.Integration.Model.Parsers.Organization;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.EntryPoint.Operations.Functions;
 using MediatR;
@@ -103,15 +105,14 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.Operations
 
             var message = new ActorUpdatedIntegrationEvent(
                 Guid.NewGuid(),
+                DateTime.UtcNow,
                 Guid.NewGuid(),
                 Guid.NewGuid(),
                 Guid.NewGuid(),
                 "fake_value",
                 status,
                 Enumerable.Empty<BusinessRoleCode>(),
-                Enumerable.Empty<EicFunction>(),
-                Enumerable.Empty<Guid>(),
-                Enumerable.Empty<string>());
+                Enumerable.Empty<ActorMarketRole>());
 
             var bytes = new ActorUpdatedIntegrationEventParser().Parse(message);
 
@@ -143,15 +144,14 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.Operations
 
             var message = new ActorUpdatedIntegrationEvent(
                 Guid.NewGuid(),
+                DateTime.UtcNow,
                 Guid.NewGuid(),
                 Guid.NewGuid(),
                 null,
                 "fake_value",
                 ActorStatus.Active,
                 Enumerable.Empty<BusinessRoleCode>(),
-                Enumerable.Empty<EicFunction>(),
-                Enumerable.Empty<Guid>(),
-                Enumerable.Empty<string>());
+                Enumerable.Empty<ActorMarketRole>());
 
             var bytes = new ActorUpdatedIntegrationEventParser().Parse(message);
 

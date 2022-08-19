@@ -79,11 +79,11 @@ namespace Microsoft.Azure.Functions.Isolated.TestDoubles
             var parameters = new List<FunctionParameter>();
 
             // Always provide a trigger
-            inputs.Add("triggerName", new MockBindingMetadata("TestTrigger", BindingDirection.In));
+            inputs.Add("triggerName", new MockBindingMetadata("TestTrigger", BindingDirection.In, "TestTriggerName"));
 
-            for (var i = 0; i < inputBindingCount; i++) inputs.Add($"inputName{i}", new MockBindingMetadata($"TestInput{i}", BindingDirection.In));
+            for (var i = 0; i < inputBindingCount; i++) inputs.Add($"inputName{i}", new MockBindingMetadata($"TestInput{i}", BindingDirection.In, $"TestInputName{i}"));
 
-            for (var i = 0; i < outputBindingCount; i++) outputs.Add($"outputName{i}", new MockBindingMetadata($"TestOutput{i}", BindingDirection.Out));
+            for (var i = 0; i < outputBindingCount; i++) outputs.Add($"outputName{i}", new MockBindingMetadata($"TestOutput{i}", BindingDirection.Out, $"TestOutputName{i}"));
 
             for (var i = 0; i < paramTypes.Length; i++)
             {
