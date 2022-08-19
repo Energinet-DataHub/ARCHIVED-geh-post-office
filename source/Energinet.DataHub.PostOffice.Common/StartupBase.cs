@@ -15,8 +15,8 @@
 using System;
 using System.Threading.Tasks;
 using Energinet.DataHub.Core.App.FunctionApp.Extensions.DependencyInjection;
-using Energinet.DataHub.Core.App.FunctionApp.Middleware;
 using Energinet.DataHub.Core.App.FunctionApp.Middleware.CorrelationId;
+using Energinet.DataHub.Core.JsonSerialization;
 using Energinet.DataHub.PostOffice.Application;
 using Energinet.DataHub.PostOffice.Common.MediatR;
 using Energinet.DataHub.PostOffice.Common.SimpleInjector;
@@ -83,6 +83,7 @@ namespace Energinet.DataHub.PostOffice.Common
 
             Container.Register<LegacyActorIdIdentity>(Lifestyle.Scoped);
 
+            Container.RegisterSingleton<IJsonSerializer>(() => new JsonSerializer());
             Container.Register<ICorrelationContext, CorrelationContext>(Lifestyle.Scoped);
             Container.Register<CorrelationIdMiddleware>(Lifestyle.Scoped);
 
