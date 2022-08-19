@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Threading.Tasks;
+using Energinet.DataHub.Core.App.FunctionApp.FunctionTelemetryScope;
 using Energinet.DataHub.Core.App.FunctionApp.Middleware;
 using Energinet.DataHub.Core.App.FunctionApp.Middleware.CorrelationId;
 using Energinet.DataHub.Core.Logging.RequestResponseMiddleware;
