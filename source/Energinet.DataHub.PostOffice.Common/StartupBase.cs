@@ -14,6 +14,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Energinet.DataHub.Core.App.FunctionApp.Extensions.DependencyInjection;
 using Energinet.DataHub.Core.App.FunctionApp.Middleware;
 using Energinet.DataHub.Core.App.FunctionApp.Middleware.CorrelationId;
 using Energinet.DataHub.PostOffice.Application;
@@ -72,7 +73,7 @@ namespace Energinet.DataHub.PostOffice.Common
             Container.RegisterSingleton<IFeatureFlags, FeatureFlags>();
 
             // Add Application insights telemetry
-            services.SetupApplicationInsightTelemetry(configuration);
+            services.AddApplicationInsights();
 
             // services
             Container.AddRepositories();
@@ -84,7 +85,6 @@ namespace Energinet.DataHub.PostOffice.Common
 
             Container.Register<ICorrelationContext, CorrelationContext>(Lifestyle.Scoped);
             Container.Register<CorrelationIdMiddleware>(Lifestyle.Scoped);
-            Container.Register<FunctionTelemetryScopeMiddleware>(Lifestyle.Scoped);
 
             // Add MediatR
             Container.BuildMediator(new[] { typeof(ApplicationAssemblyReference).Assembly });
