@@ -18,14 +18,17 @@ namespace Microsoft.Azure.Functions.Isolated.TestDoubles
 {
     public class MockBindingMetadata : BindingMetadata
     {
-        public MockBindingMetadata(string type, BindingDirection direction)
+        public MockBindingMetadata(string type, BindingDirection direction, string name)
         {
             Type = type;
             Direction = direction;
+            Name = name;
         }
 
         public override string Type { get; }
 
         public override BindingDirection Direction { get; }
+
+        public override string Name { get; }
     }
 }
