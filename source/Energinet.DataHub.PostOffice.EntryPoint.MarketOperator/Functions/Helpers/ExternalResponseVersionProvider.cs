@@ -18,16 +18,14 @@ using Microsoft.Azure.Functions.Worker.Http;
 
 namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpers
 {
-    public sealed class ExternalResponseVersionProvider
+    public sealed class ExternalResponseVersionProvider : IExternalResponseVersionProvider
     {
         /// <summary>
         /// Get the Response format version from the request, or returns null if no version was provided.
         /// </summary>
         /// <param name="request">The request to probe for the bundle id.</param>
         /// <returns>The Response format version, or null.</returns>
-#pragma warning disable CA1822 // Mark members as static
         public double TryGetResponseVersion(HttpRequestData request)
-#pragma warning restore CA1822 // Mark members as static
         {
             ArgumentNullException.ThrowIfNull(request, nameof(request));
 

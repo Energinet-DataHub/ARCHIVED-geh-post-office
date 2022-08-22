@@ -93,9 +93,9 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
             container.Register<PeekMasterDataFunction>(Lifestyle.Scoped);
             container.Register<PeekAggregationsFunction>(Lifestyle.Scoped);
             container.Register<DequeueFunction>(Lifestyle.Scoped);
-            container.Register(() => new ExternalBundleIdProvider(), Lifestyle.Singleton);
-            container.Register(() => new ExternalResponseFormatProvider(), Lifestyle.Singleton);
-            container.Register(() => new ExternalResponseVersionProvider(), Lifestyle.Singleton);
+            container.Register<IExternalBundleIdProvider, ExternalBundleIdProvider>(Lifestyle.Singleton);
+            container.Register<IExternalResponseFormatProvider, ExternalResponseFormatProvider>(Lifestyle.Singleton);
+            container.Register<IExternalResponseVersionProvider, ExternalResponseVersionProvider>(Lifestyle.Singleton);
 
             AddRequestResponseLogging(container);
 

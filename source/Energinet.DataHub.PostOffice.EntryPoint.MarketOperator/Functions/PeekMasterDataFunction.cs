@@ -29,16 +29,16 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions
     {
         private readonly IMediator _mediator;
         private readonly IMarketOperatorIdentity _operatorIdentity;
-        private readonly ExternalBundleIdProvider _bundleIdProvider;
-        private readonly ExternalResponseFormatProvider _responseFormatProvider;
-        private readonly ExternalResponseVersionProvider _responseVersionProvider;
+        private readonly IExternalBundleIdProvider _bundleIdProvider;
+        private readonly IExternalResponseFormatProvider _responseFormatProvider;
+        private readonly IExternalResponseVersionProvider _responseVersionProvider;
 
         public PeekMasterDataFunction(
             IMediator mediator,
             IMarketOperatorIdentity operatorIdentity,
-            ExternalBundleIdProvider bundleIdProvider,
-            ExternalResponseFormatProvider responseFormatProvider,
-            ExternalResponseVersionProvider responseVersionProvider)
+            IExternalBundleIdProvider bundleIdProvider,
+            IExternalResponseFormatProvider responseFormatProvider,
+            IExternalResponseVersionProvider responseVersionProvider)
         {
             _mediator = mediator;
             _operatorIdentity = operatorIdentity;

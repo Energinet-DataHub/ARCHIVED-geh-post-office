@@ -18,16 +18,14 @@ using Microsoft.Azure.Functions.Worker.Http;
 
 namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpers
 {
-    public sealed class ExternalBundleIdProvider
+    public sealed class ExternalBundleIdProvider : IExternalBundleIdProvider
     {
         /// <summary>
         /// Get the bundle id from the request, or returns null if no bundle id was provided.
         /// </summary>
         /// <param name="request">The request to probe for the bundle id.</param>
         /// <returns>The bundle id, or null.</returns>
-#pragma warning disable CA1822 // Mark members as static
         public string? TryGetBundleId(HttpRequestData request)
-#pragma warning restore CA1822 // Mark members as static
         {
             ArgumentNullException.ThrowIfNull(request, nameof(request));
 
