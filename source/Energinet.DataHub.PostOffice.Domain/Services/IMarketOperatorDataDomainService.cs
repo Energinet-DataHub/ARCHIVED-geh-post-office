@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Threading.Tasks;
+using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Domain.Model;
 
 namespace Energinet.DataHub.PostOffice.Domain.Services
@@ -28,8 +29,14 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         /// </summary>
         /// <param name="recipient">The market operator to get the next unacknowledged bundle for.</param>
         /// <param name="suggestedBundleId">The suggested bundle id to use for the next bundle.</param>
+        /// <param name="responseFormat">The data format for this bundle.</param>
+        /// <param name="responseVersion">The version of the data format for this bundle.</param>
         /// <returns>The next unacknowledged bundle; or null, if there is no new data.</returns>
-        Task<Bundle?> GetNextUnacknowledgedAsync(ActorId recipient, Uuid? suggestedBundleId);
+        Task<Bundle?> GetNextUnacknowledgedAsync(
+            ActorId recipient,
+            Uuid? suggestedBundleId,
+            ResponseFormat responseFormat,
+            double responseVersion);
 
         /// <summary>
         /// Get the next bundle of unacknowledged time series data for a given market operator.
@@ -37,8 +44,14 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         /// </summary>
         /// <param name="recipient">The market operator to get the next unacknowledged bundle for.</param>
         /// <param name="suggestedBundleId">The suggested bundle id to use for the next bundle.</param>
+        /// <param name="responseFormat">The data format for this bundle.</param>
+        /// <param name="responseVersion">The version of the data format for this bundle.</param>
         /// <returns>The next unacknowledged bundle; or null, if there is no new data.</returns>
-        Task<Bundle?> GetNextUnacknowledgedTimeSeriesAsync(ActorId recipient, Uuid? suggestedBundleId);
+        Task<Bundle?> GetNextUnacknowledgedTimeSeriesAsync(
+            ActorId recipient,
+            Uuid? suggestedBundleId,
+            ResponseFormat responseFormat,
+            double responseVersion);
 
         /// <summary>
         /// Get the next bundle of unacknowledged master data for a given market operator.
@@ -46,8 +59,14 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         /// </summary>
         /// <param name="recipient">The market operator to get the next unacknowledged bundle for.</param>
         /// <param name="suggestedBundleId">The suggested bundle id to use for the next bundle.</param>
+        /// <param name="responseFormat">The data format for this bundle.</param>
+        /// <param name="responseVersion">The version of the data format for this bundle.</param>
         /// <returns>The next unacknowledged bundle; or null, if there is no new data.</returns>
-        Task<Bundle?> GetNextUnacknowledgedMasterDataAsync(ActorId recipient, Uuid? suggestedBundleId);
+        Task<Bundle?> GetNextUnacknowledgedMasterDataAsync(
+            ActorId recipient,
+            Uuid? suggestedBundleId,
+            ResponseFormat responseFormat,
+            double responseVersion);
 
         /// <summary>
         /// Get the next bundle of unacknowledged aggregations data for a given market operator.
@@ -55,8 +74,14 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         /// </summary>
         /// <param name="recipient">The market operator to get the next unacknowledged bundle for.</param>
         /// <param name="suggestedBundleId">The suggested bundle id to use for the next bundle.</param>
+        /// <param name="responseFormat">The data format for this bundle.</param>
+        /// <param name="responseVersion">The version of the data format for this bundle.</param>
         /// <returns>The next unacknowledged bundle; or null, if there is no new data.</returns>
-        Task<Bundle?> GetNextUnacknowledgedAggregationsAsync(ActorId recipient, Uuid? suggestedBundleId);
+        Task<Bundle?> GetNextUnacknowledgedAggregationsAsync(
+            ActorId recipient,
+            Uuid? suggestedBundleId,
+            ResponseFormat responseFormat,
+            double responseVersion);
 
         /// <summary>
         /// Checks if the current bundle can be acknowledged.

@@ -40,7 +40,9 @@ namespace Energinet.DataHub.MessageHub.Client.Tests.Storage
                 Guid.NewGuid(),
                 "A6A7912F-A578-4448-A2C1-6545F4C8EA8C",
                 Guid.NewGuid().ToString(),
-                new MessageTypeDto("fake_value"));
+                new MessageTypeDto("fake_value"),
+                ResponseFormat.Json,
+                1.0);
 
             mockedStorageServiceClientFactory.Setup(
                     x => x.Create())
@@ -89,7 +91,9 @@ namespace Energinet.DataHub.MessageHub.Client.Tests.Storage
                 Guid.NewGuid(),
                 "9B0A9B6C-EA5F-4DD0-817B-4D29A681984E",
                 Guid.NewGuid().ToString(),
-                new MessageTypeDto("fake_value"));
+                new MessageTypeDto("fake_value"),
+                ResponseFormat.Xml,
+                1.0);
 
             mockedBlobServiceClient.Setup(
                     x => x.GetBlobContainerClient(It.IsAny<string>()))
@@ -133,7 +137,9 @@ namespace Energinet.DataHub.MessageHub.Client.Tests.Storage
                 Guid.NewGuid(),
                 "24AEFA9F-91D5-4908-A111-157C48D7FC6D",
                 Guid.NewGuid().ToString(),
-                new MessageTypeDto("fake_value"));
+                new MessageTypeDto("fake_value"),
+                ResponseFormat.Json,
+                1.0);
 
             var testUri = new Uri("https://test.test.dk/FileStorage/postoffice-blobstorage");
             mockedBlobClient.Setup(

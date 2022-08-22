@@ -12,7 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Energinet.DataHub.MessageHub.Model.Model;
+
 namespace Energinet.DataHub.PostOffice.Application.Commands
 {
-    public sealed record PeekTimeSeriesCommand(string MarketOperator, string? BundleId) : PeekCommandBase(MarketOperator, BundleId);
+    public sealed record PeekTimeSeriesCommand(
+        string MarketOperator,
+        string? BundleId,
+        ResponseFormat? ResponseFormat,
+        double? ResponseVersion) : PeekCommandBase(MarketOperator, BundleId, ResponseFormat, ResponseVersion);
 }

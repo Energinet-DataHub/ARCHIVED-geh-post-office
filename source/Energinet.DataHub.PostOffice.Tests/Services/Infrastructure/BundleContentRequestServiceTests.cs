@@ -33,6 +33,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
     [UnitTest]
     public sealed class BundleContentRequestServiceTests
     {
+        private const ResponseFormat ResponseFormat = MessageHub.Model.Model.ResponseFormat.Json;
+        private const double ResponseVersion = 1.0;
+
         [Fact]
         public async Task WaitForBundleContentFromSubDomainAsync_NoData_ReturnsNull()
         {
@@ -58,7 +61,10 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
                 .ReturnsAsync((DataBundleResponseDto?)null);
 
             // Act
-            var actual = await target.WaitForBundleContentFromSubDomainAsync(bundle).ConfigureAwait(false);
+            var actual = await target.WaitForBundleContentFromSubDomainAsync(
+                bundle,
+                ResponseFormat,
+                ResponseVersion).ConfigureAwait(false);
 
             // Assert
             Assert.Null(actual);
@@ -95,7 +101,10 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
                 .ReturnsAsync(response);
 
             // Act
-            var actual = (AzureBlobBundleContent?)await target.WaitForBundleContentFromSubDomainAsync(bundle).ConfigureAwait(false);
+            var actual = (AzureBlobBundleContent?)await target.WaitForBundleContentFromSubDomainAsync(
+                bundle,
+                ResponseFormat,
+                ResponseVersion).ConfigureAwait(false);
 
             // Assert
             Assert.NotNull(actual);

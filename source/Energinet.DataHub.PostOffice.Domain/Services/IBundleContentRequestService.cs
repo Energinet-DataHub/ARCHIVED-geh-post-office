@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Threading.Tasks;
+using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Domain.Model;
 
 namespace Energinet.DataHub.PostOffice.Domain.Services
@@ -26,7 +27,9 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         /// Request and wait for bundle content from the sub-domain.
         /// </summary>
         /// <param name="bundle">The bundle to retrieve the content for.</param>
+        /// <param name="responseFormat">The data format for this bundle.</param>
+        /// <param name="responseVersion">The version of the data format for this bundle.</param>
         /// <returns>Returns the bundle content; or null, if the content is not yet ready.</returns>
-        Task<IBundleContent?> WaitForBundleContentFromSubDomainAsync(Bundle bundle);
+        Task<IBundleContent?> WaitForBundleContentFromSubDomainAsync(Bundle bundle, ResponseFormat responseFormat, double responseVersion);
     }
 }

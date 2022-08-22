@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Common.Auth;
 using Energinet.DataHub.PostOffice.Common.Extensions;
+using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpers;
 using MediatR;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -28,16 +29,22 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions
     {
         private readonly IMediator _mediator;
         private readonly IMarketOperatorIdentity _operatorIdentity;
-        private readonly ExternalBundleIdProvider _bundleIdProvider;
+        private readonly IExternalBundleIdProvider _bundleIdProvider;
+        private readonly IExternalResponseFormatProvider _responseFormatProvider;
+        private readonly IExternalResponseVersionProvider _responseVersionProvider;
 
         public PeekMasterDataFunction(
             IMediator mediator,
             IMarketOperatorIdentity operatorIdentity,
-            ExternalBundleIdProvider bundleIdProvider)
+            IExternalBundleIdProvider bundleIdProvider,
+            IExternalResponseFormatProvider responseFormatProvider,
+            IExternalResponseVersionProvider responseVersionProvider)
         {
             _mediator = mediator;
             _operatorIdentity = operatorIdentity;
             _bundleIdProvider = bundleIdProvider;
+            _responseFormatProvider = responseFormatProvider;
+            _responseVersionProvider = responseVersionProvider;
         }
 
         [Function("PeekMasterData")]
@@ -47,7 +54,11 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions
         {
             return request.ProcessAsync(async () =>
             {
-                var command = new PeekMasterDataCommand(_operatorIdentity.ActorId, _bundleIdProvider.TryGetBundleId(request));
+                var command = new PeekMasterDataCommand(
+                    _operatorIdentity.ActorId,
+                    _bundleIdProvider.TryGetBundleId(request),
+                    _responseFormatProvider.TryGetResponseFormat(request),
+                    _responseVersionProvider.TryGetResponseVersion(request));
                 var (hasContent, bundleId, stream, documentTypes) = await _mediator.Send(command).ConfigureAwait(false);
 
                 var response = hasContent

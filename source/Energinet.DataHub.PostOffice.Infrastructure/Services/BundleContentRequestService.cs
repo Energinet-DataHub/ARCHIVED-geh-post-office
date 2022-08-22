@@ -45,7 +45,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
             _correlationContext = correlationContext;
         }
 
-        public async Task<IBundleContent?> WaitForBundleContentFromSubDomainAsync(Bundle bundle)
+        public async Task<IBundleContent?> WaitForBundleContentFromSubDomainAsync(Bundle bundle, ResponseFormat responseFormat, double responseVersion)
         {
             ArgumentNullException.ThrowIfNull(bundle, nameof(bundle));
 
@@ -53,7 +53,9 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
                 Guid.NewGuid(),
                 bundle.ProcessId.ToString(),
                 bundle.ProcessId.ToString(),
-                new MessageTypeDto(bundle.ContentType.Value));
+                new MessageTypeDto(bundle.ContentType.Value),
+                responseFormat,
+                responseVersion);
 
             _logger.LogProcess("Peek", "WaitForContent", _correlationContext.Id, bundle.Recipient.ToString(), bundle.BundleId.ToString(), bundle.Origin.ToString());
 

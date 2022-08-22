@@ -15,17 +15,22 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Services;
 using Moq;
 using Xunit;
 using Xunit.Categories;
+using DomainOrigin = Energinet.DataHub.PostOffice.Domain.Model.DomainOrigin;
 
 namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 {
     [UnitTest]
     public sealed class RequestBundleDomainServiceTests
     {
+        private const ResponseFormat ResponseFormat = MessageHub.Model.Model.ResponseFormat.Json;
+        private const double ResponseVersion = 1.0;
+
         [Fact]
         public async Task WaitForBundleContentFromSubDomainAsync_NoData_ReturnsNull()
         {
@@ -41,11 +46,17 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 Enumerable.Empty<string>());
 
             bundleContentRequestServiceMock
-                .Setup(x => x.WaitForBundleContentFromSubDomainAsync(bundle))
+                .Setup(x => x.WaitForBundleContentFromSubDomainAsync(
+                    bundle,
+                    ResponseFormat,
+                    ResponseVersion))
                 .ReturnsAsync((IBundleContent?)null);
 
             // Act
-            var actual = await target.WaitForBundleContentFromSubDomainAsync(bundle).ConfigureAwait(false);
+            var actual = await target.WaitForBundleContentFromSubDomainAsync(
+                bundle,
+                ResponseFormat,
+                ResponseVersion).ConfigureAwait(false);
 
             // Assert
             Assert.Null(actual);
@@ -67,11 +78,17 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 Enumerable.Empty<string>());
 
             bundleContentRequestServiceMock
-                .Setup(x => x.WaitForBundleContentFromSubDomainAsync(bundle))
+                .Setup(x => x.WaitForBundleContentFromSubDomainAsync(
+                    bundle,
+                    ResponseFormat,
+                    ResponseVersion))
                 .ReturnsAsync(bundleContentMock.Object);
 
             // Act
-            var actual = await target.WaitForBundleContentFromSubDomainAsync(bundle).ConfigureAwait(false);
+            var actual = await target.WaitForBundleContentFromSubDomainAsync(
+                bundle,
+                ResponseFormat,
+                ResponseVersion).ConfigureAwait(false);
 
             // Assert
             Assert.NotNull(actual);

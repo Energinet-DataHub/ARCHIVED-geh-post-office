@@ -16,8 +16,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
+using DomainOrigin = Energinet.DataHub.PostOffice.Domain.Model.DomainOrigin;
 
 namespace Energinet.DataHub.PostOffice.Domain.Services
 {
@@ -40,26 +42,58 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
             _weightCalculatorDomainService = weightCalculatorDomainService;
         }
 
-        public Task<Bundle?> GetNextUnacknowledgedAsync(ActorId recipient, Uuid? suggestedBundleId)
-        {
-            return GetNextUnacknowledgedForDomainsAsync(recipient, suggestedBundleId);
-        }
-
-        public Task<Bundle?> GetNextUnacknowledgedTimeSeriesAsync(ActorId recipient, Uuid? suggestedBundleId)
-        {
-            return GetNextUnacknowledgedForDomainsAsync(recipient, suggestedBundleId, DomainOrigin.TimeSeries);
-        }
-
-        public Task<Bundle?> GetNextUnacknowledgedAggregationsAsync(ActorId recipient, Uuid? suggestedBundleId)
-        {
-            return GetNextUnacknowledgedForDomainsAsync(recipient, suggestedBundleId, DomainOrigin.Aggregations);
-        }
-
-        public Task<Bundle?> GetNextUnacknowledgedMasterDataAsync(ActorId recipient, Uuid? suggestedBundleId)
+        public Task<Bundle?> GetNextUnacknowledgedAsync(
+            ActorId recipient,
+            Uuid? suggestedBundleId,
+            ResponseFormat responseFormat,
+            double responseVersion)
         {
             return GetNextUnacknowledgedForDomainsAsync(
                 recipient,
                 suggestedBundleId,
+                responseFormat,
+                responseVersion);
+        }
+
+        public Task<Bundle?> GetNextUnacknowledgedTimeSeriesAsync(
+            ActorId recipient,
+            Uuid? suggestedBundleId,
+            ResponseFormat responseFormat,
+            double responseVersion)
+        {
+            return GetNextUnacknowledgedForDomainsAsync(
+                recipient,
+                suggestedBundleId,
+                responseFormat,
+                responseVersion,
+                DomainOrigin.TimeSeries);
+        }
+
+        public Task<Bundle?> GetNextUnacknowledgedAggregationsAsync(
+            ActorId recipient,
+            Uuid? suggestedBundleId,
+            ResponseFormat responseFormat,
+            double responseVersion)
+        {
+            return GetNextUnacknowledgedForDomainsAsync(
+                recipient,
+                suggestedBundleId,
+                responseFormat,
+                responseVersion,
+                DomainOrigin.Aggregations);
+        }
+
+        public Task<Bundle?> GetNextUnacknowledgedMasterDataAsync(
+            ActorId recipient,
+            Uuid? suggestedBundleId,
+            ResponseFormat responseFormat,
+            double responseVersion)
+        {
+            return GetNextUnacknowledgedForDomainsAsync(
+                recipient,
+                suggestedBundleId,
+                responseFormat,
+                responseVersion,
                 DomainOrigin.MarketRoles,
                 DomainOrigin.MeteringPoints,
                 DomainOrigin.Charges);
@@ -89,6 +123,8 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         private async Task<Bundle?> GetNextUnacknowledgedForDomainsAsync(
             ActorId recipient,
             Uuid? suggestedBundleId,
+            ResponseFormat responseFormat,
+            double responseVersion,
             params DomainOrigin[] domains)
         {
             var existingBundle = await _bundleRepository
@@ -104,7 +140,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
                         $"The specified bundle id was rejected, as the current bundle {existingBundle.BundleId} is yet to be acknowledged.");
                 }
 
-                return await AskSubDomainForContentAsync(existingBundle).ConfigureAwait(false);
+                return await AskSubDomainForContentAsync(existingBundle, responseFormat, responseVersion).ConfigureAwait(false);
             }
 
             var cabinetReader = await _dataAvailableNotificationRepository
@@ -123,20 +159,20 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
 
             return bundleCreatedResponse switch
             {
-                BundleCreatedResponse.Success => await AskSubDomainForContentAsync(newBundle).ConfigureAwait(false),
+                BundleCreatedResponse.Success => await AskSubDomainForContentAsync(newBundle, responseFormat, responseVersion).ConfigureAwait(false),
                 BundleCreatedResponse.AnotherBundleExists => null,
                 BundleCreatedResponse.BundleIdAlreadyInUse => throw new ValidationException(nameof(BundleCreatedResponse.BundleIdAlreadyInUse)),
                 _ => throw new InvalidOperationException($"bundleCreatedResponse was {bundleCreatedResponse}")
             };
         }
 
-        private async Task<Bundle?> AskSubDomainForContentAsync(Bundle bundle)
+        private async Task<Bundle?> AskSubDomainForContentAsync(Bundle bundle, ResponseFormat responseFormat, double responseVersion)
         {
             if (bundle.TryGetContent(out _))
                 return bundle;
 
             var bundleContent = await _requestBundleDomainService
-                .WaitForBundleContentFromSubDomainAsync(bundle)
+                .WaitForBundleContentFromSubDomainAsync(bundle, responseFormat, responseVersion)
                 .ConfigureAwait(false);
 
             if (bundleContent == null)
