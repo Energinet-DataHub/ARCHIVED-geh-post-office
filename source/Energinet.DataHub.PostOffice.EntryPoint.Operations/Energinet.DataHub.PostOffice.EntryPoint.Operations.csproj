@@ -23,12 +23,12 @@ limitations under the License.
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.7.0" />
-    <PackageReference Include="Energinet.DataHub.Core.App.FunctionApp" Version="2.3.3" />
-    <PackageReference Include="Energinet.DataHub.MarketParticipant.Integration.Model" Version="2.0.5" />
+    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.10.0" />
+    <PackageReference Include="Energinet.DataHub.Core.App.FunctionApp" Version="5.0.0" />
+    <PackageReference Include="Energinet.DataHub.MarketParticipant.Integration.Model" Version="2.4.1" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.0.13" />
-    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.ServiceBus" Version="4.2.1" />
-    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.6.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.ServiceBus" Version="5.4.0" />
+    <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.8.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.3.0" />
   </ItemGroup>
   <ItemGroup>
@@ -43,5 +43,11 @@ limitations under the License.
   <ItemGroup>
     <ProjectReference Include="..\Energinet.DataHub.PostOffice.Common\Energinet.DataHub.PostOffice.Common.csproj" />
     <ProjectReference Include="..\Energinet.DataHub.PostOffice.Utilities\Energinet.DataHub.PostOffice.Utilities.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="Microsoft.VisualStudio.Threading.Analyzers" Version="17.3.44">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 </Project>

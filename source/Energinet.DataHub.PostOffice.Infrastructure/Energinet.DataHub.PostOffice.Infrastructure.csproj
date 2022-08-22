@@ -30,11 +30,11 @@ limitations under the License.
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Azure.Storage.Blobs" Version="12.11.0" />
-      <PackageReference Include="Energinet.DataHub.Core.App.FunctionApp" Version="2.3.3" />
+      <PackageReference Include="Azure.Storage.Blobs" Version="12.13.0" />
+      <PackageReference Include="Energinet.DataHub.Core.App.FunctionApp" Version="5.0.0" />
       <PackageReference Include="Energinet.DataHub.MessageHub.Core" Version="3.0.2-alpha-20220811T073242" />
-      <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.26.1" />
-      <PackageReference Include="Microsoft.Azure.Functions.Worker.Core" Version="1.4.0" />
+      <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.29.0" />
+      <PackageReference Include="Microsoft.Azure.Functions.Worker.Core" Version="1.6.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -53,6 +53,13 @@ limitations under the License.
         <Link>v1\MessageReply.proto</Link>
       </Protobuf>
       <Protobuf Remove="..\PostOffice.Communicator\source\PostOffice.Communicator\Protobuf\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Update="Microsoft.VisualStudio.Threading.Analyzers" Version="17.3.44">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
     </ItemGroup>
 
 </Project>
