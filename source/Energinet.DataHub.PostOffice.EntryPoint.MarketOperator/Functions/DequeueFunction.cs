@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Common.Auth;
 using Energinet.DataHub.PostOffice.Common.Extensions;
+using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpers;
 using MediatR;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;

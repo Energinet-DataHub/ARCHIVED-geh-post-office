@@ -27,10 +27,16 @@ namespace Energinet.DataHub.MessageHub.Model.Model
     /// </param>
     /// <param name="MessageType">
     /// Specifies the common message type for the requested bundle.</param>
+    /// <param name="ResponseFormat">
+    /// Specifies the Format for  the requested bundle.</param>
+    /// <param name="ResponseVersion">
+    /// Specifies the version of the ResponseFormat for the requested bundle.</param>
     /// </summary>
     public sealed record DataBundleRequestDto(
         Guid RequestId,
         string DataAvailableNotificationReferenceId,
         string IdempotencyId,
-        MessageTypeDto MessageType);
+        MessageTypeDto MessageType,
+        ResponseFormat ResponseFormat,
+        double ResponseVersion);
 }

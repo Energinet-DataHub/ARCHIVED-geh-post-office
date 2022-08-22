@@ -14,12 +14,14 @@
 
 using System;
 using System.Threading.Tasks;
+using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.IntegrationTests.Common;
 using FluentValidation;
 using MediatR;
 using Xunit;
 using Xunit.Categories;
+using DataAvailableNotificationDto = Energinet.DataHub.PostOffice.Application.Commands.DataAvailableNotificationDto;
 
 namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
 {
@@ -38,7 +40,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekCommand("   ", "   ");
+            var peekCommand = new PeekCommand("   ", "   ", ResponseFormat.Json, 1.0);
 
             // Act + Assert
             await Assert.ThrowsAsync<ValidationException>(() => mediator.Send(peekCommand)).ConfigureAwait(false);
@@ -61,7 +63,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekCommand(recipientGln, bundleId);
+            var peekCommand = new PeekCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
 
             // Act
             var response = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -86,7 +88,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekCommand(recipientGln, bundleId);
+            var peekCommand = new PeekCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
 
             // Act
             var response = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -111,7 +113,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekCommand(recipientGln, bundleId);
+            var peekCommand = new PeekCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
 
             // Act
             var responseA = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -146,7 +148,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekCommand(recipientGln, bundleId);
+            var peekCommand = new PeekCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
 
             // Act
             var response = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -181,7 +183,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekCommand(recipientGln, bundleId);
+            var peekCommand = new PeekCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
 
             // Act
             var response = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -210,7 +212,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekTimeSeriesCommand("   ", "   ");
+            var peekCommand = new PeekTimeSeriesCommand("   ", "   ", ResponseFormat.Json, 1.0);
 
             // Act + Assert
             await Assert.ThrowsAsync<ValidationException>(() => mediator.Send(peekCommand)).ConfigureAwait(false);
@@ -233,7 +235,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekTimeSeriesCommand(recipientGln, bundleId);
+            var peekCommand = new PeekTimeSeriesCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
 
             // Act
             var response = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -259,7 +261,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekTimeSeriesCommand(recipientGln, bundleId);
+            var peekCommand = new PeekTimeSeriesCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
 
             // Act
             var response = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -285,7 +287,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekTimeSeriesCommand(recipientGln, bundleId);
+            var peekCommand = new PeekTimeSeriesCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
 
             // Act
             var responseA = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -320,7 +322,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekTimeSeriesCommand(recipientGln, bundleId);
+            var peekCommand = new PeekTimeSeriesCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
 
             // Act
             var response = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -355,7 +357,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekTimeSeriesCommand(recipientGln, bundleId);
+            var peekCommand = new PeekTimeSeriesCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
 
             // Act
             var response = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -384,7 +386,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekAggregationsCommand("   ", "    ");
+            var peekCommand = new PeekAggregationsCommand("   ", "    ", ResponseFormat.Json, 1.0);
 
             // Act + Assert
             await Assert.ThrowsAsync<ValidationException>(() => mediator.Send(peekCommand)).ConfigureAwait(false);
@@ -407,7 +409,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekAggregationsCommand(recipientGln, bundleId);
+            var peekCommand = new PeekAggregationsCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
 
             // Act
             var response = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -432,7 +434,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekAggregationsCommand(recipientGln, bundleId);
+            var peekCommand = new PeekAggregationsCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
 
             // Act
             var response = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -457,7 +459,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekAggregationsCommand(recipientGln, bundleId);
+            var peekCommand = new PeekAggregationsCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
 
             // Act
             var responseA = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -492,7 +494,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekAggregationsCommand(recipientGln, bundleId);
+            var peekCommand = new PeekAggregationsCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
 
             // Act
             var response = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -527,7 +529,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekAggregationsCommand(recipientGln, bundleId);
+            var peekCommand = new PeekAggregationsCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
 
             // Act
             var response = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -556,7 +558,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekMasterDataCommand("   ", "    ");
+            var peekCommand = new PeekMasterDataCommand("   ", "    ", ResponseFormat.Json, 1.0);
 
             // Act + Assert
             await Assert.ThrowsAsync<ValidationException>(() => mediator.Send(peekCommand)).ConfigureAwait(false);
@@ -579,7 +581,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekMasterDataCommand(recipientGln, bundleId);
+            var peekCommand = new PeekMasterDataCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
 
             // Act
             var response = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -604,7 +606,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekMasterDataCommand(recipientGln, bundleId);
+            var peekCommand = new PeekMasterDataCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
 
             // Act
             var response = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -629,7 +631,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekMasterDataCommand(recipientGln, bundleId);
+            var peekCommand = new PeekMasterDataCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
 
             // Act
             var response = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -654,7 +656,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekMasterDataCommand(recipientGln, bundleId);
+            var peekCommand = new PeekMasterDataCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
 
             // Act
             var response = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -679,7 +681,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekMasterDataCommand(recipientGln, bundleId);
+            var peekCommand = new PeekMasterDataCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
 
             // Act
             var responseA = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -709,7 +711,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekMasterDataCommand(recipientGln, bundleId);
+            var peekCommand = new PeekMasterDataCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
 
             // Act
             var response = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -748,7 +750,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekMasterDataCommand(recipientGln, bundleId);
+            var peekCommand = new PeekMasterDataCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
 
             // Act
             var response = await mediator.Send(peekCommand).ConfigureAwait(false);
@@ -783,7 +785,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekMasterDataCommand(recipientGln, bundleId);
+            var peekCommand = new PeekMasterDataCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
 
             // Act
             var response = await mediator.Send(peekCommand).ConfigureAwait(false);

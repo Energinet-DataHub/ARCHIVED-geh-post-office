@@ -117,7 +117,9 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Peek
                         new Guid("B679EFB9-70E9-4BC8-8C79-EAA9918C83C8"),
                         "1B2B8FA9-A7B7-4DFE-B06B-5F306D7C264B",
                         "80BB9BB8-CDE8-4C77-BE76-FDC886FD75A3",
-                        new MessageTypeDto("message_type")),
+                        new MessageTypeDto("message_type"),
+                        ResponseFormat.Json,
+                        1.0),
                     domainOrigin)
                 .ConfigureAwait(false);
 
@@ -169,7 +171,9 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Peek
                         Guid.NewGuid(),
                         "90E1431E-FAF8-44E3-BC87-B1DFFF2D1F67",
                         "80BB9BB8-CDE8-4C77-BE76-FDC886FD75A3",
-                        new MessageTypeDto("message_type")),
+                        new MessageTypeDto("message_type"),
+                        ResponseFormat.Json,
+                        1.0),
                     domainOrigin)
                 .ConfigureAwait(false);
 
@@ -231,7 +235,9 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Peek
                         new Guid("C163828E-08C0-4D97-93A3-B647B2B657FB"),
                         "97D0427B-56A9-4189-8C8D-EF4A5F1B379C",
                         "80BB9BB8-CDE8-4C77-BE76-FDC886FD75A3",
-                        new MessageTypeDto("message_type")),
+                        new MessageTypeDto("message_type"),
+                        ResponseFormat.Json,
+                        1.0),
                     domainOrigin)
                 .ConfigureAwait(false);
 

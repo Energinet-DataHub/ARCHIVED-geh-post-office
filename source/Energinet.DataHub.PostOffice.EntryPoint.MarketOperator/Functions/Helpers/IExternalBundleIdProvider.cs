@@ -11,24 +11,20 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+using Microsoft.Azure.Functions.Worker.Http;
 
-namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
+namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpers
 {
-    public static class Constants
+    /// <summary>
+    /// Its an interface
+    /// </summary>
+    public interface IExternalBundleIdProvider
     {
         /// <summary>
-        /// Name of query parameter
+        /// Get the bundle id from the request, or returns null if no bundle id was provided.
         /// </summary>
-        public const string BundleIdQueryName = "bundleId";
-
-        /// <summary>
-        /// Name of HttpHeader that contains the response bundle-id
-        /// </summary>
-        public const string BundleIdHeaderName = "MessageId";
-
-        /// <summary>
-        /// Name of HttpHeader that contains the message types found in a given bundle
-        /// </summary>
-        public const string MessageTypeName = "MessageType";
+        /// <param name="request">The request to probe for the bundle id.</param>
+        /// <returns>The bundle id, or null.</returns>
+        string? TryGetBundleId(HttpRequestData request);
     }
 }
