@@ -83,20 +83,22 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                         .ConfigureAwait(false);
                 }
 
-                if (nextDrawer.Position == nextDrawerItemCount)
-                {
-                    var catalogEntry = CreateCatalogEntry(notification);
-                    await _repositoryContainer
-                        .Catalog
-                        .CreateItemAsync(catalogEntry)
-                        .ConfigureAwait(false);
-                }
-
                 var cosmosDataAvailable = CosmosDataAvailableMapper.Map(notification, nextDrawer.Id);
                 await _repositoryContainer
                     .Cabinet
                     .CreateItemAsync(cosmosDataAvailable)
                     .ConfigureAwait(false);
+
+                nextDrawer = await GetUpdatedDrawerAsync(nextDrawer).ConfigureAwait(false);
+
+                if (nextDrawer.Position == nextDrawerItemCount)
+                {
+                    var catalogEntry = CreateCatalogEntry(notification);
+                    await _repositoryContainer
+                        .Catalog
+                        .UpsertItemAsync(catalogEntry)
+                        .ConfigureAwait(false);
+                }
 
                 var itemsLeft = notifications.Count - (i + 1);
                 var spaceLeft = MaximumCabinetDrawerItemCount - (nextDrawerItemCount + 1);
@@ -296,6 +298,24 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             return query
                 .AsCosmosIteratorAsync()
                 .FirstOrDefaultAsync();
+        }
+
+        private Task<CosmosCabinetDrawer> GetUpdatedDrawerAsync(CosmosCabinetDrawer drawer)
+        {
+            var asLinq = _repositoryContainer
+                .Cabinet
+                .GetItemLinqQueryable<CosmosCabinetDrawer>();
+
+            var query =
+                from cabinetDrawer in asLinq
+                where
+                    cabinetDrawer.Id == drawer.Id &&
+                    cabinetDrawer.PartitionKey == drawer.PartitionKey
+                select cabinetDrawer;
+
+            return query
+                .AsCosmosIteratorAsync()
+                .SingleAsync();
         }
 
         private async Task<int> CountItemsInDrawerAsync(CosmosCabinetDrawer drawer)
