@@ -148,7 +148,9 @@ namespace Energinet.DataHub.MessageHub.IntegrationTesting
                 requestId,
                 referenceId,
                 idempotencyId.ToString(),
-                new MessageTypeDto(messageType));
+                new MessageTypeDto(messageType),
+                ResponseFormat.Xml,
+                1.0);
 
             // This domain origin must be valid, but it is not used.
             // All the queue names point to the same domain.
