@@ -1,5 +1,9 @@
 # Energinet.DataHub.MessageHub.SimpleInjector Release notes
 
+## Version 3.0.3
+
+- All Nuget publishing pipelines have been merged into one, as the project are inter-dependent and therefore works as a bundle.
+
 ## Version 2.2.0
 
 - Add registration method for `IServiceCollection`.
