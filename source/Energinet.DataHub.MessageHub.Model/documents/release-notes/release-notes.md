@@ -4,7 +4,6 @@
 
 - All Nuget publishing pipelines have been merged into one, as the project are inter-dependent and therefore works as a bundle.
 
-
 ## Version 3.0.1 -> 3.0.2
 
 - Unknown
