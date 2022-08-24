@@ -1,0 +1,31 @@
+flag_management:
+  default_rules: # the rules that will be followed for any flag added, generally
+    carryforward: true
+  individual_flags: # exceptions to the default rules above, stated flag by flag
+    - name: business
+      paths:
+      - source/Energinet.DataHub.MessageHub.Core
+      - source/Energinet.DataHub.MessageHub.Model
+      - source/Energinet.DataHub.PostOffice.Application
+      - source/Energinet.DataHub.PostOffice.Common
+      - source/Energinet.DataHub.PostOffice.Domain
+      - source/Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
+      - source/Energinet.DataHub.PostOffice.EntryPoint.Operations
+      - source/Energinet.DataHub.PostOffice.EntryPoint.SubDomain
+      - source/Energinet.DataHub.PostOffice.Infrastructure
+      - source/Energinet.DataHub.PostOffice.ServiceContracts
+      - source/Energinet.DataHub.PostOffice.Utilities
+    - name: clientlibraries
+      paths:
+      - source/Energinet.DataHub.MessageHub.Client
+      - source/Energinet.DataHub.MessageHub.Client.SimpleInjector
+      - source/Energinet.DataHub.MessageHub.IntegrationTesting
+
+# https://docs.codecov.com/docs/ignoring-paths
+ignore:
+  - "source/Energinet.DataHub.MessageHub.Client.Tests"
+  - "source/Energinet.DataHub.MessageHub.Core.Tests"
+  - "source/Energinet.DataHub.MessageHub.Model.Tests"
+  - "source/Energinet.DataHub.PostOffice.IntegrationTests"
+  - "source/Energinet.DataHub.PostOffice.Tests"
+  - "source/Microsoft.Azure.Functions.Isolated.TestDoubles"
