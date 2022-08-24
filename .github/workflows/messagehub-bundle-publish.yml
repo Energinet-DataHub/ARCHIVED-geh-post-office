@@ -50,10 +50,6 @@ env:
   # Conditions
   PUSH_PACKAGES: ${{ github.event_name != 'pull_request' }}
 
-permissions:
-  id-token: write
-  contents: read
-
 jobs:
 
   build_and_publish:
