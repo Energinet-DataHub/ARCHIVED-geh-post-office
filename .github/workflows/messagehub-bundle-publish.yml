@@ -83,10 +83,7 @@ jobs:
         uses: Energinet-DataHub/.github/.github/actions/dotnet-solution-build-and-test@v8
         with:
           SOLUTION_FILE_PATH: './source/Energinet.DataHub.PostOffice.Libraries.sln'
-          # AZURE_KEYVAULT_URL: ${{ secrets.AZURE_KEYVAULT_URL }}
-          # AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-          # AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          # AZURE_SPN_ID: ${{ secrets.AZURE_SPN_ID_OIDC }}
+          CODE_COVERAGE_FLAGS: clientlibraries
 
       - name: Pack Client project
         uses: Energinet-DataHub/.github/.github/actions/nuget-project-pack@v8
