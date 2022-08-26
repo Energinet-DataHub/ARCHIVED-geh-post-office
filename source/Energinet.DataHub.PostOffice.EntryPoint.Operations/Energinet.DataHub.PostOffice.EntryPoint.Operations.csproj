@@ -24,8 +24,8 @@ limitations under the License.
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.10.0" />
-    <PackageReference Include="Energinet.DataHub.Core.App.FunctionApp" Version="5.0.0" />
-    <PackageReference Include="Energinet.DataHub.MarketParticipant.Integration.Model" Version="2.4.1" />
+    <PackageReference Include="Energinet.DataHub.Core.App.FunctionApp" Version="6.0.0" />
+    <PackageReference Include="Energinet.DataHub.MarketParticipant.Integration.Model" Version="2.5.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.0.13" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.ServiceBus" Version="5.4.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.8.0" />

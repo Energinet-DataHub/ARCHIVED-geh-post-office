@@ -51,7 +51,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.Operations
                 PriceAreaCode.DK1,
                 Guid.NewGuid());
 
-            var bytes = new GridAreaUpdatedIntegrationEventParser().Parse(message);
+            var bytes = new GridAreaUpdatedIntegrationEventParser().ParseToSharedIntegrationEvent(message);
 
             // Act
             await target.RunAsync(bytes).ConfigureAwait(false);
@@ -78,7 +78,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.Operations
                 "fake_value",
                 new Address("fake_value", "fake_value", "fake_value", "fake_value", "fake_value"));
 
-            var bytes = new OrganizationUpdatedIntegrationEventParser().Parse(message);
+            var bytes = new OrganizationUpdatedIntegrationEventParser().ParseToSharedIntegrationEvent(message);
 
             // Act
             await target.RunAsync(bytes).ConfigureAwait(false);
@@ -114,7 +114,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.Operations
                 Enumerable.Empty<BusinessRoleCode>(),
                 Enumerable.Empty<ActorMarketRole>());
 
-            var bytes = new ActorUpdatedIntegrationEventParser().Parse(message);
+            var bytes = new ActorUpdatedIntegrationEventParser().ParseToSharedIntegrationEvent(message);
 
             // Act
             await target.RunAsync(bytes).ConfigureAwait(false);
@@ -153,7 +153,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.Operations
                 Enumerable.Empty<BusinessRoleCode>(),
                 Enumerable.Empty<ActorMarketRole>());
 
-            var bytes = new ActorUpdatedIntegrationEventParser().Parse(message);
+            var bytes = new ActorUpdatedIntegrationEventParser().ParseToSharedIntegrationEvent(message);
 
             // Act
             await target.RunAsync(bytes).ConfigureAwait(false);
