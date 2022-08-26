@@ -1,5 +1,9 @@
 # Energinet.DataHub.MessageHub.IntegrationTesting Release Notes
 
+## Version 3.0.4
+
+- Updated pipeline
+
 ## Version 3.0.3
 
 - All Nuget publishing pipelines have been merged into one, as the projects are inter-dependent and therefore works as a bundle.
