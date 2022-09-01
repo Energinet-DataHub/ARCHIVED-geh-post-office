@@ -1,5 +1,9 @@
 # Energinet.DataHub.MessageHub.Model Release notes
 
+## Version 3.0.5
+
+- Updated packages
+
 ## Version 3.0.4
 
 - Updated pipeline
