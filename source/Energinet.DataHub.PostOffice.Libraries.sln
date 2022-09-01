@@ -1,19 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Copyright 2020 Energinet DataHub A/S
-#
-# Licensed under the Apache License, Version 2.0 (the "License2");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-VisualStudioVersion = 16.0.30114.105
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32819.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Energinet.DataHub.MessageHub.Client", "Energinet.DataHub.MessageHub.Client", "{D79C7D37-ADE1-42D3-9FED-1E5D784E6E7D}"
 EndProject
@@ -50,6 +38,56 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Energinet.DataHub.MessageHub.IntegrationTesting", "Energinet.DataHub.MessageHub.IntegrationTesting\source\Energinet.DataHub.MessageHub.IntegrationTesting\Energinet.DataHub.MessageHub.IntegrationTesting.csproj", "{34056092-767C-485A-B0A8-9A15147EBB6D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Energinet.DataHub.MessageHub.IntegrationTesting", "Energinet.DataHub.MessageHub.IntegrationTesting", "{3D122C94-4320-4331-BD33-9CD500DD4C48}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documents", "documents", "{67237757-2307-4F4C-97E9-22F855E8FA71}"
+	ProjectSection(SolutionItems) = preProject
+		Energinet.DataHub.MessageHub.Client\documents\documentation.md = Energinet.DataHub.MessageHub.Client\documents\documentation.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "release-notes", "release-notes", "{B3028437-37E1-497E-855D-9B642416A981}"
+	ProjectSection(SolutionItems) = preProject
+		Energinet.DataHub.MessageHub.Client\documents\release-notes\release-notes.md = Energinet.DataHub.MessageHub.Client\documents\release-notes\release-notes.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documents", "documents", "{E9712B75-7306-4D08-9ED7-F2A6786AAAB0}"
+	ProjectSection(SolutionItems) = preProject
+		Energinet.DataHub.MessageHub.Client.SimpleInjector\documents\documentation.md = Energinet.DataHub.MessageHub.Client.SimpleInjector\documents\documentation.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "release-notes", "release-notes", "{E3B517DF-73C1-4261-B675-075E581C95A3}"
+	ProjectSection(SolutionItems) = preProject
+		Energinet.DataHub.MessageHub.Client.SimpleInjector\documents\release-notes\release-notes.md = Energinet.DataHub.MessageHub.Client.SimpleInjector\documents\release-notes\release-notes.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documents", "documents", "{5911800D-15C7-4EDC-8455-CB4A80ECEC19}"
+	ProjectSection(SolutionItems) = preProject
+		Energinet.DataHub.MessageHub.Core\documents\documentation.md = Energinet.DataHub.MessageHub.Core\documents\documentation.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "release-notes", "release-notes", "{F4ADB15D-35D6-447F-8004-99D63BD6E9E7}"
+	ProjectSection(SolutionItems) = preProject
+		Energinet.DataHub.MessageHub.Core\documents\release-notes\release-notes.md = Energinet.DataHub.MessageHub.Core\documents\release-notes\release-notes.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documents", "documents", "{4E9F2674-960B-4DDB-AF0B-1928A7938E42}"
+	ProjectSection(SolutionItems) = preProject
+		Energinet.DataHub.MessageHub.IntegrationTesting\documents\documentation.md = Energinet.DataHub.MessageHub.IntegrationTesting\documents\documentation.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "release-notes", "release-notes", "{A745D57A-4ADA-4678-A1DF-8E5DCA96843F}"
+	ProjectSection(SolutionItems) = preProject
+		Energinet.DataHub.MessageHub.IntegrationTesting\documents\release-notes\release-notes.md = Energinet.DataHub.MessageHub.IntegrationTesting\documents\release-notes\release-notes.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documents", "documents", "{5223C900-076B-4FAD-A533-876BEFF52FBE}"
+	ProjectSection(SolutionItems) = preProject
+		Energinet.DataHub.MessageHub.Model\documents\documentation.md = Energinet.DataHub.MessageHub.Model\documents\documentation.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "release-notes", "release-notes", "{A275E9D4-B536-467E-846B-AE9E454A858F}"
+	ProjectSection(SolutionItems) = preProject
+		Energinet.DataHub.MessageHub.Model\documents\release-notes\release-notes.md = Energinet.DataHub.MessageHub.Model\documents\release-notes\release-notes.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -172,6 +210,16 @@ Global
 		{67C95CC9-95E6-4D05-B14B-2AEF2A961C04} = {4B75BBAA-83F7-4DAF-971A-F65C7C6AA5E7}
 		{D7B39BBE-EC7F-4025-9A9F-6DDA9E4E6754} = {3D122C94-4320-4331-BD33-9CD500DD4C48}
 		{34056092-767C-485A-B0A8-9A15147EBB6D} = {D7B39BBE-EC7F-4025-9A9F-6DDA9E4E6754}
+		{67237757-2307-4F4C-97E9-22F855E8FA71} = {D79C7D37-ADE1-42D3-9FED-1E5D784E6E7D}
+		{B3028437-37E1-497E-855D-9B642416A981} = {67237757-2307-4F4C-97E9-22F855E8FA71}
+		{E9712B75-7306-4D08-9ED7-F2A6786AAAB0} = {42755FFA-C4B2-4E8B-AED6-354CE59DFCF6}
+		{E3B517DF-73C1-4261-B675-075E581C95A3} = {E9712B75-7306-4D08-9ED7-F2A6786AAAB0}
+		{5911800D-15C7-4EDC-8455-CB4A80ECEC19} = {E5FFF67D-D999-446A-84DD-1E8E46D45E57}
+		{F4ADB15D-35D6-447F-8004-99D63BD6E9E7} = {5911800D-15C7-4EDC-8455-CB4A80ECEC19}
+		{4E9F2674-960B-4DDB-AF0B-1928A7938E42} = {3D122C94-4320-4331-BD33-9CD500DD4C48}
+		{A745D57A-4ADA-4678-A1DF-8E5DCA96843F} = {4E9F2674-960B-4DDB-AF0B-1928A7938E42}
+		{5223C900-076B-4FAD-A533-876BEFF52FBE} = {5AA99C26-61C0-457E-9B8E-7B648A9A5275}
+		{A275E9D4-B536-467E-846B-AE9E454A858F} = {5223C900-076B-4FAD-A533-876BEFF52FBE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AFC1A6A3-7235-4DB1-A2E4-35B72C1FEA28}
