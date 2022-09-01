@@ -25,12 +25,20 @@ namespace DataAvailableNotification
             return dto;
         }
 
-        private static DataAvailableNotificationDto CreateDto(DomainOrigin origin, string messageType, string recipient)
+        private static DataAvailableNotificationDto CreateDto(
+            DomainOrigin origin,
+            string messageType,
+            string recipient)
         {
+            var actorId = new LegacyActorIdDto(string.IsNullOrWhiteSpace(recipient)
+                ? GlnHelper.CreateRandomGln()
+                : recipient);
+
             return new DataAvailableNotificationDto(
                 Guid.NewGuid(),
-                new GlobalLocationNumberDto(string.IsNullOrWhiteSpace(recipient) ? GlnHelper.CreateRandomGln() : recipient),
+                actorId,
                 new MessageTypeDto(string.IsNullOrWhiteSpace(messageType) ? "timeseries" : messageType),
+                "sample_document_type",
                 origin,
                 true,
                 1);
