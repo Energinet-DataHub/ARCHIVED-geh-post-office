@@ -45,7 +45,6 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             _marketOperatorDataStorageService = marketOperatorDataStorageService;
         }
 
-        // TODO: UTs
         public Task<Bundle?> GetAsync(ActorId recipient, Uuid bundleId)
         {
             ArgumentNullException.ThrowIfNull(recipient, nameof(recipient));
