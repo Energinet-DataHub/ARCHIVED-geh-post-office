@@ -45,6 +45,24 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             _marketOperatorDataStorageService = marketOperatorDataStorageService;
         }
 
+        // TODO: UTs
+        public Task<Bundle?> GetAsync(ActorId recipient, Uuid bundleId)
+        {
+            ArgumentNullException.ThrowIfNull(recipient, nameof(recipient));
+            ArgumentNullException.ThrowIfNull(bundleId, nameof(bundleId));
+
+            var asLinq = _repositoryContainer
+                .Container
+                .GetItemLinqQueryable<CosmosBundleDocument>();
+
+            var query =
+                from bundle in asLinq
+                where bundle.Id == bundleId.ToString() && bundle.Recipient == recipient.Value
+                select bundle;
+
+            return GetBundleAsync(query);
+        }
+
         public Task<Bundle?> GetNextUnacknowledgedAsync(ActorId recipient, params DomainOrigin[] domains)
         {
             ArgumentNullException.ThrowIfNull(recipient, nameof(recipient));
@@ -68,7 +86,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 orderby bundle.Timestamp
                 select bundle;
 
-            return GetNextUnacknowledgedAsync(query);
+            return GetBundleAsync(query);
         }
 
         public async Task<BundleCreatedResponse> TryAddNextUnacknowledgedAsync(Bundle bundle, ICabinetReader cabinetReader)
@@ -168,9 +186,13 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             return ex.StatusCode == HttpStatusCode.Conflict;
         }
 
-        private async Task<Bundle?> GetNextUnacknowledgedAsync(IQueryable<CosmosBundleDocument> query)
+        private async Task<Bundle?> GetBundleAsync(IQueryable<CosmosBundleDocument> query)
         {
-            var bundleDocument = await query.AsCosmosIteratorAsync().FirstOrDefaultAsync().ConfigureAwait(false);
+            var bundleDocument = await query
+                .AsCosmosIteratorAsync()
+                .FirstOrDefaultAsync()
+                .ConfigureAwait(false);
+
             if (bundleDocument == null)
                 return null;
 

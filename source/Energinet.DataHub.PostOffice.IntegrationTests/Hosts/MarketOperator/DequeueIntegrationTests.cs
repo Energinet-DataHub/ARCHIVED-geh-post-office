@@ -77,7 +77,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             // Arrange
             var recipientGln = new MockedGln();
             var bundleId = Guid.NewGuid().ToString();
-            await AddDataAvailableNotificationAsync(recipientGln).ConfigureAwait(false);
+            await AddDataAvailableNotificationAsync(recipientGln, DomainOrigin.TimeSeries).ConfigureAwait(false);
 
             await using var host = await MarketOperatorIntegrationTestHost
                 .InitializeAsync()
@@ -105,7 +105,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             // Arrange
             var recipientGln = new MockedGln();
             var bundleId = Guid.NewGuid().ToString();
-            await AddDataAvailableNotificationAsync(recipientGln).ConfigureAwait(false);
+            await AddDataAvailableNotificationAsync(recipientGln, DomainOrigin.TimeSeries).ConfigureAwait(false);
 
             await using var host = await MarketOperatorIntegrationTestHost
                 .InitializeAsync()
@@ -131,13 +131,13 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         }
 
         [Fact]
-        public async Task Dequeue_DifferentRecipient_ReturnsNotDequeued()
+        public async Task Dequeue_DifferentRecipients_ReturnsNotDequeued()
         {
             // Arrange
             var recipientGln = new MockedGln();
             var unrelatedGln = new MockedGln();
             var bundleId = Guid.NewGuid().ToString();
-            await AddDataAvailableNotificationAsync(recipientGln).ConfigureAwait(false);
+            await AddDataAvailableNotificationAsync(recipientGln, DomainOrigin.TimeSeries).ConfigureAwait(false);
 
             await using var host = await MarketOperatorIntegrationTestHost
                 .InitializeAsync()
@@ -159,14 +159,61 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             Assert.False(response.IsDequeued);
         }
 
-        private static async Task AddDataAvailableNotificationAsync(string recipientGln)
+        [Fact]
+        public async Task Dequeue_DifferentEndpointsForSameRecipient_CanDequeueFromAllEndpoints()
+        {
+            // Arrange
+            var recipientGln = new MockedGln();
+            await AddDataAvailableNotificationAsync(recipientGln, DomainOrigin.Aggregations);
+            await AddDataAvailableNotificationAsync(recipientGln, DomainOrigin.Charges);
+            await AddDataAvailableNotificationAsync(recipientGln, DomainOrigin.TimeSeries);
+
+            await using var host = await MarketOperatorIntegrationTestHost
+                .InitializeAsync()
+                .ConfigureAwait(false);
+
+            await using var scope = host.BeginScope();
+            var mediator = scope.GetInstance<IMediator>();
+
+            var timeSeriesPeek = new PeekTimeSeriesCommand(recipientGln, null, ResponseFormat.Xml, 1.0);
+            var aggregationsPeek = new PeekAggregationsCommand(recipientGln, null, ResponseFormat.Xml, 1.0);
+            var masterDataPeek = new PeekMasterDataCommand(recipientGln, null, ResponseFormat.Xml, 1.0);
+
+            var timeSeriesPeekResponse = await mediator.Send(timeSeriesPeek);
+            var aggregationsPeekResponse = await mediator.Send(aggregationsPeek);
+            var masterDataPeekResponse = await mediator.Send(masterDataPeek);
+
+            var timeSeriesBundleUuid = await ReadBundleIdAsync(timeSeriesPeekResponse);
+            var aggregationsBundleUuid = await ReadBundleIdAsync(aggregationsPeekResponse);
+            var masterDataBundleUuid = await ReadBundleIdAsync(masterDataPeekResponse);
+
+            var timeSeriesDequeueCommand = new DequeueCommand(recipientGln, timeSeriesBundleUuid);
+            var aggregationsDequeueCommand = new DequeueCommand(recipientGln, aggregationsBundleUuid);
+            var masterDataDequeueCommand = new DequeueCommand(recipientGln, masterDataBundleUuid);
+
+            // Act
+            // Order matters! The newest bundle must be dequeued first, otherwise the test may incorrectly succeed.
+            var masterDataResponse = await mediator.Send(masterDataDequeueCommand);
+            var aggregationsResponse = await mediator.Send(aggregationsDequeueCommand);
+            var timeSeriesResponse = await mediator.Send(timeSeriesDequeueCommand);
+
+            // Assert
+            Assert.NotNull(masterDataResponse);
+            Assert.NotNull(aggregationsResponse);
+            Assert.NotNull(timeSeriesResponse);
+            Assert.True(masterDataResponse.IsDequeued);
+            Assert.True(aggregationsResponse.IsDequeued);
+            Assert.True(timeSeriesResponse.IsDequeued);
+        }
+
+        private static async Task AddDataAvailableNotificationAsync(string recipientGln, DomainOrigin origin)
         {
             var dataAvailableUuid = Guid.NewGuid().ToString();
             var dataAvailableNotification = new DataAvailableNotificationDto(
                 dataAvailableUuid,
                 recipientGln,
-                "timeseries",
-                "timeseries",
+                $"{origin}_content_type",
+                origin.ToString(),
                 false,
                 1,
                 1,
