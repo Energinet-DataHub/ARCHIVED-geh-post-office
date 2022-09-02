@@ -32,6 +32,23 @@ public sealed class LegacyBundleRepositoryProxy : IBundleRepository
         _legacyActorIdIdentity = legacyActorIdIdentity;
     }
 
+    public async Task<Bundle?> GetAsync(ActorId recipient, Uuid bundleId)
+    {
+        if (_legacyActorIdIdentity.Identity != null)
+        {
+            var legacy = await _bundleRepository
+                .GetAsync(_legacyActorIdIdentity.Identity, bundleId)
+                .ConfigureAwait(false);
+
+            if (legacy != null)
+                return legacy;
+        }
+
+        return await _bundleRepository
+            .GetAsync(recipient, bundleId)
+            .ConfigureAwait(false);
+    }
+
     public async Task<Bundle?> GetNextUnacknowledgedAsync(ActorId recipient, params DomainOrigin[] domains)
     {
         if (_legacyActorIdIdentity.Identity != null)

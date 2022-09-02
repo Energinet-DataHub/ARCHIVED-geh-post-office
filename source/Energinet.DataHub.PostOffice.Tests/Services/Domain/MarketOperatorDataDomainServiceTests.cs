@@ -192,7 +192,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             // Assert
             Assert.NotNull(bundle);
-            Assert.Equal(dataAvailableNotificationFirst.Recipient, bundle!.Recipient);
+            Assert.Equal(dataAvailableNotificationFirst.Recipient, bundle.Recipient);
             Assert.Equal(dataAvailableNotificationFirst.Origin, bundle.Origin);
             Assert.True(bundle.TryGetContent(out var actualBundleContent));
             Assert.Equal(bundleContentMock.Object, actualBundleContent);
@@ -258,7 +258,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             // Assert
             Assert.NotNull(bundle);
-            Assert.NotNull(bundle!.BundleId);
+            Assert.NotNull(bundle.BundleId);
             Assert.Equal(dataAvailableNotificationFirst.Recipient, bundle.Recipient);
             Assert.Equal(dataAvailableNotificationFirst.Origin, bundle.Origin);
             Assert.True(bundle.TryGetContent(out var actualBundleContent));
@@ -413,7 +413,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             // Assert
             Assert.NotNull(bundle);
             Assert.Equal(setupBundle, bundle);
-            Assert.True(bundle!.TryGetContent(out var actualBundleContent));
+            Assert.True(bundle.TryGetContent(out var actualBundleContent));
             Assert.Equal(bundleContentMock.Object, actualBundleContent);
         }
 
@@ -539,7 +539,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             // Assert
             Assert.NotNull(bundle);
-            Assert.Single(bundle!.NotificationIds);
+            Assert.Single(bundle.NotificationIds);
             Assert.Equal(dataAvailableNotificationA.Recipient, bundle.Recipient);
             Assert.Equal(dataAvailableNotificationA.Origin, bundle.Origin);
             Assert.True(bundle.TryGetContent(out var actualBundleContent));
@@ -612,7 +612,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             // Assert
             Assert.NotNull(bundle);
-            Assert.Equal(dataAvailableNotification.Recipient, bundle!.Recipient);
+            Assert.Equal(dataAvailableNotification.Recipient, bundle.Recipient);
             Assert.Equal(dataAvailableNotification.Origin, bundle.Origin);
             Assert.True(bundle.TryGetContent(out var actualBundleContent));
             Assert.Equal(bundleContentMock.Object, actualBundleContent);
@@ -778,7 +778,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             // Assert
             Assert.NotNull(bundle);
-            Assert.Equal(dataAvailableNotificationFirst.Recipient, bundle!.Recipient);
+            Assert.Equal(dataAvailableNotificationFirst.Recipient, bundle.Recipient);
             Assert.Equal(dataAvailableNotificationFirst.Origin, bundle.Origin);
             Assert.True(bundle.TryGetContent(out var actualBundleContent));
             Assert.Equal(bundleContentMock.Object, actualBundleContent);
@@ -845,7 +845,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             // Assert
             Assert.NotNull(bundle);
-            Assert.NotNull(bundle!.BundleId);
+            Assert.NotNull(bundle.BundleId);
             Assert.Equal(dataAvailableNotificationFirst.Recipient, bundle.Recipient);
             Assert.Equal(dataAvailableNotificationFirst.Origin, bundle.Origin);
             Assert.True(bundle.TryGetContent(out var actualBundleContent));
@@ -939,7 +939,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             // Assert
             Assert.NotNull(bundle);
             Assert.Equal(setupBundle, bundle);
-            Assert.True(bundle!.TryGetContent(out var actualBundleContent));
+            Assert.True(bundle.TryGetContent(out var actualBundleContent));
             Assert.Equal(bundleContentMock.Object, actualBundleContent);
         }
 
@@ -1062,7 +1062,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             // Assert
             Assert.NotNull(bundle);
-            Assert.Single(bundle!.NotificationIds);
+            Assert.Single(bundle.NotificationIds);
             Assert.Equal(dataAvailableNotificationA.Recipient, bundle.Recipient);
             Assert.Equal(dataAvailableNotificationA.Origin, bundle.Origin);
             Assert.True(bundle.TryGetContent(out var actualBundleContent));
@@ -1136,7 +1136,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             // Assert
             Assert.NotNull(bundle);
-            Assert.Equal(dataAvailableNotification.Recipient, bundle!.Recipient);
+            Assert.Equal(dataAvailableNotification.Recipient, bundle.Recipient);
             Assert.Equal(dataAvailableNotification.Origin, bundle.Origin);
             Assert.True(bundle.TryGetContent(out var actualBundleContent));
             Assert.Equal(bundleContentMock.Object, actualBundleContent);
@@ -1302,7 +1302,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             // Assert
             Assert.NotNull(bundle);
-            Assert.Equal(dataAvailableNotificationFirst.Recipient, bundle!.Recipient);
+            Assert.Equal(dataAvailableNotificationFirst.Recipient, bundle.Recipient);
             Assert.Equal(dataAvailableNotificationFirst.Origin, bundle.Origin);
             Assert.True(bundle.TryGetContent(out var actualBundleContent));
             Assert.Equal(bundleContentMock.Object, actualBundleContent);
@@ -1373,7 +1373,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             // Assert
             Assert.NotNull(bundle);
-            Assert.NotNull(bundle!.BundleId);
+            Assert.NotNull(bundle.BundleId);
             Assert.Equal(dataAvailableNotificationFirst.Recipient, bundle.Recipient);
             Assert.Equal(dataAvailableNotificationFirst.Origin, bundle.Origin);
             Assert.True(bundle.TryGetContent(out var actualBundleContent));
@@ -1466,7 +1466,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             // Assert
             Assert.NotNull(bundle);
             Assert.Equal(setupBundle, bundle);
-            Assert.True(bundle!.TryGetContent(out var actualBundleContent));
+            Assert.True(bundle.TryGetContent(out var actualBundleContent));
             Assert.Equal(bundleContentMock.Object, actualBundleContent);
         }
 
@@ -1593,7 +1593,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             // Assert
             Assert.NotNull(bundle);
-            Assert.Single(bundle!.NotificationIds);
+            Assert.Single(bundle.NotificationIds);
             Assert.Equal(dataAvailableNotificationB.Recipient, bundle.Recipient);
             Assert.Equal(dataAvailableNotificationB.Origin, bundle.Origin);
             Assert.True(bundle.TryGetContent(out var actualBundleContent));
@@ -1667,7 +1667,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             // Assert
             Assert.NotNull(bundle);
-            Assert.Equal(dataAvailableNotification.Recipient, bundle!.Recipient);
+            Assert.Equal(dataAvailableNotification.Recipient, bundle.Recipient);
             Assert.Equal(dataAvailableNotification.Origin, bundle.Origin);
             Assert.True(bundle.TryGetContent(out var actualBundleContent));
             Assert.Equal(bundleContentMock.Object, actualBundleContent);
@@ -1790,7 +1790,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             // Assert
             Assert.NotNull(bundle);
-            Assert.NotNull(bundle!.BundleId);
+            Assert.NotNull(bundle.BundleId);
             Assert.Equal(dataAvailableNotificationFirst.Recipient, bundle.Recipient);
             Assert.Equal(dataAvailableNotificationFirst.Origin, bundle.Origin);
             Assert.True(bundle.TryGetContent(out var actualBundleContent));
@@ -2006,7 +2006,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             // Assert
             Assert.NotNull(bundle);
-            Assert.Equal(dataAvailableNotificationFirst.Recipient, bundle!.Recipient);
+            Assert.Equal(dataAvailableNotificationFirst.Recipient, bundle.Recipient);
             Assert.Equal(dataAvailableNotificationFirst.Origin, bundle.Origin);
             Assert.True(bundle.TryGetContent(out var actualBundleContent));
             Assert.Equal(bundleContentMock.Object, actualBundleContent);
@@ -2111,7 +2111,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             // Assert
             Assert.NotNull(bundle);
             Assert.Equal(setupBundle, bundle);
-            Assert.True(bundle!.TryGetContent(out var actualBundleContent));
+            Assert.True(bundle.TryGetContent(out var actualBundleContent));
             Assert.Equal(bundleContentMock.Object, actualBundleContent);
         }
 
@@ -2145,7 +2145,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                     setupBundle,
                     ResponseFormat,
                     ResponseVersion))
-
                 .ReturnsAsync((IBundleContent?)null);
 
             var dataAvailableNotificationRepositoryMock = new Mock<IDataAvailableNotificationRepository>();
@@ -2252,7 +2251,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             // Assert
             Assert.NotNull(bundle);
-            Assert.Single(bundle!.NotificationIds);
+            Assert.Single(bundle.NotificationIds);
             Assert.Equal(dataAvailableNotificationA.Recipient, bundle.Recipient);
             Assert.Equal(dataAvailableNotificationA.Origin, bundle.Origin);
             Assert.True(bundle.TryGetContent(out var actualBundleContent));
@@ -2334,7 +2333,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             // Assert
             Assert.NotNull(bundle);
-            Assert.Equal(dataAvailableNotification.Recipient, bundle!.Recipient);
+            Assert.Equal(dataAvailableNotification.Recipient, bundle.Recipient);
             Assert.Equal(dataAvailableNotification.Origin, bundle.Origin);
             Assert.True(bundle.TryGetContent(out var actualBundleContent));
             Assert.Equal(bundleContentMock.Object, actualBundleContent);
@@ -2366,7 +2365,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             var bundleRepositoryMock = new Mock<IBundleRepository>();
             bundleRepositoryMock
-                .Setup(x => x.GetNextUnacknowledgedAsync(recipient))
+                .Setup(x => x.GetAsync(recipient, bundleUuid))
                 .ReturnsAsync(bundle);
 
             var contentTypeWeightMapMock = new Mock<IWeightCalculatorDomainService>();
@@ -2394,7 +2393,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
 
             var bundleRepositoryMock = new Mock<IBundleRepository>();
             bundleRepositoryMock
-                .Setup(x => x.GetNextUnacknowledgedAsync(recipient))
+                .Setup(x => x.GetAsync(recipient, bundleUuid))
                 .ReturnsAsync((Bundle?)null);
 
             var contentTypeWeightMapMock = new Mock<IWeightCalculatorDomainService>();
@@ -2413,12 +2412,11 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
         }
 
         [Fact]
-        public async Task CanAcknowledgeAsync_WrongId_ReturnsFalse()
+        public async Task CanAcknowledgeAsync_IsDequeued_ReturnsFalse()
         {
             // Arrange
             var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleUuid = new Uuid("60D041F5-548B-49C0-8118-BB0F3DF1E692");
-            var incorrectId = new Uuid("8BF7791E-A179-4B86-AE2F-69B5C276E99F");
             var dataAvailableNotificationRepositoryMock = new Mock<IDataAvailableNotificationRepository>();
 
             var bundle = new Bundle(
@@ -2429,9 +2427,11 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 Array.Empty<Uuid>(),
                 Enumerable.Empty<string>());
 
+            bundle.Dequeue();
+
             var bundleRepositoryMock = new Mock<IBundleRepository>();
             bundleRepositoryMock
-                .Setup(x => x.GetNextUnacknowledgedAsync(recipient))
+                .Setup(x => x.GetAsync(recipient, bundleUuid))
                 .ReturnsAsync(bundle);
 
             var contentTypeWeightMapMock = new Mock<IWeightCalculatorDomainService>();
@@ -2443,7 +2443,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 contentTypeWeightMapMock.Object);
 
             // Act
-            var result = await target.CanAcknowledgeAsync(recipient, incorrectId).ConfigureAwait(false);
+            var result = await target.CanAcknowledgeAsync(recipient, bundleUuid);
 
             // Assert
             Assert.False(result.CanAcknowledge);
