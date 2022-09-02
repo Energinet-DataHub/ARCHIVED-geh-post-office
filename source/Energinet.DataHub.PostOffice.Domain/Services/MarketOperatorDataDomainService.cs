@@ -101,8 +101,8 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
 
         public async Task<(bool CanAcknowledge, Bundle? Bundle)> CanAcknowledgeAsync(ActorId recipient, Uuid bundleId)
         {
-            var bundle = await _bundleRepository.GetNextUnacknowledgedAsync(recipient).ConfigureAwait(false);
-            return bundle != null && bundle.BundleId == bundleId
+            var bundle = await _bundleRepository.GetAsync(recipient, bundleId).ConfigureAwait(false);
+            return bundle is { Dequeued: false }
                 ? (true, bundle)
                 : (false, null);
         }

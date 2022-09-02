@@ -36,6 +36,90 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
         private static readonly Uri _contentPathUri = new("https://test.test.dk");
 
         [Fact]
+        public async Task GetAsync_NoBundle_ReturnsNull()
+        {
+            // Arrange
+            await using var host = await MarketOperatorIntegrationTestHost.InitializeAsync();
+            var scope = host.BeginScope();
+
+            var container = scope.GetInstance<IBundleRepositoryContainer>();
+            var storageService = scope.GetInstance<IMarketOperatorDataStorageService>();
+            var storageHandler = scope.GetInstance<IStorageHandler>();
+            var target = new BundleRepository(storageHandler, container, storageService);
+
+            var recipient = new LegacyActorId(new MockedGln());
+
+            // Act
+            var bundle = await target.GetAsync(recipient, new Uuid());
+
+            // Assert
+            Assert.Null(bundle);
+        }
+
+        [Fact]
+        public async Task GetAsync_HasUnrelatedBundle_ReturnsNull()
+        {
+            // Arrange
+            await using var host = await MarketOperatorIntegrationTestHost.InitializeAsync();
+            var scope = host.BeginScope();
+
+            var container = scope.GetInstance<IBundleRepositoryContainer>();
+            var storageService = scope.GetInstance<IMarketOperatorDataStorageService>();
+            var storageHandler = scope.GetInstance<IStorageHandler>();
+            var target = new BundleRepository(storageHandler, container, storageService);
+
+            var recipient = new LegacyActorId(new MockedGln());
+            var reader = CreateMockedReader();
+            var setupBundle = new Bundle(
+                new Uuid(Guid.NewGuid()),
+                recipient,
+                DomainOrigin.TimeSeries,
+                new ContentType("fake_value"),
+                new[] { new Uuid(Guid.NewGuid()) },
+                Enumerable.Empty<string>());
+
+            await target.TryAddNextUnacknowledgedAsync(setupBundle, reader).ConfigureAwait(false);
+
+            // Act
+            var bundle = await target.GetAsync(recipient, new Uuid()).ConfigureAwait(false);
+
+            // Assert
+            Assert.Null(bundle);
+        }
+
+        [Fact]
+        public async Task GetAsync_HasBundle_ReturnsBundle()
+        {
+            // Arrange
+            await using var host = await MarketOperatorIntegrationTestHost.InitializeAsync();
+            var scope = host.BeginScope();
+
+            var container = scope.GetInstance<IBundleRepositoryContainer>();
+            var storageService = scope.GetInstance<IMarketOperatorDataStorageService>();
+            var storageHandler = scope.GetInstance<IStorageHandler>();
+            var target = new BundleRepository(storageHandler, container, storageService);
+
+            var recipient = new LegacyActorId(new MockedGln());
+            var reader = CreateMockedReader();
+            var setupBundle = new Bundle(
+                new Uuid(Guid.NewGuid()),
+                recipient,
+                DomainOrigin.TimeSeries,
+                new ContentType("fake_value"),
+                new[] { new Uuid(Guid.NewGuid()) },
+                Enumerable.Empty<string>());
+
+            await target.TryAddNextUnacknowledgedAsync(setupBundle, reader).ConfigureAwait(false);
+
+            // Act
+            var bundle = await target.GetAsync(recipient, setupBundle.BundleId).ConfigureAwait(false);
+
+            // Assert
+            Assert.NotNull(bundle);
+            Assert.Equal(setupBundle.BundleId, bundle.BundleId);
+        }
+
+        [Fact]
         public async Task GetNextUnacknowledgedAsync_NoBundle_ReturnsNull()
         {
             // Arrange
@@ -118,7 +202,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
 
             // Assert
             Assert.NotNull(bundle);
-            Assert.Equal(setupBundle.BundleId, bundle!.BundleId);
+            Assert.Equal(setupBundle.BundleId, bundle.BundleId);
             Assert.Equal(setupBundle.Origin, bundle.Origin);
             Assert.Equal(setupBundle.Recipient, bundle.Recipient);
             Assert.Equal(setupBundle.NotificationIds.Single(), bundle.NotificationIds.Single());
@@ -150,12 +234,12 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
 
             // Assert
             Assert.NotNull(bundle);
-            Assert.Equal(setupBundle.BundleId, bundle!.BundleId);
+            Assert.Equal(setupBundle.BundleId, bundle.BundleId);
             Assert.Equal(setupBundle.Origin, bundle.Origin);
             Assert.Equal(setupBundle.Recipient, bundle.Recipient);
             Assert.Equal(setupBundle.NotificationIds.Single(), bundle.NotificationIds.Single());
             Assert.True(bundle.TryGetContent(out var actualBundleContent));
-            Assert.Equal(_contentPathUri, ((AzureBlobBundleContent)actualBundleContent!).ContentPath);
+            Assert.Equal(_contentPathUri, ((AzureBlobBundleContent)actualBundleContent).ContentPath);
         }
 
         [Fact]
@@ -428,8 +512,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             // Assert
             var actualBundle = await target.GetNextUnacknowledgedAsync(recipient).ConfigureAwait(false);
             Assert.NotNull(actualBundle);
-            Assert.True(actualBundle!.TryGetContent(out var actualBundleContent));
-            Assert.Equal(_contentPathUri, ((AzureBlobBundleContent)actualBundleContent!).ContentPath);
+            Assert.True(actualBundle.TryGetContent(out var actualBundleContent));
+            Assert.Equal(_contentPathUri, ((AzureBlobBundleContent)actualBundleContent).ContentPath);
         }
 
         private static Bundle CreateBundle(
