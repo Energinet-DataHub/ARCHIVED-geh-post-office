@@ -52,7 +52,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             var target = new InsertDataAvailableNotificationsCommandHandler(repository.Object);
 
             const string recipient = "7495563456235";
-            const string origin = "TimeSeries";
+            const MessageHub.Model.Model.DomainOrigin origin = MessageHub.Model.Model.DomainOrigin.TimeSeries;
 
             var dataAvailableNotifications = new[]
             {
@@ -121,7 +121,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             return
                 notification.NotificationId == new Uuid(dto.Uuid) &&
                 notification.Recipient.Value == dto.Recipient &&
-                notification.Origin.ToString() == dto.Origin &&
+                notification.Origin == (DomainOrigin)dto.Origin &&
                 notification.ContentType.Value == dto.ContentType &&
                 notification.Weight.Value == dto.Weight &&
                 notification.SupportsBundling.Value == dto.SupportsBundling &&
@@ -132,7 +132,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         {
             return cabinetKey => cabinetKey == new CabinetKey(
                 new LegacyActorId(new GlobalLocationNumber(dto.Recipient)),
-                Enum.Parse<DomainOrigin>(dto.Origin, true),
+                (DomainOrigin)dto.Origin,
                 new ContentType(dto.ContentType));
         }
     }

@@ -67,8 +67,8 @@ namespace Energinet.DataHub.MessageHub.Core.Dequeue
                     return _dequeueConfig.ChargesDequeueQueue;
                 case DomainOrigin.TimeSeries:
                     return _dequeueConfig.TimeSeriesDequeueQueue;
-                case DomainOrigin.Aggregations:
-                    return _dequeueConfig.AggregationsDequeueQueue;
+                case DomainOrigin.Wholesale:
+                    return _dequeueConfig.WholesaleDequeueQueue;
                 case DomainOrigin.MarketRoles:
                     return _dequeueConfig.MarketRolesDequeueQueue;
                 case DomainOrigin.MeteringPoints:

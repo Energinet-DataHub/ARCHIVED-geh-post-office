@@ -231,7 +231,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
                     parsedValue.Uuid.ToString(),
                     recipient,
                     parsedValue.MessageType.Value,
-                    parsedValue.Origin.ToString(),
+                    parsedValue.Origin,
                     parsedValue.SupportsBundling,
                     parsedValue.RelativeWeight,
                     initialSequenceNumber + sequenceNumberOffset,

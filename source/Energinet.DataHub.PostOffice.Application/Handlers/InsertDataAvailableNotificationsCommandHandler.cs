@@ -56,7 +56,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
                 new Uuid(notificationDto.Uuid),
                 recipient,
                 new ContentType(notificationDto.ContentType),
-                Enum.Parse<DomainOrigin>(notificationDto.Origin, true),
+                (DomainOrigin)notificationDto.Origin,
                 new SupportsBundling(notificationDto.SupportsBundling),
                 new Weight(notificationDto.Weight),
                 new SequenceNumber(notificationDto.SequenceNumber),
