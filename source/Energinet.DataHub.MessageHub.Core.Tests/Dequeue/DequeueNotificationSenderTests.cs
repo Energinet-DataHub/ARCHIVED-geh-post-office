@@ -32,7 +32,7 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Dequeue
             "sbq-Charges-dequeue",
             "sbq-MarketRoles-dequeue",
             "sbq-MeteringPoints-dequeue",
-            "sbq-Aggregations-dequeue");
+            "sbq-Wholesale-dequeue");
 
         [Fact]
         public async Task SendAsync_NullArgument_ThrowsException()
