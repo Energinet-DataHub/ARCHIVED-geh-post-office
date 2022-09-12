@@ -213,7 +213,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
                 dataAvailableUuid,
                 recipientGln,
                 $"{origin}_content_type",
-                origin.ToString(),
+                origin,
                 false,
                 1,
                 1,

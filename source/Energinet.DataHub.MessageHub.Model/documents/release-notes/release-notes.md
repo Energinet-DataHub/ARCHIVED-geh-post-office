@@ -1,5 +1,9 @@
 # Energinet.DataHub.MessageHub.Model Release notes
 
+## Version 3.2.0
+
+- Domain origin `Aggregations` renamed to `Wholesale` in enum `DocumentType`.
+
 ## Version 3.0.5
 
 - Updated packages

@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 using Energinet.DataHub.MessageHub.Core.Extensions;
@@ -43,7 +42,6 @@ namespace Energinet.DataHub.MessageHub.Core.Peek
             _peekRequestConfig = peekRequestConfig;
         }
 
-        [SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "Issue: https://github.com/dotnet/roslyn-analyzers/issues/5712")]
         public async Task<DataBundleResponseDto?> SendAsync(
             DataBundleRequestDto dataBundleRequestDto,
             DomainOrigin domainOrigin)
@@ -71,18 +69,21 @@ namespace Energinet.DataHub.MessageHub.Core.Peek
                 .PublishMessageAsync<ServiceBusMessage>(serviceBusMessage)
                 .ConfigureAwait(false);
 
-            await using var receiverMessageBus = await _messageBusFactory
+            var receiverMessageBus = await _messageBusFactory
                 .GetSessionReceiverClientAsync(replyQueue, sessionId)
                 .ConfigureAwait(false);
 
-            var response = await receiverMessageBus
-                .ReceiveMessageAsync<ServiceBusMessage>(_peekRequestConfig.PeekTimeout ?? _defaultTimeout)
-                .ConfigureAwait(false);
+            await using (receiverMessageBus.ConfigureAwait(false))
+            {
+                var response = await receiverMessageBus
+                    .ReceiveMessageAsync<ServiceBusMessage>(_peekRequestConfig.PeekTimeout ?? _defaultTimeout)
+                    .ConfigureAwait(false);
 
-            if (response == null)
-                return null;
+                if (response == null)
+                    return null;
 
-            return _responseBundleParser.Parse(response.Body.ToArray());
+                return _responseBundleParser.Parse(response.Body.ToArray());
+            }
         }
 
         private string GetQueueName(DomainOrigin domainOrigin)
@@ -93,8 +94,8 @@ namespace Energinet.DataHub.MessageHub.Core.Peek
                     return _peekRequestConfig.ChargesQueue;
                 case DomainOrigin.TimeSeries:
                     return _peekRequestConfig.TimeSeriesQueue;
-                case DomainOrigin.Aggregations:
-                    return _peekRequestConfig.AggregationsQueue;
+                case DomainOrigin.Wholesale:
+                    return _peekRequestConfig.WholesaleQueue;
                 case DomainOrigin.MarketRoles:
                     return _peekRequestConfig.MarketRolesQueue;
                 case DomainOrigin.MeteringPoints:
@@ -112,8 +113,8 @@ namespace Energinet.DataHub.MessageHub.Core.Peek
                     return _peekRequestConfig.ChargesReplyQueue;
                 case DomainOrigin.TimeSeries:
                     return _peekRequestConfig.TimeSeriesReplyQueue;
-                case DomainOrigin.Aggregations:
-                    return _peekRequestConfig.AggregationsReplyQueue;
+                case DomainOrigin.Wholesale:
+                    return _peekRequestConfig.WholesaleReplyQueue;
                 case DomainOrigin.MarketRoles:
                     return _peekRequestConfig.MarketRolesReplyQueue;
                 case DomainOrigin.MeteringPoints:

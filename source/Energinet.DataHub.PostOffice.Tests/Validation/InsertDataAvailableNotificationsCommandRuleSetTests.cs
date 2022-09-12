@@ -14,10 +14,12 @@
 
 using System.Linq;
 using System.Threading.Tasks;
+using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Application.Validation;
 using Xunit;
 using Xunit.Categories;
+using DataAvailableNotificationDto = Energinet.DataHub.PostOffice.Application.Commands.DataAvailableNotificationDto;
 
 namespace Energinet.DataHub.PostOffice.Tests.Validation
 {
@@ -27,10 +29,10 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation
         private const int ValidWeight = 1;
         private const long ValidSequenceNumber = 1;
         private const string ValidUuid = "169B53A2-0A17-47D7-9603-4E41854E4181";
-        private const string ValidOrigin = "Charges";
         private const string ValidRecipient = "5790000555550";
         private const string ValidContentType = "TimeSeries";
         private const string ValidDocumentType = "RSM??";
+        private const DomainOrigin ValidOrigin = DomainOrigin.Charges;
 
         [Fact]
         public async Task Validate_NullNotifications_ValidatesProperty()
@@ -167,14 +169,14 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation
         }
 
         [Theory]
-        [InlineData("", false)]
-        [InlineData(null, false)]
-        [InlineData("  ", false)]
-        [InlineData("Unknown", false)]
-        [InlineData("Charges", true)]
-        [InlineData("TimeSeries", true)]
-        [InlineData("Aggregations", true)]
-        public async Task Validate_Origin_ValidatesProperty(string value, bool isValid)
+        [InlineData(DomainOrigin.Unknown, false)]
+        [InlineData((DomainOrigin)100000, false)]
+        [InlineData(DomainOrigin.Charges, true)]
+        [InlineData(DomainOrigin.TimeSeries, true)]
+        [InlineData(DomainOrigin.Aggregations, true)]
+        [InlineData(DomainOrigin.MarketRoles, true)]
+        [InlineData(DomainOrigin.MeteringPoints, true)]
+        public async Task Validate_Origin_ValidatesProperty(DomainOrigin value, bool isValid)
         {
             // Arrange
             const string propertyName = "Notifications[0]." + nameof(DataAvailableNotificationDto.Origin);

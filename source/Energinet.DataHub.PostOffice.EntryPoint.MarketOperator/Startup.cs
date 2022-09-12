@@ -47,14 +47,14 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
             var marketRolesReplyQueue = configuration.GetSetting(Settings.MarketRolesReplyQueue);
             var meteringPointsQueue = configuration.GetSetting(Settings.MeteringPointsQueue);
             var meteringPointsReplyQueue = configuration.GetSetting(Settings.MeteringPointsReplyQueue);
-            var aggregationsQueue = configuration.GetSetting(Settings.AggregationsQueue);
-            var aggregationsReplyQueue = configuration.GetSetting(Settings.AggregationsReplyQueue);
+            var wholesaleQueue = configuration.GetSetting(Settings.WholesaleQueue);
+            var wholesaleReplyQueue = configuration.GetSetting(Settings.WholesaleReplyQueue);
 
             var timeSeriesDequeueQueue = configuration.GetSetting(Settings.TimeSeriesDequeueQueue);
             var chargesDequeueQueue = configuration.GetSetting(Settings.ChargesDequeueQueue);
             var marketRolesDequeueQueue = configuration.GetSetting(Settings.MarketRolesDequeueQueue);
             var meteringPointsDequeueQueue = configuration.GetSetting(Settings.MeteringPointsDequeueQueue);
-            var aggregationsDequeueQueue = configuration.GetSetting(Settings.AggregationsDequeueQueue);
+            var wholesaleDequeueQueue = configuration.GetSetting(Settings.WholesaleDequeueQueue);
 
             // Health check
             services
@@ -80,9 +80,9 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
                 .AddAzureServiceBusQueue(serviceBusConnectionString, meteringPointsReplyQueue, name: meteringPointsReplyQueue)
                 .AddAzureServiceBusQueue(serviceBusConnectionString, meteringPointsDequeueQueue, name: meteringPointsDequeueQueue)
 
-                .AddAzureServiceBusQueue(serviceBusConnectionString, aggregationsQueue, name: aggregationsQueue)
-                .AddAzureServiceBusQueue(serviceBusConnectionString, aggregationsReplyQueue, name: aggregationsReplyQueue)
-                .AddAzureServiceBusQueue(serviceBusConnectionString, aggregationsDequeueQueue, name: aggregationsDequeueQueue);
+                .AddAzureServiceBusQueue(serviceBusConnectionString, wholesaleQueue, name: wholesaleQueue)
+                .AddAzureServiceBusQueue(serviceBusConnectionString, wholesaleReplyQueue, name: wholesaleReplyQueue)
+                .AddAzureServiceBusQueue(serviceBusConnectionString, wholesaleDequeueQueue, name: wholesaleDequeueQueue);
         }
 
         protected override void Configure(IConfiguration configuration, Container container)
