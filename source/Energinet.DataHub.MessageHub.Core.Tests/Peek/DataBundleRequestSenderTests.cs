@@ -39,8 +39,8 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Peek
             $"sbq-{DomainOrigin.MarketRoles}-reply",
             $"sbq-{DomainOrigin.MeteringPoints}",
             $"sbq-{DomainOrigin.MeteringPoints}-reply",
-            $"sbq-{DomainOrigin.Aggregations}",
-            $"sbq-{DomainOrigin.Aggregations}-reply");
+            $"sbq-{DomainOrigin.Wholesale}",
+            $"sbq-{DomainOrigin.Wholesale}-reply");
 
         [Fact]
         public async Task Send_DtoIsNull_ThrowsArgumentNullException()
@@ -56,11 +56,13 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Peek
                 _peekRequestConfig);
 
             // act, assert
-            await Assert.ThrowsAsync<ArgumentNullException>(() => target.SendAsync(null!, DomainOrigin.Aggregations)).ConfigureAwait(false);
+            await Assert
+                .ThrowsAsync<ArgumentNullException>(() => target.SendAsync(null!, DomainOrigin.Wholesale))
+                .ConfigureAwait(false);
         }
 
         [Theory]
-        [InlineData(DomainOrigin.Aggregations)]
+        [InlineData(DomainOrigin.Wholesale)]
         [InlineData(DomainOrigin.Charges)]
         [InlineData(DomainOrigin.MarketRoles)]
         [InlineData(DomainOrigin.MeteringPoints)]

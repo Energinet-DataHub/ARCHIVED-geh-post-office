@@ -12,37 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.PostOffice.Application.Commands
-{
-    public sealed record DataAvailableNotificationDto
-    {
-        public DataAvailableNotificationDto(
-            string uuid,
-            string recipient,
-            string contentType,
-            string origin,
-            bool supportsBundling,
-            int weight,
-            long sequenceNumber,
-            string documentType)
-        {
-            Uuid = uuid;
-            Recipient = recipient;
-            ContentType = contentType;
-            Origin = origin;
-            SupportsBundling = supportsBundling;
-            Weight = weight;
-            SequenceNumber = sequenceNumber;
-            DocumentType = documentType;
-        }
+using Energinet.DataHub.MessageHub.Model.Model;
 
-        public string Uuid { get; }
-        public string Recipient { get; }
-        public string ContentType { get; }
-        public string Origin { get; }
-        public bool SupportsBundling { get; }
-        public int Weight { get; }
-        public long SequenceNumber { get; }
-        public string DocumentType { get; }
-    }
-}
+namespace Energinet.DataHub.PostOffice.Application.Commands;
+
+public sealed record DataAvailableNotificationDto(
+    string Uuid,
+    string Recipient,
+    string ContentType,
+    DomainOrigin Origin,
+    bool SupportsBundling,
+    int Weight,
+    long SequenceNumber,
+    string DocumentType);

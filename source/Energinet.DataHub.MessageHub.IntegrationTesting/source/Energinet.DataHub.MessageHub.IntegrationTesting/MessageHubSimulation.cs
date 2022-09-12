@@ -154,7 +154,7 @@ namespace Energinet.DataHub.MessageHub.IntegrationTesting
 
             // This domain origin must be valid, but it is not used.
             // All the queue names point to the same domain.
-            const DomainOrigin domainOrigin = DomainOrigin.Aggregations;
+            const DomainOrigin domainOrigin = DomainOrigin.Wholesale;
 
             var peekResponse = await _dataBundleRequestSender
                 .SendAsync(request, domainOrigin)
@@ -194,7 +194,7 @@ namespace Energinet.DataHub.MessageHub.IntegrationTesting
 
             // This domain origin must be valid, but it is not used.
             // All the queue names point to the same domain.
-            const DomainOrigin domainOrigin = DomainOrigin.Aggregations;
+            const DomainOrigin domainOrigin = DomainOrigin.Wholesale;
 
             return _dequeueNotificationSender.SendAsync(simulatedPeek.CorrelationId.Value.ToString(), dequeue, domainOrigin);
         }

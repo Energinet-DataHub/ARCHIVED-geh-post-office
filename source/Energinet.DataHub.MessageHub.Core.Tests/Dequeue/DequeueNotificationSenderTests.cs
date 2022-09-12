@@ -32,7 +32,7 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Dequeue
             "sbq-Charges-dequeue",
             "sbq-MarketRoles-dequeue",
             "sbq-MeteringPoints-dequeue",
-            "sbq-Aggregations-dequeue");
+            "sbq-Wholesale-dequeue");
 
         [Fact]
         public async Task SendAsync_NullArgument_ThrowsException()
@@ -64,7 +64,7 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Dequeue
         [Theory]
         [InlineData(DomainOrigin.TimeSeries, "sbq-TimeSeries-dequeue")]
         [InlineData(DomainOrigin.Charges, "sbq-Charges-dequeue")]
-        [InlineData(DomainOrigin.Aggregations, "sbq-Aggregations-dequeue")]
+        [InlineData(DomainOrigin.Wholesale, "sbq-Wholesale-dequeue")]
         [InlineData(DomainOrigin.MarketRoles, "sbq-MarketRoles-dequeue")]
         [InlineData(DomainOrigin.MeteringPoints, "sbq-MeteringPoints-dequeue")]
         public async Task SendAsync_ValidInputForDomain_SendsMessage(DomainOrigin domainOrigin, string queueName)

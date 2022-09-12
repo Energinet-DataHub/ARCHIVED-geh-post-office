@@ -136,9 +136,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         {
             // Arrange
             var recipientGln = new MockedGln();
-            var expectedGuid = await AddBundlingNotificationAsync(recipientGln, "TimeSeries", first).ConfigureAwait(false);
-            var unexpectedGuidA = await AddBundlingNotificationAsync(recipientGln, "TimeSeries", second).ConfigureAwait(false);
-            var unexpectedGuidB = await AddBundlingNotificationAsync(recipientGln, "TimeSeries", third).ConfigureAwait(false);
+            var expectedGuid = await AddBundlingNotificationAsync(recipientGln, DomainOrigin.TimeSeries, first).ConfigureAwait(false);
+            var unexpectedGuidA = await AddBundlingNotificationAsync(recipientGln, DomainOrigin.TimeSeries, second).ConfigureAwait(false);
+            var unexpectedGuidB = await AddBundlingNotificationAsync(recipientGln, DomainOrigin.TimeSeries, third).ConfigureAwait(false);
             var bundleId = Guid.NewGuid().ToString();
 
             await using var host = await MarketOperatorIntegrationTestHost
@@ -171,9 +171,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         {
             // Arrange
             var recipientGln = new MockedGln();
-            var expectedGuidA = await AddBundlingNotificationAsync(recipientGln, "TimeSeries", true).ConfigureAwait(false);
-            var expectedGuidB = await AddBundlingNotificationAsync(recipientGln, "TimeSeries", true).ConfigureAwait(false);
-            var expectedGuidC = await AddBundlingNotificationAsync(recipientGln, "TimeSeries", true).ConfigureAwait(false);
+            var expectedGuidA = await AddBundlingNotificationAsync(recipientGln, DomainOrigin.TimeSeries, true).ConfigureAwait(false);
+            var expectedGuidB = await AddBundlingNotificationAsync(recipientGln, DomainOrigin.TimeSeries, true).ConfigureAwait(false);
+            var expectedGuidC = await AddBundlingNotificationAsync(recipientGln, DomainOrigin.TimeSeries, true).ConfigureAwait(false);
             var bundleId = Guid.NewGuid().ToString();
 
             await using var host = await MarketOperatorIntegrationTestHost
@@ -310,9 +310,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         {
             // Arrange
             var recipientGln = new MockedGln();
-            var expectedGuid = await AddBundlingNotificationAsync(recipientGln, "TimeSeries", first).ConfigureAwait(false);
-            var unexpectedGuidA = await AddBundlingNotificationAsync(recipientGln, "TimeSeries", second).ConfigureAwait(false);
-            var unexpectedGuidB = await AddBundlingNotificationAsync(recipientGln, "TimeSeries", third).ConfigureAwait(false);
+            var expectedGuid = await AddBundlingNotificationAsync(recipientGln, DomainOrigin.TimeSeries, first).ConfigureAwait(false);
+            var unexpectedGuidA = await AddBundlingNotificationAsync(recipientGln, DomainOrigin.TimeSeries, second).ConfigureAwait(false);
+            var unexpectedGuidB = await AddBundlingNotificationAsync(recipientGln, DomainOrigin.TimeSeries, third).ConfigureAwait(false);
             var bundleId = Guid.NewGuid().ToString();
 
             await using var host = await MarketOperatorIntegrationTestHost
@@ -345,9 +345,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         {
             // Arrange
             var recipientGln = new MockedGln();
-            var expectedGuidA = await AddBundlingNotificationAsync(recipientGln, "TimeSeries", true).ConfigureAwait(false);
-            var expectedGuidB = await AddBundlingNotificationAsync(recipientGln, "TimeSeries", true).ConfigureAwait(false);
-            var expectedGuidC = await AddBundlingNotificationAsync(recipientGln, "TimeSeries", true).ConfigureAwait(false);
+            var expectedGuidA = await AddBundlingNotificationAsync(recipientGln, DomainOrigin.TimeSeries, true).ConfigureAwait(false);
+            var expectedGuidB = await AddBundlingNotificationAsync(recipientGln, DomainOrigin.TimeSeries, true).ConfigureAwait(false);
+            var expectedGuidC = await AddBundlingNotificationAsync(recipientGln, DomainOrigin.TimeSeries, true).ConfigureAwait(false);
             var bundleId = Guid.NewGuid().ToString();
 
             await using var host = await MarketOperatorIntegrationTestHost
@@ -482,9 +482,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         {
             // Arrange
             var recipientGln = new MockedGln();
-            var expectedGuid = await AddBundlingNotificationAsync(recipientGln, "Aggregations", first).ConfigureAwait(false);
-            var unexpectedGuidA = await AddBundlingNotificationAsync(recipientGln, "Aggregations", second).ConfigureAwait(false);
-            var unexpectedGuidB = await AddBundlingNotificationAsync(recipientGln, "Aggregations", third).ConfigureAwait(false);
+            var expectedGuid = await AddBundlingNotificationAsync(recipientGln, DomainOrigin.Aggregations, first).ConfigureAwait(false);
+            var unexpectedGuidA = await AddBundlingNotificationAsync(recipientGln, DomainOrigin.Aggregations, second).ConfigureAwait(false);
+            var unexpectedGuidB = await AddBundlingNotificationAsync(recipientGln, DomainOrigin.Aggregations, third).ConfigureAwait(false);
             var bundleId = Guid.NewGuid().ToString();
 
             await using var host = await MarketOperatorIntegrationTestHost
@@ -517,9 +517,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         {
             // Arrange
             var recipientGln = new MockedGln();
-            var expectedGuidA = await AddBundlingNotificationAsync(recipientGln, "Aggregations", true).ConfigureAwait(false);
-            var expectedGuidB = await AddBundlingNotificationAsync(recipientGln, "Aggregations", true).ConfigureAwait(false);
-            var expectedGuidC = await AddBundlingNotificationAsync(recipientGln, "Aggregations", true).ConfigureAwait(false);
+            var expectedGuidA = await AddBundlingNotificationAsync(recipientGln, DomainOrigin.Aggregations, true).ConfigureAwait(false);
+            var expectedGuidB = await AddBundlingNotificationAsync(recipientGln, DomainOrigin.Aggregations, true).ConfigureAwait(false);
+            var expectedGuidC = await AddBundlingNotificationAsync(recipientGln, DomainOrigin.Aggregations, true).ConfigureAwait(false);
             var bundleId = Guid.NewGuid().ToString();
 
             await using var host = await MarketOperatorIntegrationTestHost
@@ -738,9 +738,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         {
             // Arrange
             var recipientGln = new MockedGln();
-            var expectedGuid = await AddBundlingNotificationAsync(recipientGln, "MeteringPoints", first).ConfigureAwait(false);
-            var unexpectedGuidA = await AddBundlingNotificationAsync(recipientGln, "MeteringPoints", second).ConfigureAwait(false);
-            var unexpectedGuidB = await AddBundlingNotificationAsync(recipientGln, "MeteringPoints", third).ConfigureAwait(false);
+            var expectedGuid = await AddBundlingNotificationAsync(recipientGln, DomainOrigin.MeteringPoints, first).ConfigureAwait(false);
+            var unexpectedGuidA = await AddBundlingNotificationAsync(recipientGln, DomainOrigin.MeteringPoints, second).ConfigureAwait(false);
+            var unexpectedGuidB = await AddBundlingNotificationAsync(recipientGln, DomainOrigin.MeteringPoints, third).ConfigureAwait(false);
             var bundleId = Guid.NewGuid().ToString();
 
             await using var host = await MarketOperatorIntegrationTestHost
@@ -773,9 +773,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         {
             // Arrange
             var recipientGln = new MockedGln();
-            var expectedGuidA = await AddBundlingNotificationAsync(recipientGln, "MeteringPoints", true).ConfigureAwait(false);
-            var expectedGuidB = await AddBundlingNotificationAsync(recipientGln, "MeteringPoints", true).ConfigureAwait(false);
-            var expectedGuidC = await AddBundlingNotificationAsync(recipientGln, "MeteringPoints", true).ConfigureAwait(false);
+            var expectedGuidA = await AddBundlingNotificationAsync(recipientGln, DomainOrigin.MeteringPoints, true).ConfigureAwait(false);
+            var expectedGuidB = await AddBundlingNotificationAsync(recipientGln, DomainOrigin.MeteringPoints, true).ConfigureAwait(false);
+            var expectedGuidC = await AddBundlingNotificationAsync(recipientGln, DomainOrigin.MeteringPoints, true).ConfigureAwait(false);
             var bundleId = Guid.NewGuid().ToString();
 
             await using var host = await MarketOperatorIntegrationTestHost
@@ -810,7 +810,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
                 dataAvailableUuid.ToString(),
                 recipientGln,
                 "timeseries",
-                "TimeSeries",
+                DomainOrigin.TimeSeries,
                 false,
                 1,
                 1,
@@ -826,7 +826,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
                 dataAvailableUuid.ToString(),
                 recipientGln,
                 "aggregations",
-                "Aggregations",
+                DomainOrigin.Aggregations,
                 false,
                 1,
                 1,
@@ -842,7 +842,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
                 dataAvailableUuid.ToString(),
                 recipientGln,
                 "marketroles",
-                "MarketRoles",
+                DomainOrigin.MarketRoles,
                 false,
                 1,
                 1,
@@ -859,7 +859,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
                 dataAvailableUuid.ToString(),
                 recipientGln,
                 "meteringpoints",
-                "MeteringPoints",
+                DomainOrigin.MeteringPoints,
                 false,
                 1,
                 1,
@@ -876,7 +876,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
                 dataAvailableUuid.ToString(),
                 recipientGln,
                 "charges",
-                "Charges",
+                DomainOrigin.Charges,
                 false,
                 1,
                 1,
@@ -886,7 +886,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             return dataAvailableUuid;
         }
 
-        private static async Task<Guid> AddBundlingNotificationAsync(string recipientGln, string origin, bool supportsBundling)
+        private static async Task<Guid> AddBundlingNotificationAsync(string recipientGln, DomainOrigin origin, bool supportsBundling)
         {
             var dataAvailableUuid = Guid.NewGuid();
             var dataAvailableCommand = new DataAvailableNotificationDto(

@@ -64,10 +64,10 @@ public static class Settings
         = new("METERINGPOINTS_QUEUE_NAME", "meteringpoints");
     public static Setting<string> MeteringPointsReplyQueue { get; }
         = new("METERINGPOINTS_REPLY_QUEUE_NAME", "meteringpoints-reply");
-    public static Setting<string> AggregationsQueue { get; }
-        = new("AGGREGATIONS_QUEUE_NAME", "aggregations");
-    public static Setting<string> AggregationsReplyQueue { get; }
-        = new("AGGREGATIONS_REPLY_QUEUE_NAME", "aggregations-reply");
+    public static Setting<string> WholesaleQueue { get; }
+        = new("WHOLESALE_QUEUE_NAME", "wholesale");
+    public static Setting<string> WholesaleReplyQueue { get; }
+        = new("WHOLESALE_REPLY_QUEUE_NAME", "wholesale-reply");
 
     public static Setting<string> TimeSeriesDequeueQueue { get; }
         = new("TIMESERIES_DEQUEUE_QUEUE_NAME", "timeseries-dequeue");
@@ -77,8 +77,8 @@ public static class Settings
         = new("MARKETROLES_DEQUEUE_QUEUE_NAME", "marketroles-dequeue");
     public static Setting<string> MeteringPointsDequeueQueue { get; }
         = new("METERINGPOINTS_DEQUEUE_QUEUE_NAME", "meteringpoints-dequeue");
-    public static Setting<string> AggregationsDequeueQueue { get; }
-        = new("AGGREGATIONS_DEQUEUE_QUEUE_NAME", "aggregations-dequeue");
+    public static Setting<string> WholesaleDequeueQueue { get; }
+        = new("WHOLESALE_DEQUEUE_QUEUE_NAME", "wholesale-dequeue");
 
     public static Setting<string> OpenIdTenantId { get; }
         = new("B2C_TENANT_ID");

@@ -25,7 +25,7 @@ namespace Energinet.DataHub.MessageHub.Core
         string MarketRolesReplyQueue,
         string MeteringPointsQueue,
         string MeteringPointsReplyQueue,
-        string AggregationsQueue,
-        string AggregationsReplyQueue,
+        string WholesaleQueue,
+        string WholesaleReplyQueue,
         TimeSpan? PeekTimeout = default);
 }

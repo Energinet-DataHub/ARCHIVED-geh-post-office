@@ -37,8 +37,8 @@ namespace Energinet.DataHub.PostOffice.Common
                     configuration.GetSetting(Settings.MarketRolesReplyQueue),
                     configuration.GetSetting(Settings.MeteringPointsQueue),
                     configuration.GetSetting(Settings.MeteringPointsReplyQueue),
-                    configuration.GetSetting(Settings.AggregationsQueue),
-                    configuration.GetSetting(Settings.AggregationsReplyQueue));
+                    configuration.GetSetting(Settings.WholesaleQueue),
+                    configuration.GetSetting(Settings.WholesaleReplyQueue));
             });
 
             container.RegisterSingleton(() =>
@@ -49,7 +49,7 @@ namespace Energinet.DataHub.PostOffice.Common
                     configuration.GetSetting(Settings.ChargesDequeueQueue),
                     configuration.GetSetting(Settings.MarketRolesDequeueQueue),
                     configuration.GetSetting(Settings.MeteringPointsDequeueQueue),
-                    configuration.GetSetting(Settings.AggregationsDequeueQueue));
+                    configuration.GetSetting(Settings.WholesaleDequeueQueue));
             });
         }
     }

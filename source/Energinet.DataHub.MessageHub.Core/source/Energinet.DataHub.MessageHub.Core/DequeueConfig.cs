@@ -19,5 +19,5 @@ namespace Energinet.DataHub.MessageHub.Core
         string ChargesDequeueQueue,
         string MarketRolesDequeueQueue,
         string MeteringPointsDequeueQueue,
-        string AggregationsDequeueQueue);
+        string WholesaleDequeueQueue);
 }

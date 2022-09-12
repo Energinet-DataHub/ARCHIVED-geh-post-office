@@ -13,10 +13,11 @@
 // limitations under the License.
 
 using System.Linq;
+using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Application.Validation.Rules;
-using Energinet.DataHub.PostOffice.Domain.Model;
 using FluentValidation;
+using DataAvailableNotificationDto = Energinet.DataHub.PostOffice.Application.Commands.DataAvailableNotificationDto;
 
 namespace Energinet.DataHub.PostOffice.Application.Validation
 {
@@ -47,9 +48,8 @@ namespace Energinet.DataHub.PostOffice.Application.Validation
                         .NotEmpty();
 
                     dto.RuleFor(x => x.Origin)
-                        .NotEmpty()
-                        .IsEnumName(typeof(DomainOrigin), false)
-                        .NotEqual(_ => DomainOrigin.Unknown.ToString());
+                        .IsInEnum()
+                        .NotEqual(_ => DomainOrigin.Unknown);
 
                     dto.RuleFor(x => x.Weight)
                         .GreaterThan(0);

@@ -1,5 +1,9 @@
 # Energinet.DataHub.MessageHub.SimpleInjector Release notes
 
+## Version 3.2.0
+
+- Domain origin `Aggregations` renamed to `Wholesale` in enum `DocumentType`.
+
 ## Version 3.1.0
 
 - Updated packages
