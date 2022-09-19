@@ -31,12 +31,12 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.Operations
         protected override void Configure(IConfiguration configuration, IServiceCollection services)
         {
             // This is called to ensure the property is filled out. Actual value is read by Azure SDK.
-            configuration.GetSetting(Settings.MarketParticipantConnectionString);
+            configuration.GetSetting(Settings.IntegrationEventConnectionString);
 
             var cosmosDbConnectionString = configuration.GetSetting(Settings.MessagesDbConnectionString);
             var serviceBusConnectionString = configuration.GetSetting(Settings.ServiceBusHealthCheckConnectionString);
-            var marketParticipantTopicName = configuration.GetSetting(Settings.MarketParticipantTopicName);
-            var marketParticipantSubscriptionName = configuration.GetSetting(Settings.MarketParticipantSubscriptionName);
+            var integrationEventTopicName = configuration.GetSetting(Settings.IntegrationEventTopicName);
+            var marketPartActorUpdatedSubscriptionName = configuration.GetSetting(Settings.MarketParticipantActorUpdatedSubscriptionName);
 
             // Health check
             services
@@ -45,8 +45,8 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.Operations
                 .AddCosmosDb(cosmosDbConnectionString)
                 .AddAzureServiceBusSubscription(
                     serviceBusConnectionString,
-                    marketParticipantTopicName,
-                    marketParticipantSubscriptionName);
+                    integrationEventTopicName,
+                    marketPartActorUpdatedSubscriptionName);
         }
 
         protected override void Configure(IConfiguration configuration, Container container)

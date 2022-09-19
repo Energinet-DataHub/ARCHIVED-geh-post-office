@@ -36,9 +36,9 @@ module "func_operations" {
     MESSAGES_DB_NAME                           = azurerm_cosmosdb_sql_database.db.name
     DATAAVAILABLE_QUEUE_CONNECTION_STRING      = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=sb-domain-relay-transceiver-connection-string)"
     DATAAVAILABLE_QUEUE_NAME                   = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=sbq-data-available-name)"
-    MARKET_PARTICIPANT_CONNECTION_STRING       = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=sb-domain-relay-listen-connection-string)"
-    MARKET_PARTICIPANT_TOPIC_NAME              = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=sbt-market-participant-changed-name)"
-    MARKET_PARTICIPANT_SUBSCRIPTION_NAME       = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=sbs-market-participant-changed-to-messagehub-name)"
+    INTEGRATION_EVENT_CONNECTION_STRING        = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=sb-domain-relay-listen-connection-string)"
+    INTEGRATION_EVENT_TOPIC_NAME               = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=sbt-sharedres-integrationevent-received-name)"
+    MARKET_PARTICIPANT_ACTOR_UPDATED_SUBSCRIPTION_NAME   = module.sbs_int-events-market-actor-updated.name
     SERVICE_BUS_HEALTH_CHECK_CONNECTION_STRING = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=sb-domain-relay-manage-connection-string)"
     SQL_ACTOR_DB_CONNECTION_STRING             = local.sql_actor_db_connection_string
     BlobStorageConnectionString                = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=st-marketres-primary-connection-string)"

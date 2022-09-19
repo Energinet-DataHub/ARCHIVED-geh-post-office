@@ -44,9 +44,9 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.Operations.Functions
         [Function(FunctionName)]
         public async Task RunAsync(
             [ServiceBusTrigger(
-                "%" + Settings.MarketParticipantTopicNameKey + "%",
-                "%" + Settings.MarketParticipantSubscriptionNameKey + "%",
-                Connection = Settings.MarketParticipantConnectionStringKey)]
+                "%" + Settings.IntegrationEventTopicNameKey + "%",
+                "%" + Settings.MarketParticipantActorUpdateSubscriptionNameKey + "%",
+                Connection = Settings.IntegrationEventConnectionStringKey)]
             byte[] message)
         {
             _logger.LogInformation("Begins processing MarketParticipantSyncFunction.");

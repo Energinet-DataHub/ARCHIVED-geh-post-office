@@ -63,9 +63,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests
         {
             KeyValuePair<string, string>[] keyValuePairs =
             {
-                new(Settings.MarketParticipantConnectionString.Key, "fake_value"),
-                new(Settings.MarketParticipantTopicName.Key, "fake_value"),
-                new(Settings.MarketParticipantSubscriptionName.Key, "fake_value"),
+                new(Settings.IntegrationEventConnectionString.Key, "fake_value"),
+                new(Settings.IntegrationEventTopicName.Key, "fake_value"),
+                new(Settings.MarketParticipantActorUpdatedSubscriptionName.Key, "fake_value"),
                 new(Settings.ServiceBusHealthCheckConnectionString.Key, "fake_value")
             };
 

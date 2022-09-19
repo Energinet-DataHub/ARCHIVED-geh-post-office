@@ -16,9 +16,9 @@ namespace Energinet.DataHub.PostOffice.Common.Configuration;
 
 public static class Settings
 {
-    public const string MarketParticipantConnectionStringKey = "MARKET_PARTICIPANT_CONNECTION_STRING";
-    public const string MarketParticipantTopicNameKey = "MARKET_PARTICIPANT_TOPIC_NAME";
-    public const string MarketParticipantSubscriptionNameKey = "MARKET_PARTICIPANT_SUBSCRIPTION_NAME";
+    public const string IntegrationEventConnectionStringKey = "INTEGRATION_EVENT_CONNECTION_STRING";
+    public const string MarketParticipantActorUpdateSubscriptionNameKey = "MARKET_PARTICIPANT_ACTOR_UPDATED_SUBSCRIPTION_NAME";
+    public const string IntegrationEventTopicNameKey = "INTEGRATION_EVENT_TOPIC_NAME";
 
     public static Setting<string> MessagesDbConnectionString { get; }
         = new("MESSAGES_DB_CONNECTION_STRING");
@@ -32,12 +32,12 @@ public static class Settings
 
     public static Setting<string> SqlActorDbConnectionString { get; }
         = new("SQL_ACTOR_DB_CONNECTION_STRING");
-    public static Setting<string> MarketParticipantConnectionString { get; }
-        = new(MarketParticipantConnectionStringKey);
-    public static Setting<string> MarketParticipantTopicName { get; }
-        = new(MarketParticipantTopicNameKey);
-    public static Setting<string> MarketParticipantSubscriptionName { get; }
-        = new(MarketParticipantSubscriptionNameKey);
+    public static Setting<string> IntegrationEventConnectionString { get; }
+        = new(IntegrationEventConnectionStringKey);
+    public static Setting<string> IntegrationEventTopicName { get; }
+        = new(IntegrationEventTopicNameKey);
+    public static Setting<string> MarketParticipantActorUpdatedSubscriptionName { get; }
+        = new(MarketParticipantActorUpdateSubscriptionNameKey);
 
     public static Setting<string> DataAvailableConnectionString { get; }
         = new("DATAAVAILABLE_QUEUE_CONNECTION_STRING");
