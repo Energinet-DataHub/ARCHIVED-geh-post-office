@@ -113,7 +113,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekCommand = new PeekCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
+            var peekCommand = new PeekCommand(recipientGln, bundleId, ResponseFormat.Xml, 1.0);
 
             // Act
             var responseA = await mediator.Send(peekCommand).ConfigureAwait(false);

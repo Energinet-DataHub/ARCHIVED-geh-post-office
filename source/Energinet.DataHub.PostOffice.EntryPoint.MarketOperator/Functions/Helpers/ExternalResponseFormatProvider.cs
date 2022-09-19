@@ -13,8 +13,8 @@
 // limitations under the License.
 
 using System;
+using System.Linq;
 using Energinet.DataHub.MessageHub.Model.Model;
-using Energinet.DataHub.PostOffice.Common.Extensions;
 using Microsoft.Azure.Functions.Worker.Http;
 
 namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpers
@@ -22,7 +22,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpe
     public sealed class ExternalResponseFormatProvider : IExternalResponseFormatProvider
     {
         /// <summary>
-        /// Get the bundle id from the request, or returns null if no bundle id was provided.
+        ///     Get the bundle id from the request, or returns null if no bundle id was provided.
         /// </summary>
         /// <param name="request">The request to probe for the bundle id.</param>
         /// <returns>The bundle id, or null.</returns>
@@ -30,13 +30,12 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpe
         {
             ArgumentNullException.ThrowIfNull(request, nameof(request));
 
-            var maybeResponseFormat = request.Url.GetQueryValue(Constants.ResponseFormatQueryName);
-            if (Enum.TryParse<ResponseFormat>(maybeResponseFormat, true, out var format))
+            if (!request.Headers.TryGetValues("accept", out var values)) return ResponseFormat.Xml;
+            return values.First() switch
             {
-                return Enum.IsDefined(format) ? format : ResponseFormat.Xml;
-            }
-
-            return ResponseFormat.Xml;
+                "application/json" => ResponseFormat.Json,
+                _ => ResponseFormat.Xml
+            };
         }
     }
 }

@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Energinet.DataHub.MessageHub.Model.Model;
 
 namespace Energinet.DataHub.PostOffice.Domain.Model
 {
@@ -28,7 +29,8 @@ namespace Energinet.DataHub.PostOffice.Domain.Model
             DomainOrigin origin,
             ContentType contentType,
             IEnumerable<Uuid> notificationIds,
-            IEnumerable<string> documentTypes)
+            IEnumerable<string> documentTypes,
+            ResponseFormat responseFormat)
         {
             BundleId = bundleId;
             Origin = origin;
@@ -37,6 +39,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Model
             NotificationIds = notificationIds;
             DocumentTypes = documentTypes;
             ProcessId = new ProcessId(bundleId, recipient);
+            ResponseFormat = responseFormat;
         }
 
         public Bundle(
@@ -46,7 +49,8 @@ namespace Energinet.DataHub.PostOffice.Domain.Model
             ContentType contentType,
             IEnumerable<Uuid> notificationIds,
             IBundleContent? bundleContent,
-            IEnumerable<string> documentTypes)
+            IEnumerable<string> documentTypes,
+            ResponseFormat responseFormat)
         {
             BundleId = bundleId;
             Origin = origin;
@@ -56,6 +60,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Model
             _bundleContent = bundleContent;
             DocumentTypes = documentTypes;
             ProcessId = new ProcessId(bundleId, recipient);
+            ResponseFormat = responseFormat;
         }
 
         public Uuid BundleId { get; }
@@ -69,6 +74,8 @@ namespace Energinet.DataHub.PostOffice.Domain.Model
 
         public IEnumerable<Uuid> NotificationIds { get; }
         public IEnumerable<string> DocumentTypes { get; }
+
+        public ResponseFormat ResponseFormat { get; }
 
         public bool TryGetContent([NotNullWhen(true)] out IBundleContent? bundleContent)
         {

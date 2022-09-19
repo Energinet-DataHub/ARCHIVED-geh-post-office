@@ -14,10 +14,12 @@
 
 using System;
 using System.Linq;
+using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Moq;
 using Xunit;
 using Xunit.Categories;
+using DomainOrigin = Energinet.DataHub.PostOffice.Domain.Model.DomainOrigin;
 
 namespace Energinet.DataHub.PostOffice.Tests.Model
 {
@@ -35,7 +37,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Model
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
                 new Mock<IBundleContent>().Object,
-                Enumerable.Empty<string>());
+                Enumerable.Empty<string>(),
+                ResponseFormat.Json);
 
             // Act
             target.Dequeue();
@@ -55,7 +58,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Model
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
                 new Mock<IBundleContent>().Object,
-                Enumerable.Empty<string>());
+                Enumerable.Empty<string>(),
+                ResponseFormat.Json);
 
             // Act
             var actual = target.TryGetContent(out var actualContent);
@@ -75,7 +79,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Model
                 DomainOrigin.TimeSeries,
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
-                Enumerable.Empty<string>());
+                Enumerable.Empty<string>(),
+                ResponseFormat.Json);
 
             // Act
             var actual = target.TryGetContent(out var actualContent);
@@ -96,7 +101,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Model
                 DomainOrigin.TimeSeries,
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
-                Enumerable.Empty<string>());
+                Enumerable.Empty<string>(),
+                ResponseFormat.Json);
 
             // Act
             target.AssignContent(bundleContentMock.Object);
@@ -118,7 +124,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Model
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
                 bundleContentMock.Object,
-                Enumerable.Empty<string>());
+                Enumerable.Empty<string>(),
+                ResponseFormat.Json);
 
             // Act + Assert
             Assert.Throws<InvalidOperationException>(() => target.AssignContent(bundleContentMock.Object));
