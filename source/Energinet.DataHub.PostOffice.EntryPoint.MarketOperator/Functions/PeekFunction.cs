@@ -15,6 +15,7 @@
 using System.Net;
 using System.Net.Mime;
 using System.Threading.Tasks;
+using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Common.Auth;
 using Energinet.DataHub.PostOffice.Common.Extensions;
@@ -54,15 +55,16 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions
         {
             return request.ProcessAsync(async () =>
             {
+                var responseFormat = _responseFormatProvider.TryGetResponseFormat(request);
                 var command = new PeekCommand(
                     _operatorIdentity.ActorId,
                     _bundleIdProvider.TryGetBundleId(request),
-                    _responseFormatProvider.TryGetResponseFormat(request),
+                    responseFormat,
                     _responseVersionProvider.TryGetResponseVersion(request));
                 var (hasContent, bundleId, stream, documentTypes) = await _mediator.Send(command).ConfigureAwait(false);
 
                 var response = hasContent
-                    ? request.CreateResponse(stream, MediaTypeNames.Application.Xml)
+                    ? request.CreateResponse(stream,  responseFormat == ResponseFormat.Xml ? MediaTypeNames.Application.Xml : MediaTypeNames.Application.Json)
                     : request.CreateResponse(HttpStatusCode.NoContent);
 
                 response.Headers.Add(Constants.BundleIdHeaderName, bundleId);
