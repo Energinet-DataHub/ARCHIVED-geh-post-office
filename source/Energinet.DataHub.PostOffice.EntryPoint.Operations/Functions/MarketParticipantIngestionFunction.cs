@@ -45,7 +45,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.Operations.Functions
         public async Task RunAsync(
             [ServiceBusTrigger(
                 "%" + Settings.IntegrationEventTopicNameKey + "%",
-                "%" + Settings.MarketParticipantActorUpdateSubscriptionNameKey + "%",
+                "%" + Settings.MarketParticipantActorUpdatedSubscriptionNameKey + "%",
                 Connection = Settings.IntegrationEventConnectionStringKey)]
             byte[] message)
         {

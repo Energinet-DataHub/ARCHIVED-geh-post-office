@@ -17,7 +17,7 @@ namespace Energinet.DataHub.PostOffice.Common.Configuration;
 public static class Settings
 {
     public const string IntegrationEventConnectionStringKey = "INTEGRATION_EVENT_CONNECTION_STRING";
-    public const string MarketParticipantActorUpdateSubscriptionNameKey = "MARKET_PARTICIPANT_ACTOR_UPDATED_SUBSCRIPTION_NAME";
+    public const string MarketParticipantActorUpdatedSubscriptionNameKey = "MARKET_PARTICIPANT_ACTOR_UPDATED_SUBSCRIPTION_NAME";
     public const string IntegrationEventTopicNameKey = "INTEGRATION_EVENT_TOPIC_NAME";
 
     public static Setting<string> MessagesDbConnectionString { get; }
@@ -37,7 +37,7 @@ public static class Settings
     public static Setting<string> IntegrationEventTopicName { get; }
         = new(IntegrationEventTopicNameKey);
     public static Setting<string> MarketParticipantActorUpdatedSubscriptionName { get; }
-        = new(MarketParticipantActorUpdateSubscriptionNameKey);
+        = new(MarketParticipantActorUpdatedSubscriptionNameKey);
 
     public static Setting<string> DataAvailableConnectionString { get; }
         = new("DATAAVAILABLE_QUEUE_CONNECTION_STRING");
