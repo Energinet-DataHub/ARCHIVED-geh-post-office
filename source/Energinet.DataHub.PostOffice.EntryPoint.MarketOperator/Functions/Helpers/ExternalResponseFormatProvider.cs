@@ -31,11 +31,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpe
             ArgumentNullException.ThrowIfNull(request, nameof(request));
 
             if (!request.Headers.TryGetValues("accept", out var values)) return ResponseFormat.Xml;
-            return values.First() switch
-            {
-                "application/json" => ResponseFormat.Json,
-                _ => ResponseFormat.Xml
-            };
+            return values.Contains("application/json") ? ResponseFormat.Json : ResponseFormat.Xml;
         }
     }
 }
