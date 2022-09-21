@@ -124,6 +124,74 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
         }
 
         [Fact]
+        public async Task GetAsync_HasBundle_ReturnsBundleWithCorrectResponseFormatJson()
+        {
+            // Arrange
+            await using var host = await MarketOperatorIntegrationTestHost.InitializeAsync();
+            var scope = host.BeginScope();
+
+            var container = scope.GetInstance<IBundleRepositoryContainer>();
+            var storageService = scope.GetInstance<IMarketOperatorDataStorageService>();
+            var storageHandler = scope.GetInstance<IStorageHandler>();
+            var target = new BundleRepository(storageHandler, container, storageService);
+
+            var recipient = new LegacyActorId(new MockedGln());
+            var reader = CreateMockedReader();
+            var setupBundle = new Bundle(
+                new Uuid(Guid.NewGuid()),
+                recipient,
+                DomainOrigin.TimeSeries,
+                new ContentType("fake_value"),
+                new[] { new Uuid(Guid.NewGuid()) },
+                Enumerable.Empty<string>(),
+                ResponseFormat.Json);
+
+            await target.TryAddNextUnacknowledgedAsync(setupBundle, reader).ConfigureAwait(false);
+
+            // Act
+            var bundle = await target.GetAsync(recipient, setupBundle.BundleId).ConfigureAwait(false);
+
+            // Assert
+            Assert.NotNull(bundle);
+            Assert.Equal(setupBundle.BundleId, bundle.BundleId);
+            Assert.Equal(setupBundle.ResponseFormat, bundle.ResponseFormat);
+        }
+
+        [Fact]
+        public async Task GetAsync_HasBundle_ReturnsBundleWithCorrectResponseFormatXml()
+        {
+            // Arrange
+            await using var host = await MarketOperatorIntegrationTestHost.InitializeAsync();
+            var scope = host.BeginScope();
+
+            var container = scope.GetInstance<IBundleRepositoryContainer>();
+            var storageService = scope.GetInstance<IMarketOperatorDataStorageService>();
+            var storageHandler = scope.GetInstance<IStorageHandler>();
+            var target = new BundleRepository(storageHandler, container, storageService);
+
+            var recipient = new LegacyActorId(new MockedGln());
+            var reader = CreateMockedReader();
+            var setupBundle = new Bundle(
+                new Uuid(Guid.NewGuid()),
+                recipient,
+                DomainOrigin.TimeSeries,
+                new ContentType("fake_value"),
+                new[] { new Uuid(Guid.NewGuid()) },
+                Enumerable.Empty<string>(),
+                ResponseFormat.Xml);
+
+            await target.TryAddNextUnacknowledgedAsync(setupBundle, reader).ConfigureAwait(false);
+
+            // Act
+            var bundle = await target.GetAsync(recipient, setupBundle.BundleId).ConfigureAwait(false);
+
+            // Assert
+            Assert.NotNull(bundle);
+            Assert.Equal(setupBundle.BundleId, bundle.BundleId);
+            Assert.Equal(setupBundle.ResponseFormat, bundle.ResponseFormat);
+        }
+
+        [Fact]
         public async Task GetNextUnacknowledgedAsync_NoBundle_ReturnsNull()
         {
             // Arrange

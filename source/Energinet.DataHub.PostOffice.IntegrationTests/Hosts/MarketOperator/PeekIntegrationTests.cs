@@ -47,6 +47,54 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         }
 
         [Fact]
+        public async Task PeekCommand_InvalidFormat_ThrowsExceptionWithXmlFirst()
+        {
+            // Arrange
+            var recipientGln = new MockedGln();
+            var unrelatedGln = new MockedGln();
+            var bundleId = Guid.NewGuid().ToString();
+
+            await AddTimeSeriesNotificationAsync(recipientGln).ConfigureAwait(false);
+            await using var host = await MarketOperatorIntegrationTestHost
+                .InitializeAsync()
+                .ConfigureAwait(false);
+
+            await using var scope = host.BeginScope();
+            var mediator = scope.GetInstance<IMediator>();
+
+            var peekCommand = new PeekCommand(recipientGln, bundleId, ResponseFormat.Xml, 1.0);
+            var peekCommandJson = new PeekTimeSeriesCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
+
+            // Act + Assert
+            await mediator.Send(peekCommand).ConfigureAwait(false);
+            await Assert.ThrowsAsync<System.ComponentModel.DataAnnotations.ValidationException>(() => mediator.Send(peekCommandJson)).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task PeekCommand_InvalidFormat_ThrowsExceptionWithJsonFirst()
+        {
+            // Arrange
+            var recipientGln = new MockedGln();
+            var unrelatedGln = new MockedGln();
+            var bundleId = Guid.NewGuid().ToString();
+
+            await AddTimeSeriesNotificationAsync(recipientGln).ConfigureAwait(false);
+            await using var host = await MarketOperatorIntegrationTestHost
+                .InitializeAsync()
+                .ConfigureAwait(false);
+
+            await using var scope = host.BeginScope();
+            var mediator = scope.GetInstance<IMediator>();
+
+            var peekCommand = new PeekCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0);
+            var peekCommandXml = new PeekTimeSeriesCommand(recipientGln, bundleId, ResponseFormat.Xml, 1.0);
+
+            // Act + Assert
+            await mediator.Send(peekCommand).ConfigureAwait(false);
+            await Assert.ThrowsAsync<System.ComponentModel.DataAnnotations.ValidationException>(() => mediator.Send(peekCommandXml)).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task PeekCommand_Empty_ReturnsNothing()
         {
             // Arrange
