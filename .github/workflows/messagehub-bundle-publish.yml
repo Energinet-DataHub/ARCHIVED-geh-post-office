@@ -24,7 +24,7 @@ on:
       - source/Energinet.DataHub.MessageHub.Client/source/**
       - source/Energinet.DataHub.MessageHub.Client.SimpleInjector/source/**
       - source/Energinet.DataHub.MessageHub.Core/source/**
-      - source/Energinet.DataHub.MessageHub.IntegrationTesting/source/**
+      - source/Energinet.DataHub.MessageHub.SimulationLibrary/source/**
       - source/Energinet.DataHub.MessageHub.Model/source/**
       - .github/workflows/messagehub-bundle-publish.yml
   # Build, test, pack
@@ -38,7 +38,7 @@ on:
       - source/Energinet.DataHub.MessageHub.Client.SimpleInjector/**
       - source/Energinet.DataHub.MessageHub.Core/**
       - source/Energinet.DataHub.MessageHub.Core.Tests/**
-      - source/Energinet.DataHub.MessageHub.IntegrationTesting/**
+      - source/Energinet.DataHub.MessageHub.SimulationLibrary/**
       - source/Energinet.DataHub.MessageHub.Model/**
       - source/Energinet.DataHub.MessageHub.Model.Tests/**
       - .github/workflows/messagehub-bundle-publish.yml
@@ -90,10 +90,10 @@ jobs:
         with:
           PROJECT_PATH: './source/Energinet.DataHub.MessageHub.Core/source/Energinet.DataHub.MessageHub.Core/Energinet.DataHub.MessageHub.Core.csproj'
 
-      - name: Pack Integration Testing Simulator project
+      - name: Pack Testing Simulator project
         uses: Energinet-DataHub/.github/.github/actions/nuget-project-pack@v8
         with:
-          PROJECT_PATH: './source/Energinet.DataHub.MessageHub.IntegrationTesting/source/Energinet.DataHub.MessageHub.IntegrationTesting/Energinet.DataHub.MessageHub.IntegrationTesting.csproj'
+          PROJECT_PATH: './source/Energinet.DataHub.MessageHub.SimulationLibrary/source/Energinet.DataHub.MessageHub.SimulationLibrary/Energinet.DataHub.MessageHub.SimulationLibrary.csproj'
 
       - name: Pack Model project
         uses: Energinet-DataHub/.github/.github/actions/nuget-project-pack@v8
@@ -108,7 +108,7 @@ jobs:
             source/Energinet.DataHub.MessageHub.Client/source/**/*.*
             source/Energinet.DataHub.MessageHub.Client.SimpleInjector/source/**/*.*
             source/Energinet.DataHub.MessageHub.Core/source/**/*.*
-            source/Energinet.DataHub.MessageHub.IntegrationTesting/source/**/*.*
+            source/Energinet.DataHub.MessageHub.SimulationLibrary/source/**/*.*
             source/Energinet.DataHub.MessageHub.Model/source/**/*.*
             .github/workflows/messagehub-bundle-publish.yml
 
