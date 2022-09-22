@@ -26,7 +26,7 @@ using Energinet.DataHub.MessageHub.Model.DataAvailable;
 using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.MessageHub.Model.Peek;
 
-namespace Energinet.DataHub.MessageHub.IntegrationTesting
+namespace Energinet.DataHub.MessageHub.SimulationLibrary
 {
     /// <summary>
     /// Facilitates integration testing between MessageHub and sub-domains.
