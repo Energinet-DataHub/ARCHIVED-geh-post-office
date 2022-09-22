@@ -29,7 +29,7 @@ using Energinet.DataHub.MessageHub.Model.Peek;
 namespace Energinet.DataHub.MessageHub.SimulationLibrary
 {
     /// <summary>
-    /// Facilitates integration testing between MessageHub and sub-domains.
+    /// Facilitates integration simulation between MessageHub and sub-domains.
     /// This class is not thread-safe.
     /// </summary>
     public sealed class MessageHubSimulation : IAsyncDisposable
