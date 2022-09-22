@@ -1,8 +1,8 @@
 # Energinet.DataHub.MessageHub.SimulationLibrary Release Notes
 
-## Version 4.0.0
+## Version 3.2.1
 
-- Package and namespace renaming
+- Package and namespace renaming from IntegrationTesting to SimulationLibrary
 
 ## Version 3.2.0
 
