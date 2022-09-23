@@ -53,7 +53,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Documents
 
         public string ContentPath { get; init; }
 
-        public ResponseFormat ResponseFormat { get; set; }
+        public ResponseFormat ResponseFormat { get; init; }
 
         [JsonProperty(PropertyName = "_ts")]
         public long Timestamp { get; init; }
