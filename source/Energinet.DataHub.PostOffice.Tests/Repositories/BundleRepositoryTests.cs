@@ -16,6 +16,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Energinet.DataHub.MessageHub.Core.Storage;
+using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
 using Energinet.DataHub.PostOffice.Domain.Services;
@@ -24,6 +25,7 @@ using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
 using Moq;
 using Xunit;
 using Xunit.Categories;
+using DomainOrigin = Energinet.DataHub.PostOffice.Domain.Model.DomainOrigin;
 
 namespace Energinet.DataHub.PostOffice.Tests.Repositories
 {
@@ -161,7 +163,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Repositories
                 DomainOrigin.Aggregations,
                 null!,
                 Array.Empty<Uuid>(),
-                Enumerable.Empty<string>());
+                Enumerable.Empty<string>(),
+                ResponseFormat.Json);
 
             // Act + Assert
             await Assert
