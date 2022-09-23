@@ -49,7 +49,8 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Mappers
                 new ContentType(bundleDocument.ContentType),
                 notificationIds,
                 bundleContent,
-                bundleDocument.DocumentTypes == null ? Enumerable.Empty<string>() : bundleDocument.DocumentTypes.Split(',', StringSplitOptions.RemoveEmptyEntries));
+                bundleDocument.DocumentTypes == null ? Enumerable.Empty<string>() : bundleDocument.DocumentTypes.Split(',', StringSplitOptions.RemoveEmptyEntries),
+                bundleDocument.ResponseFormat);
 
             if (bundleDocument.Dequeued)
                 bundle.Dequeue();
@@ -81,7 +82,8 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Mappers
                 NotificationIdsBase64 = toBase64,
                 AffectedDrawers = changes.ToList(),
                 ContentPath = MapBundleContent(source),
-                DocumentTypes = string.Join(',', source.DocumentTypes)
+                DocumentTypes = string.Join(',', source.DocumentTypes),
+                ResponseFormat = source.ResponseFormat
             };
         }
 
