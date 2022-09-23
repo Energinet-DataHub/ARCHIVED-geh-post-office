@@ -20,34 +20,34 @@ limitations under the License.
     <LangVersion>9</LangVersion>
     <Nullable>enable</Nullable>
     <ProjectGuid>{34056092-767C-485A-B0A8-9A15147EBB6D}</ProjectGuid>
-    <AssemblyName>Energinet.DataHub.MessageHub.IntegrationTesting</AssemblyName>
-    <RootNamespace>Energinet.DataHub.MessageHub.IntegrationTesting</RootNamespace>
+    <AssemblyName>Energinet.DataHub.MessageHub.SimulationLibrary</AssemblyName>
+    <RootNamespace>Energinet.DataHub.MessageHub.SimulationLibrary</RootNamespace>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageId>Energinet.DataHub.MessageHub.IntegrationTesting</PackageId>
-    <PackageVersion>3.2.0$(VersionSuffix)</PackageVersion>
-    <Title>Energinet.DataHub.MessageHub.IntegrationTesting library</Title>
+    <PackageId>Energinet.DataHub.MessageHub.SimulationLibrary</PackageId>
+    <PackageVersion>3.3.0$(VersionSuffix)</PackageVersion>
+    <Title>Energinet.DataHub.MessageHub.Simulation library</Title>
     <Company>Energinet-DataHub</Company>
     <Authors>Energinet-DataHub</Authors>
     <RepositoryUrl>https://github.com/Energinet-DataHub/geh-post-office</RepositoryUrl>
     <PackageReleaseNotes>
       Release Notes
-      https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energinet.DataHub.MessageHub.IntegrationTesting/documents/release-notes/release-notes.md
+      https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energinet.DataHub.MessageHub.SimulationLibrary/documents/release-notes/release-notes.md
 
       Documentation
-      https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energinet.DataHub.MessageHub.IntegrationTesting/documents/documentation.md
+      https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energinet.DataHub.MessageHub.SimulationLibrary/documents/documentation.md
     </PackageReleaseNotes>
     <PackageDescription>
       Release Notes
-      https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energinet.DataHub.MessageHub.IntegrationTesting/documents/release-notes/release-notes.md
+      https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energinet.DataHub.MessageHub.SimulationLibrary/documents/release-notes/release-notes.md
 
       Documentation
-      https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energinet.DataHub.MessageHub.IntegrationTesting/documents/documentation.md
+      https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energinet.DataHub.MessageHub.SimulationLibrary/documents/documentation.md
     </PackageDescription>
-    <Description>Library for integration testing of Energinet.DataHub.MessageHub</Description>
+    <Description>Library for simulation of Energinet.DataHub.MessageHub</Description>
     <PackageTags>geh;library</PackageTags>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>

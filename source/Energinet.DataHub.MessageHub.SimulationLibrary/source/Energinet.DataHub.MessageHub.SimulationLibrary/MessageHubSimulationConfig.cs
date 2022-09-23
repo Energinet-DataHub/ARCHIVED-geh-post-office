@@ -15,7 +15,7 @@
 using System;
 using Energinet.DataHub.MessageHub.Core;
 
-namespace Energinet.DataHub.MessageHub.IntegrationTesting
+namespace Energinet.DataHub.MessageHub.SimulationLibrary
 {
     public class MessageHubSimulationConfig
     {
