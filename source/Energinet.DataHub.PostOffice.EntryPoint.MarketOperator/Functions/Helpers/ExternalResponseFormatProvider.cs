@@ -15,6 +15,7 @@
 using System;
 using System.Linq;
 using Energinet.DataHub.MessageHub.Model.Model;
+using Energinet.DataHub.PostOffice.Common.Extensions;
 using Microsoft.Azure.Functions.Worker.Http;
 
 namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpers
@@ -29,6 +30,12 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpe
         public ResponseFormat TryGetResponseFormat(HttpRequestData request)
         {
             ArgumentNullException.ThrowIfNull(request, nameof(request));
+
+            var maybeResponseFormat = request.Url.GetQueryValue(Constants.ResponseFormatQueryName);
+            if (!string.IsNullOrEmpty(maybeResponseFormat) && Enum.TryParse<ResponseFormat>(maybeResponseFormat, true, out var format))
+            {
+                return Enum.IsDefined(format) ? format : ResponseFormat.Xml;
+            }
 
             if (!request.Headers.TryGetValues("accept", out var values)) return ResponseFormat.Xml;
             return values.Contains("application/json") ? ResponseFormat.Json : ResponseFormat.Xml;
