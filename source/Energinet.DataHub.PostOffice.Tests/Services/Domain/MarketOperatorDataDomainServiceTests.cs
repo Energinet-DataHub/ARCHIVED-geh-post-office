@@ -344,7 +344,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
                 bundleContentMock.Object,
-                Enumerable.Empty<string>());
+                Enumerable.Empty<string>(),
+                ResponseFormat.Json);
 
             var bundleRepositoryMock = new Mock<IBundleRepository>();
             bundleRepositoryMock
@@ -380,7 +381,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 DomainOrigin.TimeSeries,
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
-                Enumerable.Empty<string>());
+                Enumerable.Empty<string>(),
+                ResponseFormat.Json);
 
             var bundleRepositoryMock = new Mock<IBundleRepository>();
             bundleRepositoryMock
@@ -429,7 +431,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 DomainOrigin.TimeSeries,
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
-                Enumerable.Empty<string>());
+                Enumerable.Empty<string>(),
+                ResponseFormat.Json);
 
             var bundleRepositoryMock = new Mock<IBundleRepository>();
             bundleRepositoryMock
@@ -867,7 +870,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
                 bundleContentMock.Object,
-                Enumerable.Empty<string>());
+                Enumerable.Empty<string>(),
+                ResponseFormat.Json);
 
             var bundleRepositoryMock = new Mock<IBundleRepository>();
             bundleRepositoryMock
@@ -906,7 +910,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 DomainOrigin.TimeSeries,
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
-                Enumerable.Empty<string>());
+                Enumerable.Empty<string>(),
+                ResponseFormat.Json);
 
             var bundleRepositoryMock = new Mock<IBundleRepository>();
             bundleRepositoryMock
@@ -955,7 +960,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 DomainOrigin.TimeSeries,
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
-                Enumerable.Empty<string>());
+                Enumerable.Empty<string>(),
+                ResponseFormat.Json);
 
             var bundleRepositoryMock = new Mock<IBundleRepository>();
             bundleRepositoryMock
@@ -1396,7 +1402,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
                 bundleContentMock.Object,
-                Enumerable.Empty<string>());
+                Enumerable.Empty<string>(),
+                ResponseFormat.Json);
 
             var bundleRepositoryMock = new Mock<IBundleRepository>();
             bundleRepositoryMock
@@ -1437,7 +1444,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 DomainOrigin.Aggregations,
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
-                Enumerable.Empty<string>());
+                Enumerable.Empty<string>(),
+                ResponseFormat.Json);
 
             var bundleRepositoryMock = new Mock<IBundleRepository>();
             bundleRepositoryMock
@@ -1482,7 +1490,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 DomainOrigin.Aggregations,
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
-                Enumerable.Empty<string>());
+                Enumerable.Empty<string>(),
+                ResponseFormat.Json);
 
             var bundleRepositoryMock = new Mock<IBundleRepository>();
             bundleRepositoryMock
@@ -2028,7 +2037,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
                 bundleContentMock.Object,
-                Enumerable.Empty<string>());
+                Enumerable.Empty<string>(),
+                ResponseFormat.Json);
 
             var bundleRepositoryMock = new Mock<IBundleRepository>();
             bundleRepositoryMock
@@ -2073,7 +2083,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 DomainOrigin.MarketRoles,
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
-                Enumerable.Empty<string>());
+                Enumerable.Empty<string>(),
+                ResponseFormat.Json);
 
             var bundleRepositoryMock = new Mock<IBundleRepository>();
             bundleRepositoryMock
@@ -2127,7 +2138,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 DomainOrigin.MarketRoles,
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
-                Enumerable.Empty<string>());
+                Enumerable.Empty<string>(),
+                ResponseFormat.Json);
 
             var bundleRepositoryMock = new Mock<IBundleRepository>();
             bundleRepositoryMock
@@ -2359,7 +2371,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 DomainOrigin.TimeSeries,
                 new ContentType("fake_value"),
                 idsInBundle,
-                Enumerable.Empty<string>());
+                Enumerable.Empty<string>(),
+                ResponseFormat.Json);
 
             var dataAvailableNotificationRepositoryMock = new Mock<IDataAvailableNotificationRepository>();
 
@@ -2425,7 +2438,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 DomainOrigin.TimeSeries,
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
-                Enumerable.Empty<string>());
+                Enumerable.Empty<string>(),
+                ResponseFormat.Json);
 
             bundle.Dequeue();
 
@@ -2469,7 +2483,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 DomainOrigin.TimeSeries,
                 new ContentType("fake_value"),
                 idsInBundle,
-                Enumerable.Empty<string>());
+                Enumerable.Empty<string>(),
+                ResponseFormat.Json);
 
             var dataAvailableNotificationRepositoryMock = new Mock<IDataAvailableNotificationRepository>();
             var bundleRepositoryMock = new Mock<IBundleRepository>();

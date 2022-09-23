@@ -17,11 +17,13 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
 using Energinet.DataHub.PostOffice.IntegrationTests.Common;
 using Xunit;
 using Xunit.Categories;
+using DomainOrigin = Energinet.DataHub.PostOffice.Domain.Model.DomainOrigin;
 
 namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
 {
@@ -354,7 +356,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
                 notifications[0].Origin,
                 notifications[0].ContentType,
                 new[] { notifications[0].NotificationId },
-                Enumerable.Empty<string>());
+                Enumerable.Empty<string>(),
+                ResponseFormat.Json);
 
             await bundleRepository
                 .TryAddNextUnacknowledgedAsync(bundle, readForBundle)
@@ -421,7 +424,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
                 notifications[0].Origin,
                 notifications[0].ContentType,
                 new[] { notifications[0].NotificationId },
-                Enumerable.Empty<string>());
+                Enumerable.Empty<string>(),
+                ResponseFormat.Json);
 
             await bundleRepository
                 .TryAddNextUnacknowledgedAsync(bundle, readForBundle!)
