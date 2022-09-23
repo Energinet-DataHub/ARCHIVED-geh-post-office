@@ -32,7 +32,6 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Documents
             AffectedDrawers = new List<CosmosCabinetDrawerChanges>();
             ContentPath = null!;
             DocumentTypes = null!;
-            ResponseFormat = ResponseFormat.Xml;
         }
 
         public string Id { get; init; }
