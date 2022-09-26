@@ -140,6 +140,12 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
                         $"The specified bundle id was rejected, as the current bundle {existingBundle.BundleId} is yet to be acknowledged.");
                 }
 
+                if (responseFormat != existingBundle.ResponseFormat)
+                {
+                    throw new ValidationException(
+                        $"The specified bundle response format was rejected, as the current bundle {existingBundle.BundleId} was already requested with another format.");
+                }
+
                 return await AskSubDomainForContentAsync(existingBundle, responseFormat, responseVersion).ConfigureAwait(false);
             }
 
@@ -151,7 +157,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
             if (cabinetReader == null)
                 return null;
 
-            var newBundle = await CreateNextBundleAsync(suggestedBundleId, cabinetReader).ConfigureAwait(false);
+            var newBundle = await CreateNextBundleAsync(suggestedBundleId, cabinetReader, responseFormat).ConfigureAwait(false);
 
             var bundleCreatedResponse = await _bundleRepository
                 .TryAddNextUnacknowledgedAsync(newBundle, cabinetReader)
@@ -183,7 +189,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
             return bundle;
         }
 
-        private async Task<Bundle> CreateNextBundleAsync(Uuid? suggestedBundleId, ICabinetReader cabinetReader)
+        private async Task<Bundle> CreateNextBundleAsync(Uuid? suggestedBundleId, ICabinetReader cabinetReader, ResponseFormat responseFormat)
         {
             var cabinetKey = cabinetReader.Key;
 
@@ -234,7 +240,8 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
                 cabinetKey.Origin,
                 cabinetKey.ContentType,
                 notificationIds,
-                documentTypes);
+                documentTypes,
+                responseFormat);
         }
     }
 }
