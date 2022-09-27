@@ -16,7 +16,7 @@ using Energinet.DataHub.MessageHub.Core;
 using Energinet.DataHub.MessageHub.Core.Factories;
 using Energinet.DataHub.MessageHub.Core.Storage;
 
-namespace Energinet.DataHub.MessageHub.IntegrationTesting
+namespace Energinet.DataHub.MessageHub.SimulationLibrary
 {
     internal sealed class StorageHandlerSimulation
     {

@@ -14,7 +14,7 @@
 
 using System;
 
-namespace Energinet.DataHub.MessageHub.IntegrationTesting
+namespace Energinet.DataHub.MessageHub.SimulationLibrary
 {
     public sealed class AzureBlobContentDto
     {

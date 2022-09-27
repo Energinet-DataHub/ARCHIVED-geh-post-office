@@ -15,7 +15,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Energinet.DataHub.MessageHub.IntegrationTesting
+namespace Energinet.DataHub.MessageHub.SimulationLibrary
 {
     public sealed class PeekSimulationResponseDto
     {
