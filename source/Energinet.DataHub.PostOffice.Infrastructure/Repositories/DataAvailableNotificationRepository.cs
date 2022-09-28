@@ -28,6 +28,7 @@ using Energinet.DataHub.PostOffice.Infrastructure.Common;
 using Energinet.DataHub.PostOffice.Infrastructure.Documents;
 using Energinet.DataHub.PostOffice.Infrastructure.Mappers;
 using Energinet.DataHub.PostOffice.Infrastructure.Model;
+using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Constants;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
@@ -36,9 +37,6 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 {
     public sealed class DataAvailableNotificationRepository : IDataAvailableNotificationRepository
     {
-        private const int MaximumCabinetDrawerItemCount = 10000;
-        private const int MaximumCabinetDrawersInRequest = 6;
-
         private readonly IDataAvailableNotificationRepositoryContainer _repositoryContainer;
         private readonly IBundleRepositoryContainer _bundleRepositoryContainer;
         private readonly ISequenceNumberRepository _sequenceNumberRepository;
@@ -101,7 +99,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 }
 
                 var itemsLeft = notifications.Count - (i + 1);
-                var spaceLeft = MaximumCabinetDrawerItemCount - (nextDrawerItemCount + 1);
+                var spaceLeft = RepositoryConstants.MaximumCabinetDrawerItemCount - (nextDrawerItemCount + 1);
 
                 var itemsToFill = notifications
                     .Skip(i + 1)
@@ -112,9 +110,9 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 nextDrawerItemCount += itemsInserted;
                 nextDrawerItemCount++;
 
-                Debug.Assert(nextDrawerItemCount <= MaximumCabinetDrawerItemCount, "Too many items were inserted into a single drawer.");
+                Debug.Assert(nextDrawerItemCount <= RepositoryConstants.MaximumCabinetDrawerItemCount, "Too many items were inserted into a single drawer.");
 
-                if (nextDrawerItemCount == MaximumCabinetDrawerItemCount)
+                if (nextDrawerItemCount == RepositoryConstants.MaximumCabinetDrawerItemCount)
                 {
                     nextDrawer = null;
                 }
@@ -291,7 +289,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 from cabinetDrawer in asLinq
                 where
                     cabinetDrawer.PartitionKey == partitionKey &&
-                    cabinetDrawer.Position < MaximumCabinetDrawerItemCount
+                    cabinetDrawer.Position < RepositoryConstants.MaximumCabinetDrawerItemCount
                 orderby cabinetDrawer.OrderBy descending
                 select cabinetDrawer;
 
@@ -386,11 +384,11 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 from cabinetDrawer in asLinq
                 where
                     cabinetDrawer.PartitionKey == partitionKey &&
-                    cabinetDrawer.Position < MaximumCabinetDrawerItemCount
+                    cabinetDrawer.Position < RepositoryConstants.MaximumCabinetDrawerItemCount
                 orderby cabinetDrawer.OrderBy
                 select cabinetDrawer;
 
-            return query.Take(MaximumCabinetDrawersInRequest).AsCosmosIteratorAsync();
+            return query.Take(RepositoryConstants.MaximumCabinetDrawersInRequest).AsCosmosIteratorAsync();
         }
 
         private async Task<IEnumerable<CosmosDataAvailable>> GetCabinetDrawerContentsAsync(CosmosCabinetDrawer drawer)
@@ -454,7 +452,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 return;
             }
 
-            if (changes.UpdatedDrawer.Position == MaximumCabinetDrawerItemCount)
+            if (changes.UpdatedDrawer.Position == RepositoryConstants.MaximumCabinetDrawerItemCount)
                 return;
 
             var asLinq = _repositoryContainer

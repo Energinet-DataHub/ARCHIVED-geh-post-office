@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
 using Energinet.DataHub.PostOffice.Infrastructure.Common;
 using Energinet.DataHub.PostOffice.Infrastructure.Documents;
+using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Constants;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
@@ -26,7 +27,6 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 {
     public sealed class DataAvailableNotificationCleanUpRepository : IDataAvailableNotificationCleanUpRepository
     {
-        private const int MaximumCabinetDrawerItemCount = 10000;
         private readonly IClock _systemClock;
         private readonly ILogger<DataAvailableNotificationCleanUpRepository> _logger;
         private readonly IDataAvailableNotificationRepositoryContainer _repositoryContainer;
@@ -47,14 +47,14 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 .Cabinet
                 .GetItemLinqQueryable<CosmosCabinetDrawer>();
 
-            var nowInIsoUtc = _systemClock.GetCurrentInstant() - Duration.FromDays(7);
-            var deletionTime = nowInIsoUtc.ToUnixTimeMilliseconds();
+            var nowInIsoUtc = _systemClock.GetCurrentInstant() - Duration.FromDays(RepositoryConstants.DataAvailableNotificationDaysOldWhenDeleted);
+            var deletionTimeFormatForDb = nowInIsoUtc.ToUnixTimeMilliseconds();
 
             var query =
                 from cabinetDrawer in asLinq
                 where
-                    cabinetDrawer.Position == MaximumCabinetDrawerItemCount &&
-                    cabinetDrawer.TimeStamp < deletionTime
+                    cabinetDrawer.Position == RepositoryConstants.MaximumCabinetDrawerItemCount &&
+                    cabinetDrawer.TimeStamp < deletionTimeFormatForDb
                 select cabinetDrawer;
 
             await foreach (var drawerToDelete in query.AsCosmosIteratorAsync())
