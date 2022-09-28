@@ -1,5 +1,9 @@
 # Energinet.DataHub.MessageHub.Client Release notes
 
+## Version 3.3.0
+
+- Package and namespace renaming from IntegrationTesting to SimulationLibrary
+
 ## Version 3.2.0
 
 - Domain origin `Aggregations` renamed to `Wholesale` in enum `DocumentType`.

@@ -35,9 +35,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Energinet.DataHub.MessageHu
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "source", "source", "{D7B39BBE-EC7F-4025-9A9F-6DDA9E4E6754}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Energinet.DataHub.MessageHub.IntegrationTesting", "Energinet.DataHub.MessageHub.IntegrationTesting\source\Energinet.DataHub.MessageHub.IntegrationTesting\Energinet.DataHub.MessageHub.IntegrationTesting.csproj", "{34056092-767C-485A-B0A8-9A15147EBB6D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Energinet.DataHub.MessageHub.SimulationLibrary", "Energinet.DataHub.MessageHub.SimulationLibrary\source\Energinet.DataHub.MessageHub.SimulationLibrary\Energinet.DataHub.MessageHub.SimulationLibrary.csproj", "{34056092-767C-485A-B0A8-9A15147EBB6D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Energinet.DataHub.MessageHub.IntegrationTesting", "Energinet.DataHub.MessageHub.IntegrationTesting", "{3D122C94-4320-4331-BD33-9CD500DD4C48}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Energinet.DataHub.MessageHub.SimulationLibrary", "Energinet.DataHub.MessageHub.SimulationLibrary", "{3D122C94-4320-4331-BD33-9CD500DD4C48}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documents", "documents", "{67237757-2307-4F4C-97E9-22F855E8FA71}"
 	ProjectSection(SolutionItems) = preProject
@@ -71,12 +71,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "release-notes", "release-no
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documents", "documents", "{4E9F2674-960B-4DDB-AF0B-1928A7938E42}"
 	ProjectSection(SolutionItems) = preProject
-		Energinet.DataHub.MessageHub.IntegrationTesting\documents\documentation.md = Energinet.DataHub.MessageHub.IntegrationTesting\documents\documentation.md
+		Energinet.DataHub.MessageHub.SimulationLibrary\documents\documentation.md = Energinet.DataHub.MessageHub.SimulationLibrary\documents\documentation.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "release-notes", "release-notes", "{A745D57A-4ADA-4678-A1DF-8E5DCA96843F}"
 	ProjectSection(SolutionItems) = preProject
-		Energinet.DataHub.MessageHub.IntegrationTesting\documents\release-notes\release-notes.md = Energinet.DataHub.MessageHub.IntegrationTesting\documents\release-notes\release-notes.md
+		Energinet.DataHub.MessageHub.SimulationLibrary\documents\release-notes\release-notes.md = Energinet.DataHub.MessageHub.SimulationLibrary\documents\release-notes\release-notes.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documents", "documents", "{5223C900-076B-4FAD-A533-876BEFF52FBE}"
