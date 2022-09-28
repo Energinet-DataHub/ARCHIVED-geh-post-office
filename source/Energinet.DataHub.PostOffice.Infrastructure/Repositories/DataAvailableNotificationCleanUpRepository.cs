@@ -19,6 +19,7 @@ using Energinet.DataHub.PostOffice.Infrastructure.Common;
 using Energinet.DataHub.PostOffice.Infrastructure.Documents;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Logging;
 using NodaTime;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
@@ -26,13 +27,18 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
     public sealed class DataAvailableNotificationCleanUpRepository : IDataAvailableNotificationCleanUpRepository
     {
         private const int MaximumCabinetDrawerItemCount = 10000;
-
+        private readonly IClock _systemClock;
+        private readonly ILogger<DataAvailableNotificationCleanUpRepository> _logger;
         private readonly IDataAvailableNotificationRepositoryContainer _repositoryContainer;
 
         public DataAvailableNotificationCleanUpRepository(
-            IDataAvailableNotificationRepositoryContainer repositoryContainer)
+            IDataAvailableNotificationRepositoryContainer repositoryContainer,
+            IClock systemClock,
+            ILogger<DataAvailableNotificationCleanUpRepository> logger)
         {
             _repositoryContainer = repositoryContainer;
+            _systemClock = systemClock;
+            _logger = logger;
         }
 
         public async Task DeleteOldCabinetDrawersAsync()
@@ -41,8 +47,8 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 .Cabinet
                 .GetItemLinqQueryable<CosmosCabinetDrawer>();
 
-            var nowInIsoUtc = SystemClock.Instance.GetCurrentInstant().Minus(Duration.FromDays(-7));
-            var deletionTime = (ulong)nowInIsoUtc.ToUnixTimeMilliseconds();
+            var nowInIsoUtc = _systemClock.GetCurrentInstant() - Duration.FromDays(7);
+            var deletionTime = nowInIsoUtc.ToUnixTimeMilliseconds();
 
             var query =
                 from cabinetDrawer in asLinq
@@ -53,16 +59,46 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
             await foreach (var drawerToDelete in query.AsCosmosIteratorAsync())
             {
+                await DeleteDataAvailableNotificationsInDrawerAsync(drawerToDelete.Id).ConfigureAwait(false);
                 await DeleteDrawerAsync(drawerToDelete).ConfigureAwait(false);
+            }
+        }
+
+        private async Task DeleteDataAvailableNotificationsInDrawerAsync(string dataAvailableNotificationPartitionKey)
+        {
+            try
+            {
+                var deleteResponse = await _repositoryContainer
+                    .Cabinet
+                    .DeleteAllItemsByPartitionKeyStreamAsync(new PartitionKey(dataAvailableNotificationPartitionKey))
+                    .ConfigureAwait(false);
+
+                if (!deleteResponse.IsSuccessStatusCode)
+                {
+                    _logger.LogError("DeleteDataAvailableNotificationsInDrawerAsync: {DeleteResponseErrorMessage}", deleteResponse.ErrorMessage);
+                }
+            }
+            catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                // Concurrent calls may have removed the file.
             }
         }
 
         private async Task DeleteDrawerAsync(CosmosCabinetDrawer drawerToDelete)
         {
-            await _repositoryContainer
-                 .Cabinet
-                 .DeleteItemAsync<CosmosCabinetDrawer>(drawerToDelete.Id, new PartitionKey(drawerToDelete.PartitionKey))
-                 .ConfigureAwait(false);
+            try
+            {
+                await _repositoryContainer
+                    .Cabinet
+                    .DeleteItemAsync<CosmosCabinetDrawer>(
+                        drawerToDelete.Id,
+                        new PartitionKey(drawerToDelete.PartitionKey))
+                    .ConfigureAwait(false);
+            }
+            catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                // Concurrent calls may have removed the file.
+            }
         }
     }
 }

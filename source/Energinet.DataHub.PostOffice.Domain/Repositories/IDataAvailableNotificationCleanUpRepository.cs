@@ -12,9 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Energinet.DataHub.PostOffice.Domain.Model;
 
 namespace Energinet.DataHub.PostOffice.Domain.Repositories
 {
@@ -24,7 +22,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Repositories
     public interface IDataAvailableNotificationCleanUpRepository
     {
         /// <summary>
-        /// Deletes old DataAvailables where cabinet is full and older than specific date.
+        /// Deletes old DataAvailable where cabinet is full and older than specific date.
         /// </summary>
         Task DeleteOldCabinetDrawersAsync();
     }

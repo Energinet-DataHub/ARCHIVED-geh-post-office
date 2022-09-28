@@ -36,6 +36,6 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Documents
         public string ETag { get; init; }
 
         [JsonProperty(PropertyName = "_ts")]
-        public ulong TimeStamp { get; init; }
+        public long TimeStamp { get; init; }
     }
 }
