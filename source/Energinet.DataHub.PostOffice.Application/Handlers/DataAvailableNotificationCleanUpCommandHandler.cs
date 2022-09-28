@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Application.Commands;
@@ -31,6 +32,8 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
 
         public async Task<Unit> Handle(DataAvailableNotificationCleanUpCommand request, CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(request, nameof(request));
+
             await _dataAvailableNotificationCleanUpRepository
                 .DeleteOldCabinetDrawersAsync()
                 .ConfigureAwait(false);

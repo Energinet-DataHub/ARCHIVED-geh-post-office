@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
 using Energinet.DataHub.PostOffice.Infrastructure.Documents;
+using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Constants;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
 using Energinet.DataHub.PostOffice.IntegrationTests.Common;
 using Microsoft.Azure.Cosmos;
@@ -77,7 +78,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
 
             var cabinetDrawerAdded = query.ToList().First();
 
-            var replaceOperation = PatchOperation.Replace("/position", 10000);
+            var replaceOperation = PatchOperation.Replace("/position", RepositoryConstants.MaximumCabinetDrawerItemCount);
             await dataAvailableNotificationRepositoryContainer
                 .Cabinet
                 .PatchItemAsync<CosmosCabinetDrawer>(cabinetDrawerAdded.Id, new PartitionKey(cabinetDrawerAdded.PartitionKey), new List<PatchOperation>() { replaceOperation });
