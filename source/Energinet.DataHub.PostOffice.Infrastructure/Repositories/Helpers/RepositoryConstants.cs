@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories.Constants;
+namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories.Helpers;
 
 public static class RepositoryConstants
 {
