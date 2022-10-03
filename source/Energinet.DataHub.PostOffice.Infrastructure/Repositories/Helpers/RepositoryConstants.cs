@@ -18,5 +18,5 @@ public static class RepositoryConstants
 {
     public const int MaximumCabinetDrawerItemCount = 10000;
     public const int MaximumCabinetDrawersInRequest = 6;
-    public const int DataAvailableNotificationDaysOldWhenDeleted = 7;
+    public const int DataAvailableNotificationDaysOldWhenDeleted = 365;
 }

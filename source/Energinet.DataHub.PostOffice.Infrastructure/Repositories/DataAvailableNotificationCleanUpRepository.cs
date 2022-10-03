@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
 using Energinet.DataHub.PostOffice.Infrastructure.Common;
@@ -48,7 +49,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 .GetItemLinqQueryable<CosmosCabinetDrawer>();
 
             var nowInIsoUtc = _systemClock.GetCurrentInstant() - Duration.FromDays(RepositoryConstants.DataAvailableNotificationDaysOldWhenDeleted);
-            var deletionTimeFormatForDb = nowInIsoUtc.ToUnixTimeMilliseconds();
+            var deletionTimeFormatForDb = nowInIsoUtc.ToUnixTimeSeconds();
 
             var query =
                 from cabinetDrawer in asLinq
@@ -68,19 +69,30 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
         {
             try
             {
-                var deleteResponse = await _repositoryContainer
-                    .Cabinet
-                    .DeleteAllItemsByPartitionKeyStreamAsync(new PartitionKey(dataAvailableNotificationPartitionKey))
-                    .ConfigureAwait(false);
+                var dataAvailableNotificationIterator = _repositoryContainer.Cabinet.GetItemQueryIterator<CosmosDataAvailable>(
+                    new QueryDefinition("SELECT * FROM c"),
+                    requestOptions: new QueryRequestOptions()
+                    {
+                        PartitionKey = new PartitionKey(dataAvailableNotificationPartitionKey)
+                    });
 
-                if (!deleteResponse.IsSuccessStatusCode)
+                while (dataAvailableNotificationIterator.HasMoreResults)
                 {
-                    _logger.LogError("DeleteDataAvailableNotificationsInDrawerAsync: {DeleteResponseErrorMessage}", deleteResponse.ErrorMessage);
+                    var nextNotifications = await dataAvailableNotificationIterator.ReadNextAsync().ConfigureAwait(false);
+                    foreach (var dataAvailable in nextNotifications)
+                    {
+                        var deleteResponse = await _repositoryContainer.Catalog.DeleteItemAsync<CosmosDataAvailable>(dataAvailable.Id, new PartitionKey(dataAvailable.PartitionKey)).ConfigureAwait(false);
+                        if (deleteResponse.StatusCode != HttpStatusCode.OK)
+                        {
+                            _logger.LogError("DeleteDataAvailableNotificationsInDrawerAsync, ErrorCode: {DeleteResponseStatusCode}", deleteResponse.StatusCode);
+                        }
+                    }
                 }
             }
-            catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
             {
                 // Concurrent calls may have removed the file.
+                _logger.LogError(ex, "DeleteDataAvailableNotificationsInDrawerAsync, ErrorCode: {DeleteResponseStatusCode}", HttpStatusCode.NotFound);
             }
         }
 
