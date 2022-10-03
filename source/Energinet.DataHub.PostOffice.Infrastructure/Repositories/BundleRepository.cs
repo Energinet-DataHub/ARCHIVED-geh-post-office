@@ -57,6 +57,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             var query =
                 from bundle in asLinq
                 where bundle.Id == bundleId.ToString() && bundle.Recipient == recipient.Value
+                                                       && !bundle.Dequeued // Ensure that the bundle is available for dequeue. Can be removed with old actor registry.
                 select bundle;
 
             return GetBundleAsync(query);
