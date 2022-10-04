@@ -43,6 +43,11 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         Task LogLegacyActorNotFoundAsync(Guid externalActorId);
 
         /// <summary>
+        /// Logs message regarding registry actor found
+        /// </summary>
+        Task LogRequestDataFromSubdomainTimeoutFoundAsync(string correlationId);
+
+        /// <summary>
         /// Retrieves all logged messages as a string
         /// </summary>
         /// <returns>The log</returns>

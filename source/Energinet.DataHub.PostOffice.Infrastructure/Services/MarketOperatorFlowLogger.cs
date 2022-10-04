@@ -50,6 +50,11 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
             return LogAsync($"A legacy actor was not found with external id '{externalActorId}'");
         }
 
+        public Task LogRequestDataFromSubdomainTimeoutFoundAsync(string correlationId)
+        {
+            return LogAsync($"Request for data timeout when waiting for SubDomain, correlationId '{correlationId}'");
+        }
+
         public Task<string> GetLogAsync()
         {
             return Task.FromResult(string.Join(Environment.NewLine, _log));
