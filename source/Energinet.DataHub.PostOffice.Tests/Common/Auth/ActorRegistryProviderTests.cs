@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Common.Auth;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
+using Energinet.DataHub.PostOffice.Domain.Services;
 using Moq;
 using Xunit;
 using Xunit.Categories;
@@ -27,11 +28,12 @@ namespace Energinet.DataHub.PostOffice.Tests.Common.Auth;
 public sealed class ActorRegistryProviderTests
 {
     [Fact]
-    public async Task GetActorAsync_WhenActorFound_ReturnsActor()
+    public async Task GetActorAsync_WhenActorFound_ReturnsActorAndLogsActorFound()
     {
         // Arrange
         var repository = new Mock<IActorRepository>();
-        var target = new ActorRegistryProvider(repository.Object);
+        var flowLogger = new Mock<IMarketOperatorFlowLogger>();
+        var target = new ActorRegistryProvider(repository.Object, flowLogger.Object);
 
         var externalActorId = Guid.NewGuid();
         var internalActorId = Guid.NewGuid();
@@ -45,14 +47,16 @@ public sealed class ActorRegistryProviderTests
 
         // Assert
         Assert.Equal(internalActorId, actual.ActorId);
+        flowLogger.Verify(x => x.LogActorFoundAsync(externalActorId, internalActorId), Times.Exactly(1));
     }
 
     [Fact]
-    public async Task GetActorAsync_WhenNoActorFound_ThrowsException()
+    public async Task GetActorAsync_WhenNoActorFound_ThrowsExceptionAndLogsNotFound()
     {
         // Arrange
         var repository = new Mock<IActorRepository>();
-        var target = new ActorRegistryProvider(repository.Object);
+        var flowLogger = new Mock<IMarketOperatorFlowLogger>();
+        var target = new ActorRegistryProvider(repository.Object, flowLogger.Object);
 
         var externalActorId = Guid.NewGuid();
 
@@ -60,5 +64,6 @@ public sealed class ActorRegistryProviderTests
         await Assert
             .ThrowsAsync<InvalidOperationException>(() => target.GetActorAsync(externalActorId))
             .ConfigureAwait(false);
+        flowLogger.Verify(x => x.LogActorNotFoundAsync(externalActorId), Times.Exactly(1));
     }
 }
