@@ -46,7 +46,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         /// <summary>
         /// Logs which sub domain is called for data retrieving bundle data
         /// </summary>
-        Task LogSubDomainDataRequestAsync(DomainOrigin origin);
+        Task LogSubDomainOriginDataRequestAsync(DomainOrigin origin);
 
         /// <summary>
         /// Retrieves all logged messages as a string

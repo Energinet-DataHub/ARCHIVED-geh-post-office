@@ -51,7 +51,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
             return LogAsync($"A legacy actor was not found with external id '{externalActorId}'");
         }
 
-        public Task LogSubDomainDataRequestAsync(DomainOrigin origin)
+        public Task LogSubDomainOriginDataRequestAsync(DomainOrigin origin)
         {
             return LogAsync($"Bundle data requested at subdomain: '{origin}'");
         }
