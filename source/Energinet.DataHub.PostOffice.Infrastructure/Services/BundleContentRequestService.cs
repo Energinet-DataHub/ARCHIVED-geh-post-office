@@ -29,17 +29,20 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
     public sealed class BundleContentRequestService : IBundleContentRequestService
     {
         private readonly ILogger _logger;
+        private readonly IMarketOperatorFlowLogger _marketOperatorFlowLogger;
         private readonly IMarketOperatorDataStorageService _marketOperatorDataStorageService;
         private readonly IDataBundleRequestSender _dataBundleRequestSender;
         private readonly ICorrelationContext _correlationContext;
 
         public BundleContentRequestService(
             ILogger logger,
+            IMarketOperatorFlowLogger marketOperatorFlowLogger,
             IMarketOperatorDataStorageService marketOperatorDataStorageService,
             IDataBundleRequestSender dataBundleRequestSender,
             ICorrelationContext correlationContext)
         {
             _logger = logger;
+            _marketOperatorFlowLogger = marketOperatorFlowLogger;
             _marketOperatorDataStorageService = marketOperatorDataStorageService;
             _dataBundleRequestSender = dataBundleRequestSender;
             _correlationContext = correlationContext;
@@ -58,6 +61,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
                 responseVersion);
 
             _logger.LogProcess("Peek", "WaitForContent", _correlationContext.Id, bundle.Recipient.ToString(), bundle.BundleId.ToString(), bundle.Origin.ToString());
+            await _marketOperatorFlowLogger.LogSubDomainDataRequestAsync(bundle.Origin).ConfigureAwait(false);
 
             var response = await _dataBundleRequestSender.SendAsync(request, (DomainOrigin)bundle.Origin).ConfigureAwait(false);
             if (response == null)

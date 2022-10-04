@@ -14,6 +14,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Energinet.DataHub.PostOffice.Domain.Model;
 
 namespace Energinet.DataHub.PostOffice.Domain.Services
 {
@@ -41,6 +42,11 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         /// Logs message regarding legacy actor not found
         /// </summary>
         Task LogLegacyActorNotFoundAsync(Guid externalActorId);
+
+        /// <summary>
+        /// Logs which sub domain is called for data retrieving bundle data
+        /// </summary>
+        Task LogSubDomainDataRequestAsync(DomainOrigin origin);
 
         /// <summary>
         /// Retrieves all logged messages as a string
