@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using Energinet.DataHub.Core.App.Common.Abstractions.Actor;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
+using Energinet.DataHub.PostOffice.Domain.Services;
 using Actor = Energinet.DataHub.Core.App.Common.Abstractions.Actor.Actor;
 
 namespace Energinet.DataHub.PostOffice.Common.Auth;
@@ -24,10 +25,12 @@ namespace Energinet.DataHub.PostOffice.Common.Auth;
 public sealed class ActorRegistryProvider : IActorProvider
 {
     private readonly IActorRepository _actorRepository;
+    private readonly IMarketOperatorFlowLogger _marketOperatorFlowLogger;
 
-    public ActorRegistryProvider(IActorRepository actorRepository)
+    public ActorRegistryProvider(IActorRepository actorRepository, IMarketOperatorFlowLogger marketOperatorFlowLogger)
     {
         _actorRepository = actorRepository;
+        _marketOperatorFlowLogger = marketOperatorFlowLogger;
     }
 
     public async Task<Actor> GetActorAsync(Guid actorId)
@@ -37,7 +40,12 @@ public sealed class ActorRegistryProvider : IActorProvider
             .ConfigureAwait(false);
 
         if (actor == null)
+        {
+            await _marketOperatorFlowLogger.LogActorNotFoundAsync(actorId).ConfigureAwait(false);
             throw new InvalidOperationException($"Actor with id {actorId} not found.");
+        }
+
+        await _marketOperatorFlowLogger.LogActorFoundAsync(actorId, Guid.Parse(actor.Id.Value)).ConfigureAwait(false);
 
         return new Actor(
             Guid.Parse(actor.Id.Value),

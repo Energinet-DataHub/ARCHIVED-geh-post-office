@@ -25,7 +25,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         /// <summary>
         /// Logs message regarding registry actor found
         /// </summary>
-        Task LogActorFoundAsync(Guid externalActorId);
+        Task LogActorFoundAsync(Guid externalActorId, Guid actorId);
 
         /// <summary>
         /// Logs message regarding registry actor not found

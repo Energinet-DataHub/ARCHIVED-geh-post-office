@@ -16,7 +16,6 @@ using System;
 using System.Threading.Tasks;
 using Energinet.DataHub.Core.App.Common.Abstractions.Actor;
 using Energinet.DataHub.PostOffice.Domain.Model;
-using Energinet.DataHub.PostOffice.Domain.Services;
 using Energinet.DataHub.PostOffice.Infrastructure.Model;
 using Actor = Energinet.DataHub.Core.App.Common.Abstractions.Actor.Actor;
 
@@ -27,26 +26,21 @@ public sealed class LegacyActorProviderProxy : IActorProvider
     private readonly LegacyActorProvider _legacyActorProvider;
     private readonly LegacyActorIdIdentity _legacyActorIdIdentity;
     private readonly ActorRegistryProvider _actorRegistryProvider;
-    private readonly IMarketOperatorFlowLogger _marketOperatorFlowLogger;
 
     public LegacyActorProviderProxy(
         LegacyActorProvider legacyActorProvider,
         LegacyActorIdIdentity legacyActorIdIdentity,
-        ActorRegistryProvider actorRegistryProvider,
-        IMarketOperatorFlowLogger marketOperatorFlowLogger)
+        ActorRegistryProvider actorRegistryProvider)
     {
         _legacyActorProvider = legacyActorProvider;
         _legacyActorIdIdentity = legacyActorIdIdentity;
         _actorRegistryProvider = actorRegistryProvider;
-        _marketOperatorFlowLogger = marketOperatorFlowLogger;
     }
 
     public async Task<Actor> GetActorAsync(Guid actorId)
     {
         var registryActor = await GetRegistryActorAsync(actorId).ConfigureAwait(false);
         var legacyActor = await GetLegacyActorAsync(actorId).ConfigureAwait(false);
-
-        await LogActorsFoundAsync(actorId, registryActor, legacyActor).ConfigureAwait(false);
 
         if (registryActor != null)
         {
@@ -92,18 +86,5 @@ public sealed class LegacyActorProviderProxy : IActorProvider
         {
             return null;
         }
-    }
-
-    private async Task LogActorsFoundAsync(Guid actorId, Actor? registryActor, Actor? legacyActor)
-    {
-        if (registryActor != null)
-            await _marketOperatorFlowLogger.LogActorFoundAsync(actorId).ConfigureAwait(false);
-        else
-            await _marketOperatorFlowLogger.LogActorNotFoundAsync(actorId).ConfigureAwait(false);
-
-        if (legacyActor != null)
-            await _marketOperatorFlowLogger.LogLegacyActorFoundAsync(actorId, legacyActor.Identifier).ConfigureAwait(false);
-        else
-            await _marketOperatorFlowLogger.LogLegacyActorNotFoundAsync(actorId).ConfigureAwait(false);
     }
 }

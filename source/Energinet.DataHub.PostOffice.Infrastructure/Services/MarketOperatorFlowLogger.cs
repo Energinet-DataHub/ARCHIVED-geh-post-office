@@ -30,9 +30,9 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
             _logger = logger;
         }
 
-        public Task LogActorFoundAsync(Guid externalActorId)
+        public Task LogActorFoundAsync(Guid externalActorId, Guid actorId)
         {
-            return LogAsync($"Actor found with external id '{externalActorId}'");
+            return LogAsync($"Actor found with external id '{externalActorId}' and id '{actorId}'");
         }
 
         public Task LogActorNotFoundAsync(Guid externalActorId)

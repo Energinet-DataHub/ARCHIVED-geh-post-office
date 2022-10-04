@@ -31,15 +31,17 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
         {
             // assert
             var externalActorId = Guid.NewGuid();
+            var actorId = Guid.NewGuid();
             var target = new MarketOperatorFlowLogger(new Mock<ILogger>().Object);
 
             // act
-            await target.LogActorFoundAsync(externalActorId);
+            await target.LogActorFoundAsync(externalActorId, actorId);
             var actual = await target.GetLogAsync();
 
             // assert
             Assert.StartsWith("Actor found", actual, StringComparison.CurrentCulture);
             Assert.Contains(externalActorId.ToString(), actual, StringComparison.CurrentCultureIgnoreCase);
+            Assert.Contains(actorId.ToString(), actual, StringComparison.CurrentCultureIgnoreCase);
         }
 
         [Fact]
