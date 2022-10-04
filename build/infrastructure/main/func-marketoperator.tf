@@ -44,7 +44,7 @@ module "func_marketoperator" {
     B2C_TENANT_ID                               = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=b2c-tenant-id)"
     BACKEND_SERVICE_APP_ID                      = "@Microsoft.KeyVault(VaultName=${var.shared_resources_keyvault_name};SecretName=backend-service-app-id)"
     SQL_ACTOR_DB_CONNECTION_STRING              = local.sql_actor_db_connection_string
-    FLOW_LOG_ENABLED                            = false
+    FLOW_LOG_ENABLED                            = local.FLOW_LOG_ENABLED
   }
 
   tags                                      = azurerm_resource_group.this.tags
