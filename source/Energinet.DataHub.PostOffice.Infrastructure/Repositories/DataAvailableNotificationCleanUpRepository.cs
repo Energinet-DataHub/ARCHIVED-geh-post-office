@@ -98,7 +98,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             {
                 await _repositoryContainer.Catalog.DeleteItemAsync<CosmosDataAvailable>(dataAvailable.Id, new PartitionKey(dataAvailable.PartitionKey)).ConfigureAwait(false);
             }
-            catch (CosmosException ex)
+            catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
             {
                 _logger.LogError(ex, "DeleteDataAvailableNotificationsInDrawerAsync, ErrorCode: {StatusCode}, DataAvailableId: {Id}", ex.StatusCode, dataAvailable.Id);
             }
@@ -114,6 +114,8 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                         drawerToDelete.Id,
                         new PartitionKey(drawerToDelete.PartitionKey))
                     .ConfigureAwait(false);
+
+                _logger.LogInformation("Deleted drawer. Id: {Id}, PartitionKey: {PartitionKey}", drawerToDelete.Id, drawerToDelete.PartitionKey);
             }
             catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
             {
