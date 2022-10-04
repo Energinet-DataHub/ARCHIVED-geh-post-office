@@ -39,6 +39,9 @@ public static class Settings
     public static Setting<string> MarketParticipantActorUpdatedSubscriptionName { get; }
         = new(MarketParticipantActorUpdatedSubscriptionNameKey);
 
+    public static Setting<bool> FlowLogEnabled { get; }
+        = new("FLOW_LOG_ENABLED", false);
+
     public static Setting<string> DataAvailableConnectionString { get; }
         = new("DATAAVAILABLE_QUEUE_CONNECTION_STRING");
     public static Setting<string> DataAvailableQueueName { get; }

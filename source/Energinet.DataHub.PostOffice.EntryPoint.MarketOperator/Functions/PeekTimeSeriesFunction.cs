@@ -32,19 +32,22 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions
         private readonly IExternalBundleIdProvider _bundleIdProvider;
         private readonly IExternalResponseFormatProvider _responseFormatProvider;
         private readonly IExternalResponseVersionProvider _responseVersionProvider;
+        private readonly IMarketOperatorFlowLogHelper _marketOperatorFlowLogHelper;
 
         public PeekTimeSeriesFunction(
             IMediator mediator,
             IMarketOperatorIdentity operatorIdentity,
             IExternalBundleIdProvider bundleIdProvider,
             IExternalResponseFormatProvider responseFormatProvider,
-            IExternalResponseVersionProvider responseVersionProvider)
+            IExternalResponseVersionProvider responseVersionProvider,
+            IMarketOperatorFlowLogHelper marketOperatorFlowLogHelper)
         {
             _mediator = mediator;
             _operatorIdentity = operatorIdentity;
             _bundleIdProvider = bundleIdProvider;
             _responseFormatProvider = responseFormatProvider;
             _responseVersionProvider = responseVersionProvider;
+            _marketOperatorFlowLogHelper = marketOperatorFlowLogHelper;
         }
 
         [Function("PeekTimeSeries")]
@@ -63,7 +66,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions
 
                 var response = hasContent
                     ? request.CreateResponse(stream, MediaTypeNames.Application.Xml)
-                    : request.CreateResponse(HttpStatusCode.NoContent);
+                    : await _marketOperatorFlowLogHelper.GetFlowLogResponseAsync(request, HttpStatusCode.NoContent).ConfigureAwait(false);
 
                 response.Headers.Add(Constants.BundleIdHeaderName, bundleId);
                 response.Headers.Add(Constants.MessageTypeName, string.Join(",", documentTypes));
