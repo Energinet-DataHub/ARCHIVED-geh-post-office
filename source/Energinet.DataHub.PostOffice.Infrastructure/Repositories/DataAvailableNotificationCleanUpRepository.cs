@@ -60,18 +60,18 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
             await foreach (var drawerToDelete in query.AsCosmosIteratorAsync())
             {
-                await DeleteDataAvailableNotificationsInDrawerAsync(drawerToDelete.Id).ConfigureAwait(false);
+                await FindAndDeleteDataAvailableNotificationsInDrawerAsync(drawerToDelete.Id).ConfigureAwait(false);
                 await DeleteDrawerAsync(drawerToDelete).ConfigureAwait(false);
             }
         }
 
-        private async Task DeleteDataAvailableNotificationsInDrawerAsync(string dataAvailableNotificationPartitionKey)
+        private async Task FindAndDeleteDataAvailableNotificationsInDrawerAsync(string dataAvailableNotificationPartitionKey)
         {
             try
             {
                 var dataAvailableNotificationIterator = _repositoryContainer.Cabinet.GetItemQueryIterator<CosmosDataAvailable>(
                     new QueryDefinition("SELECT * FROM c"),
-                    requestOptions: new QueryRequestOptions()
+                    requestOptions: new QueryRequestOptions
                     {
                         PartitionKey = new PartitionKey(dataAvailableNotificationPartitionKey)
                     });
@@ -81,18 +81,26 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                     var nextNotifications = await dataAvailableNotificationIterator.ReadNextAsync().ConfigureAwait(false);
                     foreach (var dataAvailable in nextNotifications)
                     {
-                        var deleteResponse = await _repositoryContainer.Catalog.DeleteItemAsync<CosmosDataAvailable>(dataAvailable.Id, new PartitionKey(dataAvailable.PartitionKey)).ConfigureAwait(false);
-                        if (deleteResponse.StatusCode != HttpStatusCode.OK)
-                        {
-                            _logger.LogError("DeleteDataAvailableNotificationsInDrawerAsync, ErrorCode: {DeleteResponseStatusCode}", deleteResponse.StatusCode);
-                        }
+                        await DeleteDataAvailableNotificationAsync(dataAvailable).ConfigureAwait(false);
                     }
                 }
             }
-            catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+            catch (CosmosException ex)
             {
-                // Concurrent calls may have removed the file.
-                _logger.LogError(ex, "DeleteDataAvailableNotificationsInDrawerAsync, ErrorCode: {DeleteResponseStatusCode}", HttpStatusCode.NotFound);
+                _logger.LogError(ex, "DeleteDataAvailableNotificationsInDrawerAsync, ErrorCode: {StatusCode}", ex.StatusCode);
+                throw;
+            }
+        }
+
+        private async Task DeleteDataAvailableNotificationAsync(CosmosDataAvailable dataAvailable)
+        {
+            try
+            {
+                await _repositoryContainer.Catalog.DeleteItemAsync<CosmosDataAvailable>(dataAvailable.Id, new PartitionKey(dataAvailable.PartitionKey)).ConfigureAwait(false);
+            }
+            catch (CosmosException ex)
+            {
+                _logger.LogError(ex, "DeleteDataAvailableNotificationsInDrawerAsync, ErrorCode: {StatusCode}, DataAvailableId: {Id}", ex.StatusCode, dataAvailable.Id);
             }
         }
 
@@ -107,9 +115,10 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                         new PartitionKey(drawerToDelete.PartitionKey))
                     .ConfigureAwait(false);
             }
-            catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
             {
                 // Concurrent calls may have removed the file.
+                _logger.LogError(ex, "DeleteDrawerAsync, ErrorCode: {StatusCode}", ex.StatusCode);
             }
         }
     }
