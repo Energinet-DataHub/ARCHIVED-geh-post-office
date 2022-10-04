@@ -33,22 +33,19 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
         private readonly IMarketOperatorDataStorageService _marketOperatorDataStorageService;
         private readonly IDataBundleRequestSender _dataBundleRequestSender;
         private readonly ICorrelationContext _correlationContext;
-        private readonly IMarketOperatorFlowLogger _flogger;
 
         public BundleContentRequestService(
             ILogger logger,
             IMarketOperatorFlowLogger marketOperatorFlowLogger,
             IMarketOperatorDataStorageService marketOperatorDataStorageService,
             IDataBundleRequestSender dataBundleRequestSender,
-            ICorrelationContext correlationContext,
-            IMarketOperatorFlowLogger flogger)
+            ICorrelationContext correlationContext)
         {
             _logger = logger;
             _marketOperatorFlowLogger = marketOperatorFlowLogger;
             _marketOperatorDataStorageService = marketOperatorDataStorageService;
             _dataBundleRequestSender = dataBundleRequestSender;
             _correlationContext = correlationContext;
-            _flogger = flogger;
         }
 
         public async Task<IBundleContent?> WaitForBundleContentFromSubDomainAsync(Bundle bundle, ResponseFormat responseFormat, double responseVersion)
@@ -69,7 +66,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
             var response = await _dataBundleRequestSender.SendAsync(request, (DomainOrigin)bundle.Origin).ConfigureAwait(false);
             if (response == null)
             {
-                await _flogger.LogRequestDataFromSubdomainTimeoutFoundAsync(request.IdempotencyId).ConfigureAwait(false);
+                await _marketOperatorFlowLogger.LogRequestDataFromSubdomainTimeoutFoundAsync(request.IdempotencyId).ConfigureAwait(false);
                 _logger.LogProcess("Peek", "NoDomainResponse", _correlationContext.Id, bundle.Recipient.ToString(), bundle.BundleId.ToString(), bundle.Origin.ToString());
                 return null;
             }
