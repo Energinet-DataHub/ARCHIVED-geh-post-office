@@ -58,7 +58,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
 
         public Task LogRequestDataFromSubdomainTimeoutAsync(string correlationId)
         {
-            return LogAsync($"Request for data timeout when waiting for SubDomain, correlationId '{correlationId}'");
+            return LogAsync($"Request for data encountered a timeout (30 seconds) when waiting for SubDomain, correlationId '{correlationId}'");
         }
 
         public Task<string> GetLogAsync()
