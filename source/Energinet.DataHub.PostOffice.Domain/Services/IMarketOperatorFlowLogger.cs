@@ -46,7 +46,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         /// <summary>
         /// Logs message regarding a timeout when requesting data from at subdomain.
         /// </summary>
-        Task LogRequestDataFromSubdomainTimeoutAsync(string correlationId);
+        Task LogRequestDataFromSubdomainTimeoutAsync(string correlationId, DomainOrigin origin);
 
         /// <summary>
         /// Logs which sub domain is called for data retrieving bundle data
