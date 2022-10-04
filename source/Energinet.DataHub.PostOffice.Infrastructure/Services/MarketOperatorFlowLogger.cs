@@ -53,7 +53,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
 
         public Task LogSubDomainOriginDataRequestAsync(DomainOrigin origin)
         {
-            return LogAsync($"Bundle data requested at subdomain: '{origin}'");
+            return LogAsync($"Bundle data requested from subdomain: '{origin}'");
         }
 
         public Task<string> GetLogAsync()
