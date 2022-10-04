@@ -46,7 +46,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         /// <summary>
         /// Logs message regarding registry actor found
         /// </summary>
-        Task LogRequestDataFromSubdomainTimeoutFoundAsync(string correlationId);
+        Task LogRequestDataFromSubdomainTimeoutAsync(string correlationId);
 
         /// <summary>
         /// Logs which sub domain is called for data retrieving bundle data

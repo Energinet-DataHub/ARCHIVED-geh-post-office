@@ -66,7 +66,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
             var response = await _dataBundleRequestSender.SendAsync(request, (DomainOrigin)bundle.Origin).ConfigureAwait(false);
             if (response == null)
             {
-                await _marketOperatorFlowLogger.LogRequestDataFromSubdomainTimeoutFoundAsync(request.IdempotencyId).ConfigureAwait(false);
+                await _marketOperatorFlowLogger.LogRequestDataFromSubdomainTimeoutAsync(request.IdempotencyId).ConfigureAwait(false);
                 _logger.LogProcess("Peek", "NoDomainResponse", _correlationContext.Id, bundle.Recipient.ToString(), bundle.BundleId.ToString(), bundle.Origin.ToString());
                 return null;
             }
