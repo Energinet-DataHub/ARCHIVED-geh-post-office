@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using Energinet.DataHub.PostOffice.Domain.Services;
+using Energinet.DataHub.PostOffice.Infrastructure.Services;
 using SimpleInjector;
 
 namespace Energinet.DataHub.PostOffice.Common
@@ -24,6 +25,7 @@ namespace Energinet.DataHub.PostOffice.Common
             container.Register<IWeightCalculatorDomainService, WeightCalculatorDomainService>(Lifestyle.Scoped);
             container.Register<IMarketOperatorDataDomainService, MarketOperatorDataDomainService>(Lifestyle.Scoped);
             container.Register<IRequestBundleDomainService, RequestBundleDomainService>(Lifestyle.Scoped);
+            container.Register<IMarketOperatorFlowLogger, MarketOperatorFlowLogger>(Lifestyle.Scoped);
         }
     }
 }
