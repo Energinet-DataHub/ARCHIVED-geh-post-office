@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Services;
 using Microsoft.Extensions.Logging;
 
@@ -48,6 +49,11 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
         public Task LogLegacyActorNotFoundAsync(Guid externalActorId)
         {
             return LogAsync($"A legacy actor was not found with external id '{externalActorId}'");
+        }
+
+        public Task LogSubDomainOriginDataRequestAsync(DomainOrigin origin)
+        {
+            return LogAsync($"Bundle data requested from subdomain: '{origin}'");
         }
 
         public Task LogRequestDataFromSubdomainTimeoutFoundAsync(string correlationId)
