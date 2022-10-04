@@ -54,6 +54,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.Operations
             container.Register<ISharedIntegrationEventParser, SharedIntegrationEventParser>(Lifestyle.Singleton);
 
             container.Register<MarketParticipantIngestionFunction>(Lifestyle.Scoped);
+            container.Register<DataAvailableNotificationCleanUpFunction>(Lifestyle.Scoped);
 
             // health check
             container.Register<IHealthCheckEndpointHandler, HealthCheckEndpointHandler>(Lifestyle.Scoped);
