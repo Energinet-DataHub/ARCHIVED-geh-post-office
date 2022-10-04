@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using Energinet.DataHub.Core.App.Common.Abstractions.Actor;
 using Energinet.DataHub.PostOffice.Common.Configuration;
 using Energinet.DataHub.PostOffice.Common.Extensions;
+using Energinet.DataHub.PostOffice.Domain.Services;
 using Microsoft.Extensions.Configuration;
 
 namespace Energinet.DataHub.PostOffice.Common.Auth
@@ -28,10 +29,12 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
     public sealed class LegacyActorProvider : IActorProvider
     {
         private readonly IConfiguration _configuration;
+        private readonly IMarketOperatorFlowLogger _marketOperatorFlowLogger;
 
-        public LegacyActorProvider(IConfiguration configuration)
+        public LegacyActorProvider(IConfiguration configuration, IMarketOperatorFlowLogger marketOperatorFlowLogger)
         {
             _configuration = configuration;
+            _marketOperatorFlowLogger = marketOperatorFlowLogger;
         }
 
         [SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "Issue: https://github.com/dotnet/roslyn-analyzers/issues/5712")]
@@ -61,13 +64,18 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
             {
                 var record = (IDataRecord)reader;
 
-                return new Actor(
+                var actor = new Actor(
                     record.GetGuid(0),
                     record.GetInt32(1).ToString(CultureInfo.InvariantCulture),
                     record.GetString(2),
                     record.GetString(3));
+
+                await _marketOperatorFlowLogger.LogLegacyActorFoundAsync(actorId, actor.Identifier);
+
+                return actor;
             }
 
+            await _marketOperatorFlowLogger.LogLegacyActorNotFoundAsync(actorId);
             throw new InvalidOperationException($"Actor with id {actorId} not found.");
         }
     }
