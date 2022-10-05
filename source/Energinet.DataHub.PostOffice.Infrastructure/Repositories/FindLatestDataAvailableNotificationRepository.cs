@@ -84,7 +84,8 @@ public sealed class FindLatestDataAvailableNotificationRepository
         var itemsInDrawer = await CountItemsInDrawerAsync(notificationDrawer).ConfigureAwait(false);
         var isDequeued = itemsInDrawer == notificationDrawer.Position;
 
-        return (CosmosDataAvailableMapper.Map(latestNotification), latestNotification.Timestamp, isDequeued);
+        var timestamp = DateTimeOffset.FromUnixTimeMilliseconds(latestNotification.Timestamp).DateTime;
+        return (CosmosDataAvailableMapper.Map(latestNotification), timestamp, isDequeued);
     }
 
     private async Task<int> CountItemsInDrawerAsync(CosmosCabinetDrawer drawer)

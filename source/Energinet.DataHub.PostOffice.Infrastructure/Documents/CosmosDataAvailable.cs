@@ -42,6 +42,6 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Documents
         public string DocumentType { get; init; }
 
         [JsonProperty(PropertyName = "_ts")]
-        public DateTime Timestamp { get; init; }
+        public long Timestamp { get; init; }
     }
 }
