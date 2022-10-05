@@ -96,6 +96,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator
             container.Register<IExternalBundleIdProvider, ExternalBundleIdProvider>(Lifestyle.Singleton);
             container.Register<IExternalResponseFormatProvider, ExternalResponseFormatProvider>(Lifestyle.Singleton);
             container.Register<IExternalResponseVersionProvider, ExternalResponseVersionProvider>(Lifestyle.Singleton);
+            container.Register<IMarketOperatorFlowLogHelper, MarketOperatorFlowLogHelper>(Lifestyle.Singleton);
 
             AddRequestResponseLogging(container);
 

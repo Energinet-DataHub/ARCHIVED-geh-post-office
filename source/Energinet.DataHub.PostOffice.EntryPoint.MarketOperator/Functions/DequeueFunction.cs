@@ -28,13 +28,16 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions
     {
         private readonly IMediator _mediator;
         private readonly IMarketOperatorIdentity _operatorIdentity;
+        private readonly IMarketOperatorFlowLogHelper _marketOperatorFlowLogHelper;
 
         public DequeueFunction(
             IMediator mediator,
-            IMarketOperatorIdentity operatorIdentity)
+            IMarketOperatorIdentity operatorIdentity,
+            IMarketOperatorFlowLogHelper marketOperatorFlowLogHelper)
         {
             _mediator = mediator;
             _operatorIdentity = operatorIdentity;
+            _marketOperatorFlowLogHelper = marketOperatorFlowLogHelper;
         }
 
         [Function("Dequeue")]
@@ -49,7 +52,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions
 
                 var httpResponse = response.IsDequeued
                     ? request.CreateResponse(HttpStatusCode.OK)
-                    : request.CreateResponse(HttpStatusCode.NotFound);
+                    : await _marketOperatorFlowLogHelper.GetFlowLogResponseAsync(request, HttpStatusCode.NotFound).ConfigureAwait(false);
 
                 return httpResponse;
             });

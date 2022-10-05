@@ -18,7 +18,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Application.Commands;
-using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpers;
 using Energinet.DataHub.PostOffice.Tests.Common.Auth;
@@ -53,7 +52,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
                 identifier,
                 new ExternalBundleIdProvider(),
                 new ExternalResponseFormatProvider(),
-                new ExternalResponseVersionProvider());
+                new ExternalResponseVersionProvider(),
+                new MockedMarketOperatorFlowLogHelper());
 
             var response = await sut.RunAsync(request).ConfigureAwait(false);
 
@@ -83,7 +83,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
                 identifier,
                 new ExternalBundleIdProvider(),
                 new ExternalResponseFormatProvider(),
-                new ExternalResponseVersionProvider());
+                new ExternalResponseVersionProvider(),
+                new MockedMarketOperatorFlowLogHelper());
 
             var response = await sut.RunAsync(request).ConfigureAwait(false);
 
@@ -112,7 +113,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
                 identifier,
                 new ExternalBundleIdProvider(),
                 new ExternalResponseFormatProvider(),
-                new ExternalResponseVersionProvider());
+                new ExternalResponseVersionProvider(),
+                new MockedMarketOperatorFlowLogHelper());
 
             var response = await sut.RunAsync(request).ConfigureAwait(false);
 
@@ -141,7 +143,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
                 identifier,
                 new ExternalBundleIdProvider(),
                 new ExternalResponseFormatProvider(),
-                new ExternalResponseVersionProvider());
+                new ExternalResponseVersionProvider(),
+                new MockedMarketOperatorFlowLogHelper());
             var response = await sut.RunAsync(request).ConfigureAwait(false);
 
             // Assert
