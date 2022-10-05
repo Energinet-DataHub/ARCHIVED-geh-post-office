@@ -23,7 +23,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.Operations.Functions
 {
     public sealed class DataAvailableNotificationCleanUpFunction
     {
-        private const string FunctionName = "MarketParticipantIngestion";
+        private const string FunctionName = "DataAvailableNotificationCleanUp";
 
         private readonly ILogger<DataAvailableNotificationCleanUpFunction> _logger;
         private readonly IMediator _mediator;
