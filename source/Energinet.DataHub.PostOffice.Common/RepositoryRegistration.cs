@@ -31,6 +31,7 @@ namespace Energinet.DataHub.PostOffice.Common
             container.Register<IBundleRepository, LegacyBundleRepositoryProxy>(Lifestyle.Scoped);
             container.Register<IBundleRepositoryContainer, BundleRepositoryContainer>(Lifestyle.Scoped);
             container.Register<ISequenceNumberRepository, SequenceNumberRepository>(Lifestyle.Scoped);
+            container.Register<FindLatestDataAvailableNotificationRepository>(Lifestyle.Scoped);
 
             container.Register<DataAvailableNotificationRepository>(Lifestyle.Scoped);
             container.Register<BundleRepository>(Lifestyle.Scoped);

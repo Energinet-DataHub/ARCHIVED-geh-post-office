@@ -249,59 +249,6 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             await Task.WhenAll(updateTasks).ConfigureAwait(false);
         }
 
-        public async Task<(DataAvailableNotification? Notification, DateTime Timestamp, bool IsDequeued)> FindLatestDataAvailableNotificationAsync(
-            ActorId recipient,
-            DomainOrigin domain)
-        {
-            var asLinq = _repositoryContainer
-                .Cabinet
-                .GetItemLinqQueryable<CosmosDataAvailable>();
-
-            var query =
-                from dataAvailableNotification in asLinq
-                where dataAvailableNotification.Recipient == recipient.Value
-                where dataAvailableNotification.Origin == domain.ToString()
-                orderby dataAvailableNotification.Timestamp descending
-                select dataAvailableNotification;
-
-            var latestNotification = await query
-                .Take(1)
-                .AsCosmosIteratorAsync()
-                .FirstOrDefaultAsync()
-                .ConfigureAwait(false);
-
-            if (latestNotification == null)
-                return (null, DateTime.MinValue, false);
-
-            var partitionKey = string.Join(
-                '_',
-                latestNotification.Recipient,
-                latestNotification.Origin,
-                latestNotification.ContentType);
-
-            var drawerLinq = _repositoryContainer
-                .Cabinet
-                .GetItemLinqQueryable<CosmosCabinetDrawer>();
-
-            var drawerQuery =
-                from cabinetDrawer in drawerLinq
-                where
-                    cabinetDrawer.PartitionKey == partitionKey &&
-                    cabinetDrawer.Id == latestNotification.PartitionKey
-                select cabinetDrawer;
-
-            var notificationDrawer = await drawerQuery
-                .Take(1)
-                .AsCosmosIteratorAsync()
-                .SingleAsync()
-                .ConfigureAwait(false);
-
-            var itemsInDrawer = await CountItemsInDrawerAsync(notificationDrawer).ConfigureAwait(false);
-            var isDequeued = itemsInDrawer == notificationDrawer.Position;
-
-            return (CosmosDataAvailableMapper.Map(latestNotification), latestNotification.Timestamp, isDequeued);
-        }
-
         private static CosmosCatalogEntry CreateCatalogEntry(DataAvailableNotification notification)
         {
             var partitionKey = string.Join(

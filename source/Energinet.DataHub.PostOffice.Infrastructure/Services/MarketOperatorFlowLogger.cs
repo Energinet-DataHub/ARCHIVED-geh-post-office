@@ -26,11 +26,11 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
     {
         private readonly ConcurrentQueue<string> _log = new();
 
-        private readonly DataAvailableNotificationRepository _dataAvailableNotificationRepository;
+        private readonly FindLatestDataAvailableNotificationRepository _dataAvailableNotificationRepository;
         private readonly ILogger _logger;
 
         public MarketOperatorFlowLogger(
-            DataAvailableNotificationRepository dataAvailableNotificationRepository,
+            FindLatestDataAvailableNotificationRepository dataAvailableNotificationRepository,
             ILogger logger)
         {
             _dataAvailableNotificationRepository = dataAvailableNotificationRepository;
