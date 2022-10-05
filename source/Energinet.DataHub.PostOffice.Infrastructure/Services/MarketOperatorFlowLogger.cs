@@ -15,18 +15,25 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using Energinet.DataHub.PostOffice.Domain.Model;
+using Energinet.DataHub.PostOffice.Domain.Repositories;
 using Energinet.DataHub.PostOffice.Domain.Services;
 using Microsoft.Extensions.Logging;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Services
 {
-    public class MarketOperatorFlowLogger : IMarketOperatorFlowLogger
+    public sealed class MarketOperatorFlowLogger : IMarketOperatorFlowLogger
     {
-        private readonly ConcurrentQueue<string> _log = new ConcurrentQueue<string>();
+        private readonly ConcurrentQueue<string> _log = new();
+
+        private readonly IDataAvailableNotificationRepository _dataAvailableNotificationRepository;
         private readonly ILogger _logger;
 
-        public MarketOperatorFlowLogger(ILogger logger)
+        public MarketOperatorFlowLogger(
+            IDataAvailableNotificationRepository dataAvailableNotificationRepository,
+            ILogger logger)
         {
+            _dataAvailableNotificationRepository = dataAvailableNotificationRepository;
             _logger = logger;
         }
 
@@ -48,6 +55,35 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
         public Task LogLegacyActorNotFoundAsync(Guid externalActorId)
         {
             return LogAsync($"A legacy actor was not found with external id '{externalActorId}'");
+        }
+
+        public async Task LogLatestDataAvailableNotificationsAsync(ActorId marketOperator, DomainOrigin[] domains)
+        {
+            ArgumentNullException.ThrowIfNull(marketOperator);
+            ArgumentNullException.ThrowIfNull(domains);
+
+            foreach (var domainOrigin in domains)
+            {
+                var (notification, timestamp, isDequeued) = await _dataAvailableNotificationRepository
+                    .FindLatestDataAvailableNotificationAsync(marketOperator, domainOrigin)
+                    .ConfigureAwait(false);
+
+                if (notification != null)
+                {
+                    if (isDequeued)
+                    {
+                        await LogAsync($"No new notifications found for actor '{marketOperator}' from domain {domainOrigin}. Latest received DataAvailable is {notification.NotificationId} from {timestamp:u}.").ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await LogAsync($"! Newest notification found for actor '{marketOperator}' from domain {domainOrigin}. DataAvailable is {notification.NotificationId} from {timestamp:u}.").ConfigureAwait(false);
+                    }
+                }
+                else
+                {
+                    await LogAsync($"No notifications found for actor '{marketOperator}' from domain {domainOrigin}.").ConfigureAwait(false);
+                }
+            }
         }
 
         public Task<string> GetLogAsync()

@@ -15,6 +15,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Energinet.DataHub.PostOffice.Domain.Repositories;
 using Energinet.DataHub.PostOffice.Infrastructure.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -32,7 +33,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
             // assert
             var externalActorId = Guid.NewGuid();
             var actorId = Guid.NewGuid();
-            var target = new MarketOperatorFlowLogger(new Mock<ILogger>().Object);
+            var target = new MarketOperatorFlowLogger(
+                new Mock<IDataAvailableNotificationRepository>().Object,
+                new Mock<ILogger>().Object);
 
             // act
             await target.LogActorFoundAsync(externalActorId, actorId);
@@ -49,7 +52,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
         {
             // assert
             var externalActorId = Guid.NewGuid();
-            var target = new MarketOperatorFlowLogger(new Mock<ILogger>().Object);
+            var target = new MarketOperatorFlowLogger(
+                new Mock<IDataAvailableNotificationRepository>().Object,
+                new Mock<ILogger>().Object);
 
             // act
             await target.LogActorNotFoundAsync(externalActorId);
@@ -66,7 +71,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
             // assert
             var externalActorId = Guid.NewGuid();
             var gln = Guid.NewGuid().ToString();
-            var target = new MarketOperatorFlowLogger(new Mock<ILogger>().Object);
+            var target = new MarketOperatorFlowLogger(
+                new Mock<IDataAvailableNotificationRepository>().Object,
+                new Mock<ILogger>().Object);
 
             // act
             await target.LogLegacyActorFoundAsync(externalActorId, gln);
@@ -83,7 +90,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
         {
             // assert
             var externalActorId = Guid.NewGuid();
-            var target = new MarketOperatorFlowLogger(new Mock<ILogger>().Object);
+            var target = new MarketOperatorFlowLogger(
+                new Mock<IDataAvailableNotificationRepository>().Object,
+                new Mock<ILogger>().Object);
 
             // act
             await target.LogLegacyActorNotFoundAsync(externalActorId);
@@ -100,7 +109,10 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
             // assert
             var externalActorIdFirst = Guid.NewGuid();
             var externalActorIdSecond = Guid.NewGuid();
-            var target = new MarketOperatorFlowLogger(new Mock<ILogger>().Object);
+            var target = new MarketOperatorFlowLogger(
+                new Mock<IDataAvailableNotificationRepository>().Object,
+                new Mock<ILogger>().Object);
+
             await target.LogActorNotFoundAsync(externalActorIdFirst);
             await target.LogLegacyActorNotFoundAsync(externalActorIdSecond);
 

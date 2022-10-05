@@ -24,6 +24,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
+using Energinet.DataHub.PostOffice.Domain.Services;
 using Energinet.DataHub.PostOffice.Infrastructure.Common;
 using Energinet.DataHub.PostOffice.Infrastructure.Documents;
 using Energinet.DataHub.PostOffice.Infrastructure.Mappers;
@@ -42,15 +43,18 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
         private readonly IDataAvailableNotificationRepositoryContainer _repositoryContainer;
         private readonly IBundleRepositoryContainer _bundleRepositoryContainer;
         private readonly ISequenceNumberRepository _sequenceNumberRepository;
+        private readonly IMarketOperatorFlowLogger _marketOperatorFlowLogger;
 
         public DataAvailableNotificationRepository(
             IBundleRepositoryContainer bundleRepositoryContainer,
             IDataAvailableNotificationRepositoryContainer repositoryContainer,
-            ISequenceNumberRepository sequenceNumberRepository)
+            ISequenceNumberRepository sequenceNumberRepository,
+            IMarketOperatorFlowLogger marketOperatorFlowLogger)
         {
             _bundleRepositoryContainer = bundleRepositoryContainer;
             _repositoryContainer = repositoryContainer;
             _sequenceNumberRepository = sequenceNumberRepository;
+            _marketOperatorFlowLogger = marketOperatorFlowLogger;
         }
 
         public async Task SaveAsync(CabinetKey key, IReadOnlyList<DataAvailableNotification> notifications)
@@ -192,6 +196,11 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             // If SaveAsync fails to insert DataAvailable, for example due to crash/timeout,
             // there will be a catalog entry pointing to a non-existent item.
             await DeleteOldCatalogEntryAsync(smallestEntry).ConfigureAwait(false);
+
+            await _marketOperatorFlowLogger
+                .LogLatestDataAvailableNotificationsAsync(recipient, domains)
+                .ConfigureAwait(false);
+
             return null;
         }
 
@@ -240,6 +249,59 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 });
 
             await Task.WhenAll(updateTasks).ConfigureAwait(false);
+        }
+
+        public async Task<(DataAvailableNotification? Notification, DateTime Timestamp, bool IsDequeued)> FindLatestDataAvailableNotificationAsync(
+            ActorId recipient,
+            DomainOrigin domain)
+        {
+            var asLinq = _repositoryContainer
+                .Cabinet
+                .GetItemLinqQueryable<CosmosDataAvailable>();
+
+            var query =
+                from dataAvailableNotification in asLinq
+                where dataAvailableNotification.Recipient == recipient.Value
+                where dataAvailableNotification.Origin == domain.ToString()
+                orderby dataAvailableNotification.Timestamp descending
+                select dataAvailableNotification;
+
+            var latestNotification = await query
+                .Take(1)
+                .AsCosmosIteratorAsync()
+                .FirstOrDefaultAsync()
+                .ConfigureAwait(false);
+
+            if (latestNotification == null)
+                return (null, DateTime.MinValue, false);
+
+            var partitionKey = string.Join(
+                '_',
+                latestNotification.Recipient,
+                latestNotification.Origin,
+                latestNotification.ContentType);
+
+            var drawerLinq = _repositoryContainer
+                .Cabinet
+                .GetItemLinqQueryable<CosmosCabinetDrawer>();
+
+            var drawerQuery =
+                from cabinetDrawer in drawerLinq
+                where
+                    cabinetDrawer.PartitionKey == partitionKey &&
+                    cabinetDrawer.Id == latestNotification.PartitionKey
+                select cabinetDrawer;
+
+            var notificationDrawer = await drawerQuery
+                .Take(1)
+                .AsCosmosIteratorAsync()
+                .SingleAsync()
+                .ConfigureAwait(false);
+
+            var itemsInDrawer = await CountItemsInDrawerAsync(notificationDrawer).ConfigureAwait(false);
+            var isDequeued = itemsInDrawer == notificationDrawer.Position;
+
+            return (CosmosDataAvailableMapper.Map(latestNotification), latestNotification.Timestamp, isDequeued);
         }
 
         private static CosmosCatalogEntry CreateCatalogEntry(DataAvailableNotification notification)
