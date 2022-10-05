@@ -21,6 +21,7 @@ using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Services;
 using Energinet.DataHub.PostOffice.Infrastructure.Model;
+using Energinet.DataHub.PostOffice.Infrastructure.Repositories;
 using Energinet.DataHub.PostOffice.Infrastructure.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -44,7 +45,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
             var dataBundleRequestSenderMock = new Mock<IDataBundleRequestSender>();
             var target = new BundleContentRequestService(
                 new Mock<ILogger>().Object,
-                new MarketOperatorFlowLogger(new Mock<ILogger>().Object),
+                new MarketOperatorFlowLogger(
+                    new Mock<DataAvailableNotificationRepository>().Object,
+                    new Mock<ILogger>().Object),
                 marketOperatorDataStorageServiceMock.Object,
                 dataBundleRequestSenderMock.Object,
                 new Mock<ICorrelationContext>().Object);
@@ -80,7 +83,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
             var dataBundleRequestSenderMock = new Mock<IDataBundleRequestSender>();
             var target = new BundleContentRequestService(
                 new Mock<ILogger>().Object,
-                new MarketOperatorFlowLogger(new Mock<ILogger>().Object),
+                new MarketOperatorFlowLogger(
+                    new Mock<DataAvailableNotificationRepository>().Object,
+                    new Mock<ILogger>().Object),
                 marketOperatorDataStorageServiceMock.Object,
                 dataBundleRequestSenderMock.Object,
                 new Mock<ICorrelationContext>().Object);
@@ -121,7 +126,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
             // Arrange
             var marketOperatorDataStorageServiceMock = new Mock<IMarketOperatorDataStorageService>();
             var dataBundleRequestSenderMock = new Mock<IDataBundleRequestSender>();
-            var marketOperatorFlowLogger = new MarketOperatorFlowLogger(new Mock<ILogger>().Object);
+            var marketOperatorFlowLogger = new MarketOperatorFlowLogger(
+                new Mock<DataAvailableNotificationRepository>().Object,
+                new Mock<ILogger>().Object);
 
             var target = new BundleContentRequestService(
                 new Mock<ILogger>().Object,
