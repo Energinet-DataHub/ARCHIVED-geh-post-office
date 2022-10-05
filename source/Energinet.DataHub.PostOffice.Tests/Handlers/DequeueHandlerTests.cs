@@ -23,6 +23,7 @@ using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Application.Handlers;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Services;
+using Energinet.DataHub.PostOffice.Infrastructure.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -44,7 +45,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                 warehouseDomainServiceMock.Object,
                 dequeueNotificationSenderMock.Object,
                 new Mock<ILogger>().Object,
-                new Mock<ICorrelationContext>().Object);
+                new Mock<ICorrelationContext>().Object,
+                new MarketOperatorFlowLogger(new Mock<ILogger>().Object));
 
             // Act + Assert
             await Assert
@@ -84,7 +86,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                 warehouseDomainServiceMock.Object,
                 dequeueNotificationSenderMock.Object,
                 new Mock<ILogger>().Object,
-                new Mock<ICorrelationContext>().Object);
+                new Mock<ICorrelationContext>().Object,
+                new MarketOperatorFlowLogger(new Mock<ILogger>().Object));
 
             // Act
             var response = await target.Handle(request, CancellationToken.None).ConfigureAwait(false);
@@ -116,7 +119,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                 warehouseDomainServiceMock.Object,
                 dequeueNotificationSenderMock.Object,
                 new Mock<ILogger>().Object,
-                new Mock<ICorrelationContext>().Object);
+                new Mock<ICorrelationContext>().Object,
+                new MarketOperatorFlowLogger(new Mock<ILogger>().Object));
 
             // Act
             var response = await target.Handle(request, CancellationToken.None).ConfigureAwait(false);
