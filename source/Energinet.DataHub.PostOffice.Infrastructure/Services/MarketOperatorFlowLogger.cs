@@ -16,8 +16,8 @@ using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Domain.Model;
-using Energinet.DataHub.PostOffice.Domain.Repositories;
 using Energinet.DataHub.PostOffice.Domain.Services;
+using Energinet.DataHub.PostOffice.Infrastructure.Repositories;
 using Microsoft.Extensions.Logging;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Services
@@ -26,11 +26,11 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
     {
         private readonly ConcurrentQueue<string> _log = new();
 
-        private readonly IDataAvailableNotificationRepository _dataAvailableNotificationRepository;
+        private readonly DataAvailableNotificationRepository _dataAvailableNotificationRepository;
         private readonly ILogger _logger;
 
         public MarketOperatorFlowLogger(
-            IDataAvailableNotificationRepository dataAvailableNotificationRepository,
+            DataAvailableNotificationRepository dataAvailableNotificationRepository,
             ILogger logger)
         {
             _dataAvailableNotificationRepository = dataAvailableNotificationRepository;

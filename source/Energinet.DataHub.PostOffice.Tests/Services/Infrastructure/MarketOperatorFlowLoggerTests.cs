@@ -15,7 +15,6 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Energinet.DataHub.PostOffice.Domain.Repositories;
 using Energinet.DataHub.PostOffice.Infrastructure.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -34,7 +33,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
             var externalActorId = Guid.NewGuid();
             var actorId = Guid.NewGuid();
             var target = new MarketOperatorFlowLogger(
-                new Mock<IDataAvailableNotificationRepository>().Object,
+                null!,
                 new Mock<ILogger>().Object);
 
             // act
@@ -53,7 +52,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
             // assert
             var externalActorId = Guid.NewGuid();
             var target = new MarketOperatorFlowLogger(
-                new Mock<IDataAvailableNotificationRepository>().Object,
+                null!,
                 new Mock<ILogger>().Object);
 
             // act
@@ -72,7 +71,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
             var externalActorId = Guid.NewGuid();
             var gln = Guid.NewGuid().ToString();
             var target = new MarketOperatorFlowLogger(
-                new Mock<IDataAvailableNotificationRepository>().Object,
+                null!,
                 new Mock<ILogger>().Object);
 
             // act
@@ -91,7 +90,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
             // assert
             var externalActorId = Guid.NewGuid();
             var target = new MarketOperatorFlowLogger(
-                new Mock<IDataAvailableNotificationRepository>().Object,
+                null!,
                 new Mock<ILogger>().Object);
 
             // act
@@ -110,7 +109,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
             var externalActorIdFirst = Guid.NewGuid();
             var externalActorIdSecond = Guid.NewGuid();
             var target = new MarketOperatorFlowLogger(
-                new Mock<IDataAvailableNotificationRepository>().Object,
+                null!,
                 new Mock<ILogger>().Object);
 
             await target.LogActorNotFoundAsync(externalActorIdFirst);

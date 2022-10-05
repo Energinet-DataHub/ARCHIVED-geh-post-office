@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Domain.Model;
@@ -59,10 +58,5 @@ public sealed class LegacyDataAvailableNotificationRepositoryProxy : IDataAvaila
     public Task AcknowledgeAsync(Bundle bundle)
     {
         return _dataAvailableNotificationRepository.AcknowledgeAsync(bundle);
-    }
-
-    public Task<(DataAvailableNotification? Notification, DateTime Timestamp, bool IsDequeued)> FindLatestDataAvailableNotificationAsync(ActorId recipient, DomainOrigin domain)
-    {
-        return _dataAvailableNotificationRepository.FindLatestDataAvailableNotificationAsync(recipient, domain);
     }
 }
