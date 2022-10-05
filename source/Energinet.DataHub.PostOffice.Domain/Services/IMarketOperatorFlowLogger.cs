@@ -58,6 +58,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         /// </summary>
         Task LogLatestDataAvailableNotificationsAsync(ActorId marketOperator, DomainOrigin[] domains);
 
+        /// <summary>
         /// Logs which actor requested a deuque
         /// </summary>
         /// <param name="externalActorId">The B2C id of the actor trying to dequeue</param>
