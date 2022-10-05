@@ -33,44 +33,53 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions
         private readonly IExternalBundleIdProvider _bundleIdProvider;
         private readonly IExternalResponseFormatProvider _responseFormatProvider;
         private readonly IExternalResponseVersionProvider _responseVersionProvider;
+        private readonly IMarketOperatorFlowLogHelper _marketOperatorFlowLogHelper;
 
         public PeekFunction(
             IMediator mediator,
             IMarketOperatorIdentity operatorIdentity,
             IExternalBundleIdProvider bundleIdProvider,
             IExternalResponseFormatProvider responseFormatProvider,
-            IExternalResponseVersionProvider responseVersionProvider)
+            IExternalResponseVersionProvider responseVersionProvider,
+            IMarketOperatorFlowLogHelper marketOperatorFlowLogHelper)
         {
             _mediator = mediator;
             _operatorIdentity = operatorIdentity;
             _bundleIdProvider = bundleIdProvider;
             _responseFormatProvider = responseFormatProvider;
             _responseVersionProvider = responseVersionProvider;
+            _marketOperatorFlowLogHelper = marketOperatorFlowLogHelper;
         }
 
         [Function("Peek")]
         public Task<HttpResponseData> RunAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get")]
-            HttpRequestData request)
+            HttpRequestData request,
+            bool? log = false)
         {
             return request.ProcessAsync(async () =>
             {
                 var responseFormat = _responseFormatProvider.TryGetResponseFormat(request);
+
                 var command = new PeekCommand(
                     _operatorIdentity.ActorId,
                     _bundleIdProvider.TryGetBundleId(request),
                     responseFormat,
                     _responseVersionProvider.TryGetResponseVersion(request));
+
                 var (hasContent, bundleId, stream, documentTypes) = await _mediator.Send(command).ConfigureAwait(false);
 
-                var response = hasContent
-                    ? request.CreateResponse(stream,  responseFormat == ResponseFormat.Xml ? MediaTypeNames.Application.Xml : MediaTypeNames.Application.Json)
+                if (hasContent)
+                {
+                    var response = request.CreateResponse(stream, responseFormat == ResponseFormat.Xml ? MediaTypeNames.Application.Xml : MediaTypeNames.Application.Json);
+                    response.Headers.Add(Constants.BundleIdHeaderName, bundleId);
+                    response.Headers.Add(Constants.MessageTypeName, string.Join(",", documentTypes));
+                    return response;
+                }
+
+                return log == true
+                    ? await _marketOperatorFlowLogHelper.GetFlowLogResponseAsync(request, HttpStatusCode.NoContent).ConfigureAwait(false)
                     : request.CreateResponse(HttpStatusCode.NoContent);
-
-                response.Headers.Add(Constants.BundleIdHeaderName, bundleId);
-                response.Headers.Add(Constants.MessageTypeName, string.Join(",", documentTypes));
-
-                return response;
             });
         }
     }
