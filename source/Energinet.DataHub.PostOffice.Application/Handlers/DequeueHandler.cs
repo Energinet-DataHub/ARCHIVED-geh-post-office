@@ -34,17 +34,20 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
         private readonly IDequeueNotificationSender _dequeueNotificationSender;
         private readonly ILogger _logger;
         private readonly ICorrelationContext _correlationContext;
+        private readonly IMarketOperatorFlowLogger _marketOperatorFlowLogger;
 
         public DequeueHandler(
             IMarketOperatorDataDomainService marketOperatorDataDomainService,
             IDequeueNotificationSender dequeueNotificationSender,
             ILogger logger,
-            ICorrelationContext correlationContext)
+            ICorrelationContext correlationContext,
+            IMarketOperatorFlowLogger marketOperatorFlowLogger)
         {
             _marketOperatorDataDomainService = marketOperatorDataDomainService;
             _dequeueNotificationSender = dequeueNotificationSender;
             _logger = logger;
             _correlationContext = correlationContext;
+            _marketOperatorFlowLogger = marketOperatorFlowLogger;
         }
 
         public async Task<DequeueResponse> Handle(DequeueCommand request, CancellationToken cancellationToken)
@@ -57,6 +60,10 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
             var recipient = Guid.TryParse(request.MarketOperator, out var actorId)
                 ? new ActorId(actorId)
                 : new LegacyActorId(new GlobalLocationNumber(request.MarketOperator));
+
+            await _marketOperatorFlowLogger
+                .LogActorDequeueingAsync(recipient.Value, _correlationContext.Id, request.BundleId)
+                .ConfigureAwait(false);
 
             var (canAcknowledge, bundle) = await _marketOperatorDataDomainService
                 .CanAcknowledgeAsync(recipient, bundleId)
