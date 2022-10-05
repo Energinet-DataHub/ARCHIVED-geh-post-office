@@ -44,6 +44,11 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         Task LogLegacyActorNotFoundAsync(Guid externalActorId);
 
         /// <summary>
+        /// Logs message regarding a timeout when requesting data from at subdomain.
+        /// </summary>
+        Task LogRequestDataFromSubdomainTimeoutAsync(string correlationId, DomainOrigin origin);
+
+        /// <summary>
         /// Logs which sub domain is called for data retrieving bundle data
         /// </summary>
         Task LogSubDomainOriginDataRequestAsync(DomainOrigin origin);
