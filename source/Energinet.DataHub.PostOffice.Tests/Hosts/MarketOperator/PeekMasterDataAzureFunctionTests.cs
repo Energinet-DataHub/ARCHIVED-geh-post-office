@@ -19,7 +19,6 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Application.Commands;
-using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions;
 using Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpers;
 using Energinet.DataHub.PostOffice.Tests.Common.Auth;
@@ -57,7 +56,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
                 mockedIdentity,
                 new ExternalBundleIdProvider(),
                 new ExternalResponseFormatProvider(),
-                new ExternalResponseVersionProvider());
+                new ExternalResponseVersionProvider(),
+                new MockedMarketOperatorFlowLogHelper());
 
             // Act
             var response = await target.RunAsync(mockedRequestData).ConfigureAwait(false);
@@ -87,7 +87,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
                 mockedIdentity,
                 new ExternalBundleIdProvider(),
                 new ExternalResponseFormatProvider(),
-                new ExternalResponseVersionProvider());
+                new ExternalResponseVersionProvider(),
+                new MockedMarketOperatorFlowLogHelper());
 
             // Act
             var response = await target.RunAsync(mockedRequestData).ConfigureAwait(false);
@@ -114,7 +115,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
                 mockedIdentity,
                 new ExternalBundleIdProvider(),
                 new ExternalResponseFormatProvider(),
-                new ExternalResponseVersionProvider());
+                new ExternalResponseVersionProvider(),
+                new MockedMarketOperatorFlowLogHelper());
 
             // Act
             var response = await target.RunAsync(mockedRequestData).ConfigureAwait(false);
@@ -141,7 +143,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
                 mockedIdentity,
                 new ExternalBundleIdProvider(),
                 new ExternalResponseFormatProvider(),
-                new ExternalResponseVersionProvider());
+                new ExternalResponseVersionProvider(),
+                new MockedMarketOperatorFlowLogHelper());
 
             // Act
             var response = await target.RunAsync(mockedRequestData).ConfigureAwait(false);
