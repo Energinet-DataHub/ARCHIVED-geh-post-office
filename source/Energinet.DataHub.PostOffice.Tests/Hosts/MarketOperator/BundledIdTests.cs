@@ -35,7 +35,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
         private const double ResponseVersion = 1.0;
 
         [Fact]
-        public async Task Given_PeekAggregations_WhenBundleIdIsPresentInQuery_ShouldSetBundledIdHeader()
+        public async Task PeekAggregations_WithContent_SetsBundledIdHeader()
         {
             // Arrange
             var bundleId = Guid.NewGuid().ToString("N");
@@ -43,7 +43,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
 
             var request = MockHelpers.CreateHttpRequestData(url: path);
             var mediator = new Mock<IMediator>();
-            mediator.Setup(p => p.Send(It.IsAny<PeekAggregationsCommand>(), default)).ReturnsAsync(new PeekResponse(false, bundleId, Stream.Null, Enumerable.Empty<string>()));
+            mediator
+                .Setup(p => p.Send(It.IsAny<PeekAggregationsCommand>(), default))
+                .ReturnsAsync(new PeekResponse(true, bundleId, Stream.Null, Enumerable.Empty<string>()));
             var identifier = new MockedMarketOperatorIdentity("fake_value");
 
             // Act
@@ -65,7 +67,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
         }
 
         [Fact]
-        public async Task Given_Peek_WhenBundleIdIsPresentInQuery_ShouldSetBundleIdHeader()
+        public async Task Peek_WithContent_SetsBundleIdHeader()
         {
             // Arrange
             var bundleId = Guid.NewGuid().ToString("N");
@@ -74,7 +76,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
 
             var request = MockHelpers.CreateHttpRequestData(url: path);
             var mediator = new Mock<IMediator>();
-            mediator.Setup(p => p.Send(It.IsAny<PeekCommand>(), default)).ReturnsAsync(new PeekResponse(false, bundleId, Stream.Null, Enumerable.Empty<string>()));
+            mediator
+                .Setup(p => p.Send(It.IsAny<PeekCommand>(), default))
+                .ReturnsAsync(new PeekResponse(true, bundleId, Stream.Null, Enumerable.Empty<string>()));
             var identifier = new MockedMarketOperatorIdentity("fake_value");
 
             // Act
@@ -96,7 +100,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
         }
 
         [Fact]
-        public async Task Given_PeekMasterData_WhenBundleIdIsPresentInQuery_ShouldSetBundleIdHeader()
+        public async Task PeekMasterData_WithContent_SetsBundleIdHeader()
         {
             // Arrange
             var bundleId = Guid.NewGuid().ToString("N");
@@ -104,7 +108,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
 
             var request = MockHelpers.CreateHttpRequestData(url: path);
             var mediator = new Mock<IMediator>();
-            mediator.Setup(p => p.Send(It.IsAny<PeekMasterDataCommand>(), default)).ReturnsAsync(new PeekResponse(false, bundleId, Stream.Null, Enumerable.Empty<string>()));
+            mediator
+                .Setup(p => p.Send(It.IsAny<PeekMasterDataCommand>(), default))
+                .ReturnsAsync(new PeekResponse(true, bundleId, Stream.Null, Enumerable.Empty<string>()));
             var identifier = new MockedMarketOperatorIdentity("fake_value");
 
             // Act
@@ -126,7 +132,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
         }
 
         [Fact]
-        public async Task Given_PeekTimeSeries_WhenBundleIdIsPresentInQuery_ShouldSetBundleIdHeader()
+        public async Task PeekTimeSeries_BundleIdIsPresentInQuery_SetsBundleIdHeader()
         {
             // Arrange
             var bundleId = Guid.NewGuid().ToString("N");
@@ -134,7 +140,9 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
 
             var request = MockHelpers.CreateHttpRequestData(url: path);
             var mediator = new Mock<IMediator>();
-            mediator.Setup(p => p.Send(It.IsAny<PeekTimeSeriesCommand>(), default)).ReturnsAsync(new PeekResponse(false, bundleId, Stream.Null, Enumerable.Empty<string>()));
+            mediator
+                .Setup(p => p.Send(It.IsAny<PeekTimeSeriesCommand>(), default))
+                .ReturnsAsync(new PeekResponse(true, bundleId, Stream.Null, Enumerable.Empty<string>()));
             var identifier = new MockedMarketOperatorIdentity("fake_value");
 
             // Act
