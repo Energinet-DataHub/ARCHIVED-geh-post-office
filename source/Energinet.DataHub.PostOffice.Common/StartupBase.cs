@@ -26,6 +26,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using NodaTime;
 using SimpleInjector;
 
 namespace Energinet.DataHub.PostOffice.Common
@@ -71,6 +72,9 @@ namespace Energinet.DataHub.PostOffice.Common
 
             // feature flags
             Container.RegisterSingleton<IFeatureFlags, FeatureFlags>();
+
+            // SystemClock
+            Container.RegisterSingleton<IClock>(() => SystemClock.Instance);
 
             // Add Application insights telemetry
             services.AddApplicationInsights();
