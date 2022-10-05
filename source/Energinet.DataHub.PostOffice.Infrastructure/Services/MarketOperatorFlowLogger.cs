@@ -86,6 +86,16 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
             }
         }
 
+        public Task LogSubDomainOriginDataRequestAsync(DomainOrigin origin)
+        {
+            return LogAsync($"Bundle data requested from subdomain: '{origin}'");
+        }
+
+        public Task LogRequestDataFromSubdomainTimeoutAsync(string correlationId, DomainOrigin origin)
+        {
+            return LogAsync($"Request sent to {origin} for data encountered a timeout (30 seconds) while waiting for response, correlationId '{correlationId}'");
+        }
+
         public Task<string> GetLogAsync()
         {
             return Task.FromResult(string.Join(Environment.NewLine, _log));
