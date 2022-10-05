@@ -45,7 +45,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpe
 
             var log = await _marketOperatorFlowLogger.GetLogAsync().ConfigureAwait(false);
             var bytes = Encoding.UTF8.GetBytes(log);
-            return request.CreateResponse(new MemoryStream(bytes), MediaTypeNames.Text.Plain, statusCode);
+            return request.CreateResponse(new MemoryStream(bytes), MediaTypeNames.Text.Plain, HttpStatusCode.PartialContent);
         }
     }
 }

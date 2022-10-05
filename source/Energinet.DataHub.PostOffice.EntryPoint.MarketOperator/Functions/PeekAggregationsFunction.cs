@@ -15,6 +15,7 @@
 using System.Net;
 using System.Net.Mime;
 using System.Threading.Tasks;
+using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Common.Auth;
 using Energinet.DataHub.PostOffice.Common.Extensions;
@@ -53,27 +54,34 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions
         [Function("PeekAggregations")]
         public Task<HttpResponseData> RunAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "peek/aggregations")]
-            HttpRequestData request)
+            HttpRequestData request,
+            bool? log = false)
         {
             return request.ProcessAsync(async () =>
             {
+                var responseFormat = _responseFormatProvider.TryGetResponseFormat(request);
+
                 var command = new PeekAggregationsCommand(
                     _operatorIdentity.ActorId,
                     _bundleIdProvider.TryGetBundleId(request),
-                    _responseFormatProvider.TryGetResponseFormat(request),
+                    responseFormat,
                     _responseVersionProvider.TryGetResponseVersion(request));
+
                 var (hasContent, bundleId, stream, documentTypes) = await _mediator
                     .Send(command)
                     .ConfigureAwait(false);
 
-                var response = hasContent
-                    ? request.CreateResponse(stream, MediaTypeNames.Application.Xml)
-                    : await _marketOperatorFlowLogHelper.GetFlowLogResponseAsync(request, HttpStatusCode.NoContent).ConfigureAwait(false);
+                if (hasContent)
+                {
+                    var response = request.CreateResponse(stream, responseFormat == ResponseFormat.Xml ? MediaTypeNames.Application.Xml : MediaTypeNames.Application.Json);
+                    response.Headers.Add(Constants.BundleIdHeaderName, bundleId);
+                    response.Headers.Add(Constants.MessageTypeName, string.Join(",", documentTypes));
+                    return response;
+                }
 
-                response.Headers.Add(Constants.BundleIdHeaderName, bundleId);
-                response.Headers.Add(Constants.MessageTypeName, string.Join(",", documentTypes));
-
-                return response;
+                return log == true
+                    ? await _marketOperatorFlowLogHelper.GetFlowLogResponseAsync(request, HttpStatusCode.NoContent).ConfigureAwait(false)
+                    : request.CreateResponse(HttpStatusCode.NoContent);
             });
         }
     }

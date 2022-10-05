@@ -43,18 +43,22 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions
         [Function("Dequeue")]
         public Task<HttpResponseData> RunAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "delete")]
-            HttpRequestData request)
+            HttpRequestData request,
+            bool? log = false)
         {
             return request.ProcessAsync(async () =>
             {
                 var command = new DequeueCommand(_operatorIdentity.ActorId, request.Url.GetQueryValue(Constants.BundleIdQueryName));
                 var response = await _mediator.Send(command).ConfigureAwait(false);
 
-                var httpResponse = response.IsDequeued
-                    ? request.CreateResponse(HttpStatusCode.OK)
-                    : await _marketOperatorFlowLogHelper.GetFlowLogResponseAsync(request, HttpStatusCode.NotFound).ConfigureAwait(false);
+                if (response.IsDequeued)
+                {
+                    return request.CreateResponse(HttpStatusCode.OK);
+                }
 
-                return httpResponse;
+                return log == true
+                    ? await _marketOperatorFlowLogHelper.GetFlowLogResponseAsync(request, HttpStatusCode.NotFound).ConfigureAwait(false)
+                    : request.CreateResponse(HttpStatusCode.NotFound);
             });
         }
     }

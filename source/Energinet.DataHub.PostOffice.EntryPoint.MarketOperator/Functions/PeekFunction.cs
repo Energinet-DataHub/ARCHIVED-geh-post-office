@@ -54,26 +54,32 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions
         [Function("Peek")]
         public Task<HttpResponseData> RunAsync(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get")]
-            HttpRequestData request)
+            HttpRequestData request,
+            bool? log = false)
         {
             return request.ProcessAsync(async () =>
             {
                 var responseFormat = _responseFormatProvider.TryGetResponseFormat(request);
+
                 var command = new PeekCommand(
                     _operatorIdentity.ActorId,
                     _bundleIdProvider.TryGetBundleId(request),
                     responseFormat,
                     _responseVersionProvider.TryGetResponseVersion(request));
+
                 var (hasContent, bundleId, stream, documentTypes) = await _mediator.Send(command).ConfigureAwait(false);
 
-                var response = hasContent
-                    ? request.CreateResponse(stream, responseFormat == ResponseFormat.Xml ? MediaTypeNames.Application.Xml : MediaTypeNames.Application.Json)
-                    : await _marketOperatorFlowLogHelper.GetFlowLogResponseAsync(request, HttpStatusCode.NoContent).ConfigureAwait(false);
+                if (hasContent)
+                {
+                    var response = request.CreateResponse(stream, responseFormat == ResponseFormat.Xml ? MediaTypeNames.Application.Xml : MediaTypeNames.Application.Json);
+                    response.Headers.Add(Constants.BundleIdHeaderName, bundleId);
+                    response.Headers.Add(Constants.MessageTypeName, string.Join(",", documentTypes));
+                    return response;
+                }
 
-                response.Headers.Add(Constants.BundleIdHeaderName, bundleId);
-                response.Headers.Add(Constants.MessageTypeName, string.Join(",", documentTypes));
-
-                return response;
+                return log == true
+                    ? await _marketOperatorFlowLogHelper.GetFlowLogResponseAsync(request, HttpStatusCode.NoContent).ConfigureAwait(false)
+                    : request.CreateResponse(HttpStatusCode.NoContent);
             });
         }
     }
