@@ -56,6 +56,11 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
             return LogAsync($"Bundle data requested from subdomain: '{origin}'");
         }
 
+        public Task LogActorDequeueingAsync(string externalActorId, string correlationId, string bundleId)
+        {
+            return LogAsync($"Actor with external id '{externalActorId}' is trying to dequeue the following bundle '{bundleId}', with correlation id '{correlationId}'");
+        }
+
         public Task LogRequestDataFromSubdomainTimeoutAsync(string correlationId, DomainOrigin origin)
         {
             return LogAsync($"Request sent to {origin} for data encountered a timeout (30 seconds) while waiting for response, correlationId '{correlationId}'");
