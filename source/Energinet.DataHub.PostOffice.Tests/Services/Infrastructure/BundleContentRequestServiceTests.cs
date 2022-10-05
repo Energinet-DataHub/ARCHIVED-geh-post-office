@@ -46,7 +46,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
             var target = new BundleContentRequestService(
                 new Mock<ILogger>().Object,
                 new MarketOperatorFlowLogger(
-                    new Mock<DataAvailableNotificationRepository>().Object,
+                    new Mock<FindLatestDataAvailableNotificationRepository>().Object,
                     new Mock<ILogger>().Object),
                 marketOperatorDataStorageServiceMock.Object,
                 dataBundleRequestSenderMock.Object,
@@ -83,9 +83,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
             var dataBundleRequestSenderMock = new Mock<IDataBundleRequestSender>();
             var target = new BundleContentRequestService(
                 new Mock<ILogger>().Object,
-                new MarketOperatorFlowLogger(
-                    new Mock<DataAvailableNotificationRepository>().Object,
-                    new Mock<ILogger>().Object),
+                new Mock<MarketOperatorFlowLogger>().Object,
                 marketOperatorDataStorageServiceMock.Object,
                 dataBundleRequestSenderMock.Object,
                 new Mock<ICorrelationContext>().Object);
@@ -127,7 +125,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
             var marketOperatorDataStorageServiceMock = new Mock<IMarketOperatorDataStorageService>();
             var dataBundleRequestSenderMock = new Mock<IDataBundleRequestSender>();
             var marketOperatorFlowLogger = new MarketOperatorFlowLogger(
-                new Mock<DataAvailableNotificationRepository>().Object,
+                new Mock<FindLatestDataAvailableNotificationRepository>().Object,
                 new Mock<ILogger>().Object);
 
             var target = new BundleContentRequestService(
