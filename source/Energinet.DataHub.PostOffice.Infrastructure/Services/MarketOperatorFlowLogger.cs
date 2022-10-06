@@ -57,14 +57,14 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
             return LogAsync($"Does actor '{externalActorId}' exist in legacy registry: No.");
         }
 
-        public Task LogNoCatalogWasFoundForDomainAsync(DomainOrigin domain)
+        public Task LogNoCatalogWasFoundForDomainAsync(ActorId recipient, DomainOrigin domain)
         {
-            return LogAsync($"Checking local store for notifications from '{domain}': Nothing was found.");
+            return LogAsync($"Checking local store for notifications from '{domain}' for actor '{recipient}': Nothing was found.");
         }
 
-        public Task LogCatalogWasFoundForDomainAsync(DomainOrigin domain)
+        public Task LogCatalogWasFoundForDomainAsync(ActorId recipient, DomainOrigin domain)
         {
-            return LogAsync($"Checking local store for notifications from '{domain}': Items were found.");
+            return LogAsync($"Checking local store for notifications from '{domain}' for actor '{recipient}': Items were found.");
         }
 
         public async Task LogLatestDataAvailableNotificationsAsync(ActorId marketOperator, DomainOrigin[] domains)
@@ -94,6 +94,16 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
                     await LogAsync($"Checking notifications for actor '{marketOperator}' from domain {domainOrigin}: No new notifications.").ConfigureAwait(false);
                 }
             }
+        }
+
+        public Task LogSearchForExistingBundleAsync(ActorId recipient)
+        {
+            return LogAsync($"Searching for any existing bundle for actor '{recipient}'.");
+        }
+
+        public Task LogFoundBundleAsync(string bundleDocumentRecipient, string bundleDocumentId)
+        {
+            return LogAsync($"Existing bundle '{bundleDocumentId}' found for actor '{bundleDocumentRecipient}'.");
         }
 
         public Task LogSubDomainOriginDataRequestAsync(DomainOrigin origin)

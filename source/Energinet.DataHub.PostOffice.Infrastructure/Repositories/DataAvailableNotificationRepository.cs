@@ -164,14 +164,14 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 if (catalogEntry == null)
                 {
                     await _marketOperatorFlowLogger
-                        .LogNoCatalogWasFoundForDomainAsync(entryLookup.domain)
+                        .LogNoCatalogWasFoundForDomainAsync(recipient, entryLookup.domain)
                         .ConfigureAwait(false);
 
                     continue;
                 }
 
                 await _marketOperatorFlowLogger
-                    .LogCatalogWasFoundForDomainAsync(entryLookup.domain)
+                    .LogCatalogWasFoundForDomainAsync(recipient, entryLookup.domain)
                     .ConfigureAwait(false);
 
                 if (smallestEntry == null || smallestEntry.NextSequenceNumber > catalogEntry.NextSequenceNumber)

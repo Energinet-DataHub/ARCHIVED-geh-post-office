@@ -49,6 +49,16 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         Task LogRequestDataFromSubdomainTimeoutAsync(string correlationId, DomainOrigin origin);
 
         /// <summary>
+        /// Logs information about the found bundle.
+        /// </summary>
+        Task LogFoundBundleAsync(string bundleDocumentRecipient, string bundleDocumentId);
+
+        /// <summary>
+        /// Logs which recipient is used to search for a bundle.
+        /// </summary>
+        Task LogSearchForExistingBundleAsync(ActorId recipient);
+
+        /// <summary>
         /// Logs which sub domain is called for data retrieving bundle data
         /// </summary>
         Task LogSubDomainOriginDataRequestAsync(DomainOrigin origin);
@@ -56,12 +66,12 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         /// <summary>
         /// Logs that the specified domain has a catalog entry for the next notification.
         /// </summary>
-        Task LogCatalogWasFoundForDomainAsync(DomainOrigin domain);
+        Task LogCatalogWasFoundForDomainAsync(ActorId recipient, DomainOrigin domain);
 
         /// <summary>
         /// Logs that the specified domain does not have a catalog entry for the next notification.
         /// </summary>
-        Task LogNoCatalogWasFoundForDomainAsync(DomainOrigin domain);
+        Task LogNoCatalogWasFoundForDomainAsync(ActorId recipient, DomainOrigin domain);
 
         /// <summary>
         /// Log messages regarding DataAvailable notifications for specified domains.

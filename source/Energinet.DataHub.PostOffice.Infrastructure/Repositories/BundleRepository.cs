@@ -32,17 +32,20 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
     public sealed class BundleRepository : IBundleRepository
     {
         private readonly IMarketOperatorDataStorageService _marketOperatorDataStorageService;
+        private readonly IMarketOperatorFlowLogger _marketOperatorFlowLogger;
         private readonly IBundleRepositoryContainer _repositoryContainer;
         private readonly IStorageHandler _storageHandler;
 
         public BundleRepository(
             IStorageHandler storageHandler,
             IBundleRepositoryContainer repositoryContainer,
-            IMarketOperatorDataStorageService marketOperatorDataStorageService)
+            IMarketOperatorDataStorageService marketOperatorDataStorageService,
+            IMarketOperatorFlowLogger marketOperatorFlowLogger)
         {
             _storageHandler = storageHandler;
             _repositoryContainer = repositoryContainer;
             _marketOperatorDataStorageService = marketOperatorDataStorageService;
+            _marketOperatorFlowLogger = marketOperatorFlowLogger;
         }
 
         public Task<Bundle?> GetAsync(ActorId recipient, Uuid bundleId)
@@ -63,7 +66,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             return GetBundleAsync(query);
         }
 
-        public Task<Bundle?> GetNextUnacknowledgedAsync(ActorId recipient, params DomainOrigin[] domains)
+        public async Task<Bundle?> GetNextUnacknowledgedAsync(ActorId recipient, params DomainOrigin[] domains)
         {
             ArgumentNullException.ThrowIfNull(recipient, nameof(recipient));
             ArgumentNullException.ThrowIfNull(domains, nameof(domains));
@@ -80,13 +83,17 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 domainFiltered = asLinq.Where(x => selectedDomains.Contains(x.Origin));
             }
 
+            await _marketOperatorFlowLogger
+                .LogSearchForExistingBundleAsync(recipient)
+                .ConfigureAwait(false);
+
             var query =
                 from bundle in domainFiltered
                 where bundle.Recipient == recipient.Value && !bundle.Dequeued
                 orderby bundle.Timestamp
                 select bundle;
 
-            return GetBundleAsync(query);
+            return await GetBundleAsync(query).ConfigureAwait(false);
         }
 
         public async Task<BundleCreatedResponse> TryAddNextUnacknowledgedAsync(Bundle bundle, ICabinetReader cabinetReader)
@@ -195,6 +202,10 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
             if (bundleDocument == null)
                 return null;
+
+            await _marketOperatorFlowLogger
+                .LogFoundBundleAsync(bundleDocument.Recipient, bundleDocument.Id)
+                .ConfigureAwait(false);
 
             IBundleContent? bundleContent = null;
 
