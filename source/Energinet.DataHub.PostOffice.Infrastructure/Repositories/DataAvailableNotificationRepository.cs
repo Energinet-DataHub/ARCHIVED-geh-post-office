@@ -170,6 +170,10 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                     continue;
                 }
 
+                await _marketOperatorFlowLogger
+                    .LogCatalogWasFoundForDomainAsync(entryLookup.domain)
+                    .ConfigureAwait(false);
+
                 if (smallestEntry == null || smallestEntry.NextSequenceNumber > catalogEntry.NextSequenceNumber)
                 {
                     smallestEntry = catalogEntry;

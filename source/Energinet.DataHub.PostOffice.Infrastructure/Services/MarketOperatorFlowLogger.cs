@@ -39,27 +39,32 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
 
         public Task LogActorFoundAsync(Guid externalActorId, Guid actorId)
         {
-            return LogAsync($"Actor found with external id '{externalActorId}' and id '{actorId}'");
+            return LogAsync($"Does actor '{externalActorId}' exist in new registry: Yes with id '{actorId}'.");
         }
 
         public Task LogActorNotFoundAsync(Guid externalActorId)
         {
-            return LogAsync($"An actor was not found with external id '{externalActorId}'");
+            return LogAsync($"Does actor '{externalActorId}' exist in new registry: No.");
         }
 
         public Task LogLegacyActorFoundAsync(Guid externalActorId, string gln)
         {
-            return LogAsync($"Legacy actor found with external id '{externalActorId}' with GLN number '{gln}'");
+            return LogAsync($"Does actor '{externalActorId}' exist in legacy registry: Yes with id '{gln}'.");
         }
 
         public Task LogLegacyActorNotFoundAsync(Guid externalActorId)
         {
-            return LogAsync($"A legacy actor was not found with external id '{externalActorId}'");
+            return LogAsync($"Does actor '{externalActorId}' exist in legacy registry: No.");
         }
 
         public Task LogNoCatalogWasFoundForDomainAsync(DomainOrigin domain)
         {
-            return LogAsync($"No catalog found for domain '{domain}'");
+            return LogAsync($"Checking local store for notifications from '{domain}': Nothing was found.");
+        }
+
+        public Task LogCatalogWasFoundForDomainAsync(DomainOrigin domain)
+        {
+            return LogAsync($"Checking local store for notifications from '{domain}': Items were found.");
         }
 
         public async Task LogLatestDataAvailableNotificationsAsync(ActorId marketOperator, DomainOrigin[] domains)
@@ -77,33 +82,33 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
                 {
                     if (isDequeued)
                     {
-                        await LogAsync($"No new notifications found for actor '{marketOperator}' from domain {domainOrigin}. Latest received DataAvailable is {notification.NotificationId} from {timestamp:u}.").ConfigureAwait(false);
+                        await LogAsync($"Checking notifications for actor '{marketOperator}' from domain {domainOrigin}: Latest received DataAvailable is {notification.NotificationId} with {timestamp:u}.").ConfigureAwait(false);
                     }
                     else
                     {
-                        await LogAsync($"! Newest notification found for actor '{marketOperator}' from domain {domainOrigin}. DataAvailable is {notification.NotificationId} from {timestamp:u}.").ConfigureAwait(false);
+                        await LogAsync($"! Checking notifications for actor '{marketOperator}' from domain {domainOrigin}: Found DataAvailable {notification.NotificationId} with {timestamp:u}.").ConfigureAwait(false);
                     }
                 }
                 else
                 {
-                    await LogAsync($"No notifications found for actor '{marketOperator}' from domain {domainOrigin}.").ConfigureAwait(false);
+                    await LogAsync($"Checking notifications for actor '{marketOperator}' from domain {domainOrigin}: No new notifications.").ConfigureAwait(false);
                 }
             }
         }
 
         public Task LogSubDomainOriginDataRequestAsync(DomainOrigin origin)
         {
-            return LogAsync($"Bundle data requested from subdomain: '{origin}'");
+            return LogAsync($"Bundle exists, must generate message. Asking domain '{origin}' for data.");
         }
 
         public Task LogActorDequeueingAsync(string externalActorId, string correlationId, string bundleId)
         {
-            return LogAsync($"Actor with external id '{externalActorId}' is trying to dequeue the following bundle '{bundleId}', with correlation id '{correlationId}'");
+            return LogAsync($"Actor with external id '{externalActorId}' is trying to dequeue the following bundle '{bundleId}', with correlation id '{correlationId}'.");
         }
 
         public Task LogRequestDataFromSubdomainTimeoutAsync(string correlationId, DomainOrigin origin)
         {
-            return LogAsync($"Request sent to {origin} for data encountered a timeout (30 seconds) while waiting for response, correlationId '{correlationId}'");
+            return LogAsync($"Request sent to '{origin}' for data encountered a timeout (30 seconds) while waiting for response, correlationId '{correlationId}'.");
         }
 
         public Task<string> GetLogAsync()

@@ -54,6 +54,11 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         Task LogSubDomainOriginDataRequestAsync(DomainOrigin origin);
 
         /// <summary>
+        /// Logs that the specified domain has a catalog entry for the next notification.
+        /// </summary>
+        Task LogCatalogWasFoundForDomainAsync(DomainOrigin domain);
+
+        /// <summary>
         /// Logs that the specified domain does not have a catalog entry for the next notification.
         /// </summary>
         Task LogNoCatalogWasFoundForDomainAsync(DomainOrigin domain);
