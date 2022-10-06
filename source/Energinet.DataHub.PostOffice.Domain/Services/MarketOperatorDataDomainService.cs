@@ -29,17 +29,20 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         private readonly IDataAvailableNotificationRepository _dataAvailableNotificationRepository;
         private readonly IRequestBundleDomainService _requestBundleDomainService;
         private readonly IWeightCalculatorDomainService _weightCalculatorDomainService;
+        private readonly IMarketOperatorFlowLogger _marketOperatorFlowLogger;
 
         public MarketOperatorDataDomainService(
             IBundleRepository bundleRepository,
             IDataAvailableNotificationRepository dataAvailableRepository,
             IRequestBundleDomainService requestBundleDomainService,
-            IWeightCalculatorDomainService weightCalculatorDomainService)
+            IWeightCalculatorDomainService weightCalculatorDomainService,
+            IMarketOperatorFlowLogger marketOperatorFlowLogger)
         {
             _bundleRepository = bundleRepository;
             _dataAvailableNotificationRepository = dataAvailableRepository;
             _requestBundleDomainService = requestBundleDomainService;
             _weightCalculatorDomainService = weightCalculatorDomainService;
+            _marketOperatorFlowLogger = marketOperatorFlowLogger;
         }
 
         public Task<Bundle?> GetNextUnacknowledgedAsync(
@@ -146,7 +149,10 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
                         $"The specified bundle response format was rejected, as the current bundle {existingBundle.BundleId} was already requested with another format.");
                 }
 
-                return await AskSubDomainForContentAsync(existingBundle, responseFormat, responseVersion).ConfigureAwait(false);
+                return await AskSubDomainForContentAsync(
+                    existingBundle,
+                    responseFormat,
+                    responseVersion).ConfigureAwait(false);
             }
 
             var cabinetReader = await _dataAvailableNotificationRepository
@@ -155,7 +161,13 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
 
             // Nothing to return.
             if (cabinetReader == null)
+            {
+                await _marketOperatorFlowLogger
+                    .LogNoNotificationsFoundAsync()
+                    .ConfigureAwait(false);
+
                 return null;
+            }
 
             var newBundle = await CreateNextBundleAsync(suggestedBundleId, cabinetReader, responseFormat).ConfigureAwait(false);
 
@@ -182,7 +194,13 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
                 .ConfigureAwait(false);
 
             if (bundleContent == null)
+            {
+                await _marketOperatorFlowLogger
+                    .LogNoResponseAsync()
+                    .ConfigureAwait(false);
+
                 return null; // Timeout or error. Currently returned as "no new data".
+            }
 
             bundle.AssignContent(bundleContent);
             await _bundleRepository.SaveAsync(bundle).ConfigureAwait(false);

@@ -34,18 +34,15 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
         IRequestHandler<PeekMasterDataCommand, PeekResponse>,
         IRequestHandler<PeekAggregationsCommand, PeekResponse>
     {
-        private readonly IMarketOperatorFlowLogger _marketOperatorFlowLogger;
         private readonly IMarketOperatorDataDomainService _marketOperatorDataDomainService;
         private readonly ILogger _logger;
         private readonly ICorrelationContext _correlationContext;
 
         public PeekHandler(
-            IMarketOperatorFlowLogger marketOperatorFlowLogger,
             IMarketOperatorDataDomainService marketOperatorDataDomainService,
             ILogger logger,
             ICorrelationContext correlationContext)
         {
-            _marketOperatorFlowLogger = marketOperatorFlowLogger;
             _marketOperatorDataDomainService = marketOperatorDataDomainService;
             _logger = logger;
             _correlationContext = correlationContext;
@@ -79,10 +76,6 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
 
             _logger.LogProcess("Peek", _correlationContext.Id, request.MarketOperator);
 
-            await _marketOperatorFlowLogger
-                .LogIntroAsync()
-                .ConfigureAwait(false);
-
             var marketOperator = Guid.TryParse(request.MarketOperator, out var actorId)
                 ? new ActorId(actorId)
                 : new LegacyActorId(new GlobalLocationNumber(request.MarketOperator));
@@ -105,18 +98,6 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
                         await bundleContent.OpenAsync().ConfigureAwait(false),
                         bundle.DocumentTypes);
                 }
-
-                await _marketOperatorFlowLogger
-                    .LogNoResponseAsync()
-                    .ConfigureAwait(false);
-
-                _logger.LogProcess("Peek", "TimeoutOrError", _correlationContext.Id, request.MarketOperator, bundle.BundleId.ToString(), bundle.NotificationIds.Select(x => x.ToString()));
-            }
-            else
-            {
-                await _marketOperatorFlowLogger
-                    .LogNoNotificationsFoundAsync()
-                    .ConfigureAwait(false);
             }
 
             _logger.LogProcess("Peek", "NoContent", _correlationContext.Id, request.MarketOperator, string.Empty);

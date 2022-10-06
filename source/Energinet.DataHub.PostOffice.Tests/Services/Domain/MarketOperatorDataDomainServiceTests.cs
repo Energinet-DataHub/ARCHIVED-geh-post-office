@@ -59,7 +59,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMap.Object);
+                contentTypeWeightMap.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedAsync(
@@ -81,13 +82,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             var contentType = new ContentType("timeseries");
 
             var dataAvailableNotificationFirst = CreateDataAvailableNotification(recipient, contentType);
-            var allDataAvailableNotificationsForMessageType = new[]
-            {
-                dataAvailableNotificationFirst,
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType)
-            };
+            var allDataAvailableNotificationsForMessageType = new[] { dataAvailableNotificationFirst, CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType) };
 
             var cabinetReader = CreateReaderMock(allDataAvailableNotificationsForMessageType);
 
@@ -118,7 +113,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedAsync(
@@ -140,13 +136,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             var contentType = new ContentType("timeseries");
 
             var dataAvailableNotificationFirst = CreateDataAvailableNotification(recipient, contentType);
-            var allDataAvailableNotificationsForMessageType = new[]
-            {
-                dataAvailableNotificationFirst,
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType)
-            };
+            var allDataAvailableNotificationsForMessageType = new[] { dataAvailableNotificationFirst, CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType) };
 
             var cabinetReader = CreateReaderMock(allDataAvailableNotificationsForMessageType);
 
@@ -185,7 +175,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedAsync(recipient, bundleId, ResponseFormat, ResponseVersion).ConfigureAwait(false);
@@ -206,13 +197,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             var contentType = new ContentType("timeseries");
 
             var dataAvailableNotificationFirst = CreateDataAvailableNotification(recipient, contentType);
-            var allDataAvailableNotificationsForMessageType = new[]
-            {
-                dataAvailableNotificationFirst,
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType)
-            };
+            var allDataAvailableNotificationsForMessageType = new[] { dataAvailableNotificationFirst, CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType) };
 
             var cabinetReader = CreateReaderMock(allDataAvailableNotificationsForMessageType);
 
@@ -251,7 +236,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedAsync(recipient, null, ResponseFormat, ResponseVersion).ConfigureAwait(false);
@@ -274,13 +260,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             var contentType = new ContentType("timeseries");
 
             var dataAvailableNotificationFirst = CreateDataAvailableNotification(recipient, contentType);
-            var allDataAvailableNotificationsForMessageType = new[]
-            {
-                dataAvailableNotificationFirst,
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType)
-            };
+            var allDataAvailableNotificationsForMessageType = new[] { dataAvailableNotificationFirst, CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType) };
 
             var cabinetReader = CreateReaderMock(allDataAvailableNotificationsForMessageType);
 
@@ -319,7 +299,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var nextUnacknowledged = target.GetNextUnacknowledgedAsync(recipient, bundleId, ResponseFormat, ResponseVersion).ConfigureAwait(true);
@@ -358,7 +339,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedAsync(recipient, bundleId, ResponseFormat, ResponseVersion).ConfigureAwait(false);
@@ -403,7 +385,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedAsync(
@@ -453,7 +436,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedAsync(
@@ -531,7 +515,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedAsync(
@@ -604,7 +589,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedAsync(
@@ -646,7 +632,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMap.Object);
+                contentTypeWeightMap.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedTimeSeriesAsync(
@@ -668,13 +655,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             var bundleId = new Uuid(Guid.NewGuid());
 
             var dataAvailableNotificationFirst = CreateDataAvailableNotification(recipient, contentType);
-            var allDataAvailableNotificationsForMessageType = new[]
-            {
-                dataAvailableNotificationFirst,
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType)
-            };
+            var allDataAvailableNotificationsForMessageType = new[] { dataAvailableNotificationFirst, CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType) };
 
             var cabinetReader = CreateReaderMock(allDataAvailableNotificationsForMessageType);
 
@@ -706,7 +687,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedTimeSeriesAsync(
@@ -728,13 +710,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             var bundleId = new Uuid(Guid.NewGuid());
 
             var dataAvailableNotificationFirst = CreateDataAvailableNotification(recipient, contentType);
-            var allDataAvailableNotificationsForMessageType = new[]
-            {
-                dataAvailableNotificationFirst,
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType)
-            };
+            var allDataAvailableNotificationsForMessageType = new[] { dataAvailableNotificationFirst, CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType) };
 
             var cabinetReader = CreateReaderMock(allDataAvailableNotificationsForMessageType);
 
@@ -774,7 +750,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedTimeSeriesAsync(recipient, bundleId, ResponseFormat, ResponseVersion).ConfigureAwait(false);
@@ -795,13 +772,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             var contentType = new ContentType("rms-xyz");
 
             var dataAvailableNotificationFirst = CreateDataAvailableNotification(recipient, contentType);
-            var allDataAvailableNotificationsForMessageType = new[]
-            {
-                dataAvailableNotificationFirst,
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType)
-            };
+            var allDataAvailableNotificationsForMessageType = new[] { dataAvailableNotificationFirst, CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType) };
 
             var cabinetReader = CreateReaderMock(allDataAvailableNotificationsForMessageType);
 
@@ -841,7 +812,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedTimeSeriesAsync(recipient, null, ResponseFormat, ResponseVersion).ConfigureAwait(false);
@@ -884,7 +856,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedTimeSeriesAsync(
@@ -932,7 +905,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedTimeSeriesAsync(
@@ -982,7 +956,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedTimeSeriesAsync(
@@ -1061,7 +1036,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedTimeSeriesAsync(recipient, bundleId, ResponseFormat, ResponseVersion).ConfigureAwait(false);
@@ -1131,7 +1107,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedTimeSeriesAsync(
@@ -1173,7 +1150,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMap.Object);
+                contentTypeWeightMap.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedAggregationsAsync(
@@ -1195,13 +1173,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             var contentType = new ContentType("aggregations");
 
             var dataAvailableNotificationFirst = CreateDataAvailableNotification(recipient, contentType, DomainOrigin.Aggregations);
-            var allDataAvailableNotificationsForMessageType = new[]
-            {
-                dataAvailableNotificationFirst,
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType)
-            };
+            var allDataAvailableNotificationsForMessageType = new[] { dataAvailableNotificationFirst, CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType) };
 
             var cabinetReader = CreateReaderMock(allDataAvailableNotificationsForMessageType);
 
@@ -1233,7 +1205,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedAggregationsAsync(
@@ -1255,13 +1228,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             var contentType = new ContentType("aggregations");
 
             var dataAvailableNotificationFirst = CreateDataAvailableNotification(recipient, contentType, DomainOrigin.Aggregations);
-            var allDataAvailableNotificationsForMessageType = new[]
-            {
-                dataAvailableNotificationFirst,
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType)
-            };
+            var allDataAvailableNotificationsForMessageType = new[] { dataAvailableNotificationFirst, CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType) };
 
             var cabinetReader = CreateReaderMock(allDataAvailableNotificationsForMessageType);
 
@@ -1301,7 +1268,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedAggregationsAsync(recipient, bundleId, ResponseFormat, ResponseVersion).ConfigureAwait(false);
@@ -1322,13 +1290,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             var contentType = new ContentType("aggregations");
 
             var dataAvailableNotificationFirst = CreateDataAvailableNotification(recipient, contentType, DomainOrigin.Aggregations);
-            var allDataAvailableNotificationsForMessageType = new[]
-            {
-                dataAvailableNotificationFirst,
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType)
-            };
+            var allDataAvailableNotificationsForMessageType = new[] { dataAvailableNotificationFirst, CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType) };
 
             var cabinetReader = CreateReaderMock(allDataAvailableNotificationsForMessageType);
 
@@ -1368,7 +1330,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedAggregationsAsync(
@@ -1417,7 +1380,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedAggregationsAsync(
@@ -1466,7 +1430,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedAggregationsAsync(recipient, bundleId, ResponseFormat, ResponseVersion).ConfigureAwait(false);
@@ -1512,7 +1477,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedAggregationsAsync(
@@ -1591,7 +1557,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedAggregationsAsync(
@@ -1665,7 +1632,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedAggregationsAsync(
@@ -1716,7 +1684,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMap.Object);
+                contentTypeWeightMap.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedMasterDataAsync(
@@ -1737,13 +1706,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             var contentType = new ContentType("marketroles");
 
             var dataAvailableNotificationFirst = CreateDataAvailableNotification(recipient, contentType, DomainOrigin.MarketRoles);
-            var allDataAvailableNotificationsForMessageType = new[]
-            {
-                dataAvailableNotificationFirst,
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType)
-            };
+            var allDataAvailableNotificationsForMessageType = new[] { dataAvailableNotificationFirst, CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType) };
 
             var cabinetReader = CreateReaderMock(allDataAvailableNotificationsForMessageType);
 
@@ -1792,7 +1755,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedMasterDataAsync(recipient, null, ResponseFormat, ResponseVersion).ConfigureAwait(false);
@@ -1815,13 +1779,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             var contentType = new ContentType("marketroles");
 
             var dataAvailableNotificationFirst = CreateDataAvailableNotification(recipient, contentType, DomainOrigin.MarketRoles);
-            var allDataAvailableNotificationsForMessageType = new[]
-            {
-                dataAvailableNotificationFirst,
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType)
-            };
+            var allDataAvailableNotificationsForMessageType = new[] { dataAvailableNotificationFirst, CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType) };
 
             var cabinetReader = CreateReaderMock(allDataAvailableNotificationsForMessageType);
 
@@ -1862,7 +1820,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedMasterDataAsync(
@@ -1884,13 +1843,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             var contentType = new ContentType("meteringpoints");
 
             var dataAvailableNotificationFirst = CreateDataAvailableNotification(recipient, contentType, DomainOrigin.MeteringPoints);
-            var allDataAvailableNotificationsForMessageType = new[]
-            {
-                dataAvailableNotificationFirst,
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType)
-            };
+            var allDataAvailableNotificationsForMessageType = new[] { dataAvailableNotificationFirst, CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType) };
 
             var cabinetReader = CreateReaderMock(allDataAvailableNotificationsForMessageType);
 
@@ -1931,7 +1884,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedMasterDataAsync(
@@ -1953,13 +1907,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             var contentType = new ContentType("marketroles");
 
             var dataAvailableNotificationFirst = CreateDataAvailableNotification(recipient, contentType, DomainOrigin.MarketRoles);
-            var allDataAvailableNotificationsForMessageType = new[]
-            {
-                dataAvailableNotificationFirst,
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType),
-                CreateDataAvailableNotification(recipient, contentType)
-            };
+            var allDataAvailableNotificationsForMessageType = new[] { dataAvailableNotificationFirst, CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType), CreateDataAvailableNotification(recipient, contentType) };
 
             var cabinetReader = CreateReaderMock(allDataAvailableNotificationsForMessageType);
 
@@ -2008,7 +1956,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedMasterDataAsync(recipient, bundleId, ResponseFormat, ResponseVersion).ConfigureAwait(false);
@@ -2056,7 +2005,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedMasterDataAsync(
@@ -2110,7 +2060,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedMasterDataAsync(
@@ -2165,7 +2116,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedMasterDataAsync(
@@ -2252,7 +2204,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedMasterDataAsync(
@@ -2334,7 +2287,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var bundle = await target.GetNextUnacknowledgedMasterDataAsync(
@@ -2357,13 +2311,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             // Arrange
             var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleUuid = new Uuid("1E0A906E-8895-4C86-B4FC-48E9BAF2A2B6");
-            var idsInBundle = new[]
-            {
-                new Uuid("5AA0BDE7-EAB7-408D-B4A4-BBF1EEFF3F7E"),
-                new Uuid("7E188D0E-A923-4AD5-A7CB-39889884241B"),
-                new Uuid("9DEA909A-179B-413B-A669-E38D4C812009"),
-                new Uuid("B0425457-8E0A-4E66-80EF-2717562EAEA7")
-            };
+            var idsInBundle = new[] { new Uuid("5AA0BDE7-EAB7-408D-B4A4-BBF1EEFF3F7E"), new Uuid("7E188D0E-A923-4AD5-A7CB-39889884241B"), new Uuid("9DEA909A-179B-413B-A669-E38D4C812009"), new Uuid("B0425457-8E0A-4E66-80EF-2717562EAEA7") };
 
             var bundle = new Bundle(
                 bundleUuid,
@@ -2387,7 +2335,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var result = await target.CanAcknowledgeAsync(recipient, bundleUuid).ConfigureAwait(false);
@@ -2415,7 +2364,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var result = await target.CanAcknowledgeAsync(recipient, bundleUuid).ConfigureAwait(false);
@@ -2454,7 +2404,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             var result = await target.CanAcknowledgeAsync(recipient, bundleUuid);
@@ -2469,13 +2420,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             // Arrange
             var recipient = new LegacyActorId(new GlobalLocationNumber("fake_value"));
             var bundleUuid = new Uuid("1E0A906E-8895-4C86-B4FC-48E9BAF2A2B6");
-            var idsInBundle = new[]
-            {
-                new Uuid("5AA0BDE7-EAB7-408D-B4A4-BBF1EEFF3F7E"),
-                new Uuid("7E188D0E-A923-4AD5-A7CB-39889884241B"),
-                new Uuid("9DEA909A-179B-413B-A669-E38D4C812009"),
-                new Uuid("B0425457-8E0A-4E66-80EF-2717562EAEA7")
-            };
+            var idsInBundle = new[] { new Uuid("5AA0BDE7-EAB7-408D-B4A4-BBF1EEFF3F7E"), new Uuid("7E188D0E-A923-4AD5-A7CB-39889884241B"), new Uuid("9DEA909A-179B-413B-A669-E38D4C812009"), new Uuid("B0425457-8E0A-4E66-80EF-2717562EAEA7") };
 
             var bundle = new Bundle(
                 bundleUuid,
@@ -2495,7 +2440,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act
             await target.AcknowledgeAsync(bundle).ConfigureAwait(false);
@@ -2518,7 +2464,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
                 bundleRepositoryMock.Object,
                 dataAvailableNotificationRepositoryMock.Object,
                 requestDomainServiceMock.Object,
-                contentTypeWeightMapMock.Object);
+                contentTypeWeightMapMock.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act + Assert
             await Assert

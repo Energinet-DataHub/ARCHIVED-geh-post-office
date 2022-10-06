@@ -40,7 +40,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             // Arrange
             var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
             var target = new PeekHandler(
-                new Mock<IMarketOperatorFlowLogger>().Object,
                 warehouseDomainServiceMock.Object,
                 new Mock<ILogger>().Object,
                 new Mock<ICorrelationContext>().Object);
@@ -85,7 +84,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                 .ReturnsAsync(bundle);
 
             var target = new PeekHandler(
-                new Mock<IMarketOperatorFlowLogger>().Object,
                 warehouseDomainServiceMock.Object,
                 new Mock<ILogger>().Object,
                 new Mock<ICorrelationContext>().Object);
@@ -122,7 +120,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                 .ReturnsAsync((Bundle?)null);
 
             var target = new PeekHandler(
-                new Mock<IMarketOperatorFlowLogger>().Object,
                 warehouseDomainServiceMock.Object,
                 new Mock<ILogger>().Object,
                 new Mock<ICorrelationContext>().Object);
@@ -142,7 +139,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             // Arrange
             var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
             var target = new PeekHandler(
-                new Mock<IMarketOperatorFlowLogger>().Object,
                 warehouseDomainServiceMock.Object,
                 new Mock<ILogger>().Object,
                 new Mock<ICorrelationContext>().Object);
@@ -187,7 +183,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                 .ReturnsAsync(bundle);
 
             var target = new PeekHandler(
-                new Mock<IMarketOperatorFlowLogger>().Object,
                 warehouseDomainServiceMock.Object,
                 new Mock<ILogger>().Object,
                 new Mock<ICorrelationContext>().Object);
@@ -221,7 +216,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                 .ReturnsAsync((Bundle?)null);
 
             var target = new PeekHandler(
-                new Mock<IMarketOperatorFlowLogger>().Object,
                 warehouseDomainServiceMock.Object,
                 new Mock<ILogger>().Object,
                 new Mock<ICorrelationContext>().Object);
@@ -241,7 +235,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             // Arrange
             var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
             var target = new PeekHandler(
-                new Mock<IMarketOperatorFlowLogger>().Object,
                 warehouseDomainServiceMock.Object,
                 new Mock<ILogger>().Object,
                 new Mock<ICorrelationContext>().Object);
@@ -286,7 +279,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                 .ReturnsAsync(bundle);
 
             var target = new PeekHandler(
-                new Mock<IMarketOperatorFlowLogger>().Object,
                 warehouseDomainServiceMock.Object,
                 new Mock<ILogger>().Object,
                 new Mock<ICorrelationContext>().Object);
@@ -321,7 +313,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                 .ReturnsAsync((Bundle?)null);
 
             var target = new PeekHandler(
-                new Mock<IMarketOperatorFlowLogger>().Object,
                 warehouseDomainServiceMock.Object,
                 new Mock<ILogger>().Object,
                 new Mock<ICorrelationContext>().Object);
@@ -341,7 +332,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             // Arrange
             var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
             var target = new PeekHandler(
-                new Mock<IMarketOperatorFlowLogger>().Object,
                 warehouseDomainServiceMock.Object,
                 new Mock<ILogger>().Object,
                 new Mock<ICorrelationContext>().Object);
@@ -386,7 +376,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                 .ReturnsAsync(bundle);
 
             var target = new PeekHandler(
-                new Mock<IMarketOperatorFlowLogger>().Object,
                 warehouseDomainServiceMock.Object,
                 new Mock<ILogger>().Object,
                 new Mock<ICorrelationContext>().Object);
@@ -421,7 +410,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                 .ReturnsAsync((Bundle?)null);
 
             var target = new PeekHandler(
-                new Mock<IMarketOperatorFlowLogger>().Object,
                 warehouseDomainServiceMock.Object,
                 new Mock<ILogger>().Object,
                 new Mock<ICorrelationContext>().Object);

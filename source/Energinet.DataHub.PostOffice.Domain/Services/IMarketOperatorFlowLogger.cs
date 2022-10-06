@@ -106,10 +106,5 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         /// Logs that no response was received from domain.
         /// </summary>
         Task LogNoResponseAsync();
-
-        /// <summary>
-        /// Logs an introduction.
-        /// </summary>
-        Task LogIntroAsync();
     }
 }

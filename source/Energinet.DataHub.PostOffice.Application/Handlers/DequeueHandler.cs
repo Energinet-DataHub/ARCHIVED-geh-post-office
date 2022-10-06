@@ -56,10 +56,6 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
 
             _logger.LogProcess("Dequeue", _correlationContext.Id, request.MarketOperator);
 
-            await _marketOperatorFlowLogger
-                .LogIntroAsync()
-                .ConfigureAwait(false);
-
             var bundleId = new Uuid(request.BundleId);
             var recipient = Guid.TryParse(request.MarketOperator, out var actorId)
                 ? new ActorId(actorId)
