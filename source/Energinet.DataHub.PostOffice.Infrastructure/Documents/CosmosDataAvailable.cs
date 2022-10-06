@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using Newtonsoft.Json;
+
 namespace Energinet.DataHub.PostOffice.Infrastructure.Documents
 {
     internal sealed record CosmosDataAvailable
@@ -37,5 +40,8 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Documents
         public bool SupportsBundling { get; init; }
         public int RelativeWeight { get; init; }
         public string DocumentType { get; init; }
+
+        [JsonProperty(PropertyName = "_ts")]
+        public long Timestamp { get; init; }
     }
 }

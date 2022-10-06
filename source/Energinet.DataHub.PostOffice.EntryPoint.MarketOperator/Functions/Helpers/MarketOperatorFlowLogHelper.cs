@@ -36,6 +36,12 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpe
             _marketOperatorFlowLogger = marketOperatorFlowLogger;
         }
 
+        public bool EnableHeavyLogging
+        {
+            get => _marketOperatorFlowLogger.EnableHeavyLogging;
+            set => _marketOperatorFlowLogger.EnableHeavyLogging = value;
+        }
+
         public async Task<HttpResponseData> GetFlowLogResponseAsync(HttpRequestData request, HttpStatusCode statusCode)
         {
             if (!_configuration.GetSetting(Settings.FlowLogEnabled))

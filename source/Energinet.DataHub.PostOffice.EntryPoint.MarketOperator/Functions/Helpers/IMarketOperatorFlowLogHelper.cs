@@ -20,6 +20,8 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpe
 {
     public interface IMarketOperatorFlowLogHelper
     {
+        bool EnableHeavyLogging { get; set; }
+
         Task<HttpResponseData> GetFlowLogResponseAsync(HttpRequestData request, HttpStatusCode statusCode);
     }
 }

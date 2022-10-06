@@ -16,33 +16,32 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Domain.Model;
 
-namespace Energinet.DataHub.PostOffice.Domain.Repositories
+namespace Energinet.DataHub.PostOffice.Domain.Repositories;
+
+/// <summary>
+/// Provides access to DataAvailableNotifications.
+/// </summary>
+public interface IDataAvailableNotificationRepository
 {
     /// <summary>
-    /// Provides access to DataAvailableNotifications.
+    /// Gets a reader that can be used to obtain unacknowledged notifications.
     /// </summary>
-    public interface IDataAvailableNotificationRepository
-    {
-        /// <summary>
-        /// Gets a reader that can be used to obtain unacknowledged notifications.
-        /// </summary>
-        /// <param name="recipient">The market operator to get the next notification for.</param>
-        /// <param name="domains">The domains the retrieved notification must belong to.</param>
-        /// <returns>A reader that can be used to obtain unacknowledged notifications; otherwise null.</returns>
-        Task<ICabinetReader?> GetNextUnacknowledgedAsync(ActorId recipient, params DomainOrigin[] domains);
+    /// <param name="recipient">The market operator to get the next notification for.</param>
+    /// <param name="domains">The domains the retrieved notification must belong to.</param>
+    /// <returns>A reader that can be used to obtain unacknowledged notifications; otherwise null.</returns>
+    Task<ICabinetReader?> GetNextUnacknowledgedAsync(ActorId recipient, params DomainOrigin[] domains);
 
-        /// <summary>
-        /// Saves the given notification as unacknowledged.
-        /// </summary>
-        /// <param name="key">The key to the cabinet where the notifications will be saved.</param>
-        /// <param name="notifications">The notifications to save.</param>
-        Task SaveAsync(CabinetKey key, IReadOnlyList<DataAvailableNotification> notifications);
+    /// <summary>
+    /// Saves the given notification as unacknowledged.
+    /// </summary>
+    /// <param name="key">The key to the cabinet where the notifications will be saved.</param>
+    /// <param name="notifications">The notifications to save.</param>
+    Task SaveAsync(CabinetKey key, IReadOnlyList<DataAvailableNotification> notifications);
 
-        /// <summary>
-        /// Acknowledges the specified bundle and its notifications.
-        /// These acknowledged notifications will no longer be returned from <see cref="ICabinetReader" />.
-        /// </summary>
-        /// <param name="bundle">The bundle to acknowledge.</param>
-        Task AcknowledgeAsync(Bundle bundle);
-    }
+    /// <summary>
+    /// Acknowledges the specified bundle and its notifications.
+    /// These acknowledged notifications will no longer be returned from <see cref="ICabinetReader" />.
+    /// </summary>
+    /// <param name="bundle">The bundle to acknowledge.</param>
+    Task AcknowledgeAsync(Bundle bundle);
 }

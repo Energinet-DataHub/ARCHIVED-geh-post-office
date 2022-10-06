@@ -32,14 +32,15 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
             // assert
             var externalActorId = Guid.NewGuid();
             var actorId = Guid.NewGuid();
-            var target = new MarketOperatorFlowLogger(new Mock<ILogger>().Object);
+            var target = new MarketOperatorFlowLogger(
+                null!,
+                new Mock<ILogger>().Object);
 
             // act
             await target.LogActorFoundAsync(externalActorId, actorId);
             var actual = await target.GetLogAsync();
 
             // assert
-            Assert.StartsWith("Actor found", actual, StringComparison.CurrentCulture);
             Assert.Contains(externalActorId.ToString(), actual, StringComparison.CurrentCultureIgnoreCase);
             Assert.Contains(actorId.ToString(), actual, StringComparison.CurrentCultureIgnoreCase);
         }
@@ -49,14 +50,15 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
         {
             // assert
             var externalActorId = Guid.NewGuid();
-            var target = new MarketOperatorFlowLogger(new Mock<ILogger>().Object);
+            var target = new MarketOperatorFlowLogger(
+                null!,
+                new Mock<ILogger>().Object);
 
             // act
             await target.LogActorNotFoundAsync(externalActorId);
             var actual = await target.GetLogAsync();
 
             // assert
-            Assert.StartsWith("An actor was not found", actual, StringComparison.CurrentCulture);
             Assert.Contains(externalActorId.ToString(), actual, StringComparison.CurrentCultureIgnoreCase);
         }
 
@@ -66,14 +68,15 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
             // assert
             var externalActorId = Guid.NewGuid();
             var gln = Guid.NewGuid().ToString();
-            var target = new MarketOperatorFlowLogger(new Mock<ILogger>().Object);
+            var target = new MarketOperatorFlowLogger(
+                null!,
+                new Mock<ILogger>().Object);
 
             // act
             await target.LogLegacyActorFoundAsync(externalActorId, gln);
             var actual = await target.GetLogAsync();
 
             // assert
-            Assert.StartsWith("Legacy actor found", actual, StringComparison.CurrentCulture);
             Assert.Contains(externalActorId.ToString(), actual, StringComparison.CurrentCultureIgnoreCase);
             Assert.Contains(gln, actual, StringComparison.CurrentCultureIgnoreCase);
         }
@@ -83,14 +86,15 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
         {
             // assert
             var externalActorId = Guid.NewGuid();
-            var target = new MarketOperatorFlowLogger(new Mock<ILogger>().Object);
+            var target = new MarketOperatorFlowLogger(
+                null!,
+                new Mock<ILogger>().Object);
 
             // act
             await target.LogLegacyActorNotFoundAsync(externalActorId);
             var actual = await target.GetLogAsync();
 
             // assert
-            Assert.StartsWith("A legacy actor was not found", actual, StringComparison.CurrentCulture);
             Assert.Contains(externalActorId.ToString(), actual, StringComparison.CurrentCultureIgnoreCase);
         }
 
@@ -100,7 +104,10 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
             // assert
             var externalActorIdFirst = Guid.NewGuid();
             var externalActorIdSecond = Guid.NewGuid();
-            var target = new MarketOperatorFlowLogger(new Mock<ILogger>().Object);
+            var target = new MarketOperatorFlowLogger(
+                null!,
+                new Mock<ILogger>().Object);
+
             await target.LogActorNotFoundAsync(externalActorIdFirst);
             await target.LogLegacyActorNotFoundAsync(externalActorIdSecond);
 

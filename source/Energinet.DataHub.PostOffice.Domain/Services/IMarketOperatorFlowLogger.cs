@@ -24,6 +24,11 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
     public interface IMarketOperatorFlowLogger
     {
         /// <summary>
+        /// Enables heavy logging.
+        /// </summary>
+        bool EnableHeavyLogging { get; set; }
+
+        /// <summary>
         /// Logs message regarding registry actor found
         /// </summary>
         Task LogActorFoundAsync(Guid externalActorId, Guid actorId);
@@ -49,12 +54,37 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         Task LogRequestDataFromSubdomainTimeoutAsync(string correlationId, DomainOrigin origin);
 
         /// <summary>
+        /// Logs information about the found bundle.
+        /// </summary>
+        Task LogFoundBundleAsync(string bundleDocumentRecipient, string bundleDocumentId);
+
+        /// <summary>
+        /// Logs which recipient is used to search for a bundle.
+        /// </summary>
+        Task LogSearchForExistingBundleAsync(ActorId recipient);
+
+        /// <summary>
         /// Logs which sub domain is called for data retrieving bundle data
         /// </summary>
         Task LogSubDomainOriginDataRequestAsync(DomainOrigin origin);
 
         /// <summary>
-        /// Logs which actor requested a deuque
+        /// Logs that the specified domain has a catalog entry for the next notification.
+        /// </summary>
+        Task LogCatalogWasFoundForDomainAsync(ActorId recipient, DomainOrigin domain);
+
+        /// <summary>
+        /// Logs that the specified domain does not have a catalog entry for the next notification.
+        /// </summary>
+        Task LogNoCatalogWasFoundForDomainAsync(ActorId recipient, DomainOrigin domain);
+
+        /// <summary>
+        /// Log messages regarding DataAvailable notifications for specified domains.
+        /// </summary>
+        Task LogLatestDataAvailableNotificationsAsync(ActorId marketOperator, DomainOrigin[] domains);
+
+        /// <summary>
+        /// Logs which actor requested a dequeue
         /// </summary>
         /// <param name="externalActorId">The B2C id of the actor trying to dequeue</param>
         /// <param name="correlationId">The correlation id of the dequeue call</param>
@@ -66,5 +96,20 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         /// </summary>
         /// <returns>The log</returns>
         Task<string> GetLogAsync();
+
+        /// <summary>
+        /// Logs that no notifications were found.
+        /// </summary>
+        Task LogNoNotificationsFoundAsync();
+
+        /// <summary>
+        /// Logs that no response was received from domain.
+        /// </summary>
+        Task LogNoResponseAsync();
+
+        /// <summary>
+        /// Logs an introduction.
+        /// </summary>
+        Task LogIntroAsync();
     }
 }
