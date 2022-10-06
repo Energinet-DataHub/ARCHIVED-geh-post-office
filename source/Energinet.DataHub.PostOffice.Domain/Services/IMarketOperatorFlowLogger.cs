@@ -24,6 +24,11 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
     public interface IMarketOperatorFlowLogger
     {
         /// <summary>
+        /// Enables heavy logging.
+        /// </summary>
+        bool EnableHeavyLogging { get; set; }
+
+        /// <summary>
         /// Logs message regarding registry actor found
         /// </summary>
         Task LogActorFoundAsync(Guid externalActorId, Guid actorId);

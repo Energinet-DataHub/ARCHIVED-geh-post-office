@@ -59,6 +59,8 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions
         {
             return request.ProcessAsync(async () =>
             {
+                _marketOperatorFlowLogHelper.EnableHeavyLogging = log == true;
+
                 var responseFormat = _responseFormatProvider.TryGetResponseFormat(request);
 
                 var command = new PeekMasterDataCommand(

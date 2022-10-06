@@ -21,6 +21,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.MarketOperator
 {
     internal sealed class MockedMarketOperatorFlowLogHelper : IMarketOperatorFlowLogHelper
     {
+        public bool EnableHeavyLogging { get; set; }
+
         public Task<HttpResponseData> GetFlowLogResponseAsync(HttpRequestData request, HttpStatusCode statusCode)
             => Task.FromResult(request.CreateResponse(statusCode));
     }

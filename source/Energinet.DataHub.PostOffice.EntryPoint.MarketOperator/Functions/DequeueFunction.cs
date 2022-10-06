@@ -48,6 +48,8 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions
         {
             return request.ProcessAsync(async () =>
             {
+                _marketOperatorFlowLogHelper.EnableHeavyLogging = log == true;
+
                 var command = new DequeueCommand(_operatorIdentity.ActorId, request.Url.GetQueryValue(Constants.BundleIdQueryName));
                 var response = await _mediator.Send(command).ConfigureAwait(false);
 

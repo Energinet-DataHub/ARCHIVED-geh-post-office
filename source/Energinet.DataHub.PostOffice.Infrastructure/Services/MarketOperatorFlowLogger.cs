@@ -37,6 +37,8 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
             _logger = logger;
         }
 
+        public bool EnableHeavyLogging { get; set; }
+
         public Task LogIntroAsync()
         {
             const string cow = @"
@@ -85,6 +87,9 @@ _______________________________
 
         public async Task LogLatestDataAvailableNotificationsAsync(ActorId marketOperator, DomainOrigin[] domains)
         {
+            if (!EnableHeavyLogging)
+                return;
+
             ArgumentNullException.ThrowIfNull(marketOperator);
             ArgumentNullException.ThrowIfNull(domains);
 
