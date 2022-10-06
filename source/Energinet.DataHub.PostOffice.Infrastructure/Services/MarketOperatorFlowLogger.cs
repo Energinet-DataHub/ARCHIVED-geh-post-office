@@ -57,6 +57,11 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
             return LogAsync($"A legacy actor was not found with external id '{externalActorId}'");
         }
 
+        public Task LogNoCatalogWasFoundForDomainAsync(DomainOrigin domain)
+        {
+            return LogAsync($"No catalog found for domain '{domain}'");
+        }
+
         public async Task LogLatestDataAvailableNotificationsAsync(ActorId marketOperator, DomainOrigin[] domains)
         {
             ArgumentNullException.ThrowIfNull(marketOperator);

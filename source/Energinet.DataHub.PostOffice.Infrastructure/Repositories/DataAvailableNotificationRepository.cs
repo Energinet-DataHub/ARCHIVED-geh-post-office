@@ -162,7 +162,13 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             {
                 var catalogEntry = await entryLookup.task.ConfigureAwait(false);
                 if (catalogEntry == null)
+                {
+                    await _marketOperatorFlowLogger
+                        .LogNoCatalogWasFoundForDomainAsync(entryLookup.domain)
+                        .ConfigureAwait(false);
+
                     continue;
+                }
 
                 if (smallestEntry == null || smallestEntry.NextSequenceNumber > catalogEntry.NextSequenceNumber)
                 {
@@ -176,7 +182,13 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 .ConfigureAwait(false);
 
             if (smallestEntry == null || smallestEntry.NextSequenceNumber > maximumSequenceNumber.Value)
+            {
+                await _marketOperatorFlowLogger
+                    .LogLatestDataAvailableNotificationsAsync(recipient, domains)
+                    .ConfigureAwait(false);
+
                 return null;
+            }
 
             var cabinetKey = new CabinetKey(
                 recipient,
