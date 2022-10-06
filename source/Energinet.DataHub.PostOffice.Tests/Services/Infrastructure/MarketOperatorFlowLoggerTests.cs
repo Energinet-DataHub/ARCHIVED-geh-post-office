@@ -41,7 +41,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
             var actual = await target.GetLogAsync();
 
             // assert
-            Assert.StartsWith("Actor found", actual, StringComparison.CurrentCulture);
             Assert.Contains(externalActorId.ToString(), actual, StringComparison.CurrentCultureIgnoreCase);
             Assert.Contains(actorId.ToString(), actual, StringComparison.CurrentCultureIgnoreCase);
         }
@@ -60,7 +59,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
             var actual = await target.GetLogAsync();
 
             // assert
-            Assert.StartsWith("An actor was not found", actual, StringComparison.CurrentCulture);
             Assert.Contains(externalActorId.ToString(), actual, StringComparison.CurrentCultureIgnoreCase);
         }
 
@@ -79,7 +77,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
             var actual = await target.GetLogAsync();
 
             // assert
-            Assert.StartsWith("Legacy actor found", actual, StringComparison.CurrentCulture);
             Assert.Contains(externalActorId.ToString(), actual, StringComparison.CurrentCultureIgnoreCase);
             Assert.Contains(gln, actual, StringComparison.CurrentCultureIgnoreCase);
         }
@@ -98,7 +95,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
             var actual = await target.GetLogAsync();
 
             // assert
-            Assert.StartsWith("A legacy actor was not found", actual, StringComparison.CurrentCulture);
             Assert.Contains(externalActorId.ToString(), actual, StringComparison.CurrentCultureIgnoreCase);
         }
 
