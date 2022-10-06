@@ -24,6 +24,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
+using Energinet.DataHub.PostOffice.Domain.Services;
 using Energinet.DataHub.PostOffice.Infrastructure.Common;
 using Energinet.DataHub.PostOffice.Infrastructure.Documents;
 using Energinet.DataHub.PostOffice.Infrastructure.Mappers;
@@ -40,15 +41,18 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
         private readonly IDataAvailableNotificationRepositoryContainer _repositoryContainer;
         private readonly IBundleRepositoryContainer _bundleRepositoryContainer;
         private readonly ISequenceNumberRepository _sequenceNumberRepository;
+        private readonly IMarketOperatorFlowLogger _marketOperatorFlowLogger;
 
         public DataAvailableNotificationRepository(
             IBundleRepositoryContainer bundleRepositoryContainer,
             IDataAvailableNotificationRepositoryContainer repositoryContainer,
-            ISequenceNumberRepository sequenceNumberRepository)
+            ISequenceNumberRepository sequenceNumberRepository,
+            IMarketOperatorFlowLogger marketOperatorFlowLogger)
         {
             _bundleRepositoryContainer = bundleRepositoryContainer;
             _repositoryContainer = repositoryContainer;
             _sequenceNumberRepository = sequenceNumberRepository;
+            _marketOperatorFlowLogger = marketOperatorFlowLogger;
         }
 
         public async Task SaveAsync(CabinetKey key, IReadOnlyList<DataAvailableNotification> notifications)
@@ -158,7 +162,17 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             {
                 var catalogEntry = await entryLookup.task.ConfigureAwait(false);
                 if (catalogEntry == null)
+                {
+                    await _marketOperatorFlowLogger
+                        .LogNoCatalogWasFoundForDomainAsync(recipient, entryLookup.domain)
+                        .ConfigureAwait(false);
+
                     continue;
+                }
+
+                await _marketOperatorFlowLogger
+                    .LogCatalogWasFoundForDomainAsync(recipient, entryLookup.domain)
+                    .ConfigureAwait(false);
 
                 if (smallestEntry == null || smallestEntry.NextSequenceNumber > catalogEntry.NextSequenceNumber)
                 {
@@ -172,7 +186,13 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 .ConfigureAwait(false);
 
             if (smallestEntry == null || smallestEntry.NextSequenceNumber > maximumSequenceNumber.Value)
+            {
+                await _marketOperatorFlowLogger
+                    .LogLatestDataAvailableNotificationsAsync(recipient, domains)
+                    .ConfigureAwait(false);
+
                 return null;
+            }
 
             var cabinetKey = new CabinetKey(
                 recipient,
@@ -190,6 +210,11 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             // If SaveAsync fails to insert DataAvailable, for example due to crash/timeout,
             // there will be a catalog entry pointing to a non-existent item.
             await DeleteOldCatalogEntryAsync(smallestEntry).ConfigureAwait(false);
+
+            await _marketOperatorFlowLogger
+                .LogLatestDataAvailableNotificationsAsync(recipient, domains)
+                .ConfigureAwait(false);
+
             return null;
         }
 

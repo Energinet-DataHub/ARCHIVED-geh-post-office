@@ -42,7 +42,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Repositories
             var target = new BundleRepository(
                 storageHandler.Object,
                 bundleRepositoryContainer.Object,
-                marketOperatorDataStorageService.Object);
+                marketOperatorDataStorageService.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act + Assert
             await Assert
@@ -62,7 +63,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Repositories
             var target = new BundleRepository(
                 storageHandler.Object,
                 bundleRepositoryContainer.Object,
-                marketOperatorDataStorageService.Object);
+                marketOperatorDataStorageService.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act + Assert
             await Assert
@@ -81,7 +83,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Repositories
             var target = new BundleRepository(
                 storageHandler.Object,
                 bundleRepositoryContainer.Object,
-                marketOperatorDataStorageService.Object);
+                marketOperatorDataStorageService.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act + Assert
             await Assert
@@ -99,7 +102,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Repositories
             var target = new BundleRepository(
                 storageHandler.Object,
                 bundleRepositoryContainer.Object,
-                marketOperatorDataStorageService.Object);
+                marketOperatorDataStorageService.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act + Assert
             await Assert
@@ -117,7 +121,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Repositories
             var target = new BundleRepository(
                 storageHandler.Object,
                 bundleRepositoryContainer.Object,
-                marketOperatorDataStorageService.Object);
+                marketOperatorDataStorageService.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act + Assert
             await Assert
@@ -136,7 +141,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Repositories
             var target = new BundleRepository(
                 storageHandler.Object,
                 bundleRepositoryContainer.Object,
-                marketOperatorDataStorageService.Object);
+                marketOperatorDataStorageService.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             // Act + Assert
             await Assert
@@ -155,7 +161,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Repositories
             var target = new BundleRepository(
                 storageHandler.Object,
                 bundleRepositoryContainer.Object,
-                marketOperatorDataStorageService.Object);
+                marketOperatorDataStorageService.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
 
             var bundle = new Bundle(
                 new Uuid(Guid.NewGuid()),

@@ -16,8 +16,10 @@ using System;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
+using Energinet.DataHub.PostOffice.Domain.Services;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
+using Energinet.DataHub.PostOffice.Infrastructure.Services;
 using Moq;
 using Xunit;
 using Xunit.Categories;
@@ -103,7 +105,8 @@ namespace Energinet.DataHub.PostOffice.Tests.Repositories
             return new DataAvailableNotificationRepository(
                 bundleRepositoryContainer.Object,
                 dataAvailableNotificationRepositoryContainer.Object,
-                sequenceNumberRepository.Object);
+                sequenceNumberRepository.Object,
+                new Mock<IMarketOperatorFlowLogger>().Object);
         }
     }
 }
