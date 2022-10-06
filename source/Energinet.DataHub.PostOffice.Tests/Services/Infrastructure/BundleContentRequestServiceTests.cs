@@ -21,7 +21,6 @@ using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Services;
 using Energinet.DataHub.PostOffice.Infrastructure.Model;
-using Energinet.DataHub.PostOffice.Infrastructure.Repositories;
 using Energinet.DataHub.PostOffice.Infrastructure.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -45,9 +44,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
             var dataBundleRequestSenderMock = new Mock<IDataBundleRequestSender>();
             var target = new BundleContentRequestService(
                 new Mock<ILogger>().Object,
-                new MarketOperatorFlowLogger(
-                    new Mock<FindLatestDataAvailableNotificationRepository>().Object,
-                    new Mock<ILogger>().Object),
+                new Mock<IMarketOperatorFlowLogger>().Object,
                 marketOperatorDataStorageServiceMock.Object,
                 dataBundleRequestSenderMock.Object,
                 new Mock<ICorrelationContext>().Object);
@@ -83,7 +80,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
             var dataBundleRequestSenderMock = new Mock<IDataBundleRequestSender>();
             var target = new BundleContentRequestService(
                 new Mock<ILogger>().Object,
-                new Mock<MarketOperatorFlowLogger>().Object,
+                new Mock<IMarketOperatorFlowLogger>().Object,
                 marketOperatorDataStorageServiceMock.Object,
                 dataBundleRequestSenderMock.Object,
                 new Mock<ICorrelationContext>().Object);
@@ -116,52 +113,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
             // Assert
             Assert.NotNull(actual);
             Assert.Equal(contentUri, actual!.ContentPath);
-        }
-
-        [Fact]
-        public async Task WaitForBundleContentFromSubDomainAsync_MarketOperatorFlowLogs_CalledSubdomain_Logged()
-        {
-            // Arrange
-            var marketOperatorDataStorageServiceMock = new Mock<IMarketOperatorDataStorageService>();
-            var dataBundleRequestSenderMock = new Mock<IDataBundleRequestSender>();
-            var marketOperatorFlowLogger = new MarketOperatorFlowLogger(
-                new Mock<FindLatestDataAvailableNotificationRepository>().Object,
-                new Mock<ILogger>().Object);
-
-            var target = new BundleContentRequestService(
-                new Mock<ILogger>().Object,
-                marketOperatorFlowLogger,
-                marketOperatorDataStorageServiceMock.Object,
-                dataBundleRequestSenderMock.Object,
-                new Mock<ICorrelationContext>().Object);
-
-            var bundle = new Bundle(
-                new Uuid(Guid.NewGuid()),
-                new LegacyActorId(new GlobalLocationNumber("fake_value")),
-                DomainOrigin.TimeSeries,
-                new ContentType("fake_value"),
-                Array.Empty<Uuid>(),
-                Enumerable.Empty<string>(),
-                ResponseFormat.Json);
-
-            var contentUri = new Uri("https://test.test.dk");
-            var response = new DataBundleResponseDto(
-                Guid.NewGuid(),
-                string.Empty,
-                contentUri);
-
-            dataBundleRequestSenderMock
-                .Setup(x => x.SendAsync(It.IsAny<DataBundleRequestDto>(), MessageHub.Model.Model.DomainOrigin.TimeSeries))
-                .ReturnsAsync(response);
-
-            // Act
-            await target.WaitForBundleContentFromSubDomainAsync(
-                bundle,
-                ResponseFormat,
-                ResponseVersion).ConfigureAwait(false);
-
-            // Assert
-            Assert.Contains($"subdomain: '{bundle.Origin}'", await marketOperatorFlowLogger.GetLogAsync().ConfigureAwait(false), StringComparison.InvariantCulture);
         }
     }
 }
