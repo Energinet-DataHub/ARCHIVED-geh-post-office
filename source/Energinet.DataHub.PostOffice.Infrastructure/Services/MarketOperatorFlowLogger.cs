@@ -138,7 +138,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
 
         public Task LogNoResponseAsync()
         {
-            return LogAsync("\nConclusion: There is a message ready, but the domain did not provide a it. Lying per contract and replying with NoContent.");
+            return LogAsync("\nConclusion: There is a message ready, but the domain did not provide it. Lying per contract and replying with NoContent.");
         }
 
         private Task LogAsync(string msg)
