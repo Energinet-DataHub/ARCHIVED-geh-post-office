@@ -182,7 +182,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
                 .ConfigureAwait(false);
 
             if (bundleContent == null)
-                return null; // Timeout or error. Currently returned as "no new data".
+                return bundle; // Timeout or error. Currently returned as "no new data".
 
             bundle.AssignContent(bundleContent);
             await _bundleRepository.SaveAsync(bundle).ConfigureAwait(false);

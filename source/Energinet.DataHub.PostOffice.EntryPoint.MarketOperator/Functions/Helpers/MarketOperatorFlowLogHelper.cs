@@ -27,6 +27,17 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpe
 {
     public sealed class MarketOperatorFlowLogHelper : IMarketOperatorFlowLogHelper
     {
+        private const string CowSay = @"
+_______________________________
+ < Titans First Line Support >
+-------------------------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+";
+
         private readonly IConfiguration _configuration;
         private readonly IMarketOperatorFlowLogger _marketOperatorFlowLogger;
 
@@ -50,7 +61,7 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.MarketOperator.Functions.Helpe
             }
 
             var log = await _marketOperatorFlowLogger.GetLogAsync().ConfigureAwait(false);
-            var bytes = Encoding.UTF8.GetBytes(log);
+            var bytes = Encoding.UTF8.GetBytes(CowSay + log);
             return request.CreateResponse(new MemoryStream(bytes), MediaTypeNames.Text.Plain, HttpStatusCode.PartialContent);
         }
     }

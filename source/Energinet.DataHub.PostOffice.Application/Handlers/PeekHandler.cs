@@ -79,10 +79,6 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
 
             _logger.LogProcess("Peek", _correlationContext.Id, request.MarketOperator);
 
-            await _marketOperatorFlowLogger
-                .LogIntroAsync()
-                .ConfigureAwait(false);
-
             var marketOperator = Guid.TryParse(request.MarketOperator, out var actorId)
                 ? new ActorId(actorId)
                 : new LegacyActorId(new GlobalLocationNumber(request.MarketOperator));

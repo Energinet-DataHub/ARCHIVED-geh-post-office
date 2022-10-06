@@ -39,22 +39,6 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
 
         public bool EnableHeavyLogging { get; set; }
 
-        public Task LogIntroAsync()
-        {
-            const string cow = @"
-_______________________________
- < Titans First Line Support >
--------------------------------
-        \   ^__^
-         \  (oo)\_______
-            (__)\       )\/\
-                ||----w |
-                ||     ||";
-
-            _log.Enqueue(cow);
-            return Task.CompletedTask;
-        }
-
         public Task LogActorFoundAsync(Guid externalActorId, Guid actorId)
         {
             return LogAsync($"Does actor '{externalActorId}' exist in new registry: Yes with id '{actorId}'.");
@@ -112,7 +96,7 @@ _______________________________
                 }
                 else
                 {
-                    await LogAsync($"Searching for any notifications for actor '{marketOperator}' from domain '{domainOrigin}': Never received notifications.").ConfigureAwait(false);
+                    await LogAsync($"Searching for any notifications for actor '{marketOperator}' from domain '{domainOrigin}': Nothing was found.").ConfigureAwait(false);
                 }
             }
         }
@@ -149,12 +133,12 @@ _______________________________
 
         public Task LogNoNotificationsFoundAsync()
         {
-            return LogAsync("\n\nThere is nothing new to return!");
+            return LogAsync("\nConclusion: No new messages were found. Replying with NoContent.");
         }
 
         public Task LogNoResponseAsync()
         {
-            return LogAsync("\n\nThere was data, but the domain did not reply!");
+            return LogAsync("\nConclusion: There is a message ready, but the domain did not provide a it. Lying per contract and replying with NoContent.");
         }
 
         private Task LogAsync(string msg)
