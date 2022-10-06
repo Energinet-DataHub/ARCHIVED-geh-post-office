@@ -37,6 +37,22 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
             _logger = logger;
         }
 
+        public Task LogIntroAsync()
+        {
+            const string cow = @"
+_______________________________
+ < Titans First Line Support >
+-------------------------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||";
+
+            _log.Enqueue(cow);
+            return Task.CompletedTask;
+        }
+
         public Task LogActorFoundAsync(Guid externalActorId, Guid actorId)
         {
             return LogAsync($"Does actor '{externalActorId}' exist in new registry: Yes with id '{actorId}'.");
@@ -82,16 +98,16 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
                 {
                     if (isDequeued)
                     {
-                        await LogAsync($"Checking notifications for actor '{marketOperator}' from domain {domainOrigin}: Latest received DataAvailable is {notification.NotificationId} with {timestamp:u}.").ConfigureAwait(false);
+                        await LogAsync($"Searching for any notifications for actor '{marketOperator}' from domain '{domainOrigin}': Latest received DataAvailable is {notification.NotificationId} with {timestamp:u}.").ConfigureAwait(false);
                     }
                     else
                     {
-                        await LogAsync($"! Checking notifications for actor '{marketOperator}' from domain {domainOrigin}: Found DataAvailable {notification.NotificationId} with {timestamp:u}.").ConfigureAwait(false);
+                        await LogAsync($"! Searching for any notifications for actor '{marketOperator}' from domain '{domainOrigin}': Found DataAvailable {notification.NotificationId} with {timestamp:u}.").ConfigureAwait(false);
                     }
                 }
                 else
                 {
-                    await LogAsync($"Checking notifications for actor '{marketOperator}' from domain {domainOrigin}: No new notifications.").ConfigureAwait(false);
+                    await LogAsync($"Searching for any notifications for actor '{marketOperator}' from domain '{domainOrigin}': Never received notifications.").ConfigureAwait(false);
                 }
             }
         }
@@ -118,12 +134,22 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
 
         public Task LogRequestDataFromSubdomainTimeoutAsync(string correlationId, DomainOrigin origin)
         {
-            return LogAsync($"Request sent to '{origin}' for data encountered a timeout (30 seconds) while waiting for response, correlationId '{correlationId}'.");
+            return LogAsync($"The request sent to '{origin}' encountered a timeout (30 seconds) while waiting for response, correlationId '{correlationId}'.");
         }
 
         public Task<string> GetLogAsync()
         {
             return Task.FromResult(string.Join(Environment.NewLine, _log));
+        }
+
+        public Task LogNoNotificationsFoundAsync()
+        {
+            return LogAsync("\n\nThere is nothing new to return!");
+        }
+
+        public Task LogNoResponseAsync()
+        {
+            return LogAsync("\n\nThere was data, but the domain did not reply!");
         }
 
         private Task LogAsync(string msg)

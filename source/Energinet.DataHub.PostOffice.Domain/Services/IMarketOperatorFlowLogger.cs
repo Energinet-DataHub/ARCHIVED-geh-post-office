@@ -79,7 +79,7 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         Task LogLatestDataAvailableNotificationsAsync(ActorId marketOperator, DomainOrigin[] domains);
 
         /// <summary>
-        /// Logs which actor requested a deuque
+        /// Logs which actor requested a dequeue
         /// </summary>
         /// <param name="externalActorId">The B2C id of the actor trying to dequeue</param>
         /// <param name="correlationId">The correlation id of the dequeue call</param>
@@ -91,5 +91,20 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         /// </summary>
         /// <returns>The log</returns>
         Task<string> GetLogAsync();
+
+        /// <summary>
+        /// Logs that no notifications were found.
+        /// </summary>
+        Task LogNoNotificationsFoundAsync();
+
+        /// <summary>
+        /// Logs that no response was received from domain.
+        /// </summary>
+        Task LogNoResponseAsync();
+
+        /// <summary>
+        /// Logs an introduction.
+        /// </summary>
+        Task LogIntroAsync();
     }
 }
