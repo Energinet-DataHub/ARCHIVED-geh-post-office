@@ -12,5 +12,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 locals {
-  FLOW_LOG_ENABLED = false
+  FLOW_LOG_ENABLED = true
 }
