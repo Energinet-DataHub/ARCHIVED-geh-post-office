@@ -87,16 +87,16 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
                 {
                     if (isDequeued)
                     {
-                        await LogAsync($"Searching for any notifications for actor '{marketOperator}' from domain '{domainOrigin}': Latest received DataAvailable is {notification.NotificationId} from {timestamp:u}.").ConfigureAwait(false);
+                        await LogAsync($"Showing latest DataAvailable for actor '{marketOperator}' from domain '{domainOrigin}': {notification.NotificationId} with {timestamp:u}.").ConfigureAwait(false);
                     }
                     else
                     {
-                        await LogAsync($"! Searching for any notifications for actor '{marketOperator}' from domain '{domainOrigin}': Found DataAvailable {notification.NotificationId} from {timestamp:u}.").ConfigureAwait(false);
+                        await LogAsync($"! Showing latest DataAvailable for actor '{marketOperator}' from domain '{domainOrigin}': {notification.NotificationId} with {timestamp:u}.").ConfigureAwait(false);
                     }
                 }
                 else
                 {
-                    await LogAsync($"Searching for any notifications for actor '{marketOperator}' from domain '{domainOrigin}': Nothing was found.").ConfigureAwait(false);
+                    await LogAsync($"Showing latest DataAvailable for actor '{marketOperator}' from domain '{domainOrigin}': Nothing was found.").ConfigureAwait(false);
                 }
             }
         }
