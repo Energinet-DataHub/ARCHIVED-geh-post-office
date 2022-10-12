@@ -21,11 +21,6 @@ data "azurerm_key_vault_secret" "appi_shared_instrumentation_key" {
   key_vault_id = data.azurerm_key_vault.kv_shared_resources.id
 }
 
-data "azurerm_key_vault_secret" "sbq_messagehub_dequeue_cleanup_name" {
-  name         = "sbq-messagehub-dequeue-cleanup-name"
-  key_vault_id = data.azurerm_key_vault.kv_shared_resources.id
-}
-
 data "azurerm_key_vault_secret" "mssql_market_participant_database_name" {
   name         = "mssql-market-participant-database-name"
   key_vault_id = data.azurerm_key_vault.kv_shared_resources.id
