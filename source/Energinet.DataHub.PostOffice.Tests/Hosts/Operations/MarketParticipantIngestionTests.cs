@@ -93,7 +93,6 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.Operations
         [InlineData(ActorStatus.Active, true)]
         [InlineData(ActorStatus.Passive, true)]
         [InlineData(ActorStatus.Inactive, false)]
-        [InlineData(ActorStatus.Deleted, false)]
         public async Task RunAsync_ActorUpdatedMessage_Status(ActorStatus status, bool isUpdate)
         {
             // Arrange
@@ -109,7 +108,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.Operations
                 Guid.NewGuid(),
                 Guid.NewGuid(),
                 Guid.NewGuid(),
-                "fake_value",
+                new ActorNumber("fake_value", ActorNumberType.Unknown),
                 status,
                 Enumerable.Empty<BusinessRoleCode>(),
                 Enumerable.Empty<ActorMarketRole>());
@@ -148,7 +147,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Hosts.Operations
                 Guid.NewGuid(),
                 Guid.NewGuid(),
                 null,
-                "fake_value",
+                new ActorNumber("fake_value", ActorNumberType.Unknown),
                 ActorStatus.Active,
                 Enumerable.Empty<BusinessRoleCode>(),
                 Enumerable.Empty<ActorMarketRole>());
