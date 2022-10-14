@@ -164,7 +164,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         {
             // Arrange
             var recipientGln = new MockedGln();
-            await AddDataAvailableNotificationAsync(recipientGln, DomainOrigin.Aggregations);
+            await AddDataAvailableNotificationAsync(recipientGln, DomainOrigin.Wholesale);
             await AddDataAvailableNotificationAsync(recipientGln, DomainOrigin.Charges);
             await AddDataAvailableNotificationAsync(recipientGln, DomainOrigin.TimeSeries);
 
