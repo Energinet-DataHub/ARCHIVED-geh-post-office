@@ -173,7 +173,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation
         [InlineData((DomainOrigin)100000, false)]
         [InlineData(DomainOrigin.Charges, true)]
         [InlineData(DomainOrigin.TimeSeries, true)]
-        [InlineData(DomainOrigin.Aggregations, true)]
+        [InlineData(DomainOrigin.Wholesale, true)]
         [InlineData(DomainOrigin.MarketRoles, true)]
         [InlineData(DomainOrigin.MeteringPoints, true)]
         public async Task Validate_Origin_ValidatesProperty(DomainOrigin value, bool isValid)
