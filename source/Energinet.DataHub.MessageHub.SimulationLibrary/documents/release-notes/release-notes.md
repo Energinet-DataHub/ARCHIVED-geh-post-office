@@ -1,8 +1,12 @@
 # Energinet.DataHub.MessageHub.SimulationLibrary Release Notes
 
+## Version 3.3.2
+
+- Updated packages
+
 ## Version 3.3.1
 
-- Updated Azure.Messaging.ServiceBus
+- Updated packages
 
 ## Version 3.3.0
 
