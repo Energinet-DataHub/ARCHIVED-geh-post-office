@@ -15,10 +15,12 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Domain.Model;
 using Energinet.DataHub.PostOffice.Domain.Services;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories;
 using Microsoft.Extensions.Logging;
+using DomainOrigin = Energinet.DataHub.PostOffice.Domain.Model.DomainOrigin;
 
 namespace Energinet.DataHub.PostOffice.Infrastructure.Services
 {
@@ -124,6 +126,26 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
         public Task LogRequestDataFromSubdomainTimeoutAsync(string correlationId, DomainOrigin origin)
         {
             return LogAsync($"The request sent to '{origin}' encountered a timeout (30 seconds) while waiting for response, correlationId '{correlationId}'.");
+        }
+
+        public async Task LogRequestErrorFromSubdomainAsync(
+            string correlationId,
+            DomainOrigin origin,
+            DataBundleResponseErrorDto? errorMessage)
+        {
+            await LogAsync($"The request sent to '{origin}' encountered an error, correlationId '{correlationId}'.")
+                .ConfigureAwait(false);
+
+            if (errorMessage != null)
+            {
+                await LogAsync($"The domain error was {errorMessage.Reason}. Additional description: {errorMessage.FailureDescription}.")
+                    .ConfigureAwait(false);
+            }
+            else
+            {
+                await LogAsync($"The responding domain did not provide an error description.")
+                    .ConfigureAwait(false);
+            }
         }
 
         public Task<string> GetLogAsync()
