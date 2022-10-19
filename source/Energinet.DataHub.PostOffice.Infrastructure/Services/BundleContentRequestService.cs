@@ -66,13 +66,20 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
             var response = await _dataBundleRequestSender.SendAsync(request, (DomainOrigin)bundle.Origin).ConfigureAwait(false);
             if (response == null)
             {
-                await _marketOperatorFlowLogger.LogRequestDataFromSubdomainTimeoutAsync(request.IdempotencyId, bundle.Origin).ConfigureAwait(false);
+                await _marketOperatorFlowLogger
+                    .LogRequestDataFromSubdomainTimeoutAsync(request.IdempotencyId, bundle.Origin)
+                    .ConfigureAwait(false);
+
                 _logger.LogProcess("Peek", "NoDomainResponse", _correlationContext.Id, bundle.Recipient.ToString(), bundle.BundleId.ToString(), bundle.Origin.ToString());
                 return null;
             }
 
             if (response.IsErrorResponse)
             {
+                await _marketOperatorFlowLogger
+                    .LogRequestErrorFromSubdomainAsync(request.IdempotencyId, bundle.Origin, response.ResponseError)
+                    .ConfigureAwait(false);
+
                 _logger.LogProcess("Peek", "DomainErrorResponse", _correlationContext.Id, bundle.Recipient.ToString(), bundle.BundleId.ToString(), bundle.Origin.ToString());
                 _logger.LogError(
                     "Domain returned an error {Reason}. Correlation ID: {CorrelationId}.\nDescription: {FailureDescription}",
