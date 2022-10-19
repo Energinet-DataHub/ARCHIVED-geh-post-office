@@ -42,7 +42,7 @@ limitations under the License.
     <PackageReference Include="SimpleInjector" Version="5.4.1" />
     <PackageReference Include="SimpleInjector.Integration.GenericHost" Version="5.4.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.4" />
   </ItemGroup>
 
   <ItemGroup>
