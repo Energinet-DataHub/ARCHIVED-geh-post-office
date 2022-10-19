@@ -14,7 +14,9 @@
 
 using System;
 using System.Threading.Tasks;
+using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Domain.Model;
+using DomainOrigin = Energinet.DataHub.PostOffice.Domain.Model.DomainOrigin;
 
 namespace Energinet.DataHub.PostOffice.Domain.Services
 {
@@ -49,9 +51,14 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         Task LogLegacyActorNotFoundAsync(Guid externalActorId);
 
         /// <summary>
-        /// Logs message regarding a timeout when requesting data from at subdomain.
+        /// Logs message regarding a timeout when requesting data from a subdomain.
         /// </summary>
         Task LogRequestDataFromSubdomainTimeoutAsync(string correlationId, DomainOrigin origin);
+
+        /// <summary>
+        /// Logs message regarding an error when requesting data from a subdomain.
+        /// </summary>
+        Task LogRequestErrorFromSubdomainAsync(string correlationId, DomainOrigin origin, DataBundleResponseErrorDto? errorMessage);
 
         /// <summary>
         /// Logs information about the found bundle.
