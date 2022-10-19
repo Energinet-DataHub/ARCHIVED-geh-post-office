@@ -1,5 +1,9 @@
 # Energinet.DataHub.MessageHub.Client Release notes
 
+## Version 3.3.1
+
+- Updated Azure.Messaging.ServiceBus
+
 ## Version 3.3.0
 
 - Package and namespace renaming from IntegrationTesting to SimulationLibrary
