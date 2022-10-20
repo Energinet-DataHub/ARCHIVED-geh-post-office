@@ -20,7 +20,7 @@ module "sbs_int-events-market-actor-updated" {
   max_delivery_count  = 1
   correlation_filter  = {
     properties     = {
-      "MessageType" = "ActorUpdatedIntegrationEvent"
+      "messageType" = "ActorUpdatedIntegrationEvent"
     }
   }
 }
