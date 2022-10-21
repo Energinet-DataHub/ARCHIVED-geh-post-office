@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using Energinet.DataHub.Core.App.Common;
 using Energinet.DataHub.Core.App.Common.Abstractions.Actor;
 using Energinet.DataHub.Core.App.Common.Abstractions.Identity;
@@ -24,6 +25,10 @@ using Energinet.DataHub.PostOffice.Common.Configuration;
 using Energinet.DataHub.PostOffice.Common.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
 using SimpleInjector;
 
 namespace Energinet.DataHub.PostOffice.Common.Auth
@@ -44,25 +49,41 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
 
         private static void RegisterJwt(Container container)
         {
-            container.Register<IJwtTokenValidator, JwtTokenValidator>(Lifestyle.Scoped);
+            container.Register<IConfigurationManager<OpenIdConnectConfiguration>>(
+                () =>
+                {
+                    var configuration = container.GetService<IConfiguration>();
+                    var tenantId = configuration.GetSetting(Settings.OpenIdTenantId);
+                    return new ConfigurationManager<OpenIdConnectConfiguration>(
+                        $"https://login.microsoftonline.com/{tenantId}/v2.0/.well-known/openid-configuration",
+                        new OpenIdConnectConfigurationRetriever());
+                },
+                Lifestyle.Singleton);
+
+            container.Register<ISecurityTokenValidator, JwtSecurityTokenHandler>(Lifestyle.Singleton);
+            container.Register<IJwtTokenValidator>(
+                () =>
+                {
+                    var configuration = container.GetService<IConfiguration>();
+                    var audience = configuration.GetSetting(Settings.OpenIdAudience);
+                    return new JwtTokenValidator(
+                        container.GetRequiredService<ILogger<JwtTokenValidator>>(),
+                        container.GetRequiredService<ISecurityTokenValidator>(),
+                        container.GetRequiredService<IConfigurationManager<OpenIdConnectConfiguration>>(),
+                        audience);
+                },
+                Lifestyle.Scoped);
+
             container.Register<IClaimsPrincipalAccessor, ClaimsPrincipalAccessor>(Lifestyle.Scoped);
             container.Register<ClaimsPrincipalContext>(Lifestyle.Scoped);
             container.Register(
-                () => new JwtTokenMiddleware(
-                    container.GetRequiredService<ClaimsPrincipalContext>(),
-                    container.GetRequiredService<IJwtTokenValidator>(),
-                    _functionNamesToExclude),
+                () =>
+                {
+                    var claimsPrincipalContext = container.GetRequiredService<ClaimsPrincipalContext>();
+                    var jwtTokenValidator = container.GetRequiredService<IJwtTokenValidator>();
+                    return new JwtTokenMiddleware(claimsPrincipalContext, jwtTokenValidator);
+                },
                 Lifestyle.Scoped);
-
-            container.Register(() =>
-            {
-                var configuration = container.GetService<IConfiguration>();
-                var tenantId = configuration.GetSetting(Settings.OpenIdTenantId);
-                var audience = configuration.GetSetting(Settings.OpenIdAudience);
-                return new OpenIdSettings(
-                    $"https://login.microsoftonline.com/{tenantId}/v2.0/.well-known/openid-configuration",
-                    audience);
-            });
         }
 
         private static void RegisterActor(Container container)
