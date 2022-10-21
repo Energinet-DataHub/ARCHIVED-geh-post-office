@@ -1,5 +1,9 @@
 # Energinet.DataHub.MessageHub.SimulationLibrary Release Notes
 
+## Version 3.3.4
+
+- Updated packages.
+
 ## Version 3.3.3
 
 - Updated deployment, no code changes.
