@@ -23,7 +23,7 @@ limitations under the License.
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Energinet.DataHub.Core.App.FunctionApp" Version="6.0.0" />
+    <PackageReference Include="Energinet.DataHub.Core.App.FunctionApp" Version="7.2.0" />
     <PackageReference Include="Energinet.DataHub.Core.Logging" Version="2.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.10.0" />
