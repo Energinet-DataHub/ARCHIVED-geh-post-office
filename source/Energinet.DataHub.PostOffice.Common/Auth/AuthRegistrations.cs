@@ -76,7 +76,14 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
 
             container.Register<IClaimsPrincipalAccessor, ClaimsPrincipalAccessor>(Lifestyle.Scoped);
             container.Register<ClaimsPrincipalContext>(Lifestyle.Scoped);
-            container.Register<JwtTokenMiddleware>(Lifestyle.Scoped);
+            container.Register(
+                () =>
+                {
+                    var claimsPrincipalContext = container.GetRequiredService<ClaimsPrincipalContext>();
+                    var jwtTokenValidator = container.GetRequiredService<IJwtTokenValidator>();
+                    return new JwtTokenMiddleware(claimsPrincipalContext, jwtTokenValidator);
+                },
+                Lifestyle.Scoped);
         }
 
         private static void RegisterActor(Container container)
