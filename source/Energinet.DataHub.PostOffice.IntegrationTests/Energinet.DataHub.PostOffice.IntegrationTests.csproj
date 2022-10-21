@@ -42,7 +42,7 @@ limitations under the License.
     </PackageReference>
     <PackageReference Include="FluentAssertions" Version="6.7.0" />
     <PackageReference Include="Google.Protobuf" Version="3.21.7" />
-    <PackageReference Include="Grpc.Tools" Version="2.49.1" PrivateAssets="All" />
+    <PackageReference Include="Grpc.Tools" Version="2.50.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
     <PackageReference Include="Moq" Version="4.18.2" />
