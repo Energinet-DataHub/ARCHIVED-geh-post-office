@@ -28,7 +28,7 @@ limitations under the License.
 
   <PropertyGroup>
     <PackageId>Energinet.DataHub.MessageHub.Model</PackageId>
-    <PackageVersion>3.3.3$(VersionSuffix)</PackageVersion>
+    <PackageVersion>3.3.4$(VersionSuffix)</PackageVersion>
     <Title>Energinet.DataHub.MessageHub.Model library</Title>
     <Company>Energinet-DataHub</Company>
     <Authors>Energinet-DataHub</Authors>
@@ -65,8 +65,8 @@ https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energine
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.21.5" />
-    <PackageReference Include="Grpc.Tools" Version="2.48.0">
+    <PackageReference Include="Google.Protobuf" Version="3.21.8" />
+    <PackageReference Include="Grpc.Tools" Version="2.50.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

@@ -50,9 +50,6 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Storage
             mockedBlobClient.Setup(
                     x => x.DownloadStreamingAsync(
                         default,
-                        default,
-                        default,
-                        default,
                         default))
                 .ReturnsAsync(mockedResponse.Object);
 
@@ -102,9 +99,6 @@ namespace Energinet.DataHub.MessageHub.Core.Tests.Storage
 
             mockedBlobClient.Setup(
                     x => x.DownloadStreamingAsync(
-                        default,
-                        default,
-                        default,
                         default,
                         default))
                 .ThrowsAsync(new RequestFailedException("test"));
