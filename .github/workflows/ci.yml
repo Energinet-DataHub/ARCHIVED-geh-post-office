@@ -92,4 +92,4 @@ jobs:
       !contains(needs.*.result, 'failure') &&
       !contains(needs.*.result, 'cancelled')
     steps:
-      - run: echo "${{ toJSON(needs) }}"
+      - run: echo "${{ toJSON(needs) }}"git git
