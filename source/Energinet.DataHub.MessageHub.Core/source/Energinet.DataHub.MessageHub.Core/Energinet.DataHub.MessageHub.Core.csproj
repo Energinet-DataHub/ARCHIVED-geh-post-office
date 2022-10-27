@@ -28,7 +28,7 @@ limitations under the License.
 
   <PropertyGroup>
     <PackageId>Energinet.DataHub.MessageHub.Core</PackageId>
-    <PackageVersion>3.3.0$(VersionSuffix)</PackageVersion>
+    <PackageVersion>3.3.4$(VersionSuffix)</PackageVersion>
     <Title>Energinet.DataHub.MessageHub.Core library</Title>
     <Company>Energinet-DataHub</Company>
     <Authors>Energinet-DataHub</Authors>
@@ -65,13 +65,13 @@ https://github.com/Energinet-DataHub/geh-post-office/blob/master/source/Energine
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.10.0" />
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.13.1" />
+    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.11.0" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.14.1" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="NodaTime" Version="3.1.2" />
+    <PackageReference Include="NodaTime" Version="3.1.4" />
   </ItemGroup>
 
   <ItemGroup>

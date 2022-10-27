@@ -80,7 +80,7 @@ jobs:
       infrastructure_ci_build,
       # .NET
       dotnet_ci_build,
-      dotnet_ci_test_tests
+      dotnet_ci_test_unittests
     ]
     if: |
       always() &&

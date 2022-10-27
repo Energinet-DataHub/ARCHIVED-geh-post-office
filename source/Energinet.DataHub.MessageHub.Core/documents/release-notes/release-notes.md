@@ -1,5 +1,21 @@
 # Energinet.DataHub.MessageHub.Core Release notes
 
+## Version 3.3.4
+
+- Updated packages.
+
+## Version 3.3.3
+
+- Updated deployment, no code changes.
+
+## Version 3.3.2
+
+- Updated packages
+
+## Version 3.3.1
+
+- Updated packages
+
 ## Version 3.3.0
 
 - Package and namespace renaming from IntegrationTesting to SimulationLibrary
