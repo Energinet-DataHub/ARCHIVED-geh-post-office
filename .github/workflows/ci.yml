@@ -70,7 +70,7 @@ jobs:
       CODE_COVERAGE_FLAGS: business
 
   # Run tests in 'IntegrationTests.dll'
-  integration_test:
+  dotnet_ci_integration_test:
     needs: changes
     if: ${{ needs.changes.outputs.dotnet == 'true' }}
     uses: Energinet-DataHub/.github/.github/workflows/dotnet-solution-ci-test.yml@v8
@@ -101,7 +101,7 @@ jobs:
       # .NET
       dotnet_ci_build,
       dotnet_ci_test_unittests,
-      integration_test,
+      dotnet_ci_integration_test,
     ]
     if: |
       always() &&

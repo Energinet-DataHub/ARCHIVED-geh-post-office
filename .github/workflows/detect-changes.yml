@@ -50,7 +50,11 @@ jobs:
           infrastructure:
             - '.github/workflows/ci.yml'
             - 'build/**'
+            - '.github/workflows/cd.yml'
+            - '.github/workflows/detect-changes.yml'
           dotnet:
             - '.github/workflows/ci.yml'
             - '.github/actions/dotnet-*/**'
             - 'source/**'
+            - '.github/workflows/cd.yml'
+            - '.github/workflows/detect-changes.yml'
