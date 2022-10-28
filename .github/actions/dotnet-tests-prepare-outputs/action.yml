@@ -43,8 +43,8 @@ runs:
       shell: bash
       run: |
         # Create base directory
-        mkdir -p '${{ inputs.OUTPUT_PATH }}/source/Energinet.DataHub.PostOffice/source' ';'
-        # Copy everything from source/Energinet.DataHub.PostOffice/source to the new directory
-        cp -a source/Energinet.DataHub.PostOffice/source/. '${{ inputs.OUTPUT_PATH }}/source/Energinet.DataHub.PostOffice/source'
+        mkdir -p '${{ inputs.OUTPUT_PATH }}/source ';'
+        # Copy everything from source to the new directory
+        cp -a source/. '${{ inputs.OUTPUT_PATH }}/source
         # Remove obj-directories from artifact
         find ${{ inputs.OUTPUT_PATH }}/ -type d -name 'obj' -exec rm -rf {} +
