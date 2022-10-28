@@ -39,12 +39,12 @@ runs:
           --configuration Release \
           --output '.\source\Energinet.DataHub.PostOffice.Tests\bin\Release\net6.0'
 
-    - name: Copy all directories and files in source except the obj-directories
+    - name: Copy all bin folders
       shell: bash
       run: |
         # Create base directory
-        mkdir -p '${{ inputs.OUTPUT_PATH }}/source ';'
+        mkdir -p '${{ inputs.OUTPUT_PATH }}/source' ';'
         # Copy everything from source to the new directory
-        cp -a source/. '${{ inputs.OUTPUT_PATH }}/source
+        cp -a source/. '${{ inputs.OUTPUT_PATH }}/source'
         # Remove obj-directories from artifact
         find ${{ inputs.OUTPUT_PATH }}/ -type d -name 'obj' -exec rm -rf {} +

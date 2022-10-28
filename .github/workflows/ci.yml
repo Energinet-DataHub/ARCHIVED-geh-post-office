@@ -59,14 +59,31 @@ jobs:
     with:
       SOLUTION_FILE_PATH: 'source/Energinet.DataHub.PostOffice.sln'
 
-  # Run all tests in 'UnitTests.dll'
+  # Run all tests in 'Tests.dll'
   dotnet_ci_test_unittests:
     needs: changes
     if: ${{ needs.changes.outputs.dotnet == 'true' }}
     uses: Energinet-DataHub/.github/.github/workflows/dotnet-solution-ci-test.yml@v8
     with:
       TESTS_DLL_FILE_PATH: '\source\Energinet.DataHub.PostOffice.Tests\bin\Release\net6.0\Energinet.DataHub.PostOffice.Tests.dll'
-      DOWNLOAD_ATTEMPT_LIMIT: 8
+      DOWNLOAD_ATTEMPT_LIMIT: 12
+
+  # Run tests in 'IntegrationTests.dll'
+  integration_test:
+    needs: changes
+    if: ${{ needs.changes.outputs.dotnet == 'true' }}
+    uses: Energinet-DataHub/.github/.github/workflows/dotnet-solution-ci-test.yml@v8
+    with:
+      TESTS_DLL_FILE_PATH: '\source\Energinet.DataHub.PostOffice.IntegrationTests\bin\Release\net6.0\Energinet.DataHub.PostOffice.IntegrationTests.dll'
+      DOWNLOAD_ATTEMPT_LIMIT: 12
+      USE_AZURE_FUNCTIONS_TOOLS: true
+      ENVIRONMENT: AzureAuth
+    secrets:
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_SPN_ID: ${{ secrets.AZURE_SPN_ID_OIDC }}
+      AZURE_KEYVAULT_URL: ${{ secrets.AZURE_KEYVAULT_URL }}
+      AZURE_SECRETS_KEYVAULT_URL: ${{ secrets.AZURE_SECRETS_KEYVAULT_URL }}
 
   #
   # Branch policy status check
@@ -80,7 +97,8 @@ jobs:
       infrastructure_ci_build,
       # .NET
       dotnet_ci_build,
-      dotnet_ci_test_unittests
+      dotnet_ci_test_unittests,
+      integration_test,
     ]
     if: |
       always() &&
