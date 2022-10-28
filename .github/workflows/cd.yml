@@ -47,6 +47,7 @@ jobs:
     uses: Energinet-DataHub/.github/.github/workflows/dotnet-solution-ci.yml@v8
     with:
       SOLUTION_FILE_PATH: 'source/Energinet.DataHub.PostOffice.sln'
+      USE_COSMOS_DB_EMULATOR: true
       USE_AZURE_FUNCTIONS_TOOLS: true
       ENVIRONMENT: AzureAuth
     secrets:
@@ -96,5 +97,5 @@ jobs:
         with:
           token: ${{ secrets.PAT_TOKEN }}
           repository: '${{ secrets.ENVIRONMENT_REPOSITORY_PATH }}'
-          event-type: 'geh-timeseries-deployment-request-domain'
+          event-type: 'geh-post-office-deployment-request-domain'
           client-payload: '{"pr": "${{ steps.find_pull_request.outputs.pull_request_number }}", "infrastructure_deploy": "${{ needs.changes.outputs.infrastructure }}", "dotnet_deploy": "${{ needs.changes.outputs.dotnet }}"}'
