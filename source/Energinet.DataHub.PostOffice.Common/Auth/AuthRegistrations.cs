@@ -81,7 +81,7 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
                 {
                     var claimsPrincipalContext = container.GetRequiredService<ClaimsPrincipalContext>();
                     var jwtTokenValidator = container.GetRequiredService<IJwtTokenValidator>();
-                    return new JwtTokenMiddleware(claimsPrincipalContext, jwtTokenValidator);
+                    return new JwtTokenMiddleware(claimsPrincipalContext, jwtTokenValidator, _functionNamesToExclude);
                 },
                 Lifestyle.Scoped);
         }
