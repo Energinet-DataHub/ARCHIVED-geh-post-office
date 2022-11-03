@@ -1,6 +1,6 @@
 # Energinet.DataHub.MessageHub.Client Release notes
 
-## Version 3.3.4
+## Version 3.3.4 - 3.3.5
 
 - Updated packages.
 

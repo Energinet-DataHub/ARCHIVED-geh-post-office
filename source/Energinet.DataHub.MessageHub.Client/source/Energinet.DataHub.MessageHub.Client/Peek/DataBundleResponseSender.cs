@@ -27,6 +27,7 @@ namespace Energinet.DataHub.MessageHub.Client.Peek
         private readonly IResponseBundleParser _responseBundleParser;
         private readonly IMessageBusFactory _messageBusFactory;
         private readonly MessageHubConfig _messageHubConfig;
+        private readonly TimeSpan _defaultTimeout = TimeSpan.FromSeconds(30);
 
         public DataBundleResponseSender(
             IResponseBundleParser responseBundleParser,
@@ -48,6 +49,7 @@ namespace Energinet.DataHub.MessageHub.Client.Peek
             var serviceBusReplyMessage = new ServiceBusMessage(contractBytes)
             {
                 SessionId = sessionId,
+                TimeToLive = _defaultTimeout
             }.AddDataBundleResponseIntegrationEvents(dataBundleResponseDto.RequestIdempotencyId);
 
             var sender = _messageBusFactory.GetSenderClient(_messageHubConfig.DomainReplyQueue);
