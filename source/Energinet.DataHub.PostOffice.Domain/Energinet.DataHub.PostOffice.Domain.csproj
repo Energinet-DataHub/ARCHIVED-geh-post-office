@@ -28,8 +28,8 @@ limitations under the License.
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Energinet.DataHub.MessageHub.Model" Version="3.3.4" />
-      <PackageReference Include="NodaTime" Version="3.1.4" />
+      <PackageReference Include="Energinet.DataHub.MessageHub.Model" Version="3.3.5" />
+      <PackageReference Include="NodaTime" Version="3.1.5" />
     </ItemGroup>
 
 </Project>
