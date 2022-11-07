@@ -1,5 +1,5 @@
 ---
-name: Task
+name: User Story
 about: Use this template for adding tasks to a feature.
 labels:
 ---
