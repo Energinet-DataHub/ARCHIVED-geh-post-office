@@ -71,9 +71,6 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
                 Debug.Assert(key == new CabinetKey(notification), "All notifications should belong to the provided key.");
 
-                if (await CheckIdempotencyAsync(notification).ConfigureAwait(false))
-                    continue;
-
                 if (nextDrawer is null)
                 {
                     nextDrawer = CreateEmptyDrawer(notification);
@@ -84,6 +81,9 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                         .CreateItemAsync(nextDrawer)
                         .ConfigureAwait(false);
                 }
+
+                if (await IsReceivedAlreadyAsync(notification, nextDrawer.Id).ConfigureAwait(false))
+                    continue;
 
                 var cosmosDataAvailable = CosmosDataAvailableMapper.Map(notification, nextDrawer.Id);
                 await _repositoryContainer
@@ -360,7 +360,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             var count = 0;
             var tasks = notifications.Select(async x =>
             {
-                if (await CheckIdempotencyAsync(x).ConfigureAwait(false))
+                if (await IsReceivedAlreadyAsync(x, drawer.Id).ConfigureAwait(false))
                     return;
 
                 var cosmosDataAvailable = CosmosDataAvailableMapper.Map(x, drawer.Id);
@@ -554,7 +554,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             }
         }
 
-        private async Task<bool> CheckIdempotencyAsync(DataAvailableNotification notification)
+        private async Task<bool> IsReceivedAlreadyAsync(DataAvailableNotification notification, string drawerId)
         {
             var documentId = notification.NotificationId.AsGuid();
             var partitionKey = documentId.ToByteArray()[0];
@@ -563,7 +563,8 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             {
                 Id = $"{documentId}",
                 PartitionKey = $"{partitionKey}",
-                Content = Base64Content(notification)
+                Content = Base64Content(notification),
+                DrawerId = drawerId
             };
 
             try
@@ -577,14 +578,31 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             }
             catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.Conflict)
             {
-                var conflictingItem = await _repositoryContainer
+                var conflictingUniqueId = await _repositoryContainer
                     .Idempotency
                     .ReadItemAsync<CosmosUniqueId>(
                         uniqueId.Id,
                         new PartitionKey(uniqueId.PartitionKey))
                     .ConfigureAwait(false);
 
-                if (string.Equals(conflictingItem.Resource.Content, uniqueId.Content, StringComparison.Ordinal))
+                var conflictingItem = await _repositoryContainer
+                    .Cabinet
+                    .ReadItemAsync<CosmosDataAvailable>(
+                        uniqueId.Id,
+                        new PartitionKey(uniqueId.DrawerId))
+                    .ConfigureAwait(false);
+
+                if (conflictingItem == null)
+                {
+                    await _repositoryContainer
+                        .Idempotency
+                        .UpsertItemAsync(uniqueId)
+                        .ConfigureAwait(false);
+
+                    return false;
+                }
+
+                if (string.Equals(conflictingUniqueId.Resource.Content, uniqueId.Content, StringComparison.Ordinal))
                 {
                     return true;
                 }
