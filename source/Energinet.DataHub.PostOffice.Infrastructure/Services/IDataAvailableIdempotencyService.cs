@@ -28,7 +28,7 @@ public interface IDataAvailableIdempotencyService
     /// </summary>
     /// <param name="notification">The notification to check idempotency for.</param>
     /// <param name="destinationDrawer">The drawer the notification is to be placed into.</param>
-    internal Task<bool> HasReceivedPreviouslyAsync(
+    internal Task<bool> WasReceivedPreviouslyAsync(
         DataAvailableNotification notification,
         CosmosCabinetDrawer destinationDrawer);
 }
