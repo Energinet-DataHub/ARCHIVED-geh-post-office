@@ -45,8 +45,8 @@ public sealed class DataAvailableIdempotencyService : IDataAvailableIdempotencyS
 
         var uniqueId = new CosmosUniqueId
         {
-            Id = $"{documentId}",
-            PartitionKey = $"{partitionKey}",
+            Id = documentId,
+            PartitionKey = partitionKey,
             Content = ToBase64Content(notification),
             DrawerId = destinationDrawer.Id
         };
@@ -62,18 +62,20 @@ public sealed class DataAvailableIdempotencyService : IDataAvailableIdempotencyS
         }
         catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.Conflict)
         {
-            var conflictingUniqueId = await _repositoryContainer
+            var conflictingResponse = await _repositoryContainer
                 .Idempotency
                 .ReadItemAsync<CosmosUniqueId>(
                     uniqueId.Id,
                     new PartitionKey(uniqueId.PartitionKey))
                 .ConfigureAwait(false);
 
+            var existingUniqueId = conflictingResponse.Resource;
+
             using var conflictingItem = await _repositoryContainer
                 .Cabinet
                 .ReadItemStreamAsync(
-                    uniqueId.Id,
-                    new PartitionKey(uniqueId.DrawerId))
+                    existingUniqueId.Id,
+                    new PartitionKey(existingUniqueId.DrawerId))
                 .ConfigureAwait(false);
 
             if (conflictingItem.StatusCode == HttpStatusCode.NotFound)
@@ -88,7 +90,7 @@ public sealed class DataAvailableIdempotencyService : IDataAvailableIdempotencyS
 
             conflictingItem.EnsureSuccessStatusCode();
 
-            if (string.Equals(conflictingUniqueId.Resource.Content, uniqueId.Content, StringComparison.Ordinal))
+            if (string.Equals(existingUniqueId.Content, uniqueId.Content, StringComparison.Ordinal))
             {
                 return true;
             }

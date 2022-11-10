@@ -150,6 +150,55 @@ public sealed class DataAvailableIdempotencyServiceTests
     }
 
     [Fact]
+    public async Task CheckIdempotency_SameNotificationInDifferentDrawer_ReturnsTrue()
+    {
+        // Arrange
+        await using var host = await SubDomainIntegrationTestHost.InitializeAsync();
+        var scope = host.BeginScope();
+
+        var dataAvailableIdempotencyService = scope.GetInstance<IDataAvailableIdempotencyService>();
+        var dataAvailableNotificationRepositoryContainer = scope.GetInstance<IDataAvailableNotificationRepositoryContainer>();
+
+        var cosmosCabinetDrawer = new CosmosCabinetDrawer
+        {
+            Id = Guid.NewGuid().ToString(),
+            PartitionKey = Guid.NewGuid().ToString()
+        };
+
+        var notification = new DataAvailableNotification(
+            new Uuid(),
+            new ActorId(Guid.NewGuid()),
+            new ContentType("fake_value"),
+            DomainOrigin.Aggregations,
+            new SupportsBundling(false),
+            new Weight(1),
+            new SequenceNumber(1),
+            new DocumentType("fake_value"));
+
+        await dataAvailableNotificationRepositoryContainer
+            .Cabinet
+            .CreateItemAsync(CosmosDataAvailableMapper.Map(notification, cosmosCabinetDrawer.Id));
+
+        await dataAvailableIdempotencyService.CheckIdempotencyAsync(
+            notification,
+            cosmosCabinetDrawer);
+
+        // Act
+        var newCabinetDrawer = new CosmosCabinetDrawer
+        {
+            Id = Guid.NewGuid().ToString(),
+            PartitionKey = Guid.NewGuid().ToString()
+        };
+
+        var result = await dataAvailableIdempotencyService.CheckIdempotencyAsync(
+            notification,
+            newCabinetDrawer);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
     public async Task CheckIdempotency_SameNotificationDifferentContent_ThrowsException()
     {
         // Arrange
@@ -198,5 +247,48 @@ public sealed class DataAvailableIdempotencyServiceTests
         await Assert.ThrowsAsync<ValidationException>(() => dataAvailableIdempotencyService.CheckIdempotencyAsync(
              sameIdDifferentContent,
              cosmosCabinetDrawer));
+    }
+
+    [Fact]
+    public async Task CheckIdempotency_OldIdempotency_ShouldNotFail()
+    {
+        // Arrange
+        await using var host = await SubDomainIntegrationTestHost.InitializeAsync();
+        var scope = host.BeginScope();
+
+        var dataAvailableIdempotencyService = scope.GetInstance<IDataAvailableIdempotencyService>();
+        var dataAvailableNotificationRepositoryContainer = scope.GetInstance<IDataAvailableNotificationRepositoryContainer>();
+
+        var cosmosCabinetDrawer = new CosmosCabinetDrawer
+        {
+            Id = Guid.NewGuid().ToString(),
+            PartitionKey = Guid.NewGuid().ToString()
+        };
+
+        var notification = new DataAvailableNotification(
+            new Uuid(),
+            new ActorId(Guid.NewGuid()),
+            new ContentType("fake_value"),
+            DomainOrigin.Aggregations,
+            new SupportsBundling(false),
+            new Weight(1),
+            new SequenceNumber(1),
+            new DocumentType("fake_value"));
+
+        await dataAvailableNotificationRepositoryContainer
+            .Cabinet
+            .CreateItemAsync(CosmosDataAvailableMapper.Map(notification, cosmosCabinetDrawer.Id));
+
+        await dataAvailableIdempotencyService.CheckIdempotencyAsync(
+            notification,
+            cosmosCabinetDrawer with { Id = null! });
+
+        // Act
+        var result = await dataAvailableIdempotencyService.CheckIdempotencyAsync(
+            notification,
+            cosmosCabinetDrawer);
+
+        // Assert
+        Assert.False(result);
     }
 }
