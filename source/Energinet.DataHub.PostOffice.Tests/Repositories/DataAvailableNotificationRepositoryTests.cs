@@ -100,11 +100,13 @@ namespace Energinet.DataHub.PostOffice.Tests.Repositories
         private static DataAvailableNotificationRepository CreateTarget()
         {
             var dataAvailableNotificationRepositoryContainer = new Mock<IDataAvailableNotificationRepositoryContainer>();
+            var dataAvailableIdempotencyService = new Mock<IDataAvailableIdempotencyService>();
             var bundleRepositoryContainer = new Mock<IBundleRepositoryContainer>();
             var sequenceNumberRepository = new Mock<ISequenceNumberRepository>();
             return new DataAvailableNotificationRepository(
                 bundleRepositoryContainer.Object,
                 dataAvailableNotificationRepositoryContainer.Object,
+                dataAvailableIdempotencyService.Object,
                 sequenceNumberRepository.Object,
                 new Mock<IMarketOperatorFlowLogger>().Object);
         }
