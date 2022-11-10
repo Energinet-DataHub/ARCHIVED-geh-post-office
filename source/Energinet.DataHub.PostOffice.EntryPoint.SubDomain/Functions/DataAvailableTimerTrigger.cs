@@ -189,7 +189,6 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
         private async Task ProcessGroupAsync(string key, IEnumerable<DataAvailableNotificationDto> group)
         {
             var items = group.ToList();
-            var retry = 0;
 
             while (true)
             {
@@ -201,11 +200,6 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
                 }
                 catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.TooManyRequests)
                 {
-                    if (++retry == 3)
-                    {
-                        throw;
-                    }
-
                     _logger.LogWarning("{0} will be retried ({1} messages).\nReason:\nTMR", key, items.Count);
                     await Task.Delay(1500).ConfigureAwait(false);
                 }

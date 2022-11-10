@@ -12,12 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Energinet.DataHub.PostOffice.Infrastructure.Documents
+namespace Energinet.DataHub.PostOffice.Infrastructure.Documents;
+
+internal sealed record CosmosUniqueId
 {
-    internal sealed record CosmosUniqueId
-    {
-        public string Id { get; init; } = default!;
-        public string PartitionKey { get; init; } = default!;
-        public string Content { get; init; } = default!;
-    }
+    public string Id { get; init; } = default!;
+    public string PartitionKey { get; init; } = default!;
+    public string Content { get; init; } = default!;
+    public string? DrawerId { get; init; }
 }
