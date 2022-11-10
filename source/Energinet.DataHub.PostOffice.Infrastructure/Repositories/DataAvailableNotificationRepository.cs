@@ -84,7 +84,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 }
 
                 if (await _dataAvailableIdempotencyService
-                        .CheckIdempotencyAsync(notification, nextDrawer)
+                        .HasReceivedPreviouslyAsync(notification, nextDrawer)
                         .ConfigureAwait(false))
                 {
                     continue;
@@ -368,7 +368,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             var tasks = notifications.Select(async x =>
             {
                 if (await _dataAvailableIdempotencyService
-                        .CheckIdempotencyAsync(x, drawer)
+                        .HasReceivedPreviouslyAsync(x, drawer)
                         .ConfigureAwait(false))
                 {
                     return;

@@ -36,7 +36,7 @@ public sealed class DataAvailableIdempotencyService : IDataAvailableIdempotencyS
         _repositoryContainer = repositoryContainer;
     }
 
-    async Task<bool> IDataAvailableIdempotencyService.CheckIdempotencyAsync(
+    async Task<bool> IDataAvailableIdempotencyService.HasReceivedPreviouslyAsync(
         DataAvailableNotification notification,
         CosmosCabinetDrawer destinationDrawer)
     {

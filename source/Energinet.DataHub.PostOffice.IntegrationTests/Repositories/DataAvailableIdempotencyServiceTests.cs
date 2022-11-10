@@ -30,7 +30,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories;
 public sealed class DataAvailableIdempotencyServiceTests
 {
     [Fact]
-    public async Task CheckIdempotency_NewNotification_ReturnsFalse()
+    public async Task HasReceivedPreviously_NewNotification_ReturnsFalse()
     {
         // Arrange
         await using var host = await SubDomainIntegrationTestHost.InitializeAsync();
@@ -60,7 +60,7 @@ public sealed class DataAvailableIdempotencyServiceTests
             .CreateItemAsync(CosmosDataAvailableMapper.Map(notification, cosmosCabinetDrawer.Id));
 
         // Act
-        var result = await dataAvailableIdempotencyService.CheckIdempotencyAsync(
+        var result = await dataAvailableIdempotencyService.HasReceivedPreviouslyAsync(
             notification,
             cosmosCabinetDrawer);
 
@@ -69,7 +69,7 @@ public sealed class DataAvailableIdempotencyServiceTests
     }
 
     [Fact]
-    public async Task CheckIdempotency_SameNotification_ReturnsTrue()
+    public async Task HasReceivedPreviously_SameNotification_ReturnsTrue()
     {
         // Arrange
         await using var host = await SubDomainIntegrationTestHost.InitializeAsync();
@@ -98,12 +98,12 @@ public sealed class DataAvailableIdempotencyServiceTests
             .Cabinet
             .CreateItemAsync(CosmosDataAvailableMapper.Map(notification, cosmosCabinetDrawer.Id));
 
-        await dataAvailableIdempotencyService.CheckIdempotencyAsync(
+        await dataAvailableIdempotencyService.HasReceivedPreviouslyAsync(
             notification,
             cosmosCabinetDrawer);
 
         // Act
-        var result = await dataAvailableIdempotencyService.CheckIdempotencyAsync(
+        var result = await dataAvailableIdempotencyService.HasReceivedPreviouslyAsync(
             notification,
             cosmosCabinetDrawer);
 
@@ -112,7 +112,7 @@ public sealed class DataAvailableIdempotencyServiceTests
     }
 
     [Fact]
-    public async Task CheckIdempotency_SameNotificationNotInDrawer_ReturnsFalse()
+    public async Task HasReceivedPreviously_SameNotificationNotInDrawer_ReturnsFalse()
     {
         // Arrange
         await using var host = await SubDomainIntegrationTestHost.InitializeAsync();
@@ -136,12 +136,12 @@ public sealed class DataAvailableIdempotencyServiceTests
             new SequenceNumber(1),
             new DocumentType("fake_value"));
 
-        await dataAvailableIdempotencyService.CheckIdempotencyAsync(
+        await dataAvailableIdempotencyService.HasReceivedPreviouslyAsync(
             notification,
             cosmosCabinetDrawer);
 
         // Act
-        var result = await dataAvailableIdempotencyService.CheckIdempotencyAsync(
+        var result = await dataAvailableIdempotencyService.HasReceivedPreviouslyAsync(
             notification,
             cosmosCabinetDrawer);
 
@@ -150,7 +150,7 @@ public sealed class DataAvailableIdempotencyServiceTests
     }
 
     [Fact]
-    public async Task CheckIdempotency_SameNotificationInDifferentDrawer_ReturnsTrue()
+    public async Task HasReceivedPreviously_SameNotificationInDifferentDrawer_ReturnsTrue()
     {
         // Arrange
         await using var host = await SubDomainIntegrationTestHost.InitializeAsync();
@@ -179,7 +179,7 @@ public sealed class DataAvailableIdempotencyServiceTests
             .Cabinet
             .CreateItemAsync(CosmosDataAvailableMapper.Map(notification, cosmosCabinetDrawer.Id));
 
-        await dataAvailableIdempotencyService.CheckIdempotencyAsync(
+        await dataAvailableIdempotencyService.HasReceivedPreviouslyAsync(
             notification,
             cosmosCabinetDrawer);
 
@@ -190,7 +190,7 @@ public sealed class DataAvailableIdempotencyServiceTests
             PartitionKey = Guid.NewGuid().ToString()
         };
 
-        var result = await dataAvailableIdempotencyService.CheckIdempotencyAsync(
+        var result = await dataAvailableIdempotencyService.HasReceivedPreviouslyAsync(
             notification,
             newCabinetDrawer);
 
@@ -199,7 +199,7 @@ public sealed class DataAvailableIdempotencyServiceTests
     }
 
     [Fact]
-    public async Task CheckIdempotency_SameNotificationDifferentContent_ThrowsException()
+    public async Task HasReceivedPreviously_SameNotificationDifferentContent_ThrowsException()
     {
         // Arrange
         await using var host = await SubDomainIntegrationTestHost.InitializeAsync();
@@ -228,7 +228,7 @@ public sealed class DataAvailableIdempotencyServiceTests
             .Cabinet
             .CreateItemAsync(CosmosDataAvailableMapper.Map(notification, cosmosCabinetDrawer.Id));
 
-        await dataAvailableIdempotencyService.CheckIdempotencyAsync(
+        await dataAvailableIdempotencyService.HasReceivedPreviouslyAsync(
             notification,
             cosmosCabinetDrawer);
 
@@ -244,13 +244,13 @@ public sealed class DataAvailableIdempotencyServiceTests
             notification.DocumentType);
 
         // Assert
-        await Assert.ThrowsAsync<ValidationException>(() => dataAvailableIdempotencyService.CheckIdempotencyAsync(
+        await Assert.ThrowsAsync<ValidationException>(() => dataAvailableIdempotencyService.HasReceivedPreviouslyAsync(
              sameIdDifferentContent,
              cosmosCabinetDrawer));
     }
 
     [Fact]
-    public async Task CheckIdempotency_OldIdempotency_ShouldNotFail()
+    public async Task HasReceivedPreviously_OldIdempotency_ShouldNotFail()
     {
         // Arrange
         await using var host = await SubDomainIntegrationTestHost.InitializeAsync();
@@ -279,12 +279,12 @@ public sealed class DataAvailableIdempotencyServiceTests
             .Cabinet
             .CreateItemAsync(CosmosDataAvailableMapper.Map(notification, cosmosCabinetDrawer.Id));
 
-        await dataAvailableIdempotencyService.CheckIdempotencyAsync(
+        await dataAvailableIdempotencyService.HasReceivedPreviouslyAsync(
             notification,
             cosmosCabinetDrawer with { Id = null! });
 
         // Act
-        var result = await dataAvailableIdempotencyService.CheckIdempotencyAsync(
+        var result = await dataAvailableIdempotencyService.HasReceivedPreviouslyAsync(
             notification,
             cosmosCabinetDrawer);
 
