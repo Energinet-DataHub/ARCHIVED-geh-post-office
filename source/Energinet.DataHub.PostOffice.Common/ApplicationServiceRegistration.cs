@@ -19,6 +19,8 @@ using Energinet.DataHub.MessageHub.Model.DataAvailable;
 using Energinet.DataHub.MessageHub.Model.Peek;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Application.Validation;
+using Energinet.DataHub.PostOffice.Infrastructure.Repositories;
+using Energinet.DataHub.PostOffice.Infrastructure.Services;
 using FluentValidation;
 using SimpleInjector;
 
@@ -42,6 +44,7 @@ namespace Energinet.DataHub.PostOffice.Common
             container.Register<IValidator<UpdateActorCommand>, UpdateActorCommandRuleSet>(Lifestyle.Scoped);
             container.Register<IValidator<DeleteActorCommand>, DeleteActorCommandRuleSet>(Lifestyle.Scoped);
 
+            container.Register<IDataAvailableIdempotencyService, DataAvailableIdempotencyService>(Lifestyle.Scoped);
             container.Register<IDataAvailableNotificationParser, DataAvailableNotificationParser>(Lifestyle.Singleton);
             container.Register<IRequestBundleParser, RequestBundleParser>(Lifestyle.Singleton);
             container.Register<IResponseBundleParser, ResponseBundleParser>(Lifestyle.Singleton);

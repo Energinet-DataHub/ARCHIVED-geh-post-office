@@ -14,12 +14,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Energinet.DataHub.PostOffice.Domain.Model;
@@ -31,6 +28,7 @@ using Energinet.DataHub.PostOffice.Infrastructure.Mappers;
 using Energinet.DataHub.PostOffice.Infrastructure.Model;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Helpers;
+using Energinet.DataHub.PostOffice.Infrastructure.Services;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 
@@ -39,6 +37,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
     public sealed class DataAvailableNotificationRepository : IDataAvailableNotificationRepository
     {
         private readonly IDataAvailableNotificationRepositoryContainer _repositoryContainer;
+        private readonly IDataAvailableIdempotencyService _dataAvailableIdempotencyService;
         private readonly IBundleRepositoryContainer _bundleRepositoryContainer;
         private readonly ISequenceNumberRepository _sequenceNumberRepository;
         private readonly IMarketOperatorFlowLogger _marketOperatorFlowLogger;
@@ -46,11 +45,13 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
         public DataAvailableNotificationRepository(
             IBundleRepositoryContainer bundleRepositoryContainer,
             IDataAvailableNotificationRepositoryContainer repositoryContainer,
+            IDataAvailableIdempotencyService dataAvailableIdempotencyService,
             ISequenceNumberRepository sequenceNumberRepository,
             IMarketOperatorFlowLogger marketOperatorFlowLogger)
         {
             _bundleRepositoryContainer = bundleRepositoryContainer;
             _repositoryContainer = repositoryContainer;
+            _dataAvailableIdempotencyService = dataAvailableIdempotencyService;
             _sequenceNumberRepository = sequenceNumberRepository;
             _marketOperatorFlowLogger = marketOperatorFlowLogger;
         }
@@ -71,9 +72,6 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
                 Debug.Assert(key == new CabinetKey(notification), "All notifications should belong to the provided key.");
 
-                if (await CheckIdempotencyAsync(notification).ConfigureAwait(false))
-                    continue;
-
                 if (nextDrawer is null)
                 {
                     nextDrawer = CreateEmptyDrawer(notification);
@@ -83,6 +81,13 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                         .Cabinet
                         .CreateItemAsync(nextDrawer)
                         .ConfigureAwait(false);
+                }
+
+                if (await _dataAvailableIdempotencyService
+                        .WasReceivedPreviouslyAsync(notification, nextDrawer)
+                        .ConfigureAwait(false))
+                {
+                    continue;
                 }
 
                 var cosmosDataAvailable = CosmosDataAvailableMapper.Map(notification, nextDrawer.Id);
@@ -355,13 +360,19 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             return await query.CountAsync().ConfigureAwait(false);
         }
 
-        private async Task<int> FillCabinetDrawerAsync(CosmosCabinetDrawer drawer, IEnumerable<DataAvailableNotification> notifications)
+        private async Task<int> FillCabinetDrawerAsync(
+            CosmosCabinetDrawer drawer,
+            IEnumerable<DataAvailableNotification> notifications)
         {
             var count = 0;
             var tasks = notifications.Select(async x =>
             {
-                if (await CheckIdempotencyAsync(x).ConfigureAwait(false))
+                if (await _dataAvailableIdempotencyService
+                        .WasReceivedPreviouslyAsync(x, drawer)
+                        .ConfigureAwait(false))
+                {
                     return;
+                }
 
                 var cosmosDataAvailable = CosmosDataAvailableMapper.Map(x, drawer.Id);
                 await _repositoryContainer
@@ -551,56 +562,6 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
             catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
             {
                 // Concurrent calls may have removed the file.
-            }
-        }
-
-        private async Task<bool> CheckIdempotencyAsync(DataAvailableNotification notification)
-        {
-            var documentId = notification.NotificationId.AsGuid();
-            var partitionKey = documentId.ToByteArray()[0];
-
-            var uniqueId = new CosmosUniqueId
-            {
-                Id = $"{documentId}",
-                PartitionKey = $"{partitionKey}",
-                Content = Base64Content(notification)
-            };
-
-            try
-            {
-                await _repositoryContainer
-                    .Idempotency
-                    .CreateItemAsync(uniqueId)
-                    .ConfigureAwait(false);
-
-                return false;
-            }
-            catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.Conflict)
-            {
-                var conflictingItem = await _repositoryContainer
-                    .Idempotency
-                    .ReadItemAsync<CosmosUniqueId>(
-                        uniqueId.Id,
-                        new PartitionKey(uniqueId.PartitionKey))
-                    .ConfigureAwait(false);
-
-                if (string.Equals(conflictingItem.Resource.Content, uniqueId.Content, StringComparison.Ordinal))
-                {
-                    return true;
-                }
-
-                throw new ValidationException($"Idempotency check failed for DataAvailable {documentId}.", ex);
-            }
-
-            static string Base64Content(DataAvailableNotification notification)
-            {
-                using var ms = new MemoryStream();
-                ms.Write(Encoding.UTF8.GetBytes(notification.ContentType.Value));
-                ms.Write(BitConverter.GetBytes((int)notification.Origin));
-                ms.Write(Encoding.UTF8.GetBytes(notification.Recipient.Value));
-                ms.Write(BitConverter.GetBytes(notification.SupportsBundling.Value));
-                ms.Write(BitConverter.GetBytes(notification.Weight.Value));
-                return Convert.ToBase64String(ms.ToArray());
             }
         }
     }
