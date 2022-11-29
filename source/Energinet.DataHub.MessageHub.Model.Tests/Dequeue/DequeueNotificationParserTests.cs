@@ -77,28 +77,5 @@ namespace Energinet.DataHub.MessageHub.Model.Tests.Dequeue
             var dequeueNotificationDto = target.Parse(actual);
             Assert.Equal(actorId, dequeueNotificationDto.MarketOperator.Value);
         }
-
-        [Fact]
-        public void Parse_LegacyObject_Returns_Bytes()
-        {
-            // arrange
-            var target = new DequeueNotificationParser();
-            var valid = new DequeueNotificationDto(
-                "F8201E4D-8989-4B75-A2C2-1E163DA7660B",
-#pragma warning disable CS0618 // Type or member is obsolete
-                new LegacyActorIdDto("test"));
-#pragma warning restore CS0618 // Type or member is obsolete
-
-            // act
-            var actual = target.Parse(valid);
-
-            // assert
-            Assert.NotNull(actual);
-
-            var dequeueNotificationDto = target.Parse(actual);
-#pragma warning disable CS0618 // Type or member is obsolete
-            Assert.Equal("test", ((LegacyActorIdDto)dequeueNotificationDto.MarketOperator).LegacyValue);
-#pragma warning restore CS0618 // Type or member is obsolete
-        }
     }
 }

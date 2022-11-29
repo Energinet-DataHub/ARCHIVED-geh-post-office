@@ -1,5 +1,9 @@
 # Energinet.DataHub.MessageHub.Model Release notes
 
+## Version 3.4.0
+
+- Removed legacy actor id.
+
 ## Version 3.3.4 - 3.3.5
 
 - Updated packages.
