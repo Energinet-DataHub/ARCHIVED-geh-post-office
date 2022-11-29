@@ -28,15 +28,11 @@ namespace Energinet.DataHub.MessageHub.Model.DataAvailable
             {
                 var dataAvailable = DataAvailableNotificationContract.Parser.ParseFrom(dataAvailableContract);
 
-                var recipient = Guid.TryParse(dataAvailable.Recipient, out var actorId)
-                    ? new ActorIdDto(actorId)
-#pragma warning disable CS0618 // Type or member is obsolete
-                    : new LegacyActorIdDto(dataAvailable.Recipient);
-#pragma warning restore CS0618 // Type or member is obsolete
+                var recipient = Guid.Parse(dataAvailable.Recipient);
 
                 return new DataAvailableNotificationDto(
                     uuid: Guid.Parse(dataAvailable.UUID),
-                    recipient,
+                    recipient: new ActorIdDto(recipient),
                     messageType: new MessageTypeDto(dataAvailable.MessageType),
                     documentType: dataAvailable.DocumentType,
                     origin: Enum.Parse<DomainOrigin>(dataAvailable.Origin),
