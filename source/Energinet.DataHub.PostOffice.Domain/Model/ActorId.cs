@@ -16,7 +16,7 @@ using System;
 
 namespace Energinet.DataHub.PostOffice.Domain.Model
 {
-    public record ActorId
+    public sealed record ActorId
     {
         private readonly Guid _id;
 
@@ -26,6 +26,6 @@ namespace Energinet.DataHub.PostOffice.Domain.Model
         }
 
         // This property can be changed to a Guid once LegacyActor has been removed.
-        public virtual string Value => _id.ToString();
+        public string Value => _id.ToString();
     }
 }

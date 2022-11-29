@@ -59,7 +59,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Repositories
             var bundleRepositoryContainer = new Mock<IBundleRepositoryContainer>();
             var marketOperatorDataStorageService = new Mock<IMarketOperatorDataStorageService>();
             var storageHandler = new Mock<IStorageHandler>();
-            var marketOperator = new LegacyActorId(new GlobalLocationNumber("fake_value"));
+            var marketOperator = new ActorId(Guid.NewGuid());
             var target = new BundleRepository(
                 storageHandler.Object,
                 bundleRepositoryContainer.Object,
@@ -107,7 +107,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Repositories
 
             // Act + Assert
             await Assert
-                .ThrowsAsync<ArgumentNullException>(() => target.AcknowledgeAsync(new LegacyActorId(null!), null!))
+                .ThrowsAsync<ArgumentNullException>(() => target.AcknowledgeAsync(new ActorId(Guid.NewGuid()), null!))
                 .ConfigureAwait(false);
         }
 
@@ -166,7 +166,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Repositories
 
             var bundle = new Bundle(
                 new Uuid(Guid.NewGuid()),
-                new LegacyActorId(new GlobalLocationNumber(null!)),
+                new ActorId(Guid.NewGuid()),
                 DomainOrigin.Aggregations,
                 null!,
                 Array.Empty<Uuid>(),

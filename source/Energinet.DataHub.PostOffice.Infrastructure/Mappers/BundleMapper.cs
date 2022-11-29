@@ -38,13 +38,9 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Mappers
                 notificationIds.Add(new Uuid(new Guid(guidBytes)));
             }
 
-            var recipient = Guid.TryParse(bundleDocument.Recipient, out var actorId)
-                ? new ActorId(actorId)
-                : new LegacyActorId(new GlobalLocationNumber(bundleDocument.Recipient));
-
             var bundle = new Bundle(
                 new Uuid(bundleDocument.Id),
-                recipient,
+                new ActorId(Guid.Parse(bundleDocument.Recipient)),
                 Enum.Parse<DomainOrigin>(bundleDocument.Origin),
                 new ContentType(bundleDocument.ContentType),
                 notificationIds,

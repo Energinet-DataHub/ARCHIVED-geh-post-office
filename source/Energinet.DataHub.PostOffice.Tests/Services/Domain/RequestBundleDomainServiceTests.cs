@@ -39,7 +39,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             var target = new RequestBundleDomainService(bundleContentRequestServiceMock.Object);
             var bundle = new Bundle(
                 new Uuid(Guid.NewGuid()),
-                new LegacyActorId(new GlobalLocationNumber("fake_value")),
+                new ActorId(Guid.NewGuid()),
                 DomainOrigin.TimeSeries,
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
@@ -72,7 +72,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Domain
             var target = new RequestBundleDomainService(bundleContentRequestServiceMock.Object);
             var bundle = new Bundle(
                 new Uuid(Guid.NewGuid()),
-                new LegacyActorId(new GlobalLocationNumber("fake_value")),
+                new ActorId(Guid.NewGuid()),
                 DomainOrigin.TimeSeries,
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),

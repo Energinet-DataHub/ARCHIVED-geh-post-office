@@ -28,7 +28,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation
     {
         private const ResponseFormat ResponseFormat = MessageHub.Model.Model.ResponseFormat.Json;
         private const double ResponseVersion = 1.0;
-        private const string ValidRecipient = "5790000555550";
+        private const string ValidRecipient = "3FDFCC4F-1E7F-4370-89F8-BDB58BD64D1A";
 
         [Theory]
         [InlineData("", false)]
@@ -68,7 +68,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation
         [InlineData("", false)]
         [InlineData(null, false)]
         [InlineData("  ", false)]
-        [InlineData("5790000555550", true)]
+        [InlineData("220E0914-3B83-447D-972D-D9168036BD33", true)]
         public async Task Validate_Recipient_ValidatesProperty(string value, bool isValid)
         {
             // Arrange
