@@ -59,8 +59,9 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
             var query =
                 from bundle in asLinq
-                where bundle.Id == bundleId.ToString() && bundle.Recipient == recipient.Value
-                                                       && !bundle.Dequeued // Ensure that the bundle is available for dequeue. Can be removed with old actor registry.
+                where bundle.Id == bundleId.ToString() &&
+                      bundle.Recipient == recipient.Value.ToString() &&
+                      !bundle.Dequeued // Ensure that the bundle is available for dequeue. Can be removed with old actor registry.
                 select bundle;
 
             return GetBundleAsync(query);
@@ -89,7 +90,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
             var query =
                 from bundle in domainFiltered
-                where bundle.Recipient == recipient.Value && !bundle.Dequeued
+                where bundle.Recipient == recipient.Value.ToString() && !bundle.Dequeued
                 orderby bundle.Timestamp
                 select bundle;
 
@@ -142,7 +143,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
             var query =
                 from bundle in asLinq
-                where bundle.Id == bundleId.ToString() && bundle.Recipient == recipient.Value
+                where bundle.Id == bundleId.ToString() && bundle.Recipient == recipient.Value.ToString()
                 select bundle;
 
             var bundleToUpdate = await query
@@ -168,7 +169,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 from cosmosBundleDocument in asLinq
                 where
                     cosmosBundleDocument.Id == bundle.BundleId.ToString() &&
-                    cosmosBundleDocument.Recipient == bundle.Recipient.Value
+                    cosmosBundleDocument.Recipient == bundle.Recipient.Value.ToString()
                 select new { cosmosBundleDocument.AffectedDrawers };
 
             var changes = await query

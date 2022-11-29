@@ -88,10 +88,8 @@ namespace Energinet.DataHub.PostOffice.Common.Auth
 
         private static void RegisterActor(Container container)
         {
-            container.Register<LegacyActorProvider>(Lifestyle.Scoped);
-            container.Register<ActorRegistryProvider>(Lifestyle.Scoped);
             container.Register<IActorContext, ActorContext>(Lifestyle.Scoped);
-            container.Register<IActorProvider, LegacyActorProviderProxy>(Lifestyle.Scoped);
+            container.Register<IActorProvider, ActorRegistryProvider>(Lifestyle.Scoped);
 
             container.Register(
                 () => new ActorMiddleware(

@@ -47,11 +47,11 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         [Fact]
         public async Task Handle_WithNotifications_DataIsSaved()
         {
-            // Arrangem
+            // Arrange
             var repository = new Mock<IDataAvailableNotificationRepository>();
             var target = new InsertDataAvailableNotificationsCommandHandler(repository.Object);
 
-            const string recipient = "7495563456235";
+            const string recipient = "7567637B-389E-44FF-8997-8DC3C43ACA21";
             const MessageHub.Model.Model.DomainOrigin origin = MessageHub.Model.Model.DomainOrigin.TimeSeries;
 
             var dataAvailableNotifications = new[]
@@ -120,7 +120,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         {
             return
                 notification.NotificationId == new Uuid(dto.Uuid) &&
-                notification.Recipient.Value == dto.Recipient &&
+                notification.Recipient == new ActorId(Guid.Parse(dto.Recipient)) &&
                 notification.Origin == (DomainOrigin)dto.Origin &&
                 notification.ContentType.Value == dto.ContentType &&
                 notification.Weight.Value == dto.Weight &&
@@ -131,7 +131,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         private static Expression<Func<CabinetKey, bool>> ExpectedCabinetKey(DataAvailableNotificationDto dto)
         {
             return cabinetKey => cabinetKey == new CabinetKey(
-                new LegacyActorId(new GlobalLocationNumber(dto.Recipient)),
+                new ActorId(Guid.Parse(dto.Recipient)),
                 (DomainOrigin)dto.Origin,
                 new ContentType(dto.ContentType));
         }

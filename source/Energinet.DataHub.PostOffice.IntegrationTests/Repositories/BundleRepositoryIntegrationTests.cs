@@ -24,7 +24,6 @@ using Energinet.DataHub.PostOffice.Infrastructure.Documents;
 using Energinet.DataHub.PostOffice.Infrastructure.Model;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories;
 using Energinet.DataHub.PostOffice.Infrastructure.Repositories.Containers;
-using Energinet.DataHub.PostOffice.IntegrationTests.Common;
 using Moq;
 using Xunit;
 using Xunit.Categories;
@@ -50,7 +49,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var storageHandler = scope.GetInstance<IStorageHandler>();
             var target = new BundleRepository(storageHandler, container, storageService, new Mock<IMarketOperatorFlowLogger>().Object);
 
-            var recipient = new LegacyActorId(new MockedGln());
+            var recipient = new ActorId(Guid.NewGuid());
 
             // Act
             var bundle = await target.GetAsync(recipient, new Uuid());
@@ -71,7 +70,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var storageHandler = scope.GetInstance<IStorageHandler>();
             var target = new BundleRepository(storageHandler, container, storageService, new Mock<IMarketOperatorFlowLogger>().Object);
 
-            var recipient = new LegacyActorId(new MockedGln());
+            var recipient = new ActorId(Guid.NewGuid());
             var reader = CreateMockedReader();
             var setupBundle = new Bundle(
                 new Uuid(Guid.NewGuid()),
@@ -103,7 +102,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var storageHandler = scope.GetInstance<IStorageHandler>();
             var target = new BundleRepository(storageHandler, container, storageService, new Mock<IMarketOperatorFlowLogger>().Object);
 
-            var recipient = new LegacyActorId(new MockedGln());
+            var recipient = new ActorId(Guid.NewGuid());
             var reader = CreateMockedReader();
             var setupBundle = new Bundle(
                 new Uuid(Guid.NewGuid()),
@@ -136,7 +135,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var storageHandler = scope.GetInstance<IStorageHandler>();
             var target = new BundleRepository(storageHandler, container, storageService, new Mock<IMarketOperatorFlowLogger>().Object);
 
-            var recipient = new LegacyActorId(new MockedGln());
+            var recipient = new ActorId(Guid.NewGuid());
             var reader = CreateMockedReader();
             var setupBundle = new Bundle(
                 new Uuid(Guid.NewGuid()),
@@ -170,7 +169,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var storageHandler = scope.GetInstance<IStorageHandler>();
             var target = new BundleRepository(storageHandler, container, storageService, new Mock<IMarketOperatorFlowLogger>().Object);
 
-            var recipient = new LegacyActorId(new MockedGln());
+            var recipient = new ActorId(Guid.NewGuid());
             var reader = CreateMockedReader();
             var setupBundle = new Bundle(
                 new Uuid(Guid.NewGuid()),
@@ -204,7 +203,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var storageHandler = scope.GetInstance<IStorageHandler>();
             var target = new BundleRepository(storageHandler, container, storageService, new Mock<IMarketOperatorFlowLogger>().Object);
 
-            var recipient = new LegacyActorId(new MockedGln());
+            var recipient = new ActorId(Guid.NewGuid());
 
             // Act
             var bundle = await target.GetNextUnacknowledgedAsync(recipient).ConfigureAwait(false);
@@ -225,7 +224,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var storageHandler = scope.GetInstance<IStorageHandler>();
             var target = new BundleRepository(storageHandler, container, storageService, new Mock<IMarketOperatorFlowLogger>().Object);
 
-            var recipient = new LegacyActorId(new MockedGln());
+            var recipient = new ActorId(Guid.NewGuid());
             var reader = CreateMockedReader();
             var setupBundle = new Bundle(
                 new Uuid(Guid.NewGuid()),
@@ -259,7 +258,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var storageHandler = scope.GetInstance<IStorageHandler>();
             var target = new BundleRepository(storageHandler, container, storageService, new Mock<IMarketOperatorFlowLogger>().Object);
 
-            var recipient = new LegacyActorId(new MockedGln());
+            var recipient = new ActorId(Guid.NewGuid());
             var reader = CreateMockedReader();
             var setupBundle = new Bundle(
                 new Uuid(Guid.NewGuid()),
@@ -296,7 +295,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var storageHandler = scope.GetInstance<IStorageHandler>();
             var target = new BundleRepository(storageHandler, container, storageService, new Mock<IMarketOperatorFlowLogger>().Object);
 
-            var recipient = new LegacyActorId(new MockedGln());
+            var recipient = new ActorId(Guid.NewGuid());
             var reader = CreateMockedReader();
             var setupBundle = CreateBundle(
                 recipient,
@@ -329,7 +328,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var storageHandler = scope.GetInstance<IStorageHandler>();
             var target = new BundleRepository(storageHandler, container, storageService, new Mock<IMarketOperatorFlowLogger>().Object);
 
-            var recipient = new LegacyActorId(new MockedGln());
+            var recipient = new ActorId(Guid.NewGuid());
             var setupBundle = CreateBundle(recipient);
 
             var beforeAdd = await target.GetNextUnacknowledgedAsync(recipient).ConfigureAwait(false);
@@ -357,8 +356,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var storageHandler = scope.GetInstance<IStorageHandler>();
             var target = new BundleRepository(storageHandler, container, storageService, new Mock<IMarketOperatorFlowLogger>().Object);
 
-            var recipientA = new LegacyActorId(new MockedGln());
-            var recipientB = new LegacyActorId(new MockedGln());
+            var recipientA = new ActorId(Guid.NewGuid());
+            var recipientB = new ActorId(Guid.NewGuid());
             var commonGuid = new Uuid(Guid.NewGuid());
 
             // Two identical bundles for two different recipients.
@@ -409,7 +408,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var storageHandler = scope.GetInstance<IStorageHandler>();
             var target = new BundleRepository(storageHandler, container, storageService, new Mock<IMarketOperatorFlowLogger>().Object);
 
-            var recipient = new LegacyActorId(new MockedGln());
+            var recipient = new ActorId(Guid.NewGuid());
             var setupBundle = CreateBundle(recipient);
 
             // Act
@@ -434,7 +433,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var storageHandler = scope.GetInstance<IStorageHandler>();
             var target = new BundleRepository(storageHandler, container, storageService, new Mock<IMarketOperatorFlowLogger>().Object);
 
-            var recipient = new LegacyActorId(new MockedGln());
+            var recipient = new ActorId(Guid.NewGuid());
             var setupBundle = CreateBundle(recipient);
             var existingBundle = CreateBundle(recipient);
 
@@ -463,13 +462,13 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var storageHandler = scope.GetInstance<IStorageHandler>();
             var target = new BundleRepository(storageHandler, container, storageService, new Mock<IMarketOperatorFlowLogger>().Object);
 
-            var recipientGln = new MockedGln();
+            var recipientGuid = Guid.NewGuid();
             var bundleId = new Uuid(Guid.NewGuid());
 
-            var recipient = new LegacyActorId(recipientGln);
+            var recipient = new ActorId(recipientGuid);
             var setupBundle = CreateBundle(bundleId.AsGuid(), recipient);
 
-            var recipient2 = new LegacyActorId(recipientGln);
+            var recipient2 = new ActorId(recipientGuid);
             var bundleWithDuplicateId = CreateBundle(bundleId.AsGuid(), recipient2);
 
             await target
@@ -508,7 +507,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var storageHandler = scope.GetInstance<IStorageHandler>();
             var target = new BundleRepository(storageHandler, container, storageService, new Mock<IMarketOperatorFlowLogger>().Object);
 
-            var recipient = new LegacyActorId(new MockedGln());
+            var recipient = new ActorId(Guid.NewGuid());
             var setupBundle = CreateBundle(recipient, domainOrigin: initial);
             var conflictBundle = CreateBundle(recipient, domainOrigin: conflicting);
 
@@ -544,7 +543,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var storageHandler = scope.GetInstance<IStorageHandler>();
             var target = new BundleRepository(storageHandler, container, storageService, new Mock<IMarketOperatorFlowLogger>().Object);
 
-            var recipient = new LegacyActorId(new MockedGln());
+            var recipient = new ActorId(Guid.NewGuid());
             var setupBundle = CreateBundle(recipient, domainOrigin: initial);
             var conflictBundle = CreateBundle(recipient, domainOrigin: conflicting);
 
@@ -573,7 +572,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var storageHandler = scope.GetInstance<IStorageHandler>();
             var target = new BundleRepository(storageHandler, container, storageService, new Mock<IMarketOperatorFlowLogger>().Object);
 
-            var recipient = new LegacyActorId(new MockedGln());
+            var recipient = new ActorId(Guid.NewGuid());
             var bundleContent = new AzureBlobBundleContent(storageService, _contentPathUri);
 
             await target
@@ -594,7 +593,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
         }
 
         private static Bundle CreateBundle(
-            LegacyActorId recipient,
+            ActorId recipient,
             IBundleContent? bundleContent = null,
             DomainOrigin domainOrigin = DomainOrigin.TimeSeries)
         {
@@ -609,7 +608,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
                 ResponseFormat.Json);
         }
 
-        private static Bundle CreateBundle(Guid bundleId, LegacyActorId recipient, IBundleContent? bundleContent = null)
+        private static Bundle CreateBundle(Guid bundleId, ActorId recipient, IBundleContent? bundleContent = null)
         {
             return new Bundle(
                 new Uuid(bundleId),

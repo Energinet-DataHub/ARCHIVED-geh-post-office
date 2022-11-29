@@ -51,7 +51,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
 
             var bundle = new Bundle(
                 new Uuid(Guid.NewGuid()),
-                new LegacyActorId(new GlobalLocationNumber("fake_value")),
+                new ActorId(Guid.NewGuid()),
                 DomainOrigin.TimeSeries,
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
@@ -87,7 +87,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
 
             var bundle = new Bundle(
                 new Uuid(Guid.NewGuid()),
-                new LegacyActorId(new GlobalLocationNumber("fake_value")),
+                new ActorId(Guid.NewGuid()),
                 DomainOrigin.TimeSeries,
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
@@ -112,7 +112,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Services.Infrastructure
 
             // Assert
             Assert.NotNull(actual);
-            Assert.Equal(contentUri, actual!.ContentPath);
+            Assert.Equal(contentUri, actual.ContentPath);
         }
     }
 }

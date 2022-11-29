@@ -117,7 +117,7 @@ public sealed class DataAvailableIdempotencyService : IDataAvailableIdempotencyS
         using var ms = new MemoryStream();
         ms.Write(Encoding.UTF8.GetBytes(notification.ContentType.Value));
         ms.Write(BitConverter.GetBytes((int)notification.Origin));
-        ms.Write(Encoding.UTF8.GetBytes(notification.Recipient.Value));
+        ms.Write(Encoding.UTF8.GetBytes(notification.Recipient.Value.ToString()));
         ms.Write(BitConverter.GetBytes(notification.SupportsBundling.Value));
         ms.Write(BitConverter.GetBytes(notification.Weight.Value));
         return Convert.ToBase64String(ms.ToArray());

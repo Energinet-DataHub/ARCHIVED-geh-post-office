@@ -29,7 +29,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation
         private const int ValidWeight = 1;
         private const long ValidSequenceNumber = 1;
         private const string ValidUuid = "169B53A2-0A17-47D7-9603-4E41854E4181";
-        private const string ValidRecipient = "5790000555550";
+        private const string ValidRecipient = "63834C6F-5F19-4934-833E-044582872527";
         private const string ValidContentType = "TimeSeries";
         private const string ValidDocumentType = "RSM??";
         private const DomainOrigin ValidOrigin = DomainOrigin.Charges;
@@ -94,7 +94,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation
         [InlineData("", false)]
         [InlineData(null, false)]
         [InlineData("  ", false)]
-        [InlineData("5790000555550", true)]
+        [InlineData("D623C041-18B7-46CA-90D9-A839EB9C105B", true)]
         public async Task Validate_Recipient_ValidatesProperty(string value, bool isValid)
         {
             // Arrange
