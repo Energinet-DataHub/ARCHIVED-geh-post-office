@@ -40,12 +40,7 @@ namespace Energinet.DataHub.MessageHub.Client.DataAvailable
             ArgumentNullException.ThrowIfNull(dataAvailableNotificationDto, nameof(dataAvailableNotificationDto));
 
             var sender = _messageBusFactory.GetSenderClient(_messageHubConfig.DataAvailableQueue);
-
-#pragma warning disable CS0618
-            var recipient = dataAvailableNotificationDto.Recipient is LegacyActorIdDto legacyActorIdDto
-#pragma warning restore CS0618
-                ? legacyActorIdDto.LegacyValue
-                : dataAvailableNotificationDto.Recipient.Value.ToString();
+            var recipient = dataAvailableNotificationDto.Recipient.Value.ToString();
 
             var contract = new DataAvailableNotificationContract
             {
