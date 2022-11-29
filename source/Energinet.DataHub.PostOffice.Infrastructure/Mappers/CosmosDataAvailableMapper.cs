@@ -38,7 +38,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Mappers
             return new CosmosDataAvailable
             {
                 Id = notification.NotificationId.ToString(),
-                Recipient = notification.Recipient.Value,
+                Recipient = notification.Recipient.Value.ToString(),
                 ContentType = notification.ContentType.Value,
                 Origin = notification.Origin.ToString(),
                 SupportsBundling = notification.SupportsBundling.Value,

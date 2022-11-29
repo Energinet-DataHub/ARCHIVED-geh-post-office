@@ -72,7 +72,7 @@ public sealed class ActorUpdatedHandlerTests
 
         // Assert
         repository.Verify(
-            r => r.AddOrUpdateAsync(It.Is<Actor>(actor => actor.Id.Value == actorId.ToString() && actor.ExternalId.Value == externalId)),
+            r => r.AddOrUpdateAsync(It.Is<Actor>(actor => actor.Id.Value == actorId && actor.ExternalId.Value == externalId)),
             Times.Once);
     }
 
@@ -91,7 +91,7 @@ public sealed class ActorUpdatedHandlerTests
             .Setup(r => r.GetActorAsync(It.Is<ActorId>(id => id == actorId)))
             .ReturnsAsync(actor);
 
-        var deleteActorCommand = new DeleteActorCommand(Guid.Parse(actorId.Value));
+        var deleteActorCommand = new DeleteActorCommand(actorId.Value);
 
         // Act
         await target.Handle(deleteActorCommand, CancellationToken.None).ConfigureAwait(false);
@@ -113,7 +113,7 @@ public sealed class ActorUpdatedHandlerTests
             .Setup(r => r.GetActorAsync(It.Is<ActorId>(id => id == actorId)))
             .ReturnsAsync((Actor?)null);
 
-        var deleteActorCommand = new DeleteActorCommand(Guid.Parse(actorId.Value));
+        var deleteActorCommand = new DeleteActorCommand(actorId.Value);
 
         // Act + Assert
         await target.Handle(deleteActorCommand, CancellationToken.None).ConfigureAwait(false);

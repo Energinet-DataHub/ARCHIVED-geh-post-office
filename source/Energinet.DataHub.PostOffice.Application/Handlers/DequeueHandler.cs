@@ -60,7 +60,7 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
             var recipient = new ActorId(Guid.Parse(request.MarketOperator));
 
             await _marketOperatorFlowLogger
-                .LogActorDequeueingAsync(recipient.Value, _correlationContext.Id, request.BundleId)
+                .LogActorDequeueingAsync(recipient, _correlationContext.Id, request.BundleId)
                 .ConfigureAwait(false);
 
             var (canAcknowledge, bundle) = await _marketOperatorDataDomainService
@@ -73,11 +73,9 @@ namespace Energinet.DataHub.PostOffice.Application.Handlers
                 return new DequeueResponse(false);
             }
 
-            var marketOperator = new ActorIdDto(Guid.Parse(recipient.Value));
-
             var dequeueNotification = new DequeueNotificationDto(
                 bundle!.ProcessId.ToString(),
-                marketOperator);
+                new ActorIdDto(recipient.Value));
 
             await _dequeueNotificationSender
                 .SendAsync(bundle.ProcessId.ToString(), dequeueNotification, (DomainOrigin)bundle.Origin)

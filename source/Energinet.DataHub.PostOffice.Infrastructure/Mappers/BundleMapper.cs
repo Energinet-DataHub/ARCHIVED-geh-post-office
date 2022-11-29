@@ -69,7 +69,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Mappers
             {
                 Id = source.BundleId.ToString(),
                 ProcessId = source.ProcessId.ToString(),
-                Recipient = source.Recipient.Value,
+                Recipient = source.Recipient.Value.ToString(),
                 Origin = source.Origin.ToString(),
                 ContentType = source.ContentType.Value,
 

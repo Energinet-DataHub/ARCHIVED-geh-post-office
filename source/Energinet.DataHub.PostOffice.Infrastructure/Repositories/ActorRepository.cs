@@ -41,7 +41,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
 
             var query =
                 from actor in _repositoryContainer.Container.GetItemLinqQueryable<CosmosActor>()
-                where actor.Id == actorId.Value
+                where actor.Id == actorId.Value.ToString()
                 select actor;
 
             var actorDocument = await query

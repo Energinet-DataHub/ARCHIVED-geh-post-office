@@ -44,7 +44,7 @@ public sealed class FindLatestDataAvailableNotificationRepository
 
         var query =
             from dataAvailableNotification in asLinq
-            where dataAvailableNotification.Recipient == recipient.Value
+            where dataAvailableNotification.Recipient == recipient.Value.ToString()
             where dataAvailableNotification.Origin == domain.ToString()
             orderby dataAvailableNotification.Timestamp descending
             select dataAvailableNotification;

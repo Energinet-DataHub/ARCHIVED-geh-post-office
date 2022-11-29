@@ -45,10 +45,10 @@ public sealed class ActorRegistryProvider : IActorProvider
             throw new InvalidOperationException($"Actor with id {actorId} not found.");
         }
 
-        await _marketOperatorFlowLogger.LogActorFoundAsync(actorId, Guid.Parse(actor.Id.Value)).ConfigureAwait(false);
+        await _marketOperatorFlowLogger.LogActorFoundAsync(actorId, actor.Id.Value).ConfigureAwait(false);
 
         return new Actor(
-            Guid.Parse(actor.Id.Value),
+            actor.Id.Value,
             string.Empty,
             string.Empty,
             string.Empty);

@@ -118,9 +118,9 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Services
             return LogAsync($"Bundle exists, must generate message. Asking domain '{origin}' for data.");
         }
 
-        public Task LogActorDequeueingAsync(string externalActorId, string correlationId, string bundleId)
+        public Task LogActorDequeueingAsync(ActorId actorId, string correlationId, string bundleId)
         {
-            return LogAsync($"Actor with external id '{externalActorId}' is trying to dequeue the following bundle '{bundleId}', with correlation id '{correlationId}'.");
+            return LogAsync($"Actor with id '{actorId}' is trying to dequeue the following bundle '{bundleId}', with correlation id '{correlationId}'.");
         }
 
         public Task LogRequestDataFromSubdomainTimeoutAsync(string correlationId, DomainOrigin origin)

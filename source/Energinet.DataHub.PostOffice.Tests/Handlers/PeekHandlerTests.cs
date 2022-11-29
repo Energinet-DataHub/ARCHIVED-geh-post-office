@@ -56,7 +56,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             // Arrange
             var bundleId = Guid.NewGuid().ToString();
             var recipient = new ActorId(Guid.NewGuid());
-            var request = new PeekCommand(recipient.Value, bundleId, ResponseFormat.Json, 1.0);
+            var request = new PeekCommand(recipient.Value.ToString(), bundleId, ResponseFormat.Json, 1.0);
 
             var bundleContentMock = new Mock<IBundleContent>();
             bundleContentMock
@@ -77,8 +77,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             warehouseDomainServiceMock
                 .Setup(x =>
                     x.GetNextUnacknowledgedAsync(
-                        It.Is<ActorId>(r =>
-                            string.Equals(r.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
+                        recipient,
                         It.Is<Uuid>(r => BundleIdCheck(r, request)),
                         ResponseFormat.Json,
                         1.0))
@@ -113,8 +112,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             warehouseDomainServiceMock
                 .Setup(x =>
                     x.GetNextUnacknowledgedAsync(
-                        It.Is<ActorId>(r =>
-                            string.Equals(r.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
+                        new ActorId(Guid.Parse(request.MarketOperator)),
                         bundleId,
                         ResponseFormat.Json,
                         1.0))
@@ -156,7 +154,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             // Arrange
             var bundleId = Guid.NewGuid().ToString();
             var recipient = new ActorId(Guid.NewGuid());
-            var request = new PeekAggregationsCommand(recipient.Value, bundleId, ResponseFormat.Json, 1.0);
+            var request = new PeekAggregationsCommand(recipient.Value.ToString(), bundleId, ResponseFormat.Json, 1.0);
 
             var bundleContentMock = new Mock<IBundleContent>();
             bundleContentMock
@@ -177,8 +175,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             warehouseDomainServiceMock
                 .Setup(x =>
                     x.GetNextUnacknowledgedAggregationsAsync(
-                        It.Is<ActorId>(r =>
-                            string.Equals(r.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
+                        recipient,
                         It.Is<Uuid>(r => r.ToString().Equals(request.BundleId, StringComparison.OrdinalIgnoreCase)),
                         ResponseFormat.Json,
                         1.0))
@@ -211,7 +208,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             warehouseDomainServiceMock
                 .Setup(x =>
                     x.GetNextUnacknowledgedAggregationsAsync(
-                        It.Is<ActorId>(r => string.Equals(r.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
+                        new ActorId(Guid.Parse(request.MarketOperator)),
                         It.Is<Uuid>(r => string.Equals(r.ToString(), request.BundleId, StringComparison.OrdinalIgnoreCase)),
                         ResponseFormat.Json,
                         1.0))
@@ -253,7 +250,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             // Arrange
             var bundleId = Guid.NewGuid().ToString();
             var recipient = new ActorId(Guid.NewGuid());
-            var request = new PeekTimeSeriesCommand(recipient.Value, bundleId, ResponseFormat.Json, 1.0);
+            var request = new PeekTimeSeriesCommand(recipient.Value.ToString(), bundleId, ResponseFormat.Json, 1.0);
 
             var bundleContentMock = new Mock<IBundleContent>();
             bundleContentMock
@@ -274,8 +271,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             warehouseDomainServiceMock
                 .Setup(x =>
                     x.GetNextUnacknowledgedTimeSeriesAsync(
-                        It.Is<ActorId>(r =>
-                            string.Equals(r.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
+                        recipient,
                         It.Is<Uuid>(r => BundleIdCheck(r, request)),
                         ResponseFormat.Json,
                         1.0))
@@ -308,8 +304,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             warehouseDomainServiceMock
                 .Setup(x =>
                     x.GetNextUnacknowledgedTimeSeriesAsync(
-                        It.Is<ActorId>(r =>
-                            string.Equals(r.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
+                        new ActorId(Guid.Parse(request.MarketOperator)),
                         It.Is<Uuid>(r => BundleIdCheck(r, request)),
                         ResponseFormat.Json,
                         1.0))
@@ -351,7 +346,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             // Arrange
             var bundleId = Guid.NewGuid().ToString();
             var recipient = new ActorId(Guid.NewGuid());
-            var request = new PeekMasterDataCommand(recipient.Value, bundleId, ResponseFormat.Json, 1.0);
+            var request = new PeekMasterDataCommand(recipient.Value.ToString(), bundleId, ResponseFormat.Json, 1.0);
 
             var bundleContentMock = new Mock<IBundleContent>();
             bundleContentMock
@@ -372,8 +367,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
             warehouseDomainServiceMock
                 .Setup(x =>
                     x.GetNextUnacknowledgedMasterDataAsync(
-                        It.Is<ActorId>(r =>
-                            string.Equals(r.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
+                        recipient,
                         It.Is<Uuid>(r => BundleIdCheck(r, request)),
                         ResponseFormat.Json,
                         1.0))
@@ -407,7 +401,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
                 .Setup(x =>
                     x.GetNextUnacknowledgedMasterDataAsync(
                         It.Is<ActorId>(r =>
-                            string.Equals(r.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
+                            string.Equals(r.Value.ToString(), request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
                         It.Is<Uuid>(r => BundleIdCheck(r, request)),
                         ResponseFormat.Json,
                         1.0))

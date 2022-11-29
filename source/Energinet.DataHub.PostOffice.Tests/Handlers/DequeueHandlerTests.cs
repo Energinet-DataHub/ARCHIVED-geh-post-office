@@ -57,12 +57,12 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
         public async Task Handle_WithData_ReturnsTrue()
         {
             // Arrange
-            var recipient = Guid.NewGuid();
-            var request = new DequeueCommand(recipient.ToString(), "9FB4753A-0E2C-4F42-BA10-D38128DDA877");
+            var recipient = new ActorId(Guid.NewGuid());
+            var request = new DequeueCommand(recipient.Value.ToString(), "9FB4753A-0E2C-4F42-BA10-D38128DDA877");
             var bundleContentMock = new Mock<IBundleContent>();
             var bundle = new Bundle(
                 new Uuid(Guid.NewGuid()),
-                new ActorId(recipient),
+                recipient,
                 DomainOrigin.TimeSeries,
                 new ContentType("fake_value"),
                 Array.Empty<Uuid>(),
@@ -72,7 +72,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
 
             var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
             warehouseDomainServiceMock.Setup(x => x.CanAcknowledgeAsync(
-                    It.Is<ActorId>(r => string.Equals(r.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
+                    recipient,
                     It.Is<Uuid>(id => string.Equals(id.ToString(), request.BundleId, StringComparison.OrdinalIgnoreCase))))
                 .ReturnsAsync((true, bundle));
 
@@ -112,7 +112,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Handlers
 
             var warehouseDomainServiceMock = new Mock<IMarketOperatorDataDomainService>();
             warehouseDomainServiceMock.Setup(x => x.CanAcknowledgeAsync(
-                    It.Is<ActorId>(r => string.Equals(r.Value, request.MarketOperator, StringComparison.OrdinalIgnoreCase)),
+                    new ActorId(recipient),
                     It.Is<Uuid>(id => string.Equals(id.ToString(), request.BundleId, StringComparison.OrdinalIgnoreCase))))
                 .ReturnsAsync((false, null));
             var dequeueNotificationSenderMock = new Mock<IDequeueNotificationSender>();
