@@ -16,7 +16,6 @@ using System;
 using System.Globalization;
 using Energinet.DataHub.MessageHub.Model.DataAvailable;
 using Energinet.DataHub.MessageHub.Model.Exceptions;
-using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.MessageHub.Model.Protobuf;
 using Google.Protobuf;
 using Xunit;
@@ -27,39 +26,6 @@ namespace Energinet.DataHub.MessageHub.Model.Tests.DataAvailable
     [UnitTest]
     public sealed class DataAvailableNotificationParserTests
     {
-        [Fact]
-        public void Parse_LegacyInput_ReturnsData()
-        {
-            // Arrange
-            var target = new DataAvailableNotificationParser();
-            var contract = new DataAvailableNotificationContract
-            {
-                UUID = "94681547-C70D-409C-9255-83B310AF7010",
-                MessageType = "messageType",
-                Origin = "TimeSeries",
-                Recipient = "recipient",
-                RelativeWeight = 5,
-                SupportsBundling = true
-            };
-
-            // Act
-            var actual = target.Parse(contract.ToByteArray());
-
-            // Assert
-            Assert.NotNull(actual);
-            Assert.Equal(contract.UUID, actual.Uuid.ToString().ToUpper(CultureInfo.InvariantCulture));
-            Assert.Equal(contract.MessageType, actual.MessageType.Value);
-            Assert.Equal(contract.Origin, actual.Origin.ToString());
-
-#pragma warning disable CS0618
-            var legacyVariant = (LegacyActorIdDto)actual.Recipient;
-#pragma warning restore CS0618
-
-            Assert.Equal(contract.Recipient, legacyVariant.LegacyValue);
-            Assert.Equal(contract.RelativeWeight, actual.RelativeWeight);
-            Assert.Equal(contract.SupportsBundling, actual.SupportsBundling);
-        }
-
         [Fact]
         public void Parse_ValidInput_ReturnsData()
         {
