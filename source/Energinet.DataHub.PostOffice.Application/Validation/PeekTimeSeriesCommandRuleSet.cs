@@ -24,7 +24,7 @@ namespace Energinet.DataHub.PostOffice.Application.Validation
         {
             RuleFor(command => command.MarketOperator)
                 .NotEmpty()
-                .SetValidator(new LegacyActorIdValidationRule<PeekTimeSeriesCommand>());
+                .SetValidator(new UuidValidationRule<PeekTimeSeriesCommand>());
 
             RuleFor(command => command.BundleId)
                 .NotEmpty()

@@ -93,10 +93,10 @@ namespace Energinet.DataHub.PostOffice.Domain.Services
         /// <summary>
         /// Logs which actor requested a dequeue
         /// </summary>
-        /// <param name="externalActorId">The B2C id of the actor trying to dequeue</param>
+        /// <param name="actorId">The id of the actor trying to dequeue</param>
         /// <param name="correlationId">The correlation id of the dequeue call</param>
         /// <param name="bundleId">the bundle id they are trying to dequeue</param>
-        Task LogActorDequeueingAsync(string externalActorId, string correlationId, string bundleId);
+        Task LogActorDequeueingAsync(ActorId actorId, string correlationId, string bundleId);
 
         /// <summary>
         /// Retrieves all logged messages as a string

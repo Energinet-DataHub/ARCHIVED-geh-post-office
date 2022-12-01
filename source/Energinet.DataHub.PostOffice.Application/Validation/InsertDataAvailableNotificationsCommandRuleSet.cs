@@ -39,7 +39,7 @@ namespace Energinet.DataHub.PostOffice.Application.Validation
 
                     dto.RuleFor(x => x.Recipient)
                         .NotEmpty()
-                        .SetValidator(new LegacyActorIdValidationRule<DataAvailableNotificationDto>());
+                        .SetValidator(new UuidValidationRule<DataAvailableNotificationDto>());
 
                     dto.RuleFor(x => x.ContentType)
                         .NotEmpty();

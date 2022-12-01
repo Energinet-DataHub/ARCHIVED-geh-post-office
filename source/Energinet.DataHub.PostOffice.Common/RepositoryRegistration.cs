@@ -25,16 +25,13 @@ namespace Energinet.DataHub.PostOffice.Common
         {
             container.Register<IActorRepository, ActorRepository>(Lifestyle.Scoped);
             container.Register<IActorRepositoryContainer, ActorRepositoryContainer>(Lifestyle.Scoped);
-            container.Register<IDataAvailableNotificationRepository, LegacyDataAvailableNotificationRepositoryProxy>(Lifestyle.Scoped);
+            container.Register<IDataAvailableNotificationRepository, DataAvailableNotificationRepository>(Lifestyle.Scoped);
             container.Register<IDataAvailableNotificationRepositoryContainer, DataAvailableNotificationRepositoryContainer>(Lifestyle.Scoped);
             container.Register<IDataAvailableNotificationCleanUpRepository, DataAvailableNotificationCleanUpRepository>(Lifestyle.Scoped);
-            container.Register<IBundleRepository, LegacyBundleRepositoryProxy>(Lifestyle.Scoped);
+            container.Register<IBundleRepository, BundleRepository>(Lifestyle.Scoped);
             container.Register<IBundleRepositoryContainer, BundleRepositoryContainer>(Lifestyle.Scoped);
             container.Register<ISequenceNumberRepository, SequenceNumberRepository>(Lifestyle.Scoped);
             container.Register<FindLatestDataAvailableNotificationRepository>(Lifestyle.Scoped);
-
-            container.Register<DataAvailableNotificationRepository>(Lifestyle.Scoped);
-            container.Register<BundleRepository>(Lifestyle.Scoped);
         }
     }
 }

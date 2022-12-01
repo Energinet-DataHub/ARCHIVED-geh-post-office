@@ -51,7 +51,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Repositories
             // Act + Assert
             await Assert
                 .ThrowsAsync<ArgumentNullException>(() =>
-                    target.GetNextUnacknowledgedAsync(new LegacyActorId(null!), null!))
+                    target.GetNextUnacknowledgedAsync(new ActorId(Guid.NewGuid()), null!))
                 .ConfigureAwait(false);
         }
 
@@ -74,7 +74,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Repositories
             // Arrange
             var target = CreateTarget();
             var cabinetKey = new CabinetKey(
-                new LegacyActorId(new GlobalLocationNumber("fake_value")),
+                new ActorId(Guid.NewGuid()),
                 DomainOrigin.Charges,
                 new ContentType("fake_value"));
 

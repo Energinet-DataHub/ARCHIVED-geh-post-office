@@ -20,7 +20,6 @@ using System.Net;
 using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 using Energinet.DataHub.MessageHub.Model.DataAvailable;
-using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using MediatR;
 using Microsoft.Azure.Cosmos;
@@ -215,15 +214,9 @@ namespace Energinet.DataHub.PostOffice.EntryPoint.SubDomain.Functions
             {
                 var parsedValue = _dataAvailableNotificationParser.Parse(message.Body.ToArray());
 
-#pragma warning disable CS0618
-                var recipient = parsedValue.Recipient is LegacyActorIdDto legacyActor
-#pragma warning restore CS0618
-                    ? legacyActor.LegacyValue
-                    : parsedValue.Recipient.Value.ToString();
-
                 return (message, true, new DataAvailableNotificationDto(
                     parsedValue.Uuid.ToString(),
-                    recipient,
+                    parsedValue.Recipient.Value.ToString(),
                     parsedValue.MessageType.Value,
                     parsedValue.Origin,
                     parsedValue.SupportsBundling,

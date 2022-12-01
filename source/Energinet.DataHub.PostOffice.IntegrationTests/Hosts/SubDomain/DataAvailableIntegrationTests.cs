@@ -17,7 +17,6 @@ using System.Threading.Tasks;
 using Energinet.DataHub.MessageHub.Model.Model;
 using Energinet.DataHub.PostOffice.Application.Commands;
 using Energinet.DataHub.PostOffice.Domain.Repositories;
-using Energinet.DataHub.PostOffice.IntegrationTests.Common;
 using FluentValidation;
 using MediatR;
 using Xunit;
@@ -65,7 +64,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.SubDomain
         public async Task InsertDataAvailableNotificationsCommand_WithData_CanBePeekedBack()
         {
             // Arrange
-            var recipientGln = new MockedGln();
+            var recipientGuid = Guid.NewGuid().ToString();
             var bundleId = Guid.NewGuid().ToString();
 
             await using var host = await MarketOperatorIntegrationTestHost
@@ -77,7 +76,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.SubDomain
 
             var dataAvailableNotification = new DataAvailableNotificationDto(
                 Guid.NewGuid().ToString(),
-                recipientGln,
+                recipientGuid,
                 "timeseries",
                 DomainOrigin.TimeSeries,
                 false,
@@ -91,7 +90,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.SubDomain
             await mediator.Send(command).ConfigureAwait(false);
 
             // Assert
-            var peekResponse = await mediator.Send(new PeekCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0)).ConfigureAwait(false);
+            var peekResponse = await mediator.Send(new PeekCommand(recipientGuid, bundleId, ResponseFormat.Json, 1.0)).ConfigureAwait(false);
             Assert.NotNull(peekResponse);
             Assert.True(peekResponse.HasContent);
         }
@@ -100,7 +99,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.SubDomain
         public async Task InsertDataAvailableNotificationsCommand_PeekDequeuePeekSequence_CanBePeekedBack()
         {
             // Arrange
-            var recipientGln = new MockedGln();
+            var recipientGuid = Guid.NewGuid().ToString();
             var bundleIdA = Guid.NewGuid().ToString();
             var bundleIdB = Guid.NewGuid().ToString();
 
@@ -113,7 +112,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.SubDomain
 
             var dataAvailableNotificationA = new DataAvailableNotificationDto(
                 Guid.NewGuid().ToString(),
-                recipientGln,
+                recipientGuid,
                 "MeteringPoints",
                 DomainOrigin.MeteringPoints,
                 true,
@@ -152,8 +151,8 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.SubDomain
             await mediator.Send(new UpdateMaximumSequenceNumberCommand(3)).ConfigureAwait(false);
 
             // Act
-            await mediator.Send(new PeekCommand(recipientGln, bundleIdA, ResponseFormat.Json, 1.0)).ConfigureAwait(false);
-            await mediator.Send(new DequeueCommand(recipientGln, bundleIdA)).ConfigureAwait(false);
+            await mediator.Send(new PeekCommand(recipientGuid, bundleIdA, ResponseFormat.Json, 1.0)).ConfigureAwait(false);
+            await mediator.Send(new DequeueCommand(recipientGuid, bundleIdA)).ConfigureAwait(false);
 
             var dataAvailableNotificationD = new DataAvailableNotificationDto(
                 Guid.NewGuid().ToString(),
@@ -174,7 +173,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.SubDomain
             await mediator.Send(new UpdateMaximumSequenceNumberCommand(4)).ConfigureAwait(false);
 
             var peekResponse = await mediator
-                .Send(new PeekCommand(recipientGln, bundleIdB, ResponseFormat.Json, 1.0))
+                .Send(new PeekCommand(recipientGuid, bundleIdB, ResponseFormat.Json, 1.0))
                 .ConfigureAwait(false);
 
             // Assert
@@ -185,7 +184,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.SubDomain
         public async Task InsertDataAvailableNotificationsCommand_PeekInsertDequeueSequence_CanBePeekedBack()
         {
             // Arrange
-            var recipientGln = new MockedGln();
+            var recipientGuid = Guid.NewGuid().ToString();
             var bundleIdA = Guid.NewGuid().ToString();
             var bundleIdB = Guid.NewGuid().ToString();
 
@@ -198,7 +197,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.SubDomain
 
             var dataAvailableNotificationA = new DataAvailableNotificationDto(
                 Guid.NewGuid().ToString(),
-                recipientGln,
+                recipientGuid,
                 "MeteringPoints",
                 DomainOrigin.MeteringPoints,
                 true,
@@ -221,17 +220,17 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.SubDomain
                 .ConfigureAwait(false);
 
             // Act
-            await mediator.Send(new PeekCommand(recipientGln, bundleIdA, ResponseFormat.Json, 1.0)).ConfigureAwait(false);
+            await mediator.Send(new PeekCommand(recipientGuid, bundleIdA, ResponseFormat.Json, 1.0)).ConfigureAwait(false);
 
             await mediator
                 .Send(new InsertDataAvailableNotificationsCommand(new[] { dataAvailableNotificationB }))
                 .ConfigureAwait(false);
 
-            await mediator.Send(new DequeueCommand(recipientGln, bundleIdA)).ConfigureAwait(false);
+            await mediator.Send(new DequeueCommand(recipientGuid, bundleIdA)).ConfigureAwait(false);
 
             // Assert
             var peekResponse = await mediator
-                .Send(new PeekCommand(recipientGln, bundleIdB, ResponseFormat.Json, 1.0))
+                .Send(new PeekCommand(recipientGuid, bundleIdB, ResponseFormat.Json, 1.0))
                 .ConfigureAwait(false);
 
             Assert.True(peekResponse.HasContent);

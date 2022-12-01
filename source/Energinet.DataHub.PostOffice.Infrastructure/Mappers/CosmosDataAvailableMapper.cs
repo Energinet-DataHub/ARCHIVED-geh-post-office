@@ -22,13 +22,9 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Mappers
     {
         public static DataAvailableNotification Map(CosmosDataAvailable document)
         {
-            var recipient = Guid.TryParse(document.Recipient, out var actorId)
-                ? new ActorId(actorId)
-                : new LegacyActorId(new GlobalLocationNumber(document.Recipient));
-
             return new DataAvailableNotification(
                 new Uuid(document.Id),
-                recipient,
+                new ActorId(Guid.Parse(document.Recipient)),
                 new ContentType(document.ContentType),
                 Enum.Parse<DomainOrigin>(document.Origin),
                 new SupportsBundling(document.SupportsBundling),
@@ -42,7 +38,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Mappers
             return new CosmosDataAvailable
             {
                 Id = notification.NotificationId.ToString(),
-                Recipient = notification.Recipient.Value,
+                Recipient = notification.Recipient.Value.ToString(),
                 ContentType = notification.ContentType.Value,
                 Origin = notification.Origin.ToString(),
                 SupportsBundling = notification.SupportsBundling.Value,

@@ -52,7 +52,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var dataAvailableNotificationRepository = scope.GetInstance<IDataAvailableNotificationRepository>();
             var dataAvailableNotificationCleanUpRepository = scope.GetInstance<IDataAvailableNotificationCleanUpRepository>();
 
-            var recipient = new LegacyActorId(new MockedGln());
+            var recipient = new ActorId(Guid.NewGuid());
             var partitionKey = string.Join('_', recipient.Value, DomainOrigin.Charges, "default_content_type");
 
             var notifications = CreateInfinite(recipient, 1).Take(1).ToList();
@@ -115,7 +115,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var dataAvailableNotificationRepository = scope.GetInstance<IDataAvailableNotificationRepository>();
             var dataAvailableNotificationCleanUpRepository = scope.GetInstance<IDataAvailableNotificationCleanUpRepository>();
 
-            var recipient = new LegacyActorId(new MockedGln());
+            var recipient = new ActorId(Guid.NewGuid());
             var partitionKey = string.Join('_', recipient.Value, DomainOrigin.Charges, "default_content_type");
 
             var notifications = CreateInfinite(recipient, 1).Take(1).ToList();
@@ -176,7 +176,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
             var dataAvailableNotificationRepository = scope.GetInstance<IDataAvailableNotificationRepository>();
             var dataAvailableNotificationCleanUpRepository = scope.GetInstance<IDataAvailableNotificationCleanUpRepository>();
 
-            var recipient = new LegacyActorId(new MockedGln());
+            var recipient = new ActorId(Guid.NewGuid());
             var partitionKey = string.Join('_', recipient.Value, DomainOrigin.Charges, "default_content_type");
 
             var notifications = CreateInfinite(recipient, 1).Take(1).ToList();
@@ -239,7 +239,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Repositories
         {
             var mockedClock = new Mock<IClock>();
             mockedClock.Setup(l => l.GetCurrentInstant()).Returns(clockAdjust);
-            scope.Container!.Register<IClock>(() => mockedClock.Object);
+            scope.Container!.Register(() => mockedClock.Object);
         }
 
         private static async Task<int> CountItemsInDrawerAsync(IDataAvailableNotificationRepositoryContainer repositoryContainer, CosmosCabinetDrawer drawer)

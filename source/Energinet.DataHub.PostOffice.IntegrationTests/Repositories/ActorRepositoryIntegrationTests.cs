@@ -49,7 +49,7 @@ public sealed class ActorRepositoryIntegrationTests
 
         // Assert
         Assert.NotNull(actual);
-        Assert.Equal(actorId, Guid.Parse(actual!.Id.Value));
+        Assert.Equal(actorId, actual.Id.Value);
         Assert.Equal(externalId, actual.ExternalId.Value);
     }
 
@@ -76,7 +76,7 @@ public sealed class ActorRepositoryIntegrationTests
 
         // Assert
         Assert.NotNull(actual);
-        Assert.Equal(actorId, Guid.Parse(actual!.Id.Value));
+        Assert.Equal(actorId, actual.Id.Value);
         Assert.Equal(externalId, actual.ExternalId.Value);
     }
 
@@ -146,7 +146,7 @@ public sealed class ActorRepositoryIntegrationTests
             .ConfigureAwait(false);
 
         Assert.NotNull(actual);
-        Assert.Equal(actorId, Guid.Parse(actual!.Id.Value));
+        Assert.Equal(actorId, actual.Id.Value);
         Assert.Equal(externalId, actual.ExternalId.Value);
     }
 
@@ -177,7 +177,7 @@ public sealed class ActorRepositoryIntegrationTests
             .ConfigureAwait(false);
 
         Assert.NotNull(actual);
-        Assert.Equal(actorId, Guid.Parse(actual!.Id.Value));
+        Assert.Equal(actorId, actual.Id.Value);
         Assert.Equal(externalId, actual.ExternalId.Value);
     }
 

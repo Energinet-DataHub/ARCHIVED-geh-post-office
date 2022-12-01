@@ -25,7 +25,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation
     public sealed class DequeueCommandRuleSetTests
     {
         private const string ValidUuid = "169B53A2-0A17-47D7-9603-4E41854E4181";
-        private const string ValidRecipient = "5790000555550";
+        private const string ValidRecipient = "61AA0332-4683-4921-B7C9-0D6EC1A8EF8E";
 
         [Theory]
         [InlineData("", false)]
@@ -63,7 +63,7 @@ namespace Energinet.DataHub.PostOffice.Tests.Validation
         [InlineData("", false)]
         [InlineData(null, false)]
         [InlineData("  ", false)]
-        [InlineData("5790000555550", true)]
+        [InlineData("2BBCD51D-D27D-4B74-9B8B-6D143200DC94", true)]
         public async Task Validate_Recipient_ValidatesProperty(string value, bool isValid)
         {
             // Arrange

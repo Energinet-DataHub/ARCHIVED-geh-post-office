@@ -51,7 +51,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         public async Task Dequeue_NoData_ReturnsNotDequeued()
         {
             // Arrange
-            var recipientGln = new MockedGln();
+            var recipientGuid = Guid.NewGuid().ToString();
             var bundleUuid = Guid.NewGuid().ToString();
 
             await using var host = await MarketOperatorIntegrationTestHost
@@ -61,7 +61,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var dequeueCommand = new DequeueCommand(recipientGln, bundleUuid);
+            var dequeueCommand = new DequeueCommand(recipientGuid, bundleUuid);
 
             // Act
             var response = await mediator.Send(dequeueCommand).ConfigureAwait(false);
@@ -75,9 +75,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         public async Task Dequeue_HasData_ReturnsIsDequeued()
         {
             // Arrange
-            var recipientGln = new MockedGln();
+            var recipientGuid = Guid.NewGuid().ToString();
             var bundleId = Guid.NewGuid().ToString();
-            await AddDataAvailableNotificationAsync(recipientGln, DomainOrigin.TimeSeries).ConfigureAwait(false);
+            await AddDataAvailableNotificationAsync(recipientGuid, DomainOrigin.TimeSeries).ConfigureAwait(false);
 
             await using var host = await MarketOperatorIntegrationTestHost
                 .InitializeAsync()
@@ -86,10 +86,10 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekResponse = await mediator.Send(new PeekCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0)).ConfigureAwait(false);
+            var peekResponse = await mediator.Send(new PeekCommand(recipientGuid, bundleId, ResponseFormat.Json, 1.0)).ConfigureAwait(false);
             var bundleUuid = await ReadBundleIdAsync(peekResponse).ConfigureAwait(false);
 
-            var dequeueCommand = new DequeueCommand(recipientGln, bundleUuid);
+            var dequeueCommand = new DequeueCommand(recipientGuid, bundleUuid);
 
             // Act
             var response = await mediator.Send(dequeueCommand).ConfigureAwait(false);
@@ -103,9 +103,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         public async Task Dequeue_HasDataTwoDequeue_ReturnsNotDequeued()
         {
             // Arrange
-            var recipientGln = new MockedGln();
+            var recipientGuid = Guid.NewGuid().ToString();
             var bundleId = Guid.NewGuid().ToString();
-            await AddDataAvailableNotificationAsync(recipientGln, DomainOrigin.TimeSeries).ConfigureAwait(false);
+            await AddDataAvailableNotificationAsync(recipientGuid, DomainOrigin.TimeSeries).ConfigureAwait(false);
 
             await using var host = await MarketOperatorIntegrationTestHost
                 .InitializeAsync()
@@ -114,10 +114,10 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekResponse = await mediator.Send(new PeekCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0)).ConfigureAwait(false);
+            var peekResponse = await mediator.Send(new PeekCommand(recipientGuid, bundleId, ResponseFormat.Json, 1.0)).ConfigureAwait(false);
             var bundleUuid = await ReadBundleIdAsync(peekResponse).ConfigureAwait(false);
 
-            var dequeueCommand = new DequeueCommand(recipientGln, bundleUuid);
+            var dequeueCommand = new DequeueCommand(recipientGuid, bundleUuid);
 
             // Act
             var responseA = await mediator.Send(dequeueCommand).ConfigureAwait(false);
@@ -134,10 +134,10 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         public async Task Dequeue_DifferentRecipients_ReturnsNotDequeued()
         {
             // Arrange
-            var recipientGln = new MockedGln();
-            var unrelatedGln = new MockedGln();
+            var recipientGuid = Guid.NewGuid().ToString();
+            var unrelatedGln = Guid.NewGuid().ToString();
             var bundleId = Guid.NewGuid().ToString();
-            await AddDataAvailableNotificationAsync(recipientGln, DomainOrigin.TimeSeries).ConfigureAwait(false);
+            await AddDataAvailableNotificationAsync(recipientGuid, DomainOrigin.TimeSeries).ConfigureAwait(false);
 
             await using var host = await MarketOperatorIntegrationTestHost
                 .InitializeAsync()
@@ -146,7 +146,7 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var peekResponse = await mediator.Send(new PeekCommand(recipientGln, bundleId, ResponseFormat.Json, 1.0)).ConfigureAwait(false);
+            var peekResponse = await mediator.Send(new PeekCommand(recipientGuid, bundleId, ResponseFormat.Json, 1.0)).ConfigureAwait(false);
             var bundleUuid = await ReadBundleIdAsync(peekResponse).ConfigureAwait(false);
 
             var dequeueCommand = new DequeueCommand(unrelatedGln, bundleUuid);
@@ -163,10 +163,10 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
         public async Task Dequeue_DifferentEndpointsForSameRecipient_CanDequeueFromAllEndpoints()
         {
             // Arrange
-            var recipientGln = new MockedGln();
-            await AddDataAvailableNotificationAsync(recipientGln, DomainOrigin.Wholesale);
-            await AddDataAvailableNotificationAsync(recipientGln, DomainOrigin.Charges);
-            await AddDataAvailableNotificationAsync(recipientGln, DomainOrigin.TimeSeries);
+            var recipientGuid = Guid.NewGuid().ToString();
+            await AddDataAvailableNotificationAsync(recipientGuid, DomainOrigin.Wholesale);
+            await AddDataAvailableNotificationAsync(recipientGuid, DomainOrigin.Charges);
+            await AddDataAvailableNotificationAsync(recipientGuid, DomainOrigin.TimeSeries);
 
             await using var host = await MarketOperatorIntegrationTestHost
                 .InitializeAsync()
@@ -175,9 +175,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             await using var scope = host.BeginScope();
             var mediator = scope.GetInstance<IMediator>();
 
-            var timeSeriesPeek = new PeekTimeSeriesCommand(recipientGln, null, ResponseFormat.Xml, 1.0);
-            var aggregationsPeek = new PeekAggregationsCommand(recipientGln, null, ResponseFormat.Xml, 1.0);
-            var masterDataPeek = new PeekMasterDataCommand(recipientGln, null, ResponseFormat.Xml, 1.0);
+            var timeSeriesPeek = new PeekTimeSeriesCommand(recipientGuid, null, ResponseFormat.Xml, 1.0);
+            var aggregationsPeek = new PeekAggregationsCommand(recipientGuid, null, ResponseFormat.Xml, 1.0);
+            var masterDataPeek = new PeekMasterDataCommand(recipientGuid, null, ResponseFormat.Xml, 1.0);
 
             var timeSeriesPeekResponse = await mediator.Send(timeSeriesPeek);
             var aggregationsPeekResponse = await mediator.Send(aggregationsPeek);
@@ -187,9 +187,9 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             var aggregationsBundleUuid = await ReadBundleIdAsync(aggregationsPeekResponse);
             var masterDataBundleUuid = await ReadBundleIdAsync(masterDataPeekResponse);
 
-            var timeSeriesDequeueCommand = new DequeueCommand(recipientGln, timeSeriesBundleUuid);
-            var aggregationsDequeueCommand = new DequeueCommand(recipientGln, aggregationsBundleUuid);
-            var masterDataDequeueCommand = new DequeueCommand(recipientGln, masterDataBundleUuid);
+            var timeSeriesDequeueCommand = new DequeueCommand(recipientGuid, timeSeriesBundleUuid);
+            var aggregationsDequeueCommand = new DequeueCommand(recipientGuid, aggregationsBundleUuid);
+            var masterDataDequeueCommand = new DequeueCommand(recipientGuid, masterDataBundleUuid);
 
             // Act
             // Order matters! The newest bundle must be dequeued first, otherwise the test may incorrectly succeed.
@@ -206,12 +206,12 @@ namespace Energinet.DataHub.PostOffice.IntegrationTests.Hosts.MarketOperator
             Assert.True(timeSeriesResponse.IsDequeued);
         }
 
-        private static async Task AddDataAvailableNotificationAsync(string recipientGln, DomainOrigin origin)
+        private static async Task AddDataAvailableNotificationAsync(string recipientGuid, DomainOrigin origin)
         {
             var dataAvailableUuid = Guid.NewGuid().ToString();
             var dataAvailableNotification = new DataAvailableNotificationDto(
                 dataAvailableUuid,
-                recipientGln,
+                recipientGuid,
                 $"{origin}_content_type",
                 origin,
                 false,

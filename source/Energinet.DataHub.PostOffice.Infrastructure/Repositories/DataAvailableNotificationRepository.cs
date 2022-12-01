@@ -231,7 +231,7 @@ namespace Energinet.DataHub.PostOffice.Infrastructure.Repositories
                 .Container
                 .GetItemLinqQueryable<CosmosBundleDocument>();
 
-            var recipient = bundle.Recipient.Value;
+            var recipient = bundle.Recipient.Value.ToString();
             var bundleId = bundle.BundleId.ToString();
 
             var query =
