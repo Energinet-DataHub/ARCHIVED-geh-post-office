@@ -1,5 +1,9 @@
 # Energinet.DataHub.MessageHub.SimulationLibrary Release Notes
 
+## Version 3.4.1
+
+- Bumped version due to workflow changes
+
 ## Version 3.4.0
 
 - Removed legacy actor id.
