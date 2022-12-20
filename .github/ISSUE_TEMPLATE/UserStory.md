@@ -1,8 +1,12 @@
 ---
 name: User Story
 about: Use this template for adding tasks to a feature.
-labels:
+title: ''
+labels: ''
+assignees: ''
+
 ---
+
 ### Synopsis
 _____________
 ### Acceptance Criteria
@@ -23,5 +27,4 @@ _________________
 #### Testability
 - [ ] Can be tested?
 - [ ] Can be demoed?
-
-
+- [ ] Verified by UX

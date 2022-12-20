@@ -1,7 +1,10 @@
 ---
-name: 🚀 Feature
+name: "\U0001F680 Feature"
 about: Use this template for adding new features.
-labels: feature, epic
+title: ''
+labels: ''
+assignees: ''
+
 ---
 
 ### Description
